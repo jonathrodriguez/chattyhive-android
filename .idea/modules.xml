@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/BackEnd/BackEnd.iml" filepath="$PROJECT_DIR$/BackEnd/BackEnd.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ChattyHive/ChattyHive.iml" filepath="$PROJECT_DIR$/ChattyHive/ChattyHive.iml" />
+      <module fileurl="file://$PROJECT_DIR$/chattyhive-android.iml" filepath="$PROJECT_DIR$/chattyhive-android.iml" />
+    </modules>
+  </component>
+</project>
+
