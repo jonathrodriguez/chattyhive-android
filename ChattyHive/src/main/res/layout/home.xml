@@ -31,7 +31,6 @@
             android:layout_height="wrap_content"
             android:text="@string/send"
             android:id="@+id/button"
-            android:layout_gravity="center_horizontal|bottom"
-            android:layout_marginLeft="@dimen/abc_dropdownitem_text_padding_right" />
+            android:layout_gravity="center_horizontal|bottom" />
     </LinearLayout>
 </LinearLayout>
