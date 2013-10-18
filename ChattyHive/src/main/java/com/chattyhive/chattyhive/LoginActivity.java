@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -24,15 +25,15 @@ public class LoginActivity extends Activity {
      * A dummy authentication store containing known user names and passwords.
      * TODO: remove after connecting to a real authentication system.
      */
-    private static final String[] DUMMY_CREDENTIALS = new String[]{
+    /*private static final String[] DUMMY_CREDENTIALS = new String[]{
             "foo@example.com:hello",
             "bar@example.com:world"
-    };
+    };*/
 
     /**
      * The default email to populate the email field with.
      */
-    public static final String EXTRA_EMAIL = "com.example.android.authenticatordemo.extra.EMAIL";
+    public static final String EXTRA_EMAIL = "com.chattyhive.chattyhive.login.extra.EMAIL";
 
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
@@ -98,6 +99,8 @@ public class LoginActivity extends Activity {
      * If there are form errors (invalid email, missing fields, etc.), the
      * errors are presented and no actual login attempt is made.
      */
+
+
     public void attemptLogin() {
         if (mAuthTask != null) {
             return;
@@ -147,6 +150,12 @@ public class LoginActivity extends Activity {
             showProgress(true);
             mAuthTask = new UserLoginTask();
             mAuthTask.execute((Void) null);
+
+            //Intent intent = null;
+            //intent = new Intent(mEmailView.getContext(), Home.class);
+            //intent.putExtra(EXTRA_EMAIL,mEmail);
+            //startActivity(intent);
+            getIntent().putExtra(EXTRA_EMAIL,mEmail);
         }
     }
 
