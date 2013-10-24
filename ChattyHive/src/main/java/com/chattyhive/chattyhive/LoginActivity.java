@@ -150,12 +150,6 @@ public class LoginActivity extends Activity {
             showProgress(true);
             mAuthTask = new UserLoginTask();
             mAuthTask.execute((Void) null);
-
-            //Intent intent = null;
-            //intent = new Intent(mEmailView.getContext(), Home.class);
-            //intent.putExtra(EXTRA_EMAIL,mEmail);
-            //startActivity(intent);
-            getIntent().putExtra(EXTRA_EMAIL,mEmail);
         }
     }
 
@@ -232,9 +226,13 @@ public class LoginActivity extends Activity {
             mAuthTask = null;
             showProgress(false);
 
+
+
             if (success) {
-                //finish();
-                // TODO: here we have to invoke the "Home" activity, passing the username.
+                Intent inte = new Intent();
+                inte.putExtra(EXTRA_EMAIL,mEmail);
+                setResult(RESULT_OK,inte);
+                finish();
             } else {
                /* mPasswordView.setError(getString(R.string.error_incorrect_password));
                 mPasswordView.requestFocus();*/

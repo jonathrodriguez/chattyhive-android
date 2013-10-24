@@ -6,8 +6,8 @@ import android.app.Activity;
 import android.view.Menu;
 
 public class Home extends Activity {
-
-    String mUsername;
+    static final int OP_CODE_LOGIN = 1;
+    String mUsername = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -15,14 +15,22 @@ public class Home extends Activity {
         setContentView(R.layout.home);
 
         if ((mUsername==null) || (mUsername.isEmpty())) {
-            Intent inte = null;
+            Intent inte;
             inte = new Intent(this, LoginActivity.class);
             inte.putExtra(LoginActivity.EXTRA_EMAIL,mUsername);
-            //TODO:recoger el resultado
-            startActivityForResult(inte);
-
+            startActivityForResult(inte,OP_CODE_LOGIN);
         }
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == OP_CODE_LOGIN) {
+            if (resultCode == RESULT_OK) {
+                mUsername = data.getStringExtra(LoginActivity.EXTRA_EMAIL);
+            }
+        }
+    }
+
 
 
     @Override
