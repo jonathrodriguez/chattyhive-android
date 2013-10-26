@@ -20,4 +20,4 @@ local.properties
 .project
 
 # IDEA additional configuration files
-.idea
+.idea/*
