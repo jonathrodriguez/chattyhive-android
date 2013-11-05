@@ -1,13 +1,21 @@
 package com.chattyhive.chattyhive;
 
+import com.chattyhive.backend.PubSub;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.app.Activity;
 import android.view.Menu;
 
+import java.security.Timestamp;
+import java.util.Date;
+
 public class Home extends Activity {
     static final int OP_CODE_LOGIN = 1;
-    String mUsername = "";
+    String mUsername = "Jonathan";
+    String mChannel_name = "public_test";
+
+    ChatListAdapter _chatListAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -15,10 +23,9 @@ public class Home extends Activity {
         setContentView(R.layout.home);
 
         if ((mUsername==null) || (mUsername.isEmpty())) {
-            Intent inte;
-            inte = new Intent(this, LoginActivity.class);
-            inte.putExtra(LoginActivity.EXTRA_EMAIL,mUsername);
-            startActivityForResult(inte,OP_CODE_LOGIN);
+           this.hasToLoggin();
+        } else {
+            this.Logged();
         }
     }
 
@@ -27,6 +34,9 @@ public class Home extends Activity {
         if (requestCode == OP_CODE_LOGIN) {
             if (resultCode == RESULT_OK) {
                 mUsername = data.getStringExtra(LoginActivity.EXTRA_EMAIL);
+                this.Logged();
+            } else {
+                this.hasToLoggin();
             }
         }
     }
@@ -39,5 +49,31 @@ public class Home extends Activity {
         getMenuInflater().inflate(R.menu.home, menu);
         return true;
     }
-    
+
+    private void hasToLoggin() {
+        Intent inte = new Intent(this, LoginActivity.class);
+        inte.putExtra(LoginActivity.EXTRA_EMAIL,mUsername);
+        startActivityForResult(inte,OP_CODE_LOGIN);
+    }
+
+    private void Logged () {
+       this._chatListAdapter = new ChatListAdapter(this, this.mUsername,true);
+       PubSub publishSubscriptionService = new PubSub(this.mUsername,new PubSub.PubSubChannelEventListener() {
+           @Override
+           public void onChannelEvent(String channel_name, String event_name, String message) {
+               int event_type = 0;
+               if (event_name.equalsIgnoreCase("msg")) {
+                   event_type = 1;
+               }
+               switch (event_type) {
+                   case 1:
+                    if (channel_name.equalsIgnoreCase(mChannel_name)) {
+                        _chatListAdapter.addItem(new ChatMessage("Usuario",message, new Date()));
+                    }
+                    break;
+               }
+           }
+       });
+        publishSubscriptionService.Join(mChannel_name);
+    }
 }

@@ -10,6 +10,8 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 /**
  * Created by Jonathan on 24/10/13.
  */
@@ -17,8 +19,9 @@ public class ChatListAdapter extends BaseAdapter {
     private Context _mContext;
     private int _layoutResourceId;
     private LayoutInflater _mInflater;
-    private ChatMessage _data[] = null;
+    private ArrayList<ChatMessage> _data = new ArrayList<ChatMessage>();
     private String _myName = "";
+    private Boolean _multichat = true;
 
     private static final int TYPE_MSG_MULTICHAT_OTHER = 0;
     private static final int TYPE_MSG_MULTICHAT_ME = 1;
@@ -26,19 +29,35 @@ public class ChatListAdapter extends BaseAdapter {
     private static final int TYPE_MSG_SINGLECHAT_ME = 3;
     private static final int TYPE_MSG_COUNT = 4;
 
+    public ChatListAdapter(Context mContext, String myName, Boolean Multichat, ChatMessage[] data) {
+        this(mContext, myName, Multichat);
+
+        for (ChatMessage message : data) {
+            this._data.add(message);
+        }
+    }
+
     public ChatListAdapter(Context mContext, String myName, ChatMessage[] data) {
+        this(mContext,myName,true,data);
+    }
+
+    public ChatListAdapter(Context mContext, String myName, Boolean Multichat) {
 
         this._mContext = mContext;
         this._mInflater = ((Activity) _mContext).getLayoutInflater();
-        this._data = data;
         this._myName = myName;
+        this._multichat = Multichat;
+    }
+
+    public ChatListAdapter(Context mContext, String myName) {
+        this(mContext,myName,true);
     }
 
     @Override
     public int getItemViewType(int position) {
-        int type = TYPE_MSG_MULTICHAT_OTHER;
-        if (_data[position].user.equalsIgnoreCase(this._myName)) {
-            type = TYPE_MSG_MULTICHAT_ME;
+        int type = (this._multichat)?TYPE_MSG_MULTICHAT_OTHER:TYPE_MSG_SINGLECHAT_OTHER;
+        if (_data.get(position).user.equalsIgnoreCase(this._myName)) {
+            type = (this._multichat)?TYPE_MSG_MULTICHAT_ME:TYPE_MSG_SINGLECHAT_ME;
         }
         return type;
     }
@@ -50,12 +69,17 @@ public class ChatListAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return this._data.length;
+        return this._data.size();
+    }
+
+    public void addItem(ChatMessage message) {
+        this._data.add(message);
+        this.notifyDataSetChanged();
     }
 
     @Override
     public ChatMessage getItem(int position){
-        return this._data[position];
+        return this._data.get(position);
     }
 
     @Override
@@ -90,7 +114,7 @@ public class ChatListAdapter extends BaseAdapter {
             holder = (ViewHolder)convertView.getTag();
         }
 
-        ChatMessage chatMessage = _data[position];
+        ChatMessage chatMessage = this._data.get(position);
 
         holder.username.setText(chatMessage.user);
         holder.messageText.setText(chatMessage.message);

@@ -1,6 +1,7 @@
 package com.chattyhive.backend;
 
 import com.pusher.client.Pusher;
+import com.pusher.client.PusherOptions;
 import com.pusher.client.channel.Channel;
 import com.pusher.client.channel.ChannelEventListener;
 import com.pusher.client.connection.ConnectionEventListener;
@@ -16,22 +17,23 @@ public class PubSub {
     }
 
     private static String APP_KEY = "5bec9fb4b45d83495627";
+	private static String CLUSTER = "eu";
     private Pusher pusher;
     private String nick;
     private ArrayList lista_canales;
 
     public PubSubChannelEventListener pscel;
 
-    PubSub() {
+    public PubSub() {
         this("sin_nombre");
     }
 
-    PubSub(String nickname, PubSubChannelEventListener listener) {
+    public PubSub(String nickname, PubSubChannelEventListener listener) {
         this(nickname);
         this.pscel = listener;
     }
 
-    PubSub(String nickname) {
+    public PubSub(String nickname) {
         lista_canales = new ArrayList();
         nick = nickname;
         pusher = new Pusher(APP_KEY);
@@ -49,7 +51,7 @@ public class PubSub {
         }, ConnectionState.ALL);
     }
 
-    void Join(String channel_name) {
+    public void Join(String channel_name) {
         Channel canal;
         canal = pusher.subscribe(channel_name, new ChannelEventListener() {
             @Override
