@@ -10,20 +10,27 @@ import com.pusher.client.connection.ConnectionStateChange;
 import com.pusher.client.util.HttpAuthorizer;
 
 import java.util.ArrayList;
+import java.util.Date;
+
+import sun.rmi.runtime.Log;
 
 public class PubSub {
 
     public interface PubSubChannelEventListener {
         public void onChannelEvent(String channel_name, String event_name, String message);
     }
+    public interface PubSubConnectionEventListener {
+        public void onConnectionStateChange(ConnectionStateChange change);
+    }
 
-    private static String APP_KEY = "8817c5eeccfb1ea2d1c6"; //"5bec9fb4b45d83495627";
+    private static String APP_KEY = "f073ebb6f5d1b918e59e"; //"8817c5eeccfb1ea2d1c6"; //"5bec9fb4b45d83495627";
 	private static String CLUSTER = "eu";
     private Pusher pusher;
     private String nick;
     private ArrayList lista_canales;
 
     public PubSubChannelEventListener pscel;
+    public PubSubConnectionEventListener psconel;
 
     public PubSub() {
         this("sin_nombre");
@@ -37,27 +44,56 @@ public class PubSub {
     public PubSub(String nickname) {
         lista_canales = new ArrayList();
         nick = nickname;
-        pusher = new Pusher(APP_KEY,(new PusherOptions().setEncrypted(true).setAuthorizer(new HttpAuthorizer("http://www.leggetter.co.uk/pusher/pusher-examples/php/authentication/src/private_auth.php"))));
+        pusher = new Pusher(APP_KEY,(new PusherOptions().setEncrypted(false)));
 
-        pusher.connect(new ConnectionEventListener() {
+        pusher.getConnection().bind(ConnectionState.ALL, new ConnectionEventListener() {
             @Override
             public void onConnectionStateChange(ConnectionStateChange change) {
-                System.out.print(change.toString());
+                psconel.onConnectionStateChange(change);
             }
 
             @Override
             public void onError(String message, String code, Exception e) {
-                System.out.print("Error "+code+": "+message);
+                System.out.print("Error " + code + ": " + message);
             }
-        }, ConnectionState.ALL);
+        });
+
+        //pusher.connect();
     }
 
+    public void Connect() { pusher.connect(); }
+    public void Disconnect() {
+        for (int i = 0; i > lista_canales.size(); i++) {
+            Channel c = (Channel)lista_canales.get(i);
+            pusher.unsubscribe(c.getName());
+        }
+        lista_canales.clear();
+        pusher.disconnect();
+    }
+    public ConnectionState GetConnectionState() { return pusher.getConnection().getState(); }
+    public void setConnectionEventListener(PubSubConnectionEventListener listener) { psconel = listener; }
+
     public void Join(String channel_name) {
+        while (pusher.getConnection().getState() != ConnectionState.CONNECTED) {
+            System.out.print("Pusher no está conectado.");
+            int Timeout = 10;
+            while ((pusher.getConnection().getState() != ConnectionState.CONNECTED) && (pusher.getConnection().getState() != ConnectionState.DISCONNECTED) && (Timeout > 0)) {
+                Timeout--;
+                try { wait(1000); } catch (Exception e) { return; };
+            }
+
+            if ((pusher.getConnection().getState() != ConnectionState.CONNECTED) && (pusher.getConnection().getState() != ConnectionState.DISCONNECTED)) {
+                return;
+            } else if ((pusher.getConnection().getState() == ConnectionState.DISCONNECTED)) {
+                pusher.connect();
+            }
+        }
         Channel canal;
         canal = pusher.subscribe(channel_name, new ChannelEventListener() {
             @Override
             public void onSubscriptionSucceeded(String channelName) {
                 System.out.print("Conectado a: "+channelName);
+                pscel.onChannelEvent(channelName, "SubscriptionSucceeded", (new Date()).toString());
             }
 
             @Override
@@ -65,7 +101,6 @@ public class PubSub {
                 pscel.onChannelEvent(channelName, eventName, data);
             }
         });
-
         lista_canales.add(canal);
     }
 }
