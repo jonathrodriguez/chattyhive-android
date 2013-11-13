@@ -72,14 +72,20 @@ public class Home extends Activity implements PubSub.PubSubChannelEventListener,
 
     private void Logged () {
         this._chatListAdapter = new ChatListAdapter(this, this.mUsername,true);
+        ((ListView)findViewById(R.id.listView)).setAdapter(this._chatListAdapter);
         publishSubscriptionService = new PubSub(this.mUsername,this);
         publishSubscriptionService.setConnectionEventListener(this);
         swich.performClick();
     }
 
     @Override
-    public void onConnectionStateChange(ConnectionStateChange change) {
-        status.setText(change.getCurrentState().toString());
+    public void onConnectionStateChange(final ConnectionStateChange change) {
+        runOnUiThread(new Runnable(){
+            public void run() {
+                status.setText(change.getCurrentState().toString());
+            }
+        });
+
         if (change.getCurrentState() == targetState) {
             if (targetState == ConnectionState.CONNECTED) {
                 publishSubscriptionService.Join(mChannel_name);
@@ -92,7 +98,7 @@ public class Home extends Activity implements PubSub.PubSubChannelEventListener,
     }
 
     @Override
-    public void onChannelEvent(String channel_name, String event_name, String message) {
+    public void onChannelEvent(String channel_name, String event_name, final String message) {
         int event_type = 0;
         if (event_name.equalsIgnoreCase("msg")) {
             event_type = 1;
@@ -102,12 +108,20 @@ public class Home extends Activity implements PubSub.PubSubChannelEventListener,
         switch (event_type) {
             case 1:
                 if (channel_name.equalsIgnoreCase(mChannel_name)) {
-                    _chatListAdapter.addItem(new ChatMessage("User",message, new Date()));
+                    runOnUiThread(new Runnable(){
+                        public void run() {
+                            _chatListAdapter.addItem(new ChatMessage("User",message, new Date()));
+                        }
+                    });
                 }
                 break;
             case 2:
                 if (channel_name.equalsIgnoreCase(mChannel_name)) {
-                    status.setText(publishSubscriptionService.GetConnectionState().toString().concat(" & JOINED"));
+                    runOnUiThread(new Runnable(){
+                        public void run() {
+                            status.setText(publishSubscriptionService.GetConnectionState().toString().concat(" & JOINED"));
+                        }
+                    });
                 }
                 break;
         }
@@ -116,8 +130,12 @@ public class Home extends Activity implements PubSub.PubSubChannelEventListener,
     public View.OnClickListener onClick_ToggleButton = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            targetState = (((ToggleButton)v).isChecked())?ConnectionState.DISCONNECTED:ConnectionState.CONNECTED;
-            publishSubscriptionService.Connect();
+            targetState = (!((ToggleButton)v).isChecked())?ConnectionState.DISCONNECTED:ConnectionState.CONNECTED;
+            if (targetState == ConnectionState.DISCONNECTED) {
+                publishSubscriptionService.Disconnect();
+            } else {
+                publishSubscriptionService.Connect();
+            }
         }
     };
 }

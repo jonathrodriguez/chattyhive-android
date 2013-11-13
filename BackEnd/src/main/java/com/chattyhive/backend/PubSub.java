@@ -49,12 +49,13 @@ public class PubSub {
         pusher.getConnection().bind(ConnectionState.ALL, new ConnectionEventListener() {
             @Override
             public void onConnectionStateChange(ConnectionStateChange change) {
-                psconel.onConnectionStateChange(change);
+                if (psconel != null)
+                    psconel.onConnectionStateChange(change);
             }
 
             @Override
             public void onError(String message, String code, Exception e) {
-                System.out.print("Error " + code + ": " + message);
+               // System.out.print("Error " + code + ": " + message);
             }
         });
 
@@ -63,7 +64,7 @@ public class PubSub {
 
     public void Connect() { pusher.connect(); }
     public void Disconnect() {
-        for (int i = 0; i > lista_canales.size(); i++) {
+        for (int i = 0; i < lista_canales.size(); i++) {
             Channel c = (Channel)lista_canales.get(i);
             pusher.unsubscribe(c.getName());
         }
@@ -74,8 +75,13 @@ public class PubSub {
     public void setConnectionEventListener(PubSubConnectionEventListener listener) { psconel = listener; }
 
     public void Join(String channel_name) {
+        for (int i = 0; i < lista_canales.size(); i++) {
+            Channel c = (Channel)lista_canales.get(i);
+            if (c.getName().equalsIgnoreCase(channel_name))
+                return;
+        }
         while (pusher.getConnection().getState() != ConnectionState.CONNECTED) {
-            System.out.print("Pusher no está conectado.");
+            //System.out.print("Pusher no está conectado.");
             int Timeout = 10;
             while ((pusher.getConnection().getState() != ConnectionState.CONNECTED) && (pusher.getConnection().getState() != ConnectionState.DISCONNECTED) && (Timeout > 0)) {
                 Timeout--;
@@ -89,18 +95,43 @@ public class PubSub {
             }
         }
         Channel canal;
-        canal = pusher.subscribe(channel_name, new ChannelEventListener() {
-            @Override
-            public void onSubscriptionSucceeded(String channelName) {
-                System.out.print("Conectado a: "+channelName);
-                pscel.onChannelEvent(channelName, "SubscriptionSucceeded", (new Date()).toString());
-            }
+        Boolean retry = true;
+        while (retry) {
+            try {
+                retry = false;
+                canal = pusher.subscribe(channel_name,new ChannelEventListener() {
+                    @Override
+                    public void onSubscriptionSucceeded(String channelName) {
+                        if (pscel != null)
+                            pscel.onChannelEvent(channelName, "SubscriptionSucceeded", (new Date()).toString());
+                    }
 
-            @Override
-            public void onEvent(String channelName, String eventName, String data) {
-                pscel.onChannelEvent(channelName, eventName, data);
+                    @Override
+                    public void onEvent(String channelName, String eventName, String data) {
+                        if (pscel != null)
+                            pscel.onChannelEvent(channelName, eventName, data);
+                    }
+                });
+                canal.bind("msg",new ChannelEventListener() {
+                    @Override
+                    public void onSubscriptionSucceeded(String channelName) {
+                        if (pscel != null)
+                            pscel.onChannelEvent(channelName, "SubscriptionSucceeded", (new Date()).toString());
+                    }
+
+                    @Override
+                    public void onEvent(String channelName, String eventName, String data) {
+                        if (pscel != null)
+                            pscel.onChannelEvent(channelName, eventName, data);
+                    }
+                });
+                lista_canales.add(canal);
+            } catch (IllegalArgumentException e) {
+                if (e.getMessage().startsWith("Already subsribed to a channel with name")) {
+                    pusher.unsubscribe(channel_name);
+                    retry = true;
+                }
             }
-        });
-        lista_canales.add(canal);
+        }
     }
 }
