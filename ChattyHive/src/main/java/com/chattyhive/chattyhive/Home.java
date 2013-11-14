@@ -1,8 +1,8 @@
 package com.chattyhive.chattyhive;
 
 import com.chattyhive.backend.PubSub;
-import com.pusher.client.connection.ConnectionState;
-import com.pusher.client.connection.ConnectionStateChange;
+import com.chattyhive.backend.ConnectionState;
+import com.chattyhive.backend.ConnectionStateChange;
 
 import android.content.Intent;
 import android.os.Bundle;

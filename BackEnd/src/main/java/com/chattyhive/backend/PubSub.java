@@ -12,15 +12,13 @@ import com.pusher.client.util.HttpAuthorizer;
 import java.util.ArrayList;
 import java.util.Date;
 
-import sun.rmi.runtime.Log;
-
 public class PubSub {
 
     public interface PubSubChannelEventListener {
         public void onChannelEvent(String channel_name, String event_name, String message);
     }
     public interface PubSubConnectionEventListener {
-        public void onConnectionStateChange(ConnectionStateChange change);
+        public void onConnectionStateChange(com.chattyhive.backend.ConnectionStateChange change);
     }
 
     private static String APP_KEY = "f073ebb6f5d1b918e59e"; //"8817c5eeccfb1ea2d1c6"; //"5bec9fb4b45d83495627";
@@ -49,8 +47,45 @@ public class PubSub {
         pusher.getConnection().bind(ConnectionState.ALL, new ConnectionEventListener() {
             @Override
             public void onConnectionStateChange(ConnectionStateChange change) {
-                if (psconel != null)
-                    psconel.onConnectionStateChange(change);
+                if (psconel != null) {
+                    com.chattyhive.backend.ConnectionState pS = com.chattyhive.backend.ConnectionState.ALL;
+                    com.chattyhive.backend.ConnectionState nS = com.chattyhive.backend.ConnectionState.ALL;
+                    switch (change.getPreviousState()) {
+                        case CONNECTED:
+                            pS = com.chattyhive.backend.ConnectionState.CONNECTED;
+                            break;
+                        case CONNECTING:
+                            pS = com.chattyhive.backend.ConnectionState.CONNECTING;
+                            break;
+                        case DISCONNECTED:
+                            pS = com.chattyhive.backend.ConnectionState.DISCONNECTED;
+                            break;
+                        case DISCONNECTING:
+                            pS = com.chattyhive.backend.ConnectionState.DISCONNECTING;
+                            break;
+                        case ALL:
+                            pS = com.chattyhive.backend.ConnectionState.ALL;
+                            break;
+                    }
+                    switch (change.getCurrentState()) {
+                        case CONNECTED:
+                            nS = com.chattyhive.backend.ConnectionState.CONNECTED;
+                            break;
+                        case CONNECTING:
+                            nS = com.chattyhive.backend.ConnectionState.CONNECTING;
+                            break;
+                        case DISCONNECTED:
+                            nS = com.chattyhive.backend.ConnectionState.DISCONNECTED;
+                            break;
+                        case DISCONNECTING:
+                            nS = com.chattyhive.backend.ConnectionState.DISCONNECTING;
+                            break;
+                        case ALL:
+                            nS = com.chattyhive.backend.ConnectionState.ALL;
+                            break;
+                    }
+                    psconel.onConnectionStateChange(new com.chattyhive.backend.ConnectionStateChange(pS,nS));
+                }
             }
 
             @Override
@@ -71,7 +106,27 @@ public class PubSub {
         lista_canales.clear();
         pusher.disconnect();
     }
-    public ConnectionState GetConnectionState() { return pusher.getConnection().getState(); }
+    public com.chattyhive.backend.ConnectionState GetConnectionState() {
+        com.chattyhive.backend.ConnectionState pS = com.chattyhive.backend.ConnectionState.ALL;
+        switch (pusher.getConnection().getState()) {
+            case CONNECTED:
+                pS = com.chattyhive.backend.ConnectionState.CONNECTED;
+                break;
+            case CONNECTING:
+                pS = com.chattyhive.backend.ConnectionState.CONNECTING;
+                break;
+            case DISCONNECTED:
+                pS = com.chattyhive.backend.ConnectionState.DISCONNECTED;
+                break;
+            case DISCONNECTING:
+                pS = com.chattyhive.backend.ConnectionState.DISCONNECTING;
+                break;
+            case ALL:
+                pS = com.chattyhive.backend.ConnectionState.ALL;
+                break;
+        }
+        return pS;
+    }
     public void setConnectionEventListener(PubSubConnectionEventListener listener) { psconel = listener; }
 
     public void Join(String channel_name) {

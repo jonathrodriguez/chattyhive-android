@@ -3,6 +3,11 @@ apply plugin: 'java'
 sourceCompatibility = JavaVersion.VERSION_1_6
 targetCompatibility = JavaVersion.VERSION_1_6
 
+repositories {
+    mavenCentral()
+}
+
 dependencies {
-    compile files('libs/pusher.jar')
+   // compile files('libs/pusher.jar')
+    compile group: 'com.pusher', name: 'pusher-java-client', version: '0.2.0'
 }
