@@ -8,6 +8,5 @@ repositories {
 }
 
 dependencies {
-   // compile files('libs/pusher.jar')
     compile group: 'com.pusher', name: 'pusher-java-client', version: '0.2.0'
 }

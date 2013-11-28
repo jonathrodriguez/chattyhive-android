@@ -3,15 +3,22 @@ package com.chattyhive.chattyhive;
 import com.chattyhive.backend.PubSub;
 import com.chattyhive.backend.ConnectionState;
 import com.chattyhive.backend.ConnectionStateChange;
+import com.chattyhive.backend.server.Server;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.app.Activity;
+import android.text.format.DateFormat;
 import android.view.Menu;
 import android.view.View;
 import android.widget.*;
 
 import java.security.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Home extends Activity implements PubSub.PubSubChannelEventListener, PubSub.PubSubConnectionEventListener {
@@ -26,6 +33,8 @@ public class Home extends Activity implements PubSub.PubSubChannelEventListener,
     TextView status;
     ToggleButton swich;
 
+    Server server;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,6 +44,15 @@ public class Home extends Activity implements PubSub.PubSubChannelEventListener,
         status = ((TextView)findViewById(R.id.textView));
 
         swich.setOnClickListener(onClick_ToggleButton);
+
+        ((Button)findViewById(R.id.button)).setOnClickListener(onClick_SendButton);
+
+        if ((mUsername!=null)&&(!mUsername.isEmpty())) {
+            server = new Server(mUsername,"chdev2");
+            if (!server.Connect()) {
+                mUsername = "";
+            }
+        }
 
         if ((mUsername==null) || (mUsername.isEmpty())) {
            this.hasToLoggin();
@@ -48,6 +66,14 @@ public class Home extends Activity implements PubSub.PubSubChannelEventListener,
         if (requestCode == OP_CODE_LOGIN) {
             if (resultCode == RESULT_OK) {
                 mUsername = data.getStringExtra(LoginActivity.EXTRA_EMAIL);
+                if ((mUsername!=null)&&(!mUsername.isEmpty())) {
+                    server = new Server(mUsername,"chdev2");
+                    if (!server.Connect()) {
+                        mUsername = "";
+                    }
+                }
+            }
+            if ((mUsername!=null)&&(!mUsername.isEmpty())) {
                 this.Logged();
             } else {
                 this.hasToLoggin();
@@ -86,11 +112,7 @@ public class Home extends Activity implements PubSub.PubSubChannelEventListener,
             }
         });
 
-        if (change.getCurrentState() == targetState) {
-            if (targetState == ConnectionState.CONNECTED) {
-                publishSubscriptionService.Join(mChannel_name);
-            }
-        } else if ((targetState == ConnectionState.CONNECTED) && (change.getCurrentState() == ConnectionState.DISCONNECTED)) {
+        if ((targetState == ConnectionState.CONNECTED) && (change.getCurrentState() == ConnectionState.DISCONNECTED)) {
             publishSubscriptionService.Connect();
         } else if ((targetState == ConnectionState.DISCONNECTED) && (change.getCurrentState() == ConnectionState.CONNECTED)) {
             publishSubscriptionService.Disconnect();
@@ -110,7 +132,18 @@ public class Home extends Activity implements PubSub.PubSubChannelEventListener,
                 if (channel_name.equalsIgnoreCase(mChannel_name)) {
                     runOnUiThread(new Runnable(){
                         public void run() {
-                            _chatListAdapter.addItem(new ChatMessage("User",message, new Date()));
+                            JsonParser jsonParser = new JsonParser();
+                            JsonElement jsonElement = jsonParser.parse(message);
+                            JsonObject jsonObject = jsonElement.getAsJsonObject();
+                            String msg_uname = jsonObject.get("username").getAsString();
+                            String msg_msg = jsonObject.get("message").getAsString();
+                            Date ts;
+                            try {
+                                ts = (new SimpleDateFormat()).parse(jsonObject.get("timestamp").getAsString());
+                            } catch (ParseException e) {
+                                ts = new Date();
+                            }
+                            _chatListAdapter.addItem(new ChatMessage(msg_uname,msg_msg, ts));
                         }
                     });
                 }
@@ -127,6 +160,17 @@ public class Home extends Activity implements PubSub.PubSubChannelEventListener,
         }
     }
 
+    public View.OnClickListener onClick_SendButton = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            EditText input = (EditText)findViewById(R.id.editText);
+            String msg = input.getText().toString();
+
+            server.SendMessage(msg);
+
+        }
+    };
+
     public View.OnClickListener onClick_ToggleButton = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -134,6 +178,7 @@ public class Home extends Activity implements PubSub.PubSubChannelEventListener,
             if (targetState == ConnectionState.DISCONNECTED) {
                 publishSubscriptionService.Disconnect();
             } else {
+                publishSubscriptionService.Join(mChannel_name);
                 publishSubscriptionService.Connect();
             }
         }

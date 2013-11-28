@@ -21,7 +21,9 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" exported="" name="pusher" level="project" />
+    <orderEntry type="library" exported="" name="slf4j-api-1.7.5" level="project" />
+    <orderEntry type="library" exported="" name="gson-2.2.2" level="project" />
+    <orderEntry type="library" exported="" name="pusher-java-client-0.2.0" level="project" />
   </component>
 </module>
 
