@@ -29,8 +29,9 @@ public class Cookie {
         this._name = splited[0].split("=")[0];
         this._value = splited[0].split("=")[1];
         try {
-            this._expiration = (new SimpleDateFormat()).parse(splited[1].split("=")[1]);
+            this._expiration = (new SimpleDateFormat("EEE, dd-MMM-yyyy HH:mm:ss 'GMT'")).parse(splited[1].split("=")[1]); //"E, d-M-y H:m:s z"
         } catch (ParseException e) {
+            this._expiration = null;
         }
     }
 

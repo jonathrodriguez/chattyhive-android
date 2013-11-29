@@ -92,8 +92,8 @@ public class Home extends Activity implements PubSub.PubSubChannelEventListener,
 
     private void hasToLoggin() {
         Intent inte = new Intent(this, LoginActivity.class);
-        inte.putExtra(LoginActivity.EXTRA_EMAIL,mUsername);
-        startActivityForResult(inte,OP_CODE_LOGIN);
+        inte.putExtra(LoginActivity.EXTRA_EMAIL, mUsername);
+        startActivityForResult(inte, OP_CODE_LOGIN);
     }
 
     private void Logged () {
@@ -139,9 +139,23 @@ public class Home extends Activity implements PubSub.PubSubChannelEventListener,
                             String msg_msg = jsonObject.get("message").getAsString();
                             Date ts;
                             try {
-                                ts = (new SimpleDateFormat()).parse(jsonObject.get("timestamp").getAsString());
+                                ts = (new SimpleDateFormat("HH:mm:ss z")).parse(jsonObject.get("timestamp").getAsString());
+                                ts = (new SimpleDateFormat("EEE MMM dd yyyy HH:mm:ss z")).parse((new SimpleDateFormat("EEE MMM dd yyyy ")).format(new Date()).concat(jsonObject.get("timestamp").getAsString()));
                             } catch (ParseException e) {
-                                ts = new Date();
+                                try {
+                                    ts = (new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy")).parse(jsonObject.get("timestamp").getAsString());
+                                } catch (ParseException e1) {
+                                    try {
+                                        ts = (new SimpleDateFormat("EEE MMM dd HH:mm:ss 'GMT'Z")).parse(jsonObject.get("timestamp").getAsString());
+                                    } catch (ParseException e2) {
+                                        try {
+                                            ts = (new SimpleDateFormat("HH:mm:ss 'GMT'Z")).parse(jsonObject.get("timestamp").getAsString());
+                                            ts = (new SimpleDateFormat("EEE MMM dd yyyy HH:mm:ss 'GMT'Z")).parse((new SimpleDateFormat("EEE MMM dd yyyy ")).format(new Date()).concat(jsonObject.get("timestamp").getAsString()));
+                                        } catch (ParseException e3) {
+                                            ts = new Date();
+                                        }
+                                    }
+                                }
                             }
                             _chatListAdapter.addItem(new ChatMessage(msg_uname,msg_msg, ts));
                         }
