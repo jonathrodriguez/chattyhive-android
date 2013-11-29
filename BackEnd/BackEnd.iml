@@ -21,9 +21,9 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" exported="" name="slf4j-api-1.7.5" level="project" />
+    <orderEntry type="library" exported="" name="Users-Lord Nivaar-.gradle-caches-artifacts-26-filestore-com.pusher-pusher-java-client-0.2.0-jar-afbc7c8ffd5d613c7dca7e3c38ff449386078b8-pusher-java-client-0.2.0.jar-pusher-java-client-0.2.0" level="project" />
     <orderEntry type="library" exported="" name="gson-2.2.2" level="project" />
-    <orderEntry type="library" exported="" name="pusher-java-client-0.2.0" level="project" />
+    <orderEntry type="library" exported="" name="slf4j-api-1.7.5" level="project" />
   </component>
 </module>
 

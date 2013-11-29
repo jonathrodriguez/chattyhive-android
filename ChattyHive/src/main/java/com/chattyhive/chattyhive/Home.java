@@ -146,7 +146,7 @@ public class Home extends Activity implements PubSub.PubSubChannelEventListener,
                                     ts = (new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy")).parse(jsonObject.get("timestamp").getAsString());
                                 } catch (ParseException e1) {
                                     try {
-                                        ts = (new SimpleDateFormat("EEE MMM dd HH:mm:ss 'GMT'Z")).parse(jsonObject.get("timestamp").getAsString());
+                                        ts = (new SimpleDateFormat("EEE MMM dd HH:mm:ss yyyy 'GMT'Z")).parse(jsonObject.get("timestamp").getAsString());
                                     } catch (ParseException e2) {
                                         try {
                                             ts = (new SimpleDateFormat("HH:mm:ss 'GMT'Z")).parse(jsonObject.get("timestamp").getAsString());
