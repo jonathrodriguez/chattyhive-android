@@ -1,17 +1,12 @@
-package com.chattyhive.backend;
+package com.chattyhive.backend.server.pubsubservice;
 
 import com.pusher.client.Pusher;
 import com.pusher.client.PusherOptions;
 import com.pusher.client.channel.Channel;
 import com.pusher.client.channel.ChannelEventListener;
-import com.pusher.client.channel.ChannelState;
-import com.pusher.client.channel.SubscriptionEventListener;
-import com.pusher.client.channel.impl.ChannelImpl;
-import com.pusher.client.channel.impl.ChannelManager;
 import com.pusher.client.connection.ConnectionEventListener;
 import com.pusher.client.connection.ConnectionState;
 import com.pusher.client.connection.ConnectionStateChange;
-import com.pusher.client.util.Factory;
 import com.pusher.client.util.HttpAuthorizer;
 
 import java.util.ArrayList;
@@ -23,7 +18,7 @@ public class PubSub {
         public void onChannelEvent(String channel_name, String event_name, String message);
     }
     public interface PubSubConnectionEventListener {
-        public void onConnectionStateChange(com.chattyhive.backend.ConnectionStateChange change);
+        public void onConnectionStateChange(ConnectionStateChange change);
     }
 
     private static String APP_KEY = "f073ebb6f5d1b918e59e"; //"5bec9fb4b45d83495627";
@@ -72,10 +67,10 @@ public class PubSub {
             @Override
             public void onConnectionStateChange(ConnectionStateChange change) {
                 if (psconel != null) {
-                    com.chattyhive.backend.ConnectionState pS = com.chattyhive.backend.ConnectionState.valueOf(change.getPreviousState().toString());
-                    com.chattyhive.backend.ConnectionState nS = com.chattyhive.backend.ConnectionState.valueOf(change.getCurrentState().toString());
+                    ConnectionState pS = ConnectionState.valueOf(change.getPreviousState().toString());
+                    ConnectionState nS = ConnectionState.valueOf(change.getCurrentState().toString());
 
-                    psconel.onConnectionStateChange(new com.chattyhive.backend.ConnectionStateChange(pS,nS));
+                    psconel.onConnectionStateChange(new ConnectionStateChange(pS,nS));
                 }
             }
 
@@ -96,8 +91,8 @@ public class PubSub {
         pusher.disconnect();
     }
 
-    public com.chattyhive.backend.ConnectionState GetConnectionState() {
-        com.chattyhive.backend.ConnectionState pS = com.chattyhive.backend.ConnectionState.valueOf(pusher.getConnection().getState().toString());
+    public ConnectionState GetConnectionState() {
+        ConnectionState pS = ConnectionState.valueOf(pusher.getConnection().getState().toString());
         return pS;
     }
     public void setConnectionEventListener(PubSubConnectionEventListener listener) {

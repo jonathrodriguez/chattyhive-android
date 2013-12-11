@@ -1,8 +1,9 @@
 package com.chattyhive.chattyhive;
 
-import com.chattyhive.backend.PubSub;
-import com.chattyhive.backend.ConnectionState;
-import com.chattyhive.backend.ConnectionStateChange;
+import com.chattyhive.backend.bussinesobjects.Message;
+import com.chattyhive.backend.server.pubsubservice.PubSub;
+import com.chattyhive.backend.server.pubsubservice.ConnectionState;
+import com.chattyhive.backend.server.pubsubservice.ConnectionStateChange;
 import com.chattyhive.backend.server.Server;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -11,12 +12,10 @@ import com.google.gson.JsonParser;
 import android.content.Intent;
 import android.os.Bundle;
 import android.app.Activity;
-import android.text.format.DateFormat;
 import android.view.Menu;
 import android.view.View;
 import android.widget.*;
 
-import java.security.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -157,7 +156,7 @@ public class Home extends Activity implements PubSub.PubSubChannelEventListener,
                                     }
                                 }
                             }
-                            _chatListAdapter.addItem(new ChatMessage(msg_uname,msg_msg, ts));
+                            _chatListAdapter.addItem(new Message(msg_uname,msg_msg, ts));
                         }
                     });
                 }
