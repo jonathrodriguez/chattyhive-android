@@ -1,4 +1,4 @@
-package com.chattyhive.backend.server.util;
+package com.chattyhive.backend.util;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

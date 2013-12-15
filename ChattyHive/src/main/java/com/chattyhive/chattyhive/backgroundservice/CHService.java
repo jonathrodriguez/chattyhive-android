@@ -1,12 +1,12 @@
-package com.chattyhive.chattyhive;
+package com.chattyhive.chattyhive.backgroundservice;
 
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 
 import com.chattyhive.backend.Controler;
-import com.chattyhive.backend.server.ServerUser;
-import com.chattyhive.backend.server.pubsubservice.PubSub;
+import com.chattyhive.backend.contentprovider.server.ServerUser;
+import com.chattyhive.backend.contentprovider.pubsubservice.PubSub;
 
 public class CHService extends Service {
 

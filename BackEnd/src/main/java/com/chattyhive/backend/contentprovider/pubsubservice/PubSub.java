@@ -1,13 +1,10 @@
-package com.chattyhive.backend.server.pubsubservice;
+package com.chattyhive.backend.contentprovider.pubsubservice;
 
 import com.pusher.client.Pusher;
 import com.pusher.client.PusherOptions;
 import com.pusher.client.channel.Channel;
 import com.pusher.client.channel.ChannelEventListener;
 import com.pusher.client.connection.ConnectionEventListener;
-import com.pusher.client.connection.ConnectionState;
-import com.pusher.client.connection.ConnectionStateChange;
-import com.pusher.client.util.HttpAuthorizer;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -63,9 +60,9 @@ public class PubSub {
         }
         pusher = new Pusher(APP_KEY,pO);
 
-        pusher.getConnection().bind(ConnectionState.ALL, new ConnectionEventListener() {
+        pusher.getConnection().bind(com.pusher.client.connection.ConnectionState.ALL, new ConnectionEventListener() {
             @Override
-            public void onConnectionStateChange(ConnectionStateChange change) {
+            public void onConnectionStateChange(com.pusher.client.connection.ConnectionStateChange change) {
                 if (psconel != null) {
                     ConnectionState pS = ConnectionState.valueOf(change.getPreviousState().toString());
                     ConnectionState nS = ConnectionState.valueOf(change.getCurrentState().toString());

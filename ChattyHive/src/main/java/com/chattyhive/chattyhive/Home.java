@@ -1,10 +1,13 @@
 package com.chattyhive.chattyhive;
 
+import com.chattyhive.backend.StaticParameters;
 import com.chattyhive.backend.bussinesobjects.Message;
-import com.chattyhive.backend.server.pubsubservice.PubSub;
-import com.chattyhive.backend.server.pubsubservice.ConnectionState;
-import com.chattyhive.backend.server.pubsubservice.ConnectionStateChange;
-import com.chattyhive.backend.server.Server;
+import com.chattyhive.backend.bussinesobjects.MessageContent;
+import com.chattyhive.backend.bussinesobjects.User;
+import com.chattyhive.backend.contentprovider.pubsubservice.PubSub;
+import com.chattyhive.backend.contentprovider.pubsubservice.ConnectionState;
+import com.chattyhive.backend.contentprovider.pubsubservice.ConnectionStateChange;
+import com.chattyhive.backend.contentprovider.server.Server;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -23,14 +26,14 @@ import java.util.Date;
 public class Home extends Activity implements PubSub.PubSubChannelEventListener, PubSub.PubSubConnectionEventListener {
     static final int OP_CODE_LOGIN = 1;
     PubSub publishSubscriptionService;
-    String mUsername = "Jonathan";
+    String mUsername = "";//Jonathan
     String mChannel_name = "public_test";
 
     ChatListAdapter _chatListAdapter;
     ConnectionState targetState;
 
     TextView status;
-    ToggleButton swich;
+    ToggleButton switchButton;
 
     Server server;
 
@@ -39,22 +42,22 @@ public class Home extends Activity implements PubSub.PubSubChannelEventListener,
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home);
 
-        swich =((ToggleButton)findViewById(R.id.toggleButton));
+        switchButton =((ToggleButton)findViewById(R.id.toggleButton));
         status = ((TextView)findViewById(R.id.textView));
 
-        swich.setOnClickListener(onClick_ToggleButton);
+        switchButton.setOnClickListener(onClick_ToggleButton);
 
         ((Button)findViewById(R.id.button)).setOnClickListener(onClick_SendButton);
 
         if ((mUsername!=null)&&(!mUsername.isEmpty())) {
-            server = new Server(mUsername,"chdev2");
+            server = new Server(mUsername, StaticParameters.DefaultServerAppName);
             if (!server.Connect()) {
                 mUsername = "";
             }
         }
 
         if ((mUsername==null) || (mUsername.isEmpty())) {
-           this.hasToLoggin();
+           this.hasToLogin();
         } else {
             this.Logged();
         }
@@ -65,17 +68,20 @@ public class Home extends Activity implements PubSub.PubSubChannelEventListener,
         if (requestCode == OP_CODE_LOGIN) {
             if (resultCode == RESULT_OK) {
                 mUsername = data.getStringExtra(LoginActivity.EXTRA_EMAIL);
+                String serverAppName = data.getStringExtra(LoginActivity.EXTRA_SERVER);
                 if ((mUsername!=null)&&(!mUsername.isEmpty())) {
-                    server = new Server(mUsername,"chdev2");
+                    server = new Server(mUsername,serverAppName);
                     if (!server.Connect()) {
                         mUsername = "";
                     }
                 }
+            } else {
+                this.finish();
             }
             if ((mUsername!=null)&&(!mUsername.isEmpty())) {
                 this.Logged();
             } else {
-                this.hasToLoggin();
+                this.hasToLogin();
             }
         }
     }
@@ -89,9 +95,10 @@ public class Home extends Activity implements PubSub.PubSubChannelEventListener,
         return true;
     }
 
-    private void hasToLoggin() {
+    private void hasToLogin() {
         Intent inte = new Intent(this, LoginActivity.class);
         inte.putExtra(LoginActivity.EXTRA_EMAIL, mUsername);
+        inte.putExtra(LoginActivity.EXTRA_SERVER,StaticParameters.DefaultServerAppName);
         startActivityForResult(inte, OP_CODE_LOGIN);
     }
 
@@ -100,7 +107,7 @@ public class Home extends Activity implements PubSub.PubSubChannelEventListener,
         ((ListView)findViewById(R.id.listView)).setAdapter(this._chatListAdapter);
         publishSubscriptionService = new PubSub(this.mUsername,this);
         publishSubscriptionService.setConnectionEventListener(this);
-        swich.performClick();
+        switchButton.performClick();
     }
 
     @Override
@@ -156,7 +163,7 @@ public class Home extends Activity implements PubSub.PubSubChannelEventListener,
                                     }
                                 }
                             }
-                            _chatListAdapter.addItem(new Message(msg_uname,msg_msg, ts));
+                            _chatListAdapter.addItem(new Message(new User(msg_uname),new MessageContent(msg_msg), ts));
                         }
                     });
                 }

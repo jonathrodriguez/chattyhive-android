@@ -1,4 +1,4 @@
-package com.chattyhive.backend.server.pubsubservice;
+package com.chattyhive.backend.contentprovider.pubsubservice;
 
 /**
  * Created by Jonathan on 14/11/13.
@@ -8,7 +8,7 @@ public class ConnectionStateChange {
     private final ConnectionState currentState;
 
     /**
-     * Used within the library to create a connection state change. Not be used used as part of the API.
+     * Used within the library to create a connection state change. Not to be used used as part of the API.
      * @param previousState
      * @param currentState
      */

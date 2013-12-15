@@ -1,16 +1,14 @@
-package com.chattyhive.backend;
+package com.chattyhive.backend.contentprovider;
 
 import com.chattyhive.backend.bussinesobjects.Message;
-import com.chattyhive.backend.server.Server;
-import com.chattyhive.backend.server.ServerUser;
-import com.chattyhive.backend.server.pubsubservice.PubSub;
+import com.chattyhive.backend.contentprovider.server.Server;
+import com.chattyhive.backend.contentprovider.server.ServerUser;
+import com.chattyhive.backend.contentprovider.pubsubservice.PubSub;
+
+import com.google.gson.JsonElement;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
 
 /**
  * Created by Jonathan on 11/12/13.
@@ -37,6 +35,10 @@ public class DataProvider {
         });
         this._pubsub.Join("public_test");
         this._pubsub.Connect();
+    }
+
+    public void sendMessage(JsonElement message) {
+
     }
 
     private void ChannelEvent(String channel_name, String event_name, String message) {

@@ -14,7 +14,12 @@ import android.view.Menu;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Activity which displays a login screen to the user, offering registration as
@@ -51,16 +56,28 @@ public class LoginActivity extends Activity {
     private View mLoginStatusView;
     private TextView mLoginStatusMessageView;
 
+    public static final String EXTRA_SERVER = "com.chattyhive.chattyhive.login.extra.SERVER";
+    private String mServer;
+    private Spinner mServerView;
+    private ArrayList<String> servers;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
         setContentView(R.layout.activity_login);
+
+        servers = new ArrayList<String>(Arrays.asList(getResources().getStringArray(R.array.servers_array)));
+        mServer = getIntent().getStringExtra(EXTRA_SERVER);
+        mServerView = (Spinner) findViewById(R.id.spinner);
+        mServerView.setSelection(servers.indexOf(mServer));
 
         // Set up the login form.
         mEmail = getIntent().getStringExtra(EXTRA_EMAIL);
         mEmailView = (EditText) findViewById(R.id.email);
         mEmailView.setText(mEmail);
+
 
         mPasswordView = (EditText) findViewById(R.id.password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -113,6 +130,8 @@ public class LoginActivity extends Activity {
         // Store values at the time of the login attempt.
         mEmail = mEmailView.getText().toString();
         mPassword = mPasswordView.getText().toString();
+
+        mServer = servers.get(mServerView.getSelectedItemPosition());
 
         boolean cancel = false;
         View focusView = null;
@@ -231,7 +250,10 @@ public class LoginActivity extends Activity {
             if (success) {
                 Intent inte = new Intent();
                 inte.putExtra(EXTRA_EMAIL,mEmail);
-                setResult(RESULT_OK,inte);
+
+                inte.putExtra(EXTRA_SERVER,mServer);
+
+                setResult(RESULT_OK, inte);
                 finish();
             } else {
                /* mPasswordView.setError(getString(R.string.error_incorrect_password));

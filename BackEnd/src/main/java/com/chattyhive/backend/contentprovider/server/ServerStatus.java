@@ -1,4 +1,4 @@
-package com.chattyhive.backend.server;
+package com.chattyhive.backend.contentprovider.server;
 
 public enum ServerStatus {
     ERROR, //Error has occurred.

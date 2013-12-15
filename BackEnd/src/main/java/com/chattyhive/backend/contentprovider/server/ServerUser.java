@@ -1,8 +1,7 @@
-package com.chattyhive.backend.server;
+package com.chattyhive.backend.contentprovider.server;
 
-import com.chattyhive.backend.server.util.Cookie;
+import com.chattyhive.backend.util.Cookie;
 
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 

@@ -1,4 +1,4 @@
-package com.chattyhive.backend.server.pubsubservice;
+package com.chattyhive.backend.contentprovider.pubsubservice;
 
 
 /**

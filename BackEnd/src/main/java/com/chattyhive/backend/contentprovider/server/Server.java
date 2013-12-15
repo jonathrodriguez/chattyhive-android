@@ -1,8 +1,8 @@
-package com.chattyhive.backend.server;
+package com.chattyhive.backend.contentprovider.server;
 
 
 import com.chattyhive.backend.StaticParameters;
-import com.chattyhive.backend.server.util.Cookie;
+import com.chattyhive.backend.util.Cookie;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -32,6 +32,8 @@ public class Server {
         EXPIRED //Session has expired.
     }
 
+
+
     private String _username;
     private String _appName = "chdev2";
     private String _appProtocol = "http";
@@ -40,6 +42,10 @@ public class Server {
     private Map<String, Cookie> _cookies;
     private ServerStatus _status;
 
+    public String getAppName() {
+        return this._appName;
+    }
+
     public Server(String username, String appName) {
         this._username = username;
         this._appName = appName;
@@ -47,7 +53,7 @@ public class Server {
     }
 
     public Boolean Connect() {
-        Boolean result = false;
+        Boolean result;
         String _function = "android.login";
         String _url = _appProtocol.concat("://").concat(_appName).concat(".").concat(_host);
         _url = _url.concat("/").concat(_function).concat("/").concat(this._username);
@@ -67,8 +73,8 @@ public class Server {
                 try {
                     //String setCookies = httpURLConnection.getHeaderField("Set-Cookie");
                     List<String> setCookies = httpURLConnection.getHeaderFields().get("Set-Cookie");
-                    for (int i = 0; i < setCookies.size(); i++) {
-                        Cookie cookie = new Cookie(setCookies.get(i));
+                    for (String setCookie : setCookies) {
+                        Cookie cookie = new Cookie(setCookie);
                         this._cookies.put(cookie.getName(), cookie);
                     }
                 } catch (NullPointerException e) {
