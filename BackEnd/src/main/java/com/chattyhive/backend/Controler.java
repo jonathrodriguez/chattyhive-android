@@ -1,9 +1,11 @@
 package com.chattyhive.backend;
 
 import com.chattyhive.backend.bussinesobjects.Message;
+import com.chattyhive.backend.bussinesobjects.User;
 import com.chattyhive.backend.contentprovider.DataProvider;
 import com.chattyhive.backend.contentprovider.server.ServerUser;
 import com.chattyhive.backend.contentprovider.pubsubservice.PubSub;
+import com.chattyhive.backend.util.formatters.TimestampFormatter;
 import com.google.gson.JsonElement;
 
 /**
@@ -25,13 +27,24 @@ public class Controler {
         });
     }
 
+    public Controler (ServerUser user, String serverApp, PubSub.PubSubChannelEventListener pubSubChannelEventListener) {
+        this._pubSubChannelEventListener = pubSubChannelEventListener;
+        this._dataProvider = new DataProvider(user, serverApp, new PubSub.PubSubChannelEventListener() {
+            @Override
+            public void onChannelEvent(String channel_name, String event_name, String message) {
+                ChannelEvent(channel_name,event_name,message);
+            }
+        });
+    }
+
     public void getMessages() {
         this._dataProvider.RecoverMessages("");
     }
 
     public void sendMessage(Message message) {
-        JsonElement json = message.toJson();
-        this._dataProvider.sendMessage(message.toJson());
+        //message._user = new User(this._dataProvider.getUser());
+        //this._dataProvider.sendMessage(message.toJson());
+        this._dataProvider.sendMessage("message=".concat(message._content.getContent().replace("+", "%2B").replace(" ", "+")).concat("&timestamp=").concat(TimestampFormatter.toString(message.getTimeStamp()).replace(":", "%3A").replace("+", "%2B").replace(" ", "+")));
     }
 
     private void ChannelEvent(String channel_name, String event_name, String message) {

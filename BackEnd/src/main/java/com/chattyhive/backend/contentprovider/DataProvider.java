@@ -1,5 +1,6 @@
 package com.chattyhive.backend.contentprovider;
 
+import com.chattyhive.backend.StaticParameters;
 import com.chattyhive.backend.bussinesobjects.Message;
 import com.chattyhive.backend.contentprovider.server.Server;
 import com.chattyhive.backend.contentprovider.server.ServerUser;
@@ -19,10 +20,17 @@ public class DataProvider {
     private Server _server;
     private PubSub _pubsub;
     private PubSub.PubSubChannelEventListener _pubSubChannelEventListener;
+    private Boolean _networkAvailable = false;
+
+    public String getUser() { return this._user.getLogin(); }
 
     public DataProvider(ServerUser user, PubSub.PubSubChannelEventListener pubSubChannelEventListener) {
+        this(user, StaticParameters.DefaultServerAppName,pubSubChannelEventListener);
+    }
+
+    public DataProvider(ServerUser user, String serverApp,PubSub.PubSubChannelEventListener pubSubChannelEventListener) {
         this._user = user;
-        this._server = new Server(this._user.getLogin(),"chtest1");
+        this._server = new Server(this._user.getLogin(),serverApp);
         this._server.Connect();
 
         this._pubSubChannelEventListener = pubSubChannelEventListener;
@@ -38,7 +46,17 @@ public class DataProvider {
     }
 
     public void sendMessage(JsonElement message) {
+        //
+        // TODO: Save message.
+        //
+        this._server.SendMessage(message.toString());
+    }
 
+    public void sendMessage(String message) {
+        //
+        // TODO: Save message.
+        //
+        this._server.SendMessage(message);
     }
 
     private void ChannelEvent(String channel_name, String event_name, String message) {
@@ -66,5 +84,8 @@ public class DataProvider {
         Collections.sort(messageList);
         return messageList;
     }
+
+    public void setNetworkAvailable(Boolean value) { this._networkAvailable = value; }
+    public Boolean getNetworkAvailable() { return this._networkAvailable; }
 }
 

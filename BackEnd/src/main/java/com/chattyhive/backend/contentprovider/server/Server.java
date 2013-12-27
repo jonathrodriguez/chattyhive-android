@@ -2,197 +2,111 @@ package com.chattyhive.backend.contentprovider.server;
 
 
 import com.chattyhive.backend.StaticParameters;
-import com.chattyhive.backend.util.Cookie;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Jonathan on 20/11/13.
  */
 public class Server {
-
-    public enum ServerStatus {
-        ERROR, //Error has occurred.
-        RECEIVED, //Message received by server.
-        LOGGED, //New session successfully created.
-        EXPIRED //Session has expired.
-    }
-
-
+    private ServerUser _serverUser;
 
     private String _username;
-    private String _appName = "chdev2";
-    private String _appProtocol = "http";
-    private String _host = "herokuapp.com";
+    private String _appName = "";
+    private String _appProtocol = "";
+    private String _host = "";
 
-    private Map<String, Cookie> _cookies;
     private ServerStatus _status;
 
     public String getAppName() {
         return this._appName;
     }
 
-    public Server(String username, String appName) {
-        this._username = username;
+    public Server(ServerUser serverUser, String appName) {
+        this._serverUser = serverUser;
         this._appName = appName;
-        this._cookies = new HashMap<String, Cookie>();
+        this._appProtocol = StaticParameters.DefaultServerAppProtocol;
+        this._host = StaticParameters.DefaultServerHost;
+        this._status = ServerStatus.DISCONNECTED;
+    }
+
+    public Server(String username, String appName) {
+        this._serverUser = new ServerUser(username,"");
+        this._appName = appName;
+        this._appProtocol = StaticParameters.DefaultServerAppProtocol;
+        this._host = StaticParameters.DefaultServerHost;
+        this._status = ServerStatus.DISCONNECTED;
     }
 
     public Boolean Connect() {
-        Boolean result;
+        Boolean result = true;
         String _function = "android.login";
         String _url = _appProtocol.concat("://").concat(_appName).concat(".").concat(_host);
-        _url = _url.concat("/").concat(_function).concat("/").concat(this._username);
+        _url = _url.concat("/").concat(_function);
+
+       String _rest = this._serverUser.getLogin();
+
+        AsyncHttpURLConnection asyncHttpURLConnection = new AsyncHttpURLConnection("GET",_url,this._serverUser,"",_rest);
 
         try {
-            URL url = new URL(_url);
-            HttpURLConnection httpURLConnection = (HttpURLConnection)url.openConnection();
-            httpURLConnection.setRequestMethod("GET");
-            httpURLConnection.setRequestProperty("User-Agent", StaticParameters.UserAgent());
-
-            int responseCode = httpURLConnection.getResponseCode();
-            if (responseCode != 200) {
-                result = false;
-            } else {
-                result = true;
-
-                try {
-                    //String setCookies = httpURLConnection.getHeaderField("Set-Cookie");
-                    List<String> setCookies = httpURLConnection.getHeaderFields().get("Set-Cookie");
-                    for (String setCookie : setCookies) {
-                        Cookie cookie = new Cookie(setCookie);
-                        this._cookies.put(cookie.getName(), cookie);
-                    }
-                } catch (NullPointerException e) {
-                    result = false;
-                }
-
-                BufferedReader inputReader = new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream()));
-                String inputLine;
-                StringBuffer response = new StringBuffer();
-
-                while ((inputLine = inputReader.readLine()) != null) {
-                    response.append(inputLine);
-                }
-                inputReader.close();
-
-                JsonParser jsonParser = new JsonParser();
-                JsonElement jsonElement = jsonParser.parse(response.toString());
-                JsonObject responseJsonObject = jsonElement.getAsJsonObject();
-                //this._sessionID = responseJsonObject.get("session").getAsString();
-                this._status = ServerStatus.valueOf(responseJsonObject.get("status").getAsString());
+            ServerResponse response = asyncHttpURLConnection.getServerResponse();
+            if (response.getResponseCode() != 200) {
+                return false;
             }
-        } catch (MalformedURLException e) {
-            result = false;
-        } catch (IOException e) {
+            try {
+                JsonParser jsonParser = new JsonParser();
+                JsonElement jsonElement = jsonParser.parse(response.getBodyData());
+                JsonObject responseJsonObject = jsonElement.getAsJsonObject();
+                this._serverUser.setStatus(ServerStatus.valueOf(responseJsonObject.get("status").getAsString()));
+            } catch (Exception e) {
+                this._serverUser.setStatus(ServerStatus.LOGGED);
+            }
+        } catch (InterruptedException e) {
             result = false;
         }
-
         return result;
     }
 
-    public Boolean SendMessage(String msg) {
-        Boolean result = false;
+    public Boolean SendMessage(String jsonMSG) {
+        Boolean result = true;
         String _function = "android.chat";
         String _url = _appProtocol.concat("://").concat(_appName).concat(".").concat(_host);
-        _url = _url.concat("/").concat(_function).concat("/");
+        _url = _url.concat("/").concat(_function);
 
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("timestamp",(new Date()).toString());
-        jsonObject.addProperty("message",msg);
+        //JsonObject jsonObject = new JsonObject();
+        //jsonObject.addProperty("timestamp", TimestampFormatter.toString(new Date()));
+        //jsonObject.addProperty("message",msg);
         //
         // TODO: Officially message should be sent in JSON.
         //
         //String jsonString = jsonObject.toString();
-        String ts = (new Date()).toString();
-        String jsonString = "message=".concat(msg.replace("+","%2B").replace(" ", "+")).concat("&timestamp=").concat(ts.replace(":","%3A").replace("+","%2B").replace(" ","+"));
+        //String ts = TimestampFormatter.toString(new Date());
+        //String jsonString = "message=".concat(msg.replace("+","%2B").replace(" ", "+")).concat("&timestamp=").concat(ts.replace(":","%3A").replace("+","%2B").replace(" ","+"));
+
+        AsyncHttpURLConnection asyncHttpURLConnection = new AsyncHttpURLConnection("POST",_url,this._serverUser,jsonMSG,"");
 
         try {
-            URL url = new URL(_url);
-            HttpURLConnection httpURLConnection = (HttpURLConnection)url.openConnection();
-            httpURLConnection.setRequestMethod("POST");
-            httpURLConnection.setRequestProperty("User-Agent", StaticParameters.UserAgent());
-            String Cookies = "";
-
-            Iterator it = this._cookies.entrySet().iterator();
-            while (it.hasNext()) {
-                Map.Entry e = (Map.Entry)it.next();
-
-                if ((Cookies != null) && (Cookies.length() > 0)) {
-                    Cookies = Cookies.concat("; ");
-                }
-                Cookie cookie = ((Cookie)e.getValue());
-                Cookies = Cookies.concat(cookie.getName()).concat("=").concat(cookie.getValue());
+            ServerResponse response = asyncHttpURLConnection.getServerResponse();
+            if (response.getResponseCode() != 200) {
+                return false;
             }
-
-            if ((Cookies != null) && (Cookies.length() > 0)) {
-                httpURLConnection.setRequestProperty("Cookie",Cookies);
-            }
-            if (this._cookies.containsKey("csrftoken")) {
-                httpURLConnection.setRequestProperty("X-CSRFToken",this._cookies.get("csrftoken").getValue());
-            }
-            httpURLConnection.setDoOutput(true);
-            DataOutputStream wr = new DataOutputStream(httpURLConnection.getOutputStream());
-            wr.writeBytes(jsonString);
-            wr.flush();
-            wr.close();
-
-            int responseCode = httpURLConnection.getResponseCode();
-            if (responseCode != 200) {
-                result = false;
-            } else {
-                result = true;
-
-                BufferedReader inputReader = new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream()));
-                String inputLine;
-                StringBuffer response = new StringBuffer();
-
-                while ((inputLine = inputReader.readLine()) != null) {
-                    response.append(inputLine);
-                }
-                inputReader.close();
-
-                //
-                // TODO: If status isn't recovered there would be something to do.
-                //
-                try {
+            try {
                 JsonParser jsonParser = new JsonParser();
-                JsonElement jsonElement = jsonParser.parse(response.toString());
+                JsonElement jsonElement = jsonParser.parse(response.getBodyData());
                 JsonObject responseJsonObject = jsonElement.getAsJsonObject();
-
                 ServerStatus status = ServerStatus.valueOf(responseJsonObject.get("status").getAsString());
-                if (status != this._status) {
-                    this._status = status;
+                if (status != this._serverUser.getStatus()) {
+                    this._serverUser.setStatus(status);
                     this.Connect();
-                    this.SendMessage(msg);
+                    this.SendMessage(jsonMSG);
                 }
-                }
-                catch (Exception e) {
-                    result=true;
-                }
+            } catch (Exception e) {
+                this._serverUser.setStatus(ServerStatus.LOGGED);
             }
-        } catch (MalformedURLException e) {
-            result = false;
-        } catch (IOException e) {
+        } catch (InterruptedException e) {
             result = false;
         }
-
-
-
         return result;
     }
 }

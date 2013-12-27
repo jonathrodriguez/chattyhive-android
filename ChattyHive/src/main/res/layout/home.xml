@@ -31,7 +31,9 @@
         android:layout_gravity="center"
         android:layout_weight="1"
         android:smoothScrollbar="true"
-        android:scrollingCache="true" />
+        android:scrollingCache="true"
+        android:stackFromBottom="false"
+        android:transcriptMode="normal" />
 
     <LinearLayout
         android:layout_width="match_parent"

@@ -19,6 +19,12 @@ public class Message implements Comparable{
         this._content = content;
         this._timeStamp = timeStamp;
     }
+
+    public Message(MessageContent content, Date timeStamp) {
+        this._content = content;
+        this._timeStamp = timeStamp;
+    }
+
     public Message(JsonElement jsonMessage) {
         this.fromJson(jsonMessage);
     }

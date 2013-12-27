@@ -1,9 +1,8 @@
 package com.chattyhive.backend.contentprovider.server;
 
-import com.chattyhive.backend.util.Cookie;
-
+import java.net.HttpCookie;
+import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 
 /**
  * Created by Jonathan on 11/12/13.
@@ -13,12 +12,13 @@ public class ServerUser {
     private String _login;
     private String _password;
 
-    private Map<String, Cookie> _cookies;
+    private HashMap<String, HttpCookie> _cookies;
     private ServerStatus _status;
 
     public ServerUser(String login, String password) {
         this._login = login;
         this._password = password;
+        this._cookies = new HashMap<String, HttpCookie>();
     }
 
     public String getLogin() {
@@ -29,21 +29,17 @@ public class ServerUser {
         return this._password;
     }
 
-    /*public String getStatus() {
-        return this._status.toString();
-    }*/
-
-    public void setCookie (Cookie cookie) {
+    public void setCookie (HttpCookie cookie) {
         this._cookies.put(cookie.getName(),cookie);
     }
 
     public String getCookies() {
         String cookies = "";
 
-        Iterator<Cookie> it = this._cookies.values().iterator();
+        Iterator<HttpCookie> it = this._cookies.values().iterator();
         while (it.hasNext()) {
-            Cookie cookie = it.next();
-            cookies = cookies.concat(cookie.getName()).concat("=").concat(cookie.getValue());
+            HttpCookie cookie = it.next();
+            cookies = cookies.concat(cookie.toString());
 
             if (it.hasNext()) cookies = cookies.concat("; ");
         }
@@ -51,8 +47,8 @@ public class ServerUser {
         return cookies;
     }
 
-    public Cookie getCookie(String name) {
-        Cookie cookie = null;
+    public HttpCookie getCookie(String name) {
+        HttpCookie cookie = null;
 
         if (this._cookies.containsKey(name))
             cookie = this._cookies.get(name);
