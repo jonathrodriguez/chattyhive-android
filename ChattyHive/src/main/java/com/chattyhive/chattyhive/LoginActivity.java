@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
+ * Created by Jonathan on 17/10/2013
  * Activity which displays a login screen to the user, offering registration as
  * well.
  */

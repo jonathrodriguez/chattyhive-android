@@ -1,4 +1,4 @@
-package com.chattyhive.backend.bussinesobjects;
+package com.chattyhive.backend.businessobjects;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;

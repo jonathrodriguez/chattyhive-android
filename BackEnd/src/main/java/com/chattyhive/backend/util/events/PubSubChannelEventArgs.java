@@ -2,6 +2,8 @@ package com.chattyhive.backend.util.events;
 
 /**
  * Created by Jonathan on 26/12/13.
+ * This class contains arguments for the PubSub Channel Event. Those arguments are the channel name, the
+ * event name and the message string representation.
  */
 public class PubSubChannelEventArgs extends EventArgs {
     private String _channelName;

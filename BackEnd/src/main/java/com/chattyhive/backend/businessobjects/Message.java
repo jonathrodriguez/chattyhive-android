@@ -1,4 +1,4 @@
-package com.chattyhive.backend.bussinesobjects;
+package com.chattyhive.backend.businessobjects;
 
 import com.chattyhive.backend.util.formatters.TimestampFormatter;
 import com.google.gson.JsonElement;

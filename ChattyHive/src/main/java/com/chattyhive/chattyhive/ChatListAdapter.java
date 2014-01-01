@@ -9,7 +9,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.chattyhive.backend.bussinesobjects.Message;
+import com.chattyhive.backend.businessobjects.Message;
 
 import java.util.ArrayList;
 

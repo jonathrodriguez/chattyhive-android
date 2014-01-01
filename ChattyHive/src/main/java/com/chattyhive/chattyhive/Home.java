@@ -1,19 +1,15 @@
 package com.chattyhive.chattyhive;
 
-import com.chattyhive.backend.Controler;
+import com.chattyhive.backend.Controller;
 import com.chattyhive.backend.StaticParameters;
-import com.chattyhive.backend.bussinesobjects.Message;
-import com.chattyhive.backend.bussinesobjects.MessageContent;
-import com.chattyhive.backend.bussinesobjects.User;
-import com.chattyhive.backend.contentprovider.pubsubservice.PubSub;
-import com.chattyhive.backend.contentprovider.pubsubservice.ConnectionState;
-import com.chattyhive.backend.contentprovider.pubsubservice.ConnectionStateChange;
+import com.chattyhive.backend.businessobjects.Message;
+import com.chattyhive.backend.businessobjects.MessageContent;
 import com.chattyhive.backend.contentprovider.server.Server;
 import com.chattyhive.backend.contentprovider.server.ServerUser;
-import com.chattyhive.backend.util.formatters.TimestampFormatter;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.chattyhive.backend.util.events.ChannelEventArgs;
+import com.chattyhive.backend.util.events.EventHandler;
+import com.chattyhive.backend.util.events.PubSubConnectionEventArgs;
+import com.chattyhive.chattyhive.backgroundservice.CHService;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -22,11 +18,13 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.*;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class Home extends Activity implements PubSub.PubSubChannelEventListener, PubSub.PubSubConnectionEventListener {
+/**
+ * Created by Jonathan on 17/10/2013
+ */
+
+public class Home extends Activity {
     static final int OP_CODE_LOGIN = 1;
     //PubSub publishSubscriptionService;
     String mUsername = "";//Jonathan
@@ -39,7 +37,7 @@ public class Home extends Activity implements PubSub.PubSubChannelEventListener,
     ToggleButton switchButton;
 
     Server server;
-    Controler _controler;
+    Controller _controller;
     ServerUser _serverUser;
 
     @Override
@@ -59,19 +57,30 @@ public class Home extends Activity implements PubSub.PubSubChannelEventListener,
         if ((mUsername==null) || (mUsername.isEmpty())) {
            this.hasToLogin();
         } else {
-            this.ConectToServer("");
+            this.ConnectToServer("");
             this.Logged();
         }
     }
 
-    private void ConectToServer(String AppName) {
+    private void ConnectToServer(String AppName) {
+        Intent intent = new Intent(this, CHService.class);
+        intent.putExtra(LoginActivity.EXTRA_EMAIL,mUsername);
+        intent.putExtra(LoginActivity.EXTRA_SERVER,AppName);
+        this.startService(intent);
+
         this._serverUser = new ServerUser(mUsername,"");
         if ((AppName == null) || (AppName.isEmpty())) {
-            this._controler = new Controler(this._serverUser,this);
+            this._controller = new Controller(this._serverUser);
         } else {
-            this._controler = new Controler(this._serverUser,AppName,this);
+            this._controller = new Controller(this._serverUser,AppName);
         }
 
+        try {
+            this._controller.SubscribeChannelEventHandler(new EventHandler<ChannelEventArgs>(this,"onChannelEvent",ChannelEventArgs.class));
+            this._controller.SubscribeConnectionEventHandler(new EventHandler<PubSubConnectionEventArgs>(this, "onConnectionStateChange",PubSubConnectionEventArgs.class));
+        } catch (NoSuchMethodException e) { }
+
+        switchButton.performClick();
     }
 
     @Override
@@ -81,7 +90,7 @@ public class Home extends Activity implements PubSub.PubSubChannelEventListener,
                 mUsername = data.getStringExtra(LoginActivity.EXTRA_EMAIL);
                 String serverAppName = data.getStringExtra(LoginActivity.EXTRA_SERVER);
                 if ((mUsername!=null)&&(!mUsername.isEmpty())) {
-                    this.ConectToServer(serverAppName);
+                    this.ConnectToServer(serverAppName);
                     this.Logged();
                 } else {
                     this.hasToLogin();
@@ -102,62 +111,45 @@ public class Home extends Activity implements PubSub.PubSubChannelEventListener,
     }
 
     private void hasToLogin() {
-        Intent inte = new Intent(this, LoginActivity.class);
-        inte.putExtra(LoginActivity.EXTRA_EMAIL, mUsername);
-        inte.putExtra(LoginActivity.EXTRA_SERVER,StaticParameters.DefaultServerAppName);
-        startActivityForResult(inte, OP_CODE_LOGIN);
+        Intent intent = new Intent(this, LoginActivity.class);
+        intent.putExtra(LoginActivity.EXTRA_EMAIL, mUsername);
+        intent.putExtra(LoginActivity.EXTRA_SERVER, StaticParameters.DefaultServerAppName);
+        startActivityForResult(intent, OP_CODE_LOGIN);
     }
 
     private void Logged () {
         this._chatListAdapter = new ChatListAdapter(this, this.mUsername,true);
         ((ListView)findViewById(R.id.listView)).setAdapter(this._chatListAdapter);
-        //publishSubscriptionService = new PubSub(this.mUsername,this);
-        //publishSubscriptionService.setConnectionEventListener(this);
-        //switchButton.performClick();
     }
 
-    @Override
-    public void onConnectionStateChange(final ConnectionStateChange change) {
+    public void onConnectionStateChange(Object sender, final PubSubConnectionEventArgs args) {
         runOnUiThread(new Runnable(){
             public void run() {
-                status.setText(change.getCurrentState().toString());
+                status.setText(args.getChange().getCurrentState().toString());
             }
         });
-
-        /*if ((targetState == ConnectionState.CONNECTED) && (change.getCurrentState() == ConnectionState.DISCONNECTED)) {
-            publishSubscriptionService.Connect();
-        } else if ((targetState == ConnectionState.DISCONNECTED) && (change.getCurrentState() == ConnectionState.CONNECTED)) {
-            publishSubscriptionService.Disconnect();
-        }*/
     }
 
-    @Override
-    public void onChannelEvent(String channel_name, String event_name, final String message) {
+    public void onChannelEvent(Object sender, final ChannelEventArgs args) {
         int event_type = 0;
-        if (event_name.equalsIgnoreCase("msg")) {
+        if (args.getEventName().equalsIgnoreCase("msg")) {
             event_type = 1;
-        } else if (event_name.equalsIgnoreCase("SubscriptionSucceeded")) {
+        } else if (args.getEventName().equalsIgnoreCase("SubscriptionSucceeded")) {
             event_type = 2;
         }
         switch (event_type) {
             case 1:
-                if (channel_name.equalsIgnoreCase(mChannel_name)) {
+                if (args.getChannelName().equalsIgnoreCase(mChannel_name)) {
                     runOnUiThread(new Runnable(){
                         public void run() {
-                            JsonParser jsonParser = new JsonParser();
-                            JsonElement jsonElement = jsonParser.parse(message);
-                            JsonObject jsonObject = jsonElement.getAsJsonObject();
-                            String msg_uname = jsonObject.get("username").getAsString();
-                            String msg_msg = jsonObject.get("message").getAsString();
-                            Date ts = TimestampFormatter.toDate(jsonObject.get("timestamp").getAsString());
-                            _chatListAdapter.addItem(new Message(new User(msg_uname),new MessageContent(msg_msg), ts));
+                            _chatListAdapter.addItem(args.getMessage());
                             _chatListAdapter.notifyDataSetChanged();
                         }
                     });
                 }
                 break;
             case 2:
-                if (channel_name.equalsIgnoreCase(mChannel_name)) {
+                if (args.getChannelName().equalsIgnoreCase(mChannel_name)) {
                     runOnUiThread(new Runnable(){
                         public void run() {
                             status.setText("CONNECTED & JOINED");
@@ -176,25 +168,18 @@ public class Home extends Activity implements PubSub.PubSubChannelEventListener,
 
             Message message = new Message(new MessageContent(msg),new Date());
 
-            //String ts = TimestampFormatter.toString(new Date());
-            //msg = "message=".concat(msg.replace("+","%2B").replace(" ", "+")).concat("&timestamp=").concat(ts.replace(":","%3A").replace("+","%2B").replace(" ","+"));
-
-            _controler.sendMessage(message);
-           // server.SendMessage(msg);
-
+            _controller.sendMessage(message);
         }
     };
 
     public View.OnClickListener onClick_ToggleButton = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-           /* targetState = (!((ToggleButton)v).isChecked())?ConnectionState.DISCONNECTED:ConnectionState.CONNECTED;
-            if (targetState == ConnectionState.DISCONNECTED) {
-                publishSubscriptionService.Disconnect();
+            if (((ToggleButton)v).isChecked()) {
+                _controller.Connect();
             } else {
-                publishSubscriptionService.Join(mChannel_name);
-                publishSubscriptionService.Connect();
-            }*/
+                _controller.Disconnect();
+            }
         }
     };
 }

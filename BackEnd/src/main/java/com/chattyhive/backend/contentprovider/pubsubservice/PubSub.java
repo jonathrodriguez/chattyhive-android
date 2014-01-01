@@ -1,5 +1,10 @@
 package com.chattyhive.backend.contentprovider.pubsubservice;
 
+import com.chattyhive.backend.util.events.Event;
+import com.chattyhive.backend.util.events.EventHandler;
+import com.chattyhive.backend.util.events.PubSubChannelEventArgs;
+import com.chattyhive.backend.util.events.PubSubConnectionEventArgs;
+import com.chattyhive.backend.util.formatters.TimestampFormatter;
 import com.pusher.client.Pusher;
 import com.pusher.client.PusherOptions;
 import com.pusher.client.channel.Channel;
@@ -9,14 +14,7 @@ import com.pusher.client.connection.ConnectionEventListener;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class PubSub {
-
-    public interface PubSubChannelEventListener {
-        public void onChannelEvent(String channel_name, String event_name, String message);
-    }
-    public interface PubSubConnectionEventListener {
-        public void onConnectionStateChange(ConnectionStateChange change);
-    }
+public class PubSub implements ChannelEventListener, ConnectionEventListener {
 
     private static String APP_KEY = "f073ebb6f5d1b918e59e"; //"5bec9fb4b45d83495627";
 	private static String CLUSTER;// = "eu";
@@ -24,33 +22,46 @@ public class PubSub {
     private String nick;
     private ArrayList lista_canales;
 
-    private final ChannelEventListener channelEventListener = new ChannelEventListener() {
-        @Override
-        public void onSubscriptionSucceeded(String channelName) {
-            if (pscel != null)
-                pscel.onChannelEvent(channelName, "SubscriptionSucceeded", (new Date()).toString());
-        }
+    private Event<PubSubChannelEventArgs> _pubSubChannelEvent;
+    public void SubscribeChannelEventHandler (EventHandler<PubSubChannelEventArgs> handler) {
+        this._pubSubChannelEvent.add(handler);
+    }
 
-        @Override
-        public void onEvent(String channelName, String eventName, String data) {
-            if (pscel != null)
-                pscel.onChannelEvent(channelName, eventName, data);
-        }
-    };
+    private Event<PubSubConnectionEventArgs> _pubSubConnectionEvent;
+    public void SubscribeConnectionEventHandler (EventHandler<PubSubConnectionEventArgs> handler) {
+        this._pubSubConnectionEvent.add(handler);
+    }
 
-    public PubSubChannelEventListener pscel;
-    public PubSubConnectionEventListener psconel;
+    @Override
+    public void onSubscriptionSucceeded(String channelName) {
+        this._pubSubChannelEvent.fire(this,new PubSubChannelEventArgs(channelName,"SubscriptionSucceeded", TimestampFormatter.toString(new Date())));
+    }
+
+    @Override
+    public void onEvent(String channelName, String eventName, String data) {
+        this._pubSubChannelEvent.fire(this,new PubSubChannelEventArgs(channelName,eventName,data));
+    }
+
+    @Override
+    public void onConnectionStateChange(com.pusher.client.connection.ConnectionStateChange change) {
+        ConnectionState pS = ConnectionState.valueOf(change.getPreviousState().toString());
+        ConnectionState nS = ConnectionState.valueOf(change.getCurrentState().toString());
+        this._pubSubConnectionEvent.fire(this,new PubSubConnectionEventArgs(new ConnectionStateChange(pS,nS)));
+    }
+
+    @Override
+    public void onError(String message, String code, Exception e) {
+        // System.out.print("Error " + code + ": " + message);
+    }
 
     public PubSub() {
         this("sin_nombre");
     }
 
-    public PubSub(String nickname, PubSubChannelEventListener listener) {
-        this(nickname);
-        this.pscel = listener;
-    }
-
     public PubSub(String nickname) {
+        this._pubSubConnectionEvent = new Event<PubSubConnectionEventArgs>();
+        this._pubSubChannelEvent = new Event<PubSubChannelEventArgs>();
+
         lista_canales = new ArrayList();
         nick = nickname;
         PusherOptions pO = new PusherOptions();
@@ -60,24 +71,7 @@ public class PubSub {
         }
         pusher = new Pusher(APP_KEY,pO);
 
-        pusher.getConnection().bind(com.pusher.client.connection.ConnectionState.ALL, new ConnectionEventListener() {
-            @Override
-            public void onConnectionStateChange(com.pusher.client.connection.ConnectionStateChange change) {
-                if (psconel != null) {
-                    ConnectionState pS = ConnectionState.valueOf(change.getPreviousState().toString());
-                    ConnectionState nS = ConnectionState.valueOf(change.getCurrentState().toString());
-
-                    psconel.onConnectionStateChange(new ConnectionStateChange(pS,nS));
-                }
-            }
-
-            @Override
-            public void onError(String message, String code, Exception e) {
-               // System.out.print("Error " + code + ": " + message);
-            }
-        });
-
-        //pusher.connect();
+        pusher.getConnection().bind(com.pusher.client.connection.ConnectionState.ALL, this);
     }
 
     public void Connect() {
@@ -92,13 +86,10 @@ public class PubSub {
         ConnectionState pS = ConnectionState.valueOf(pusher.getConnection().getState().toString());
         return pS;
     }
-    public void setConnectionEventListener(PubSubConnectionEventListener listener) {
-        psconel = listener;
-    }
 
     public void Join(String channel_name) {
-        Channel canal = pusher.subscribe(channel_name,channelEventListener);
-        canal.bind("msg",channelEventListener);
+        Channel canal = pusher.subscribe(channel_name,this);
+        canal.bind("msg",this);
         lista_canales.add(canal);
     }
 }
