@@ -6,12 +6,16 @@ import com.chattyhive.backend.contentprovider.DataProvider;
 import com.chattyhive.backend.contentprovider.server.ServerUser;
 import com.chattyhive.backend.util.events.ChannelEventArgs;
 import com.chattyhive.backend.util.events.Event;
+import com.chattyhive.backend.util.events.EventArgs;
 import com.chattyhive.backend.util.events.EventHandler;
 import com.chattyhive.backend.util.events.PubSubChannelEventArgs;
 import com.chattyhive.backend.util.events.PubSubConnectionEventArgs;
 import com.chattyhive.backend.util.formatters.TimestampFormatter;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by Jonathan on 11/12/13.
@@ -23,8 +27,37 @@ import com.google.gson.JsonParser;
  * interface data mapping.
  */
 public class Controller {
+    private static Controller _controller;
+    private static Boolean appBounded;
+    private static Event<EventArgs> appBindingEvent;
+    public static void SubscribeToAppBindingEvent(EventHandler<EventArgs> eventHandler){
+        if (appBindingEvent == null)
+            appBindingEvent = new Event<EventArgs>();
+        appBindingEvent.add(eventHandler);
+    }
+    public static Controller getRunningController() {
+        if (_controller == null)
+            _controller = new Controller();
+        return _controller;
+    }
+    public static void disposeRunningController() {
+        _controller = null;
+    }
+    public static Boolean isAppBounded() {
+        return appBounded;
+    }
+    public static void bindApp() {
+        appBounded = true;
+        if (appBindingEvent != null)
+            appBindingEvent.fire(_controller, EventArgs.Empty());
+    }
+    public static void unbindApp() {
+        appBounded = false;
+        if (appBindingEvent != null)
+            appBindingEvent.fire(_controller,EventArgs.Empty());
+    } 
     // BusinessObjects
-
+    private HashMap<String, ArrayList<Message>> messages = new HashMap<String, ArrayList<Message>>();
     // ContentProvider
     private DataProvider _dataProvider;
 
@@ -36,6 +69,32 @@ public class Controller {
     }
     public void SubscribeConnectionEventHandler(EventHandler<PubSubConnectionEventArgs> eventHandler) {
         this._dataProvider.SubscribeConnectionEventHandler(eventHandler);
+    }
+
+    /**
+     * Establishes the server user.
+     * @param user
+     */
+    public void setServerUser(ServerUser user) {
+        this._dataProvider.setUser(user);
+    }
+
+    /**
+     * Retrieves the Server User.
+     * @return
+     */
+    public ServerUser getServerUser() {
+        return this._dataProvider.getServerUser();
+    }
+    /**
+     * Changes the server app.
+     * @param serverApp
+     */
+    public void setServerApp(String serverApp) {
+        this._dataProvider.setServerApp(serverApp);
+    }
+    public Controller() {
+        this(new ServerUser("",""),StaticParameters.DefaultServerAppName);
     }
 
     /**
@@ -63,9 +122,10 @@ public class Controller {
 
     /**
      * Performs server connection. The connection to pusher service is also done.
+     * @return true if connected to our server, else false
      */
-    public void Connect () {
-        this._dataProvider.Connect();
+    public Boolean Connect () {
+        return this._dataProvider.Connect();
     }
 
     /**
@@ -89,9 +149,18 @@ public class Controller {
             JsonParser jsonParser = new JsonParser();
             JsonElement jsonElement = jsonParser.parse(args.getMessage());
             m = new Message(jsonElement);
+
+            if (this.messages.containsKey(args.getChannelName())) {
+                this.messages.get(args.getChannelName()).add(m);
+            } else {
+                ArrayList<Message> arrayList = new ArrayList<Message>();
+                arrayList.add(m);
+                this.messages.put(args.getChannelName(),arrayList);
+            }
         } else {
             m = new Message(new MessageContent(""),TimestampFormatter.toDate(args.getMessage()));
         }
+
         this._channelEvent.fire(this,new ChannelEventArgs(args.getChannelName(),args.getEventName(),m));
     }
 
@@ -101,9 +170,14 @@ public class Controller {
      * business model classes to return. Probably better option is to return an ArrayList sorted by
      * message timestamp.
      */
-    public void getMessages(String channel) {
-        // TODO: Implement the getMessages method.
-        this._dataProvider.RecoverMessages(channel);
+    public ArrayList<Message> getMessages(String channel) {
+        // TODO: Implement local and remote message recovering.
+        //this._dataProvider.RecoverMessages(channel);
+        if (!this.messages.containsKey(channel)) {
+            ArrayList<Message> arrayList = new ArrayList<Message>();
+            this.messages.put(channel,arrayList);
+        }
+        return this.messages.get(channel);
     }
 
     /**
@@ -112,10 +186,10 @@ public class Controller {
      * is URL encoded.
      * @param message The message to be sent.
      */
-    public void sendMessage(Message message) {
+    public Boolean sendMessage(Message message) {
         // TODO: Uncomment the following lines to send messages correctly and remove actual sendMessage line.
         //message._user = new User(this._dataProvider.getUser());
         //this._dataProvider.sendMessage(message.toJson());
-        this._dataProvider.sendMessage("message=".concat(message._content.getContent().replace("+", "%2B").replace(" ", "+")).concat("&timestamp=").concat(TimestampFormatter.toString(message.getTimeStamp()).replace(":", "%3A").replace("+", "%2B").replace(" ", "+")));
+        return this._dataProvider.sendMessage("message=".concat(message._content.getContent().replace("+", "%2B").replace(" ", "+")).concat("&timestamp=").concat(TimestampFormatter.toString(message.getTimeStamp()).replace(":", "%3A").replace("+", "%2B").replace(" ", "+")));
     }
 }

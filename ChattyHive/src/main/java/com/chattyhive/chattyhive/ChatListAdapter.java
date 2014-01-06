@@ -20,7 +20,7 @@ public class ChatListAdapter extends BaseAdapter {
     private Context _mContext;
     private int _layoutResourceId;
     private LayoutInflater _mInflater;
-    private ArrayList<Message> _data = new ArrayList<Message>();
+    private ArrayList<Message> _data;
     private String _myName = "";
     private Boolean _multichat = true;
 
@@ -30,15 +30,13 @@ public class ChatListAdapter extends BaseAdapter {
     private static final int TYPE_MSG_SINGLECHAT_ME = 3;
     private static final int TYPE_MSG_COUNT = 4;
 
-    public ChatListAdapter(Context mContext, String myName, Boolean Multichat, Message[] data) {
+    public ChatListAdapter(Context mContext, String myName, Boolean Multichat, ArrayList<Message> data) {
         this(mContext, myName, Multichat);
 
-        for (Message message : data) {
-            this._data.add(message);
-        }
+        this._data = data;
     }
 
-    public ChatListAdapter(Context mContext, String myName, Message[] data) {
+    public ChatListAdapter(Context mContext, String myName, ArrayList<Message> data) {
         this(mContext,myName,true,data);
     }
 
@@ -57,7 +55,8 @@ public class ChatListAdapter extends BaseAdapter {
     @Override
     public int getItemViewType(int position) {
         int type = (this._multichat)?TYPE_MSG_MULTICHAT_OTHER:TYPE_MSG_SINGLECHAT_OTHER;
-        if (_data.get(position).getUser().getUsername().equalsIgnoreCase(this._myName)) {
+        if ((this._data != null) && (this._data.get(position) != null) && (this._data.get(position).getUser() != null) &&
+            (_data.get(position).getUser().getUsername().equalsIgnoreCase(this._myName))) {
             type = (this._multichat)?TYPE_MSG_MULTICHAT_ME:TYPE_MSG_SINGLECHAT_ME;
         }
         return type;
@@ -117,7 +116,9 @@ public class ChatListAdapter extends BaseAdapter {
 
         Message message = this._data.get(position);
 
-        holder.username.setText(message.getUser().getUsername());
+        if (message.getUser() != null)
+            holder.username.setText(message.getUser().getUsername());
+
         holder.messageText.setText(message.getMessage().getContent());
         holder.timeStamp.setText(message.getTimeStamp().toString());
 

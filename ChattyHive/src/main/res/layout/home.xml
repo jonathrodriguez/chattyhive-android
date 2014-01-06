@@ -33,7 +33,8 @@
         android:smoothScrollbar="true"
         android:scrollingCache="true"
         android:stackFromBottom="false"
-        android:transcriptMode="normal" />
+        android:transcriptMode="normal"
+        android:fastScrollEnabled="true" />
 
     <LinearLayout
         android:layout_width="match_parent"

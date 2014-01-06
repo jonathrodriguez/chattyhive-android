@@ -8,37 +8,74 @@ import com.google.gson.JsonParser;
 
 /**
  * Created by Jonathan on 20/11/13.
+ * This class represents the communication with the server.
  */
 public class Server {
     private ServerUser _serverUser;
 
-    private String _username;
     private String _appName = "";
     private String _appProtocol = "";
     private String _host = "";
 
-    private ServerStatus _status;
-
+    /**
+     * Retrieves the server application name to which this instance is connected.
+     * @return a string containing the server app name.
+     */
     public String getAppName() {
         return this._appName;
     }
 
+    /**
+     * Changes the server application to which to connect.
+     * @param appName the new server application
+     */
+    public void setAppName(String appName) { this._appName = appName; }
+
+    /**
+     * Retrieves the server user.
+     * @return
+     */
+    public ServerUser getServerUser() {
+        return this._serverUser;
+    }
+
+    /**
+     * Establishes the server user.
+     * @param serverUser
+     */
+    public void setServerUser(ServerUser serverUser) {
+        this._serverUser = serverUser;
+    }
+    /**
+     * Public constructor.
+     * @param serverUser a Server user object with the user data to be used.
+     * @param appName a string with the name of the server application to which to connect.
+     */
     public Server(ServerUser serverUser, String appName) {
         this._serverUser = serverUser;
         this._appName = appName;
         this._appProtocol = StaticParameters.DefaultServerAppProtocol;
         this._host = StaticParameters.DefaultServerHost;
-        this._status = ServerStatus.DISCONNECTED;
+        this._serverUser.setStatus(ServerStatus.DISCONNECTED);
     }
 
+    /**
+     * Public constructor. This will only work with server 0.1 because next sever versions uses passwords.
+     * @param username a string with the username to use as login.
+     * @param appName a string with the name of the server application to which to connect.
+     */
     public Server(String username, String appName) {
         this._serverUser = new ServerUser(username,"");
         this._appName = appName;
         this._appProtocol = StaticParameters.DefaultServerAppProtocol;
         this._host = StaticParameters.DefaultServerHost;
-        this._status = ServerStatus.DISCONNECTED;
+        this._serverUser.setStatus(ServerStatus.DISCONNECTED);
     }
 
+    /**
+     * Perform connection to the server.
+     * @return a boolean value indicating whether the connection has been made.
+     */
     public Boolean Connect() {
         Boolean result = true;
         String _function = "android.login";
@@ -68,6 +105,11 @@ public class Server {
         return result;
     }
 
+    /**
+     * Sends a message to the server.
+     * @param jsonMSG a string representing the message to be sent.
+     * @return a boolean value indicating whether the operation has correctly been done.
+     */
     public Boolean SendMessage(String jsonMSG) {
         Boolean result = true;
         String _function = "android.chat";

@@ -2,6 +2,9 @@ package com.chattyhive.backend.contentprovider.pubsubservice;
 
 /**
  * Created by Jonathan on 14/11/13.
+ * A class representing a change in pusher connection state. It has the same members as the corresponding
+ * class provided with the pusher library. A connection state change is represented by two states, the previous
+ * state and the new or current state.
  */
 public class ConnectionStateChange {
     private final ConnectionState previousState;

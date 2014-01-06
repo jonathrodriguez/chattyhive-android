@@ -4,16 +4,22 @@ import com.chattyhive.backend.Controller;
 import com.chattyhive.backend.StaticParameters;
 import com.chattyhive.backend.businessobjects.Message;
 import com.chattyhive.backend.businessobjects.MessageContent;
+import com.chattyhive.backend.contentprovider.pubsubservice.ConnectionState;
 import com.chattyhive.backend.contentprovider.server.Server;
+import com.chattyhive.backend.contentprovider.server.ServerStatus;
 import com.chattyhive.backend.contentprovider.server.ServerUser;
 import com.chattyhive.backend.util.events.ChannelEventArgs;
 import com.chattyhive.backend.util.events.EventHandler;
 import com.chattyhive.backend.util.events.PubSubConnectionEventArgs;
 import com.chattyhive.chattyhive.backgroundservice.CHService;
 
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.app.Activity;
+import android.os.IBinder;
 import android.view.Menu;
 import android.view.View;
 import android.widget.*;
@@ -24,25 +30,20 @@ import java.util.Date;
  * Created by Jonathan on 17/10/2013
  */
 
-public class Home extends Activity {
+public class Home extends Activity implements ServiceConnection {
     static final int OP_CODE_LOGIN = 1;
-    //PubSub publishSubscriptionService;
-    String mUsername = "";//Jonathan
+
     String mChannel_name = "public_test";
 
     ChatListAdapter _chatListAdapter;
-    //ConnectionState targetState;
 
     TextView status;
     ToggleButton switchButton;
 
-    Server server;
     Controller _controller;
-    ServerUser _serverUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home);
 
@@ -53,49 +54,31 @@ public class Home extends Activity {
 
         ((Button)findViewById(R.id.button)).setOnClickListener(onClick_SendButton);
 
+        this._controller = Controller.getRunningController();
+        Controller.bindApp();
 
-        if ((mUsername==null) || (mUsername.isEmpty())) {
-           this.hasToLogin();
+        this.ConnectService();
+
+        if ((this._controller == null) || (this._controller.getServerUser() == null) ||
+                (this._controller.getServerUser().getLogin().isEmpty())) {
+            this.hasToLogin();
         } else {
-            this.ConnectToServer("");
             this.Logged();
-        }
-    }
+        };
 
-    private void ConnectToServer(String AppName) {
-        Intent intent = new Intent(this, CHService.class);
-        intent.putExtra(LoginActivity.EXTRA_EMAIL,mUsername);
-        intent.putExtra(LoginActivity.EXTRA_SERVER,AppName);
-        this.startService(intent);
+        ListView lv = ((ListView)findViewById(R.id.listView));
+        lv.smoothScrollToPosition(lv.getCount());
 
-        this._serverUser = new ServerUser(mUsername,"");
-        if ((AppName == null) || (AppName.isEmpty())) {
-            this._controller = new Controller(this._serverUser);
-        } else {
-            this._controller = new Controller(this._serverUser,AppName);
-        }
-
-        try {
-            this._controller.SubscribeChannelEventHandler(new EventHandler<ChannelEventArgs>(this,"onChannelEvent",ChannelEventArgs.class));
-            this._controller.SubscribeConnectionEventHandler(new EventHandler<PubSubConnectionEventArgs>(this, "onConnectionStateChange",PubSubConnectionEventArgs.class));
-        } catch (NoSuchMethodException e) { }
-
-        switchButton.performClick();
+        //((EditText)findViewById(R.id.editText)).setText(String.valueOf(lv.getMaxScrollAmount()));
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == OP_CODE_LOGIN) {
             if (resultCode == RESULT_OK) {
-                mUsername = data.getStringExtra(LoginActivity.EXTRA_EMAIL);
-                String serverAppName = data.getStringExtra(LoginActivity.EXTRA_SERVER);
-                if ((mUsername!=null)&&(!mUsername.isEmpty())) {
-                    this.ConnectToServer(serverAppName);
-                    this.Logged();
-                } else {
-                    this.hasToLogin();
-                }
+                this.Logged();
             } else {
+                Controller.disposeRunningController();
                 this.finish();
             }
         }
@@ -112,13 +95,27 @@ public class Home extends Activity {
 
     private void hasToLogin() {
         Intent intent = new Intent(this, LoginActivity.class);
-        intent.putExtra(LoginActivity.EXTRA_EMAIL, mUsername);
-        intent.putExtra(LoginActivity.EXTRA_SERVER, StaticParameters.DefaultServerAppName);
         startActivityForResult(intent, OP_CODE_LOGIN);
     }
 
     private void Logged () {
-        this._chatListAdapter = new ChatListAdapter(this, this.mUsername,true);
+        try {
+            this._controller.SubscribeChannelEventHandler(new EventHandler<ChannelEventArgs>(this,"onChannelEvent",ChannelEventArgs.class));
+            this._controller.SubscribeConnectionEventHandler(new EventHandler<PubSubConnectionEventArgs>(this, "onConnectionStateChange",PubSubConnectionEventArgs.class));
+        } catch (NoSuchMethodException e) { }
+
+        if (this._controller.getServerUser().getStatus() != ServerStatus.LOGGED) {
+            this._controller.Connect();
+        } else {
+            runOnUiThread(new Runnable(){
+                public void run() {
+                    switchButton.setChecked(true);
+                    status.setText("CONNECTED & JOINED");
+                }
+            });
+        }
+
+        this._chatListAdapter = new ChatListAdapter(this, this._controller.getServerUser().getLogin(),true,this._controller.getMessages("public_test"));
         ((ListView)findViewById(R.id.listView)).setAdapter(this._chatListAdapter);
     }
 
@@ -126,6 +123,9 @@ public class Home extends Activity {
         runOnUiThread(new Runnable(){
             public void run() {
                 status.setText(args.getChange().getCurrentState().toString());
+                Boolean checked = (args.getChange().getCurrentState() == ConnectionState.CONNECTED) ||
+                                  (args.getChange().getCurrentState() == ConnectionState.CONNECTING);
+                switchButton.setChecked(checked);
             }
         });
     }
@@ -142,7 +142,7 @@ public class Home extends Activity {
                 if (args.getChannelName().equalsIgnoreCase(mChannel_name)) {
                     runOnUiThread(new Runnable(){
                         public void run() {
-                            _chatListAdapter.addItem(args.getMessage());
+                            //_chatListAdapter.addItem(args.getMessage());
                             _chatListAdapter.notifyDataSetChanged();
                         }
                     });
@@ -168,7 +168,8 @@ public class Home extends Activity {
 
             Message message = new Message(new MessageContent(msg),new Date());
 
-            _controller.sendMessage(message);
+            if (_controller.sendMessage(message))
+                input.setText("");
         }
     };
 
@@ -182,4 +183,25 @@ public class Home extends Activity {
             }
         }
     };
+
+    private void ConnectService() {
+        Context context = this.getApplicationContext();
+        context.startService(new Intent(context, CHService.class)); //If not, then start it.}
+    }
+
+    @Override
+    public void onDestroy() {
+        Controller.unbindApp();
+        super.onDestroy();
+    }
+
+    @Override
+    public void onServiceConnected(ComponentName name, IBinder service) {
+
+    }
+
+    @Override
+    public void onServiceDisconnected(ComponentName name) {
+
+    }
 }

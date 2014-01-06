@@ -17,6 +17,10 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.chattyhive.backend.Controller;
+import com.chattyhive.backend.StaticParameters;
+import com.chattyhive.backend.contentprovider.server.ServerUser;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -27,19 +31,6 @@ import java.util.List;
  * well.
  */
 public class LoginActivity extends Activity {
-    /**
-     * A dummy authentication store containing known user names and passwords.
-     * TODO: remove after connecting to a real authentication system.
-     */
-    /*private static final String[] DUMMY_CREDENTIALS = new String[]{
-            "foo@example.com:hello",
-            "bar@example.com:world"
-    };*/
-
-    /**
-     * The default email to populate the email field with.
-     */
-    public static final String EXTRA_EMAIL = "com.chattyhive.chattyhive.login.extra.EMAIL";
 
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
@@ -57,10 +48,11 @@ public class LoginActivity extends Activity {
     private View mLoginStatusView;
     private TextView mLoginStatusMessageView;
 
-    public static final String EXTRA_SERVER = "com.chattyhive.chattyhive.login.extra.SERVER";
     private String mServer;
     private Spinner mServerView;
     private ArrayList<String> servers;
+
+    private Controller _controller;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,14 +60,15 @@ public class LoginActivity extends Activity {
 
 
         setContentView(R.layout.activity_login);
+        this._controller = Controller.getRunningController();
 
         servers = new ArrayList<String>(Arrays.asList(getResources().getStringArray(R.array.servers_array)));
-        mServer = getIntent().getStringExtra(EXTRA_SERVER);
+        mServer = StaticParameters.DefaultServerAppName;
         mServerView = (Spinner) findViewById(R.id.spinner);
         mServerView.setSelection(servers.indexOf(mServer));
 
         // Set up the login form.
-        mEmail = getIntent().getStringExtra(EXTRA_EMAIL);
+        mEmail = this._controller.getServerUser().getLogin();
         mEmailView = (EditText) findViewById(R.id.email);
         mEmailView.setText(mEmail);
 
@@ -220,25 +213,9 @@ public class LoginActivity extends Activity {
     public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
         @Override
         protected Boolean doInBackground(Void... params) {
-            // TODO: attempt authentication against a network service.
-
-            try {
-                // Simulate network access.
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                return false;
-            }
-
-            /*for (String credential : DUMMY_CREDENTIALS) {
-                String[] pieces = credential.split(":");
-                if (pieces[0].equals(mEmail)) {
-                    // Account exists, return true if the password matches.
-                    return pieces[1].equals(mPassword);
-                }
-            }*/
-
-            // TODO: register the new account here.
-            return true;
+            _controller.setServerUser(new ServerUser(mEmail,""));
+            _controller.setServerApp(mServer);
+            return _controller.Connect();
         }
 
         @Override
@@ -249,14 +226,11 @@ public class LoginActivity extends Activity {
 
 
             if (success) {
-                Intent inte = new Intent();
-                inte.putExtra(EXTRA_EMAIL,mEmail);
-
-                inte.putExtra(EXTRA_SERVER,mServer);
-
-                setResult(RESULT_OK, inte);
+                Intent intent = new Intent();
+                setResult(RESULT_OK, intent);
                 finish();
             } else {
+
                /* mPasswordView.setError(getString(R.string.error_incorrect_password));
                 mPasswordView.requestFocus();*/
             }
