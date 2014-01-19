@@ -28,7 +28,7 @@ import java.util.HashMap;
  */
 public class Controller {
     private static Controller _controller;
-    private static Boolean appBounded;
+    private static Boolean appBounded = false;
     private static Event<EventArgs> appBindingEvent;
     public static void SubscribeToAppBindingEvent(EventHandler<EventArgs> eventHandler){
         if (appBindingEvent == null)

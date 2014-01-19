@@ -1,28 +1,26 @@
 package com.chattyhive.chattyhive.backgroundservice;
 
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.net.NetworkInfo;
 import android.os.Binder;
-import android.os.Build;
 import android.os.IBinder;
 
 import com.chattyhive.backend.Controller;
-import com.chattyhive.backend.StaticParameters;
+import com.chattyhive.backend.businessobjects.Message;
 import com.chattyhive.backend.contentprovider.pubsubservice.ConnectionState;
 import com.chattyhive.backend.util.events.ChannelEventArgs;
 import com.chattyhive.backend.util.events.EventArgs;
 import com.chattyhive.backend.util.events.EventHandler;
 import com.chattyhive.backend.util.events.PubSubConnectionEventArgs;
 import com.chattyhive.chattyhive.Home;
-import com.chattyhive.chattyhive.LoginActivity;
+import com.chattyhive.chattyhive.R;
 
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 
 public class CHService extends Service {
     private Controller _controller;
@@ -38,34 +36,21 @@ public class CHService extends Service {
         if ((!this._appOpen) && (args.getEventName().compareTo("msg")==0)) {
             this._notificationManager.cancelAll();
             this._pendingMsgs++;
-            if (this._pendingMsgs == 1) {
-                Notification notification;
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                    notification = new Notification.Builder(this)
-                            .setContentTitle("chattyhive. New messages.")
-                            .setContentText("You have ".concat(((Integer)this._pendingMsgs).toString()).concat(" new messages."))
-                            .build();
-                } else {
-                    notification = new Notification(android.R.drawable.sym_def_app_icon,"chattyhive. ".concat(((Integer)this._pendingMsgs).toString()).concat(" new messages."),System.currentTimeMillis());
-                    PendingIntent i= PendingIntent.getActivity(this, 0, new Intent(this, Home.class), 0);
-                    notification.setLatestEventInfo(this, "You have new messages!","There are ".concat(((Integer)this._pendingMsgs).toString()).concat(" new messages."), i);
-                }
-                _notificationManager.notify(0,notification);
-            } else {
-                Notification notification;
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                    notification = new Notification.Builder(this)
-                            .setContentTitle("chattyhive. New messages.")
-                            .setContentText("You have ".concat(((Integer)this._pendingMsgs).toString()).concat(" new messages."))
-                            .build();
-                } else {
-                    notification = new Notification(android.R.drawable.sym_def_app_icon,"chattyhive. ".concat(((Integer)this._pendingMsgs).toString()).concat(" new messages."),System.currentTimeMillis());
-                    Intent intent = new Intent(this,Home.class);
-                    PendingIntent i= PendingIntent.getActivity(this, 0, intent, 0);
-                    notification.setLatestEventInfo(this, "You have new messages!","There are ".concat(((Integer)this._pendingMsgs).toString()).concat(" new messages."), i);
-                }
-                _notificationManager.notify(0,notification);
+            PendingIntent i= PendingIntent.getActivity(this, 0, new Intent(this, Home.class), 0);
+            CHNotificationBuilder chNotificationBuilder = new CHNotificationBuilder(this.getApplicationContext());
+            chNotificationBuilder.setTickerText(String.format(this.getString(R.string.buzz_in_hive_Ticker),"@".concat(args.getMessage().getUser().getUsername()),":".concat(args.getChannelName())));
+            chNotificationBuilder.setTitleText(String.format(this.getString(R.string.buzz_in_hive_TITLE), ":".concat(args.getChannelName())));
+            chNotificationBuilder.setMainText(String.format(this.getString(R.string.buzz_in_hive_mainText), this._pendingMsgs));
+
+            ArrayList<Message> messages = this._controller.getMessages(args.getChannelName());
+            ArrayList<String> subText = new ArrayList<String>();
+            for (int idx = (messages.size()-this._pendingMsgs); idx < messages.size(); idx++) {
+                subText.add(String.format(this.getString(R.string.buzz_in_hive_subText),"@".concat(messages.get(idx).getUser().getUsername()),messages.get(idx).getMessage().getContent()));
             }
+
+            chNotificationBuilder.setSubText(subText);
+            chNotificationBuilder.setMainAction(i);
+            _notificationManager.notify(0,chNotificationBuilder.Build());
         }
     }
 
@@ -149,22 +134,13 @@ public class CHService extends Service {
         }
         if ((this._controller.getServerUser() == null) ||
                 (this._controller.getServerUser().getLogin().isEmpty())) {
-            Notification notification;
             PendingIntent i= PendingIntent.getActivity(this, 0, new Intent(this, Home.class), 0);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                notification = new Notification.Builder(this)
-                        .setSmallIcon(android.R.drawable.sym_def_app_icon)
-                        .setContentTitle("chattyhive - No user data!")
-                        .setContentText("Welcome to chattyhive!.")
-                        .addAction(android.R.drawable.sym_def_app_icon,"Loggin",i)
-                        .setSubText("There's no user data. Please, touch here to login.")
-                        .setTicker("This is the ticker text")
-                        .build();
-            } else {
-                notification = new Notification(android.R.drawable.sym_def_app_icon,"chattyhive - No user data!",System.currentTimeMillis());
-                notification.setLatestEventInfo(this, "Welcome to chattyhive!","There's no user data. Please, touch here to login.", i);
-            }
-            _notificationManager.notify(0,notification);
+            CHNotificationBuilder chNotificationBuilder = new CHNotificationBuilder(this.getApplicationContext());
+            chNotificationBuilder.setTickerText("No user login data!");
+            chNotificationBuilder.setTitleText("Welcome to chattyhive!");
+            chNotificationBuilder.setMainText("There's no user data. Please, touch here to loggin.");
+            chNotificationBuilder.setMainAction(i);
+            _notificationManager.notify(0,chNotificationBuilder.Build());
         }
     }
 
