@@ -2,8 +2,16 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-
     <FrameLayout
+        android:layout_width="@dimen/right_menu_width"
+        android:layout_height="match_parent"
+        android:layout_gravity="right"
+        android:id="@+id/right_panel" >
+        <include layout="@layout/right_panel_layout" />
+    </FrameLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/main_block"
@@ -12,25 +20,20 @@
         android:layout_gravity="left"
         android:measureAllChildren="true"
         android:textAlignment="gravity">
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" >
         <FrameLayout
             android:layout_width="@dimen/chat_list_width"
             android:layout_height="match_parent"
             android:id="@+id/left_panel" >
             <include layout="@layout/left_panel_layout" />
         </FrameLayout>
-
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/main_panel"
-            android:layout_gravity="right" >
+            android:layout_gravity="right"
+            android:background="#f0ff5d">
             <include layout="@layout/home" />
         </FrameLayout>
-
     </LinearLayout>
-    </FrameLayout>
+
 </FrameLayout>

@@ -25,7 +25,7 @@ public class Main extends Activity {
 
         setContentView(R.layout.main);
 
-        FrameLayout main_block = (FrameLayout)findViewById(R.id.main_block);
+        LinearLayout main_block = (LinearLayout)findViewById(R.id.main_block);
         FrameLayout.LayoutParams main_block_params = (FrameLayout.LayoutParams) main_block.getLayoutParams();
 
         int left_margin = (int)Math.ceil(-1 * getResources().getDimension(R.dimen.chat_list_width));
@@ -38,7 +38,7 @@ public class Main extends Activity {
             @Override
             public void onClick(View v) {
 
-                final FrameLayout main_block = (FrameLayout)findViewById(R.id.main_block);
+                final LinearLayout main_block = (LinearLayout)findViewById(R.id.main_block);
                 final FrameLayout.LayoutParams main_block_params = (FrameLayout.LayoutParams) main_block.getLayoutParams();
                 final int translate, new_margin_left, new_margin_right;
 
@@ -53,6 +53,55 @@ public class Main extends Activity {
                     translate = -1*main_block_left_margin;
                     new_margin_left = 0;
                     new_margin_right = main_block_left_margin;
+                }
+
+                Animation animation = new TranslateAnimation(0, translate,0, 0);
+                animation.setDuration(600);
+                animation.setFillAfter(true);
+
+                animation.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        main_block_params.setMargins(new_margin_left,main_block_params.topMargin,new_margin_right,main_block_params.bottomMargin);
+                        main_block.destroyDrawingCache();
+                        main_block.setLayoutParams(main_block_params);
+                        main_block.clearAnimation();
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+
+                    }
+                });
+
+                main_block.startAnimation(animation);
+            }
+        });
+
+        ImageButton menuIcon = (ImageButton)findViewById(R.id.menuIcon);
+        menuIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                final LinearLayout main_block = (LinearLayout)findViewById(R.id.main_block);
+                final FrameLayout.LayoutParams main_block_params = (FrameLayout.LayoutParams) main_block.getLayoutParams();
+                final int translate, new_margin_left, new_margin_right;
+
+                int main_block_left_margin = main_block_params.leftMargin;
+
+                if (main_block_left_margin == (-1*getResources().getDimension(R.dimen.chat_list_width))) {
+                    translate = (int)(-1*getResources().getDimension(R.dimen.chat_list_width));
+                    new_margin_left = main_block_left_margin+translate;
+                    new_margin_right = (int)getResources().getDimension(R.dimen.chat_list_width);
+                } else {
+                    translate = (int)getResources().getDimension(R.dimen.chat_list_width);
+                    new_margin_left = main_block_left_margin+translate;
+                    new_margin_right = 0;
                 }
 
                 Animation animation = new TranslateAnimation(0, translate,0, 0);
