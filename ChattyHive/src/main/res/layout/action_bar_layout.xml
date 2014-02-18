@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center|center_vertical|center_horizontal"
+    android:background="#000000">
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/appIcon"
+        android:background="#000000"
+        android:src="@drawable/home_isotipo_puro_blanco_derecho" />
+
+    <ImageButton
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/appName"
+        android:layout_weight="1"
+        android:background="#000000"
+        android:src="@drawable/logo_sin_isotipo_para_fondo_negro" />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/menuIcon"
+        android:background="#000000"
+        android:src="@drawable/home_menu" />
+</LinearLayout>

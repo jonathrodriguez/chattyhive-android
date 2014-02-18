@@ -9,7 +9,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/avatarThumbnail"
         android:layout_gravity="center|left"
-        android:src="@drawable/ic_launcher"
+        android:src="@android:drawable/sym_def_app_icon"
         android:contentDescription="others_image" />
 
     <LinearLayout

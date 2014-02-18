@@ -15,7 +15,7 @@ import com.chattyhive.backend.util.events.ChannelEventArgs;
 import com.chattyhive.backend.util.events.EventArgs;
 import com.chattyhive.backend.util.events.EventHandler;
 import com.chattyhive.backend.util.events.PubSubConnectionEventArgs;
-import com.chattyhive.chattyhive.Home;
+import com.chattyhive.chattyhive.Home_old;
 import com.chattyhive.chattyhive.R;
 
 import java.io.FileDescriptor;
@@ -36,7 +36,7 @@ public class CHService extends Service {
         if ((!this._appOpen) && (args.getEventName().compareTo("msg")==0)) {
             this._notificationManager.cancelAll();
             this._pendingMsgs++;
-            PendingIntent i= PendingIntent.getActivity(this, 0, new Intent(this, Home.class), 0);
+            PendingIntent i= PendingIntent.getActivity(this, 0, new Intent(this, Home_old.class), 0);
             CHNotificationBuilder chNotificationBuilder = new CHNotificationBuilder(this.getApplicationContext());
             chNotificationBuilder.setTickerText(String.format(this.getString(R.string.buzz_in_hive_Ticker),"@".concat(args.getMessage().getUser().getUsername()),":".concat(args.getChannelName())));
             chNotificationBuilder.setTitleText(String.format(this.getString(R.string.buzz_in_hive_TITLE), ":".concat(args.getChannelName())));
@@ -134,7 +134,7 @@ public class CHService extends Service {
         }
         if ((this._controller.getServerUser() == null) ||
                 (this._controller.getServerUser().getLogin().isEmpty())) {
-            PendingIntent i= PendingIntent.getActivity(this, 0, new Intent(this, Home.class), 0);
+            PendingIntent i= PendingIntent.getActivity(this, 0, new Intent(this, Home_old.class), 0);
             CHNotificationBuilder chNotificationBuilder = new CHNotificationBuilder(this.getApplicationContext());
             chNotificationBuilder.setTickerText("No user login data!");
             chNotificationBuilder.setTitleText("Welcome to chattyhive!");
