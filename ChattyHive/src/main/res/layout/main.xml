@@ -30,8 +30,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/main_panel"
-            android:layout_gravity="right"
-            android:background="#f0ff5d">
+            android:layout_gravity="right">
             <include layout="@layout/home" />
         </FrameLayout>
     </LinearLayout>
