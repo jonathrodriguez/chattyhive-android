@@ -1,31 +1,37 @@
 package com.chattyhive.chattyhive;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Canvas;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.GestureDetector;
-import android.view.LayoutInflater;
+
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
-import android.os.Build;
-import android.view.ViewPropertyAnimator;
+
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
-public class Main extends Activity implements GestureDetector.OnGestureListener {
+import com.chattyhive.backend.Controller;
+import com.chattyhive.backend.contentprovider.server.ServerStatus;
 
-    GestureDetector detector;
+
+public class Main extends Activity implements GestureDetector.OnGestureListener {
+    static final int OP_CODE_LOGIN = 1;
+
+    GestureDetector _detector;
     MotionEvent _lastOnScrollMotionEvent = null;
     MotionEvent _firstOnScrollMotionEvent = null;
     Boolean _performScroll = false;
+
+    Controller _controller;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +39,91 @@ public class Main extends Activity implements GestureDetector.OnGestureListener 
 
         setContentView(R.layout.main);
 
-        detector = new GestureDetector(this,this);
+        setPanelBehaviour();
+
+        this._controller = Controller.getRunningController();
+        Controller.bindApp();
+
+        if ((this._controller == null) || (this._controller.getServerUser() == null) ||
+                (this._controller.getServerUser().getLogin().isEmpty())) {
+            this.hasToLogin();
+        } else {
+            this.Logged();
+        }
+
+    }
+
+    private void hasToLogin() {
+        Intent intent = new Intent(this, Login.class);
+        startActivityForResult(intent, OP_CODE_LOGIN);
+    }
+
+    private void Logged () {
+/*        try {
+            this._controller.SubscribeChannelEventHandler(new EventHandler<ChannelEventArgs>(this,"onChannelEvent",ChannelEventArgs.class));
+            this._controller.SubscribeConnectionEventHandler(new EventHandler<PubSubConnectionEventArgs>(this, "onConnectionStateChange",PubSubConnectionEventArgs.class));
+        } catch (NoSuchMethodException e) { }*/
+
+        if (this._controller.getServerUser().getStatus() != ServerStatus.LOGGED) {
+            this._controller.Connect();
+        }
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == OP_CODE_LOGIN) {
+            if (resultCode == RESULT_OK) {
+                this.Logged();
+            } else {
+                Controller.disposeRunningController();
+                this.finish();
+            }
+        }
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent me){
+        if (!this._detector.onTouchEvent(me)) {
+            if ((_performScroll) && (me.getAction() == MotionEvent.ACTION_UP)) {
+                float distanceX, distanceY;
+                distanceX = _lastOnScrollMotionEvent.getX() - me.getX();
+                distanceY = _lastOnScrollMotionEvent.getY() - me.getY();
+                return this.onScroll(_firstOnScrollMotionEvent,me,distanceX,distanceY);
+            } else if ((_lastOnScrollMotionEvent != null) && (me.getAction() == MotionEvent.ACTION_UP)) {
+                _lastOnScrollMotionEvent = null;
+                return super.dispatchTouchEvent(me);
+            }
+            else {
+                return super.dispatchTouchEvent(me);
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+        if (id == R.id.action_settings) {
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+
+    public void setPanelBehaviour() {
+        this._detector = new GestureDetector(this,this);
 
         LinearLayout main_block = (LinearLayout)findViewById(R.id.main_block);
         FrameLayout.LayoutParams main_block_params = (FrameLayout.LayoutParams) main_block.getLayoutParams();
@@ -103,44 +193,6 @@ public class Main extends Activity implements GestureDetector.OnGestureListener 
             }
         });
     }
-
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent me){
-        // TODO: ACTION_UP must be detected here.
-        if (!this.detector.onTouchEvent(me)) {
-            if ((_performScroll) && (me.getAction() == MotionEvent.ACTION_UP)) {
-                float distanceX, distanceY;
-                distanceX = _lastOnScrollMotionEvent.getX() - me.getX();
-                distanceY = _lastOnScrollMotionEvent.getY() - me.getY();
-                return this.onScroll(_firstOnScrollMotionEvent,me,distanceX,distanceY);
-            }
-            else {
-                return super.dispatchTouchEvent(me);
-            }
-        }
-        return true;
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
 
     public void movePanel(final LinearLayout main_block, final FrameLayout.LayoutParams main_block_params, final int translate, final int new_margin_left, final int new_margin_right,long duration) {
 

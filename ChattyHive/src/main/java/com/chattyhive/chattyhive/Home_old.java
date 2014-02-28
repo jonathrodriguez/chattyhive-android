@@ -91,7 +91,7 @@ public class Home_old extends Activity implements ServiceConnection {
     }
 
     private void hasToLogin() {
-        Intent intent = new Intent(this, LoginActivity.class);
+        Intent intent = new Intent(this, LoginActivity_old.class);
         startActivityForResult(intent, OP_CODE_LOGIN);
     }
 

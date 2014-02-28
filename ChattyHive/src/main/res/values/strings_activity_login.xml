@@ -17,7 +17,11 @@
     <string name="error_invalid_password">This password is too short</string>
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>
-    <string name="prompt_username">Username</string><string name="server_prompt">Select server</string>
+    <string name="prompt_username">Username</string>
+    <string name="server_prompt">Select server</string>
+    <string name="forgotten_password">Did you forget your password?</string>
+    <string name="login">Login</string>
+    <string name="sign_in">Sign In</string><string name="login_activity_go_button">GO</string>
 
     <!-- Strings related with server -->
     <string-array name="servers_array">

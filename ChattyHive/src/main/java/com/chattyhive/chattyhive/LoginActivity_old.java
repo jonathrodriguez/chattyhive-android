@@ -23,14 +23,13 @@ import com.chattyhive.backend.contentprovider.server.ServerUser;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * Created by Jonathan on 17/10/2013
  * Activity which displays a login screen to the user, offering registration as
  * well.
  */
-public class LoginActivity extends Activity {
+public class LoginActivity_old extends Activity {
 
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
@@ -59,7 +58,7 @@ public class LoginActivity extends Activity {
         super.onCreate(savedInstanceState);
 
 
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_login_old);
         this._controller = Controller.getRunningController();
 
         servers = new ArrayList<String>(Arrays.asList(getResources().getStringArray(R.array.servers_array)));
