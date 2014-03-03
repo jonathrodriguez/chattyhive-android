@@ -75,10 +75,10 @@ public class Main extends Activity implements GestureDetector.OnGestureListener 
         if (requestCode == OP_CODE_LOGIN) {
             if (resultCode == RESULT_OK) {
                 this.Logged();
-            } else {
+            } /*else {
                 Controller.disposeRunningController();
                 this.finish();
-            }
+            }*/
         }
     }
 

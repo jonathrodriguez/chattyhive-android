@@ -11,10 +11,10 @@
     android:id="@+id/login_activity_master_frame">
 
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:layout_height="144dp"
         android:id="@+id/imageView"
-        android:layout_weight="0"
+        android:layout_weight="1"
         android:src="@drawable/logo_con_isotipo_para_fondo_negro"
         android:layout_gravity="center" />
 
@@ -31,12 +31,12 @@
 
             <LinearLayout
                 android:orientation="horizontal"
-                android:layout_width="wrap_content"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center">
 
                 <Button
-                    android:layout_width="wrap_content"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/sign_in"
                     android:id="@+id/login_activity_signin_tab_button"
@@ -46,10 +46,11 @@
                     android:paddingLeft="26dp"
                     android:paddingRight="26dp"
                     android:paddingTop="18dp"
-                    android:paddingBottom="18dp" />
+                    android:paddingBottom="18dp"
+                    android:layout_weight="1" />
 
                 <Button
-                    android:layout_width="wrap_content"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/login"
                     android:id="@+id/login_activity_login_tab_button"
@@ -60,84 +61,16 @@
                     android:paddingRight="26dp"
                     android:paddingTop="18dp"
                     android:paddingLeft="26dp"
-                    android:typeface="normal" />
+                    android:typeface="normal"
+                    android:layout_weight="1" />
             </LinearLayout>
 
-            <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:layout_gravity="center"
-                android:gravity="center_horizontal"
-                android:background="@drawable/login_activity_tab_panel"
-                android:paddingLeft="30dp"
-                android:paddingRight="30dp"
-                android:paddingTop="15dp"
-                android:paddingBottom="15dp">
+            <ViewSwitcher
+                android:layout_width="294dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/viewSwitcher" />
 
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="New Button"
-                    android:id="@+id/button3" />
-
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="New Button"
-                    android:id="@+id/button4" />
-
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="New Button"
-                    android:id="@+id/button5" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="Medium Text"
-                    android:id="@+id/textView2" />
-
-                <LinearLayout
-                    android:orientation="horizontal"
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent">
-
-                    <EditText
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/editText"
-                        android:layout_weight="1"
-                        android:background="#fffff7"
-                        android:paddingEnd="1dp"
-                        android:paddingStart="5dp"
-                        android:layout_marginRight="10dp" />
-
-                    <Button
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/login_activity_go_button"
-                        android:id="@+id/go_button"
-                        android:background="@drawable/login_activity_go_button"
-                        android:layout_weight="0"
-                        android:paddingLeft="3dp"
-                        android:paddingRight="3dp"
-                        android:paddingTop="3dp"
-                        android:paddingBottom="3dp" />
-                </LinearLayout>
-
-            </LinearLayout>
         </LinearLayout>
     </FrameLayout>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/forgotten_password"
-        android:id="@+id/textView"
-        android:layout_gravity="right"
-        android:layout_weight="0" />
 </LinearLayout>

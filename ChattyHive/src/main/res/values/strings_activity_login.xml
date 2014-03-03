@@ -21,7 +21,7 @@
     <string name="server_prompt">Select server</string>
     <string name="forgotten_password">Did you forget your password?</string>
     <string name="login">Login</string>
-    <string name="sign_in">Sign In</string><string name="login_activity_go_button">GO</string>
+    <string name="sign_in">Sign In</string><string name="login_activity_go_button">GO</string><string name="sign_with_email">Or sign in with your email...</string><string name="sign_in_email_field_hint">Enter your email....</string><string name="try_it">Try it before sign in!</string><string name="login_other_social_networks">You can also login with...</string><string name="login_activity_login_button">Login to chattyhive</string><string name="login_activity_email_field_hint">email / username</string><string name="login_activity_password_field_hint">password</string>
 
     <!-- Strings related with server -->
     <string-array name="servers_array">

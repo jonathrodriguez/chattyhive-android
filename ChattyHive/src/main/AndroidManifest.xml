@@ -71,7 +71,7 @@
             android:name="com.chattyhive.chattyhive.Login"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.WithNoActionBar"
-            android:windowSoftInputMode="adjustResize|stateUnchanged">
+            android:windowSoftInputMode="adjustPan|stateUnchanged">
         </activity>
     </application>
 
