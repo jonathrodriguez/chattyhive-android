@@ -2,7 +2,6 @@ package com.chattyhive.chattyhive;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Canvas;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -41,6 +40,8 @@ public class Main extends Activity implements GestureDetector.OnGestureListener 
 
         setPanelBehaviour();
 
+        LeftPanel lp = new LeftPanel(this);
+
         this._controller = Controller.getRunningController();
         Controller.bindApp();
 
@@ -54,7 +55,7 @@ public class Main extends Activity implements GestureDetector.OnGestureListener 
     }
 
     private void hasToLogin() {
-        Intent intent = new Intent(this, Login.class);
+        Intent intent = new Intent(this, LoginActivity.class);
         startActivityForResult(intent, OP_CODE_LOGIN);
     }
 

@@ -25,7 +25,7 @@
             android:background="#fffff7"
             android:paddingLeft="5dp"
             android:paddingRight="1dp"
-            android:hint="@string/login_activity_email_field_hint"
+            android:hint="@string/login_activity_login_tab_email_field_hint"
             android:layout_marginBottom="15dp"
             android:layout_marginTop="5dp" />
 
@@ -37,27 +37,27 @@
             android:id="@+id/editText2"
             android:background="#fffff7"
             android:layout_marginBottom="15dp"
-            android:hint="@string/login_activity_password_field_hint" />
+            android:hint="@string/login_activity_login_tab_password_field_hint" />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/login_activity_login_button"
+            android:text="@string/login_activity_login_tab_login_button"
             android:id="@+id/login_button"
-            android:background="@drawable/login_activity_go_button"
+            android:background="@drawable/login_activity_login_to_chattyhive_button"
             android:layout_weight="0"
             android:gravity="center|center_vertical|center_horizontal"
-            android:paddingLeft="5dp"
+            android:paddingLeft="8dp"
             android:paddingTop="3dp"
             android:paddingRight="5dp"
-            android:paddingBottom="5dp"
+            android:paddingBottom="6dp"
             android:layout_marginBottom="15dp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="@string/login_other_social_networks"
+            android:text="@string/login_activity_login_tab_other_social_networks"
             android:id="@+id/textView2"
             android:background="#00000000"
             android:textColor="#F0FEFE"
@@ -93,7 +93,7 @@
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/forgotten_password"
+        android:text="@string/login_activity_login_tab_forgotten_password"
         android:id="@+id/textView"
         android:layout_gravity="right"
         android:layout_weight="1"

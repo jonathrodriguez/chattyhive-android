@@ -142,7 +142,7 @@ public class LoginActivity_old extends Activity {
 
         // Check for a valid email address.
         if (TextUtils.isEmpty(mEmail)) {
-            mEmailView.setError(getString(R.string.error_field_required));
+            mEmailView.setError("This field can not be blank.");
             focusView = mEmailView;
             cancel = true;
         } /*else if (!mEmail.contains("@")) {

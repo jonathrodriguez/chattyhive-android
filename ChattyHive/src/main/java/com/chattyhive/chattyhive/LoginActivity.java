@@ -12,7 +12,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ViewSwitcher;
 
-public class Login extends Activity {
+public class LoginActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,14 +24,14 @@ public class Login extends Activity {
     }
 
     protected void setTabButtonsBehaviour() {
-        final Button signin = (Button)findViewById(R.id.login_activity_signin_tab_button);
+        final Button signin = (Button)findViewById(R.id.login_activity_signup_tab_button);
         final Button loggin = (Button)findViewById(R.id.login_activity_login_tab_button);
-        final LinearLayout master_frame = (LinearLayout)findViewById(R.id.login_activity_master_frame);
+        //final LinearLayout master_frame = (LinearLayout)findViewById(R.id.login_activity_master_frame);
         final ViewSwitcher viewSwitcher = (ViewSwitcher)findViewById(R.id.viewSwitcher);
         signin.setSelected(true);
 
         LayoutInflater inflater = getLayoutInflater();
-        viewSwitcher.addView(inflater.inflate(R.layout.login_activity_sign_in,null));
+        viewSwitcher.addView(inflater.inflate(R.layout.login_activity_sign_up,null));
         viewSwitcher.addView(inflater.inflate(R.layout.login_activity_login,null));
 
 

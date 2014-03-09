@@ -17,26 +17,6 @@
         android:icon="@drawable/launcher_launcher_b"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
-
-        <!--
-        activity
-            android:name="com.chattyhive.chattyhive.Home_old"
-            android:description="@string/hello_world"
-            android:label="@string/app_name"
-            android:logo="@drawable/launcher_launcher_a"
-            android:windowSoftInputMode="adjustResize|stateVisible" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity
-        -->
-        <activity
-            android:name="com.chattyhive.chattyhive.LoginActivity_old"
-            android:label="@string/title_activity_login"
-            android:windowSoftInputMode="adjustResize|stateVisible" >
-        </activity>
-
         <!--
             <service
             android:name="com.chattyhive.chattyhive.backgroundservice.CHService"
@@ -68,7 +48,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.chattyhive.chattyhive.Login"
+            android:name=".LoginActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.WithNoActionBar"
             android:windowSoftInputMode="adjustPan|stateUnchanged">
