@@ -17,9 +17,15 @@ import android.view.animation.TranslateAnimation;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 
 import com.chattyhive.backend.Controller;
+import com.chattyhive.backend.businessobjects.Mate;
 import com.chattyhive.backend.contentprovider.server.ServerStatus;
+import com.chattyhive.backend.util.events.EventArgs;
+import com.chattyhive.backend.util.events.EventHandler;
+
+import java.util.ArrayList;
 
 
 public class Main extends Activity implements GestureDetector.OnGestureListener {
@@ -39,8 +45,6 @@ public class Main extends Activity implements GestureDetector.OnGestureListener 
         setContentView(R.layout.main);
 
         setPanelBehaviour();
-
-        LeftPanel lp = new LeftPanel(this);
 
         this._controller = Controller.getRunningController();
         Controller.bindApp();
@@ -63,20 +67,21 @@ public class Main extends Activity implements GestureDetector.OnGestureListener 
 /*        try {
             this._controller.SubscribeChannelEventHandler(new EventHandler<ChannelEventArgs>(this,"onChannelEvent",ChannelEventArgs.class));
             this._controller.SubscribeConnectionEventHandler(new EventHandler<PubSubConnectionEventArgs>(this, "onConnectionStateChange",PubSubConnectionEventArgs.class));
-        } catch (NoSuchMethodException e) { }*/
+        } catch (NoSuchMethodException e) { }
 
         if (this._controller.getServerUser().getStatus() != ServerStatus.LOGGED) {
             this._controller.Connect();
-        }
+        }*/
 
+        LeftPanel lp = new LeftPanel(this);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == OP_CODE_LOGIN) {
-            if (resultCode == RESULT_OK) {
+            //if (resultCode == RESULT_OK) {
                 this.Logged();
-            } /*else {
+            /*} else {
                 Controller.disposeRunningController();
                 this.finish();
             }*/
@@ -255,7 +260,6 @@ public class Main extends Activity implements GestureDetector.OnGestureListener 
                 DisplayMetrics metrics = new DisplayMetrics();
                 this.getWindowManager().getDefaultDisplay().getMetrics(metrics);
                 int screen_width = metrics.widthPixels;
-                Log.w("onScroll","Screen width: ".concat(String.valueOf(screen_width)));
                 if (e1.getX() > (screen_width-actual_margin_right)) return false;
             }
         }
@@ -333,7 +337,7 @@ public class Main extends Activity implements GestureDetector.OnGestureListener 
 
         if (Math.abs(velocityX) < 200) return false;
 
-        Log.w("onFling","onFlingDetected!");
+        //Log.w("onFling","onFlingDetected!");
 
         float finger_distance = e1.getX() - e2.getX();
 

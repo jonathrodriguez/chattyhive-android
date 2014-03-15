@@ -1,5 +1,6 @@
 package com.chattyhive.backend;
 
+import com.chattyhive.backend.businessobjects.Hive;
 import com.chattyhive.backend.businessobjects.Message;
 import com.chattyhive.backend.businessobjects.MessageContent;
 import com.chattyhive.backend.contentprovider.DataProvider;
@@ -29,12 +30,7 @@ import java.util.HashMap;
 public class Controller {
     private static Controller _controller;
     private static Boolean appBounded = false;
-    private static Event<EventArgs> appBindingEvent;
-    public static void SubscribeToAppBindingEvent(EventHandler<EventArgs> eventHandler){
-        if (appBindingEvent == null)
-            appBindingEvent = new Event<EventArgs>();
-        appBindingEvent.add(eventHandler);
-    }
+
     public static Controller getRunningController() {
         if (_controller == null)
             _controller = new Controller();
@@ -58,15 +54,54 @@ public class Controller {
     } 
     // BusinessObjects
     private HashMap<String, ArrayList<Message>> messages = new HashMap<String, ArrayList<Message>>();
+    private static final ArrayList<Hive> hives = new ArrayList<Hive>();
+    public static final ArrayList<Hive> getHives() { return hives; }
     // ContentProvider
     private DataProvider _dataProvider;
 
     // Events
-    private Event<ChannelEventArgs> _channelEvent;
+    private static Event<EventArgs> appBindingEvent;
+    public static void SubscribeToAppBindingEvent(EventHandler<EventArgs> eventHandler){
+        if (appBindingEvent == null)
+            appBindingEvent = new Event<EventArgs>();
+        appBindingEvent.add(eventHandler);
+    }
 
+    private static Event<EventArgs> hivesListChange;
+    public static void SubscribeToHivesListChange(EventHandler<EventArgs> eventHandler) {
+        if (hivesListChange == null)
+            hivesListChange = new Event<EventArgs>();
+        hivesListChange.add(eventHandler);
+
+        // DEBUG
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                for (int i = 0; i < 12; i++) {
+                    hives.add(new Hive("Hive number: ".concat(String.valueOf(i)),""));
+                    if (hivesListChange != null) {
+                        hivesListChange.fire(hives, new EventArgs());
+                    }
+                    try {
+                        Thread.sleep(3000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+        hives.clear();
+        t.start();
+        // END DEBUG
+    }
+
+    private Event<ChannelEventArgs> _channelEvent;
     public void SubscribeChannelEventHandler(EventHandler<ChannelEventArgs> eventHandler) {
+        if (this._channelEvent == null)
+            this._channelEvent = new Event<ChannelEventArgs>();
         this._channelEvent.add(eventHandler);
     }
+
     public void SubscribeConnectionEventHandler(EventHandler<PubSubConnectionEventArgs> eventHandler) {
         this._dataProvider.SubscribeConnectionEventHandler(eventHandler);
     }

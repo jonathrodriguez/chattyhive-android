@@ -1,2 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources><string name="left_panel_chats_button">Chats</string><string name="left_panel_hives_button">Hives</string><string name="left_panel_mates_button">Mates</string><string name="left_panel_search_button">Search</string><string name="left_panel_empty_list">You haven\'t subscribed to any Hive yet.</string></resources>
+<resources>
+    <string name="left_panel_chats_button">Chats</string>
+    <string name="left_panel_hives_button">Hives</string>
+    <string name="left_panel_mates_button">Mates</string>
+    <string name="left_panel_search_button">Search</string>
+    <string name="left_panel_chats_empty_list">You have no chats at this time.</string>
+    <string name="left_panel_hives_empty_list">You haven\'t subscribed to any Hive yet.</string>
+    <string name="left_panel_mates_empty_list">You haven\'t any mates yet. Try meeting somebody.</string>
+</resources>
