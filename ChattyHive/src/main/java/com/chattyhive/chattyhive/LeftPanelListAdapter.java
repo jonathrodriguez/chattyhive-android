@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -15,17 +16,13 @@ import com.chattyhive.backend.businessobjects.Hive;
 import com.chattyhive.backend.businessobjects.Mate;
 import com.chattyhive.backend.util.events.EventArgs;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 /**
  * Created by Jonathan on 13/03/14.
  */
 public class LeftPanelListAdapter extends BaseAdapter {
-    public static final int LEFT_PANEL_LIST_KIND_NONE  = 0;
-    public static final int LEFT_PANEL_LIST_KIND_CHATS = 1;
-    public static final int LEFT_PANEL_LIST_KIND_HIVES = 2;
-    public static final int LEFT_PANEL_LIST_KIND_MATES = 3;
-    private static final int LEFT_PANEL_LIST_KIND_COUNT = 4;
 
     private Context context;
     private ListView listView;
@@ -35,8 +32,12 @@ public class LeftPanelListAdapter extends BaseAdapter {
     private ArrayList<Mate> mates_list_data;
     private int visibleList;
 
-    public void SetVisibleList(int LEFT_PANEL_LIST_KIND) { this.visibleList = LEFT_PANEL_LIST_KIND; }
+    private View.OnClickListener clickListener;
+
+    public void SetVisibleList(int LeftPanel_ListKind) { this.visibleList = LeftPanel_ListKind; }
     public  int GetVisibleList()                         { return this.visibleList; }
+
+    public void SetOnClickListener (View.OnClickListener listener) { this.clickListener = listener; notifyDataSetChanged(); }
 
     public void OnAddItem(Object sender, EventArgs args) {
         ((Activity)this.context).runOnUiThread(new Runnable(){
@@ -64,17 +65,17 @@ public class LeftPanelListAdapter extends BaseAdapter {
 
     @Override
     public int getViewTypeCount() {
-        return LEFT_PANEL_LIST_KIND_COUNT;
+        return this.context.getResources().getInteger(R.integer.LeftPanel_ListKing_Count);
     }
 
     @Override
     public int getCount() {
         switch (this.visibleList) {
-            case LEFT_PANEL_LIST_KIND_HIVES:
+            case R.id.LeftPanel_ListKind_Hives:
                 return this.hives_list_data.size();
-            case LEFT_PANEL_LIST_KIND_CHATS:
+            case R.id.LeftPanel_ListKind_Chats:
                 return this.chats_list_data.size();
-            case LEFT_PANEL_LIST_KIND_MATES:
+            case R.id.LeftPanel_ListKind_Mates:
                 return this.mates_list_data.size();
         }
         return 0;
@@ -83,11 +84,11 @@ public class LeftPanelListAdapter extends BaseAdapter {
     @Override
     public Object getItem(int position){
         switch (this.visibleList) {
-            case LEFT_PANEL_LIST_KIND_HIVES:
+            case R.id.LeftPanel_ListKind_Hives:
                 return this.hives_list_data.get(position);
-            case LEFT_PANEL_LIST_KIND_CHATS:
+            case R.id.LeftPanel_ListKind_Chats:
                 return this.chats_list_data.get(position);
-            case LEFT_PANEL_LIST_KIND_MATES:
+            case R.id.LeftPanel_ListKind_Mates:
                 return this.mates_list_data.get(position);
         }
         return null;
@@ -102,40 +103,43 @@ public class LeftPanelListAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder = null;
         int type = visibleList;
-        if (type == LEFT_PANEL_LIST_KIND_NONE) { return null; }
+        if (type == R.id.LeftPanel_ListKind_None) { return null; }
         if (convertView==null) {
             switch (type) {
-                case LEFT_PANEL_LIST_KIND_HIVES:
+                case R.id.LeftPanel_ListKind_Hives:
                     holder = new HiveViewHolder();
                     convertView = this.inflater.inflate(R.layout.left_panel_hives_list_item,parent,false);
+                    ((HiveViewHolder)holder).hiveItem = (LinearLayout)convertView.findViewById((R.id.left_panel_hives_list_item_top_view));
                     ((HiveViewHolder)holder).hiveName = (TextView)convertView.findViewById(R.id.left_panel_hives_list_item_hive_name);
                     ((HiveViewHolder)holder).hiveImage = (ImageView)convertView.findViewById(R.id.left_panel_hives_list_item_img);
+                    ((HiveViewHolder)holder).hiveItem.setOnClickListener(clickListener);
                     break;
-                case LEFT_PANEL_LIST_KIND_CHATS:
+                case R.id.LeftPanel_ListKind_Chats:
                     //convertView = this.inflater.inflate(R.layout.multichat_message_me,parent,false);
                     holder = new ChatViewHolder();
                     break;
-                case LEFT_PANEL_LIST_KIND_MATES:
+                case R.id.LeftPanel_ListKind_Mates:
                     //convertView = this.inflater.inflate(R.layout.multichat_message_me,parent,false);
                     holder = new MateViewHolder();
                     break;
             }
             if (convertView != null)
-                convertView.setTag(holder);
+                convertView.setTag(R.id.LeftPanel_ListViewHolder,holder);
         } else {
-            holder = (ViewHolder)convertView.getTag();
+            holder = (ViewHolder)convertView.getTag(R.id.LeftPanel_ListViewHolder);
         }
 
         Object item = this.getItem(position);
 
         switch (type) {
-            case LEFT_PANEL_LIST_KIND_HIVES:
+            case R.id.LeftPanel_ListKind_Hives:
                 ((HiveViewHolder)holder).hiveName.setText(((Hive)item).get_name());
+                ((HiveViewHolder)holder).hiveItem.setTag(R.id.BO_Hive,item);
                 //((HiveViewHolder)holder).hiveImage = (ImageView)convertView.findViewById(R.id.left_panel_hives_list_item_img);
                 break;
-            case LEFT_PANEL_LIST_KIND_CHATS:
+            case R.id.LeftPanel_ListKind_Chats:
                 break;
-            case LEFT_PANEL_LIST_KIND_MATES:
+            case R.id.LeftPanel_ListKind_Mates:
                 break;
         }
 
@@ -145,6 +149,7 @@ public class LeftPanelListAdapter extends BaseAdapter {
     private abstract class ViewHolder{}
 
     private class HiveViewHolder extends ViewHolder {
+        public LinearLayout hiveItem;
         public TextView hiveName;
         public ImageView hiveImage;
     }

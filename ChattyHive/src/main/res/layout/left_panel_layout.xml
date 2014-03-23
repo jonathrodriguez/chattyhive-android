@@ -18,7 +18,9 @@
             android:text="@string/left_panel_chats_button"
             android:id="@+id/left_panel_chats_button"
             android:textColor="#a1a1a1"
-            android:background="#292929" />
+            android:background="#292929"
+            android:gravity="center|center_vertical|center_horizontal"
+            android:layout_gravity="center" />
 
         <Button
             android:layout_width="wrap_content"
@@ -26,7 +28,9 @@
             android:text="@string/left_panel_hives_button"
             android:id="@+id/left_panel_hives_button"
             android:textColor="#a1a1a1"
-            android:background="#292929" />
+            android:background="#292929"
+            android:layout_gravity="center"
+            android:gravity="center|center_vertical|center_horizontal" />
 
         <Button
             android:layout_width="wrap_content"
@@ -34,7 +38,9 @@
             android:text="@string/left_panel_mates_button"
             android:id="@+id/left_panel_mates_button"
             android:textColor="#a1a1a1"
-            android:background="#292929" />
+            android:background="#292929"
+            android:gravity="center|center_vertical|center_horizontal"
+            android:layout_gravity="center" />
 
         <FrameLayout
             android:layout_width="0dp"
@@ -51,7 +57,9 @@
             android:paddingBottom="12dp"
             android:scaleType="fitCenter"
             android:contentDescription="@string/left_panel_search_button"
-            android:layout_gravity="right" />
+            android:layout_gravity="right"
+            android:paddingRight="12dp"
+            android:paddingLeft="12dp" />
 
     </LinearLayout>
 

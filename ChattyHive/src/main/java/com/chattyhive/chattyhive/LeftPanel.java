@@ -6,13 +6,16 @@ import android.graphics.Color;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ImageSpan;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
 import com.chattyhive.backend.Controller;
+import com.chattyhive.backend.businessobjects.Hive;
 import com.chattyhive.backend.businessobjects.Mate;
 import com.chattyhive.backend.util.events.EventArgs;
 import com.chattyhive.backend.util.events.EventHandler;
@@ -69,7 +72,9 @@ public class LeftPanel {
             e.printStackTrace();
         };
 
-        this.leftPanelListAdapter.SetVisibleList(LeftPanelListAdapter.LEFT_PANEL_LIST_KIND_CHATS);
+        this.leftPanelListAdapter.SetOnClickListener(OpenChat);
+
+        this.leftPanelListAdapter.SetVisibleList(R.id.LeftPanel_ListKind_Chats);
         emptyMessage.setText(R.string.left_panel_chats_empty_list);
         if (this.leftPanelListAdapter.getCount() == 0) {
             view_switcher.showNext();
@@ -86,7 +91,7 @@ public class LeftPanel {
                     SetButtonSelected(chats, true, v.getContext().getResources().getString(R.string.left_panel_chats_button), R.drawable.pestanhas_panel_izquierdo_chats);
                     SetButtonSelected(hives,false,v.getContext().getResources().getString(R.string.left_panel_hives_button),R.drawable.pestanhas_panel_izquierdo_hives_blanco);
                     SetButtonSelected(mates,false,v.getContext().getResources().getString(R.string.left_panel_mates_button),R.drawable.pestanhas_panel_izquierdo_users_blanco);
-                    leftPanelListAdapter.SetVisibleList(LeftPanelListAdapter.LEFT_PANEL_LIST_KIND_CHATS);
+                    leftPanelListAdapter.SetVisibleList(R.id.LeftPanel_ListKind_Chats);
                     emptyMessage.setText(R.string.left_panel_chats_empty_list);
                     if ((showingEmpty) && (leftPanelListAdapter.getCount() > 0)) {
                         showingEmpty = false;
@@ -100,7 +105,7 @@ public class LeftPanel {
                     SetButtonSelected(chats,false, v.getContext().getResources().getString(R.string.left_panel_chats_button), R.drawable.pestanhas_panel_izquierdo_chats_blanco);
                     SetButtonSelected(hives, true,v.getContext().getResources().getString(R.string.left_panel_hives_button),R.drawable.pestanhas_panel_izquierdo_hives);
                     SetButtonSelected(mates,false,v.getContext().getResources().getString(R.string.left_panel_mates_button),R.drawable.pestanhas_panel_izquierdo_users_blanco);
-                    leftPanelListAdapter.SetVisibleList(LeftPanelListAdapter.LEFT_PANEL_LIST_KIND_HIVES);
+                    leftPanelListAdapter.SetVisibleList(R.id.LeftPanel_ListKind_Hives);
                     emptyMessage.setText(R.string.left_panel_hives_empty_list);
                     if ((showingEmpty) && (leftPanelListAdapter.getCount() > 0)) {
                         showingEmpty = false;
@@ -114,7 +119,7 @@ public class LeftPanel {
                     SetButtonSelected(chats,false, v.getContext().getResources().getString(R.string.left_panel_chats_button), R.drawable.pestanhas_panel_izquierdo_chats_blanco);
                     SetButtonSelected(hives,false,v.getContext().getResources().getString(R.string.left_panel_hives_button),R.drawable.pestanhas_panel_izquierdo_hives_blanco);
                     SetButtonSelected(mates, true,v.getContext().getResources().getString(R.string.left_panel_mates_button),R.drawable.pestanhas_panel_izquierdo_users);
-                    leftPanelListAdapter.SetVisibleList(LeftPanelListAdapter.LEFT_PANEL_LIST_KIND_MATES);
+                    leftPanelListAdapter.SetVisibleList(R.id.LeftPanel_ListKind_Mates);
                     emptyMessage.setText(R.string.left_panel_mates_empty_list);
                     if ((showingEmpty) && (leftPanelListAdapter.getCount() > 0)) {
                         showingEmpty = false;
@@ -145,4 +150,24 @@ public class LeftPanel {
         }
         button.setText(buttonLabel);
     }
+
+    protected View.OnClickListener OpenChat = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            switch (leftPanelListAdapter.GetVisibleList()) {
+                case R.id.LeftPanel_ListKind_Hives:
+                    Hive h = ((Hive)v.getTag(R.id.BO_Hive));
+                    View chatView = ((Main)context).ShowLayout(R.layout.main_panel_chat_layout);
+                    ((TextView)chatView.findViewById(R.id.chatName)).setText(h.get_name());
+                    chatView.findViewById(R.id.chatMenuIcon).setOnClickListener(((Main)context).menuIcon_ClickListener);
+                    chatView.findViewById(R.id.chatIcon).setOnClickListener(((Main)context).appIcon_ClickListener);
+                    ((Main)context).appIcon_ClickListener.onClick(chatView.findViewById(R.id.chatIcon));
+                    break;
+                case R.id.LeftPanel_ListKind_Chats:
+                    break;
+                case R.id.LeftPanel_ListKind_Mates:
+                    break;
+            }
+        }
+    };
 }

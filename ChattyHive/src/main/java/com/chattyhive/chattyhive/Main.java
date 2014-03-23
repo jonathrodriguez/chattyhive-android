@@ -7,6 +7,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.GestureDetector;
 
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -37,6 +38,12 @@ public class Main extends Activity implements GestureDetector.OnGestureListener 
     Boolean _performScroll = false;
 
     Controller _controller;
+
+    protected View ShowLayout (int layoutID) {
+        FrameLayout mainPanel = ((FrameLayout)findViewById(R.id.main_panel));
+        mainPanel.removeAllViews();
+        return LayoutInflater.from(this).inflate(layoutID, mainPanel, true);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,6 +134,62 @@ public class Main extends Activity implements GestureDetector.OnGestureListener 
         return super.onOptionsItemSelected(item);
     }
 
+    protected View.OnClickListener appIcon_ClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+
+            final LinearLayout main_block = (LinearLayout)findViewById(R.id.main_block);
+            final FrameLayout.LayoutParams main_block_params = (FrameLayout.LayoutParams) main_block.getLayoutParams();
+            final int translate, new_left_margin, new_right_margin;
+
+            int main_block_left_margin = main_block_params.leftMargin;
+            int main_block_right_margin = main_block_params.rightMargin;
+
+            int distance = (int)getResources().getDimension(R.dimen.chat_list_width);
+
+            if (main_block_right_margin < 0) {
+                translate = main_block_right_margin;
+                new_left_margin = -1 * distance;
+                new_right_margin = 0;
+            } else {
+                translate = -1*main_block_left_margin;
+                new_left_margin = 0;
+                new_right_margin = -1 * distance;
+            }
+
+
+
+            movePanel(main_block,main_block_params,translate,new_left_margin,new_right_margin,250);
+    } };
+
+    protected View.OnClickListener menuIcon_ClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+
+            final LinearLayout main_block = (LinearLayout)findViewById(R.id.main_block);
+            final FrameLayout.LayoutParams main_block_params = (FrameLayout.LayoutParams) main_block.getLayoutParams();
+            final int translate, new_left_margin, new_right_margin;
+
+            int main_block_left_margin = main_block_params.leftMargin;
+            int main_block_right_margin = main_block_params.rightMargin;
+
+            int distance = (int)getResources().getDimension(R.dimen.right_menu_width);
+            int zero_left = (int)getResources().getDimension(R.dimen.chat_list_width);
+            if (main_block_right_margin > 0) {
+                translate = main_block_right_margin;
+                new_left_margin = -1 * zero_left;
+                new_right_margin = 0;
+            } else {
+                translate = -1 * (distance - main_block_right_margin);
+                new_left_margin = -1*zero_left - distance;
+                new_right_margin = distance;
+            }
+
+
+
+            movePanel(main_block,main_block_params,translate,new_left_margin,new_right_margin,250);
+        }
+    };
 
     public void setPanelBehaviour() {
         this._detector = new GestureDetector(this,this);
@@ -140,65 +203,13 @@ public class Main extends Activity implements GestureDetector.OnGestureListener 
         main_block.setLayoutParams(main_block_params);
 
         ImageButton appIcon = (ImageButton)findViewById(R.id.appIcon);
-        appIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                final LinearLayout main_block = (LinearLayout)findViewById(R.id.main_block);
-                final FrameLayout.LayoutParams main_block_params = (FrameLayout.LayoutParams) main_block.getLayoutParams();
-                final int translate, new_left_margin, new_right_margin;
-
-                int main_block_left_margin = main_block_params.leftMargin;
-                int main_block_right_margin = main_block_params.rightMargin;
-
-                int distance = (int)getResources().getDimension(R.dimen.chat_list_width);
-
-                if (main_block_right_margin < 0) {
-                    translate = main_block_right_margin;
-                    new_left_margin = -1 * distance;
-                    new_right_margin = 0;
-                } else {
-                    translate = -1*main_block_left_margin;
-                    new_left_margin = 0;
-                    new_right_margin = -1 * distance;
-                }
-
-
-
-                movePanel(main_block,main_block_params,translate,new_left_margin,new_right_margin,250);
-            }
-        });
+        appIcon.setOnClickListener(this.appIcon_ClickListener);
 
         ImageButton menuIcon = (ImageButton)findViewById(R.id.menuIcon);
-        menuIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                final LinearLayout main_block = (LinearLayout)findViewById(R.id.main_block);
-                final FrameLayout.LayoutParams main_block_params = (FrameLayout.LayoutParams) main_block.getLayoutParams();
-                final int translate, new_left_margin, new_right_margin;
-
-                int main_block_left_margin = main_block_params.leftMargin;
-                int main_block_right_margin = main_block_params.rightMargin;
-
-                int distance = (int)getResources().getDimension(R.dimen.right_menu_width);
-                int zero_left = (int)getResources().getDimension(R.dimen.chat_list_width);
-                if (main_block_right_margin > 0) {
-                    translate = main_block_right_margin;
-                    new_left_margin = -1 * zero_left;
-                    new_right_margin = 0;
-                } else {
-                    translate = -1 * (distance - main_block_right_margin);
-                    new_left_margin = -1*zero_left - distance;
-                    new_right_margin = distance;
-                }
-
-
-
-                movePanel(main_block,main_block_params,translate,new_left_margin,new_right_margin,250);
-            }
-        });
+        menuIcon.setOnClickListener(this.menuIcon_ClickListener);
     }
+
+
 
     public void movePanel(final LinearLayout main_block, final FrameLayout.LayoutParams main_block_params, final int translate, final int new_margin_left, final int new_margin_right,long duration) {
 
