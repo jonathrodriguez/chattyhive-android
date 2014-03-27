@@ -7,6 +7,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.GestureDetector;
 
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -39,16 +40,19 @@ public class Main extends Activity implements GestureDetector.OnGestureListener 
 
     Controller _controller;
 
+    int ActiveLayoutID;
+
     protected View ShowLayout (int layoutID) {
         FrameLayout mainPanel = ((FrameLayout)findViewById(R.id.main_panel));
         mainPanel.removeAllViews();
+        ActiveLayoutID = layoutID;
         return LayoutInflater.from(this).inflate(layoutID, mainPanel, true);
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        ActiveLayoutID = R.layout.main;
         setContentView(R.layout.main);
 
         setPanelBehaviour();
@@ -74,11 +78,11 @@ public class Main extends Activity implements GestureDetector.OnGestureListener 
 /*        try {
             this._controller.SubscribeChannelEventHandler(new EventHandler<ChannelEventArgs>(this,"onChannelEvent",ChannelEventArgs.class));
             this._controller.SubscribeConnectionEventHandler(new EventHandler<PubSubConnectionEventArgs>(this, "onConnectionStateChange",PubSubConnectionEventArgs.class));
-        } catch (NoSuchMethodException e) { }
+        } catch (NoSuchMethodException e) { }*/
 
         if (this._controller.getServerUser().getStatus() != ServerStatus.LOGGED) {
             this._controller.Connect();
-        }*/
+        }
 
         LeftPanel lp = new LeftPanel(this);
     }
@@ -86,12 +90,12 @@ public class Main extends Activity implements GestureDetector.OnGestureListener 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == OP_CODE_LOGIN) {
-            //if (resultCode == RESULT_OK) {
+            if (resultCode == RESULT_OK) {
                 this.Logged();
-            /*} else {
+            } else {
                 Controller.disposeRunningController();
                 this.finish();
-            }*/
+            }
         }
     }
 
@@ -240,6 +244,40 @@ public class Main extends Activity implements GestureDetector.OnGestureListener 
         main_block.startAnimation(animation);
     }
 
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
+            if (event.getAction() == KeyEvent.ACTION_DOWN
+                    && event.getRepeatCount() == 0) {
+
+                // Tell the framework to start tracking this event.
+                findViewById(R.id.main_block).getKeyDispatcherState().startTracking(event, this);
+
+                return true;
+
+            } else if (event.getAction() == KeyEvent.ACTION_UP) {
+                findViewById(R.id.main_block).getKeyDispatcherState().handleUpEvent(event);
+                if (event.isTracking() && !event.isCanceled()) {
+
+                    if (ActiveLayoutID != R.layout.main) {
+                        ShowLayout(R.layout.main);
+                        return true;
+                    } else {
+                        return super.dispatchKeyEvent(event);
+                    }
+                }
+            }
+            return super.dispatchKeyEvent(event);
+        } else {
+            return super.dispatchKeyEvent(event);
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        return;
+    }
 
     @Override
     public boolean onDown(MotionEvent e) {

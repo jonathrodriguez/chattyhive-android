@@ -2,84 +2,83 @@ package com.chattyhive.chattyhive;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
+import com.chattyhive.backend.businessobjects.Hive;
+import com.chattyhive.backend.businessobjects.Mate;
 import com.chattyhive.backend.businessobjects.Message;
+import com.chattyhive.backend.util.events.EventArgs;
 
 import java.util.ArrayList;
 
 /**
- * Created by Jonathan on 24/10/13.
+ * Created by Jonathan on 25/03/14.
  */
 public class ChatListAdapter extends BaseAdapter {
-    private Context _mContext;
-    private int _layoutResourceId;
-    private LayoutInflater _mInflater;
-    private ArrayList<Message> _data;
-    private String _myName = "";
-    private Boolean _multichat = true;
+    private Context context;
+    private ListView listView;
+    private LayoutInflater inflater;
+    private ArrayList<Message> chatMessages;
+    private int chatKind;
 
-    private static final int TYPE_MSG_MULTICHAT_OTHER = 0;
-    private static final int TYPE_MSG_MULTICHAT_ME = 1;
-    private static final int TYPE_MSG_SINGLECHAT_OTHER = 2;
-    private static final int TYPE_MSG_SINGLECHAT_ME = 3;
-    private static final int TYPE_MSG_COUNT = 4;
+    public ChatListAdapter (Context activityContext,ArrayList<Message> chatMessages, int chatKind) {
+        this.chatMessages = chatMessages;
 
-    public ChatListAdapter(Context mContext, String myName, Boolean Multichat, ArrayList<Message> data) {
-        this(mContext, myName, Multichat);
+        this.context = activityContext;
+        this.inflater = ((Activity)this.context).getLayoutInflater();
 
-        this._data = data;
+        this.listView = ((ListView)((Activity)this.context).findViewById(R.id.left_panel_element_list));
+        this.chatKind = chatKind;
     }
 
-    public ChatListAdapter(Context mContext, String myName, ArrayList<Message> data) {
-        this(mContext,myName,true,data);
-    }
 
-    public ChatListAdapter(Context mContext, String myName, Boolean Multichat) {
-
-        this._mContext = mContext;
-        this._mInflater = ((Activity) _mContext).getLayoutInflater();
-        this._myName = myName;
-        this._multichat = Multichat;
-    }
-
-    public ChatListAdapter(Context mContext, String myName) {
-        this(mContext,myName,true);
+    public void OnAddItem(Object sender, EventArgs args) {
+        ((Activity)this.context).runOnUiThread(new Runnable(){
+            public void run() {
+                notifyDataSetChanged();
+            }
+        });
     }
 
     @Override
     public int getItemViewType(int position) {
-        int type = (this._multichat)?TYPE_MSG_MULTICHAT_OTHER:TYPE_MSG_SINGLECHAT_OTHER;
-        if ((this._data != null) && (this._data.get(position) != null) && (this._data.get(position).getUser() != null) &&
-            (_data.get(position).getUser().getUsername().equalsIgnoreCase(this._myName))) {
-            type = (this._multichat)?TYPE_MSG_MULTICHAT_ME:TYPE_MSG_SINGLECHAT_ME;
+        boolean mineMessage = ((this.chatMessages.get(position).getUser() != null) && (this.chatMessages.get(position).getUser().isMe()));
+        switch (this.chatKind) {
+            case R.id.MainPanelChat_ListKind_Hive:
+                return ((mineMessage)?R.id.MainPanelChat_ListKind_Hive_Me:R.id.MainPanelChat_ListKind_Hive_Other);
+            case R.id.MainPanelChat_ListKind_PrivateGroup:
+                return ((mineMessage)?R.id.MainPanelChat_ListKind_PrivateGroup_Me:R.id.MainPanelChat_ListKind_PrivateGroup_Other);
+            case R.id.MainPanelChat_ListKind_PrivateSingle:
+                return ((mineMessage)?R.id.MainPanelChat_ListKind_PrivateSingle_Me:R.id.MainPanelChat_ListKind_PrivateSingle_Other);
+            case R.id.MainPanelChat_ListKind_PublicGroup:
+                return ((mineMessage)?R.id.MainPanelChat_ListKind_PublicGroup_Me:R.id.MainPanelChat_ListKind_PublicGroup_Other);
+            case R.id.MainPanelChat_ListKind_PublicSingle:
+                return ((mineMessage)?R.id.MainPanelChat_ListKind_PublicSingle_Me:R.id.MainPanelChat_ListKind_PublicSingle_Other);
         }
-        return type;
+        return R.id.MainPanelChat_ListKind_None;
     }
 
     @Override
     public int getViewTypeCount() {
-        return TYPE_MSG_COUNT;
+        return this.context.getResources().getInteger(R.integer.MainPanelChat_ListKind_Count);
     }
 
     @Override
     public int getCount() {
-        return this._data.size();
-    }
-
-    public void addItem(Message message) {
-        this._data.add(message);
-        this.notifyDataSetChanged();
+        return this.chatMessages.size();
     }
 
     @Override
-    public Message getItem(int position){
-        return this._data.get(position);
+    public Object getItem(int position){
+        return this.chatMessages.get(position);
     }
 
     @Override
@@ -94,30 +93,41 @@ public class ChatListAdapter extends BaseAdapter {
         if(convertView==null){
             holder = new ViewHolder();
             switch (type) {
-                case TYPE_MSG_MULTICHAT_OTHER:
-                    convertView = this._mInflater.inflate(R.layout.multichat_message_other,parent,false);
-                    holder.username = (TextView)convertView.findViewById(R.id.username);
-                    holder.messageText = (TextView)convertView.findViewById(R.id.messageText);
-                    holder.timeStamp = (TextView)convertView.findViewById(R.id.timeStamp);
-                    holder.avatarThumbnail = (ImageView)convertView.findViewById(R.id.avatarThumbnail);
+                case R.id.MainPanelChat_ListKind_Hive_Other:
+                    convertView = this.inflater.inflate(R.layout.main_panel_chat_hive_message_other,parent,false);
+                    holder.username = (TextView)convertView.findViewById(R.id.main_panel_chat_username);
+                    holder.messageText = (TextView)convertView.findViewById(R.id.main_panel_chat_messageText);
+                    holder.timeStamp = (TextView)convertView.findViewById(R.id.main_panel_chat_timeStamp);
+                    holder.avatarThumbnail = (ImageView)convertView.findViewById(R.id.main_panel_chat_avatarThumbnail);
                     break;
-                case TYPE_MSG_MULTICHAT_ME:
-                    convertView = this._mInflater.inflate(R.layout.multichat_message_me,parent,false);
-                    holder.username = (TextView)convertView.findViewById(R.id.username);
-                    holder.messageText = (TextView)convertView.findViewById(R.id.messageText);
-                    holder.timeStamp = (TextView)convertView.findViewById(R.id.timeStamp);
-                    holder.avatarThumbnail = (ImageView)convertView.findViewById(R.id.avatarThumbnail);
+                case R.id.MainPanelChat_ListKind_Hive_Me:
+                    convertView = this.inflater.inflate(R.layout.main_panel_chat_hive_message_me,parent,false);
+                    Log.w("ChatListAdapter", "Is me...");
+                    holder.username = (TextView)convertView.findViewById(R.id.main_panel_chat_username);
+                    holder.messageText = (TextView)convertView.findViewById(R.id.main_panel_chat_messageText);
+                    holder.timeStamp = (TextView)convertView.findViewById(R.id.main_panel_chat_timeStamp);
+                    holder.avatarThumbnail = (ImageView)convertView.findViewById(R.id.main_panel_chat_avatarThumbnail);
+                    Log.w("ChatListAdapter", "What is wrong?");
                     break;
             }
-            convertView.setTag(holder);
+
+            convertView.setTag(R.id.MainPanelChat_ListViewHolder,holder);
         } else {
-            holder = (ViewHolder)convertView.getTag();
+            holder = (ViewHolder)convertView.getTag(R.id.MainPanelChat_ListViewHolder);
         }
 
-        Message message = this._data.get(position);
+        Message message = this.chatMessages.get(position);
 
-        if (message.getUser() != null)
+        convertView.setTag(R.id.BO_Message,message);
+
+        if (message.getUser() != null) {
             holder.username.setText(message.getUser().getUsername());
+            holder.username.setTextColor(Color.parseColor(message.getUser()._color));
+        }
+       /* else {
+            holder.username.setText("noName");
+            holder.username.setTextColor(Color.parseColor("#111111"));
+        }*/
 
         holder.messageText.setText(message.getMessage().getContent());
         holder.timeStamp.setText(message.getTimeStamp().toString());

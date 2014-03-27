@@ -3,6 +3,7 @@ package com.chattyhive.backend;
 import com.chattyhive.backend.businessobjects.Hive;
 import com.chattyhive.backend.businessobjects.Message;
 import com.chattyhive.backend.businessobjects.MessageContent;
+import com.chattyhive.backend.businessobjects.User;
 import com.chattyhive.backend.contentprovider.DataProvider;
 import com.chattyhive.backend.contentprovider.server.ServerUser;
 import com.chattyhive.backend.util.events.ChannelEventArgs;
@@ -30,6 +31,8 @@ import java.util.HashMap;
 public class Controller {
     private static Controller _controller;
     private static Boolean appBounded = false;
+
+    private static User user;
 
     public static Controller getRunningController() {
         if (_controller == null)
@@ -73,7 +76,7 @@ public class Controller {
             hivesListChange = new Event<EventArgs>();
         hivesListChange.add(eventHandler);
 
-        // DEBUG
+/*        // DEBUG
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -92,7 +95,7 @@ public class Controller {
         });
         hives.clear();
         t.start();
-        // END DEBUG
+        // END DEBUG*/
     }
 
     private Event<ChannelEventArgs> _channelEvent;
@@ -184,16 +187,17 @@ public class Controller {
             JsonParser jsonParser = new JsonParser();
             JsonElement jsonElement = jsonParser.parse(args.getMessage());
             m = new Message(jsonElement);
-
-            if (this.messages.containsKey(args.getChannelName())) {
-                this.messages.get(args.getChannelName()).add(m);
-            } else {
-                ArrayList<Message> arrayList = new ArrayList<Message>();
-                arrayList.add(m);
-                this.messages.put(args.getChannelName(),arrayList);
+            if (!((m.getUser() != null) && (m.getUser().isMe()))) {
+                if (this.messages.containsKey(args.getChannelName())) {
+                    this.messages.get(args.getChannelName()).add(m);
+                } else {
+                    ArrayList<Message> arrayList = new ArrayList<Message>();
+                    arrayList.add(m);
+                    this.messages.put(args.getChannelName(),arrayList);
+                }
             }
         } else {
-            m = new Message(new MessageContent(""),TimestampFormatter.toDate(args.getMessage()));
+            m = new Message(new MessageContent(args.getMessage()),TimestampFormatter.toDate(args.getMessage()));
         }
 
         this._channelEvent.fire(this,new ChannelEventArgs(args.getChannelName(),args.getEventName(),m));
@@ -221,10 +225,20 @@ public class Controller {
      * is URL encoded.
      * @param message The message to be sent.
      */
-    public Boolean sendMessage(Message message) {
-        // TODO: Uncomment the following lines to send messages correctly and remove actual sendMessage line.
-        //message._user = new User(this._dataProvider.getUser());
-        //this._dataProvider.sendMessage(message.toJson());
-        return this._dataProvider.sendMessage("message=".concat(message._content.getContent().replace("+", "%2B").replace(" ", "+")).concat("&timestamp=").concat(TimestampFormatter.toString(message.getTimeStamp()).replace(":", "%3A").replace("+", "%2B").replace(" ", "+")));
+    public Boolean sendMessage(Message message,String channel) {
+        if (user == null) {
+            user = new User(this._dataProvider.getUser(),true);
+        }
+        message._user = user;
+
+        if (!this.messages.containsKey(channel))
+            this.messages.put(channel,new ArrayList<Message>());
+        this.messages.get(channel).add(message);
+
+
+        //return true;
+        return this._dataProvider.sendMessage(message.toJson());
+
+        //return this._dataProvider.sendMessage("message=".concat(message._content.getContent().replace("+", "%2B").replace(" ", "+")).concat("&timestamp=").concat(TimestampFormatter.toString(message.getTimeStamp()).replace(":", "%3A").replace("+", "%2B").replace(" ", "+")));
     }
 }

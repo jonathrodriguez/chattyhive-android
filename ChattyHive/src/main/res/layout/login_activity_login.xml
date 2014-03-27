@@ -20,7 +20,7 @@
         <EditText
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/editText"
+            android:id="@+id/login_activity_login_username"
             android:layout_weight="1"
             android:background="#fffff7"
             android:paddingLeft="5dp"
@@ -34,7 +34,7 @@
             android:layout_height="wrap_content"
             android:inputType="textPassword"
             android:ems="10"
-            android:id="@+id/editText2"
+            android:id="@+id/login_activity_login_password"
             android:background="#fffff7"
             android:layout_marginBottom="15dp"
             android:hint="@string/login_activity_login_tab_password_field_hint" />
@@ -43,7 +43,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/login_activity_login_tab_login_button"
-            android:id="@+id/login_button"
+            android:id="@+id/login_activity_login_button"
             android:background="@drawable/login_activity_login_to_chattyhive_button"
             android:layout_weight="0"
             android:gravity="center|center_vertical|center_horizontal"

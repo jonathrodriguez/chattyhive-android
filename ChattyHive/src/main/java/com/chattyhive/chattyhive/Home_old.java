@@ -32,8 +32,6 @@ public class Home_old extends Activity implements ServiceConnection {
 
     String mChannel_name = "public_test";
 
-    ChatListAdapter _chatListAdapter;
-
     TextView status;
     ToggleButton switchButton;
 
@@ -111,9 +109,6 @@ public class Home_old extends Activity implements ServiceConnection {
                 }
             });
         }
-
-        this._chatListAdapter = new ChatListAdapter(this, this._controller.getServerUser().getLogin(),true,this._controller.getMessages("public_test"));
-        ((ListView)findViewById(R.id.listView)).setAdapter(this._chatListAdapter);
     }
 
     public void onConnectionStateChange(Object sender, final PubSubConnectionEventArgs args) {
@@ -136,14 +131,6 @@ public class Home_old extends Activity implements ServiceConnection {
         }
         switch (event_type) {
             case 1:
-                if (args.getChannelName().equalsIgnoreCase(mChannel_name)) {
-                    runOnUiThread(new Runnable(){
-                        public void run() {
-                            //_chatListAdapter.addItem(args.getMessage());
-                            _chatListAdapter.notifyDataSetChanged();
-                        }
-                    });
-                }
                 break;
             case 2:
                 if (args.getChannelName().equalsIgnoreCase(mChannel_name)) {
@@ -165,7 +152,7 @@ public class Home_old extends Activity implements ServiceConnection {
 
             Message message = new Message(new MessageContent(msg),new Date());
 
-            if (_controller.sendMessage(message))
+            if (_controller.sendMessage(message,""))
                 input.setText("");
         }
     };

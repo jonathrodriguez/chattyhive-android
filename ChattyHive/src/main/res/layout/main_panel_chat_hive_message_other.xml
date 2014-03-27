@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal" android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:orientation="horizontal" android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="#ffffff">
 
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/avatarThumbnail"
+        android:id="@+id/main_panel_chat_avatarThumbnail"
         android:layout_gravity="center|left"
         android:src="@android:drawable/sym_def_app_icon"
-        android:contentDescription="others_image" />
+        android:contentDescription="others_image"
+        android:background="#ffffff" />
 
     <LinearLayout
         android:orientation="vertical"
@@ -19,39 +21,46 @@
         android:layout_weight="1"
         android:layout_gravity="center"
         android:gravity="center_vertical"
-        android:id="@+id/linearLayout">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Large Text"
-            android:id="@+id/username"
-            android:layout_gravity="left|top"
-            android:gravity="left"
-            android:textAlignment="gravity"
-            android:singleLine="true" />
+        android:id="@+id/linearLayout"
+        android:background="#ffffff">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:id="@+id/messageText"
+            android:text="\@other"
+            android:id="@+id/main_panel_chat_username"
+            android:layout_gravity="left|top"
+            android:gravity="left"
+            android:textAlignment="gravity"
+            android:singleLine="true"
+            android:background="#ffffff"
+            android:textColor="#000000" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:id="@+id/main_panel_chat_messageText"
             android:text="Medium Text"
             android:layout_gravity="center_vertical|left"
             android:textAlignment="gravity"
-            android:gravity="left" />
+            android:gravity="left"
+            android:textColor="#333333"
+            android:background="#ffffff" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="Small Text"
-            android:id="@+id/timeStamp"
-            android:layout_gravity="bottom|left"
+            android:text="99:99"
+            android:id="@+id/main_panel_chat_timeStamp"
+            android:layout_gravity="bottom|right"
             android:textAlignment="gravity"
             android:gravity="left"
-            android:singleLine="true" />
+            android:singleLine="true"
+            android:textColor="#808080"
+            android:background="#ffffff" />
     </LinearLayout>
 
 </LinearLayout>

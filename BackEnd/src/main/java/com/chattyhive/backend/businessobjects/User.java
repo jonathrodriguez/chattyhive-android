@@ -9,13 +9,21 @@ import com.google.gson.JsonPrimitive;
  */
 public class User {
     String _username;
+    Boolean _me = false;
+    public String _color;
 
     /**
      * Public constructor.
      * @param username a string with the user's name.
      */
     public User (String username) {
+        this(username,false);
+    }
+
+    public User (String username, Boolean me) {
         this._username = username;
+        this._me = me;
+        this._color = "#".concat(Integer.toHexString(((int)Math.floor((Math.random()* Math.pow(2,24))))));
     }
 
     /**
@@ -24,6 +32,8 @@ public class User {
      */
     public User (JsonElement jsonUser) {
         this.fromJson(jsonUser);
+        this._me = false;
+        this._color = "#".concat(Integer.toHexString(((int)Math.floor((Math.random()* Math.pow(2,24))))));
     }
 
     /**
@@ -42,6 +52,9 @@ public class User {
         this._username = username;
     }
 
+    public Boolean isMe() { return this._me; }
+
+    public void setIsMe(Boolean value) { this._me = value; }
     /**
      * Retrieves the JSON representation of this user object.
      * @return

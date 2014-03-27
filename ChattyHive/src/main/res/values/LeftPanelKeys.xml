@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <item type="integer" name="LeftPanel_ListKing_Count">1</item>
+    <item type="integer" name="LeftPanel_ListKind_Count">1</item>
     <item type="id" name="LeftPanel_ListKind_None"/>
     <item type="id" name="LeftPanel_ListKind_Chats"/>
     <item type="id" name="LeftPanel_ListKind_Hives"/>

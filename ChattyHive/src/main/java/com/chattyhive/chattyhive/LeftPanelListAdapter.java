@@ -65,7 +65,7 @@ public class LeftPanelListAdapter extends BaseAdapter {
 
     @Override
     public int getViewTypeCount() {
-        return this.context.getResources().getInteger(R.integer.LeftPanel_ListKing_Count);
+        return this.context.getResources().getInteger(R.integer.LeftPanel_ListKind_Count);
     }
 
     @Override
@@ -115,11 +115,11 @@ public class LeftPanelListAdapter extends BaseAdapter {
                     ((HiveViewHolder)holder).hiveItem.setOnClickListener(clickListener);
                     break;
                 case R.id.LeftPanel_ListKind_Chats:
-                    //convertView = this.inflater.inflate(R.layout.multichat_message_me,parent,false);
+                    //convertView = this.inflater.inflate(R.layout.main_panel_chat_hive_message_me,parent,false);
                     holder = new ChatViewHolder();
                     break;
                 case R.id.LeftPanel_ListKind_Mates:
-                    //convertView = this.inflater.inflate(R.layout.multichat_message_me,parent,false);
+                    //convertView = this.inflater.inflate(R.layout.main_panel_chat_hive_message_me,parent,false);
                     holder = new MateViewHolder();
                     break;
             }

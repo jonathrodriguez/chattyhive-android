@@ -117,11 +117,11 @@ public class DataProvider {
      * Sends a message, which is correctly JSON formatted, to the server.
      * @param message a JSONElement with the message.
      */
-    public void sendMessage(JsonElement message) {
+    public Boolean sendMessage(JsonElement message) {
         //
         // TODO: Save message.
         //
-        this._server.SendMessage(message.toString());
+        return this._server.SendMessage(message.toString());
     }
 
     /**

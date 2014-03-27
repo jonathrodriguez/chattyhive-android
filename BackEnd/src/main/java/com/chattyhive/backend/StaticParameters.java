@@ -10,11 +10,11 @@ public final class StaticParameters {
 
     public static final String ProjectName = "chattyhive"; //The name of the project.
     public static final String ApplicationBase = "android"; //The name of the application.
-    public static final String ApplicationVersion = "0.1.0"; //Application version.
+    public static final String ApplicationVersion = "0.2.0-"; //Application version.
     public static final String ServerBase = "server"; //A name to identify the server.
-    public static final String ServerVersion = "0.1.0"; //The server version for which application is designed.
+    public static final String ServerVersion = "0.2.0"; //The server version for which application is designed.
 
-    public static final String DefaultServerAppName = "chdev2"; //Default server application name. In final release this will be set to "public" and in final beta to "private".
+    public static final String DefaultServerAppName = "chtest2"; //Default server application name. In final release this will be set to "public" and in final beta to "private".
     public static final String DefaultServerHost = "herokuapp.com"; //Domain where server application can be found.
     public static final String DefaultServerAppProtocol = "http"; //Connection protocol. This may evolve to "https".
 

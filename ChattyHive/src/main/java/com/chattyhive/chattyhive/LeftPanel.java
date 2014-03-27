@@ -158,10 +158,24 @@ public class LeftPanel {
                 case R.id.LeftPanel_ListKind_Hives:
                     Hive h = ((Hive)v.getTag(R.id.BO_Hive));
                     View chatView = ((Main)context).ShowLayout(R.layout.main_panel_chat_layout);
-                    ((TextView)chatView.findViewById(R.id.chatName)).setText(h.get_name());
-                    chatView.findViewById(R.id.chatMenuIcon).setOnClickListener(((Main)context).menuIcon_ClickListener);
-                    chatView.findViewById(R.id.chatIcon).setOnClickListener(((Main)context).appIcon_ClickListener);
-                    ((Main)context).appIcon_ClickListener.onClick(chatView.findViewById(R.id.chatIcon));
+                    ((TextView)chatView.findViewById(R.id.main_panel_chat_name)).setText(h.get_name());
+                    chatView.findViewById(R.id.main_panel_chat_name).setTag(h.get_pusher_channel_name());
+
+                    chatView.findViewById(R.id.main_panel_chat_menu_icon).setOnClickListener(((Main)context).menuIcon_ClickListener);
+                    chatView.findViewById(R.id.main_panel_chat_icon).setOnClickListener(((Main)context).appIcon_ClickListener);
+                    ((Main)context).appIcon_ClickListener.onClick(chatView.findViewById(R.id.main_panel_chat_icon));
+
+                    MainChat mainChat = new MainChat(context);
+                    chatView.findViewById(R.id.main_panel_chat_send_icon).setOnClickListener(mainChat.send_button_click);
+
+                    ChatListAdapter chatListAdapter = new ChatListAdapter(((Activity)context),((Main)context)._controller.getMessages(""), R.id.MainPanelChat_ListKind_Hive);
+                    ((ListView)((Activity)context).findViewById(R.id.main_panel_chat_message_list)).setAdapter(chatListAdapter);
+                    try {
+                        Controller.SubscribeToHivesListChange(new EventHandler<EventArgs>(chatListAdapter, "OnAddItem", EventArgs.class));
+                    } catch (NoSuchMethodException e) {
+                        e.printStackTrace();
+                    };
+
                     break;
                 case R.id.LeftPanel_ListKind_Chats:
                     break;
