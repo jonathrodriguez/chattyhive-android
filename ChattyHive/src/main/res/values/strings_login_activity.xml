@@ -14,7 +14,7 @@
     <string name="login_activity_sign_up_tab_sign_with_email">Or sign up with your email...</string>
     <string name="login_activity_sign_up_tab_email_field_hint">Enter your email....</string>
     <string name="login_activity_sign_up_tab_go_button">GO</string>
-    <string name="login_activity_sign_up_tab_try_it">Try it before sign in!</string>
+    <string name="login_activity_sign_up_tab_try_it">Try it before sign up!</string>
 
     <string name="login_activity_login_tab_email_field_hint">email / username</string>
     <string name="login_activity_login_tab_password_field_hint">password</string>

@@ -21,13 +21,14 @@ import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
 import com.chattyhive.backend.Controller;
+import com.chattyhive.backend.StaticParameters;
 import com.chattyhive.backend.contentprovider.server.ServerUser;
 
 public class LoginActivity extends Activity {
 
     private String username;
     private String password;
-    private AsyncTask mAuthTask;
+    private UserLoginTask mAuthTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -141,12 +142,11 @@ public class LoginActivity extends Activity {
     public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
         @Override
         protected Boolean doInBackground(Void... params) {
-            Log.w("UserLoginTask","Getting the controller");
             Controller controller = Controller.getRunningController();
-            Log.w("UserLoginTask","I have the controller");
             controller.setServerUser(new ServerUser(username,password));
-            Log.w("UserLoginTask", "I have set the user and pass");
-            //controller.setServerApp("chtest2");
+            if (StaticParameters.StandAlone) {
+                //TODO: Put here a wait to simulate real server communication
+            }
             return controller.Connect();
         }
 

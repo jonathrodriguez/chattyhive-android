@@ -7,12 +7,14 @@ import com.chattyhive.backend.businessobjects.User;
 import com.chattyhive.backend.contentprovider.DataProvider;
 import com.chattyhive.backend.contentprovider.server.ServerUser;
 import com.chattyhive.backend.util.events.ChannelEventArgs;
+import com.chattyhive.backend.util.events.ConnectionEventArgs;
 import com.chattyhive.backend.util.events.Event;
 import com.chattyhive.backend.util.events.EventArgs;
 import com.chattyhive.backend.util.events.EventHandler;
 import com.chattyhive.backend.util.events.PubSubChannelEventArgs;
 import com.chattyhive.backend.util.events.PubSubConnectionEventArgs;
 import com.chattyhive.backend.util.formatters.TimestampFormatter;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
@@ -57,8 +59,8 @@ public class Controller {
     } 
     // BusinessObjects
     private HashMap<String, ArrayList<Message>> messages = new HashMap<String, ArrayList<Message>>();
-    private static final ArrayList<Hive> hives = new ArrayList<Hive>();
-    public static final ArrayList<Hive> getHives() { return hives; }
+    private ArrayList<Hive> hives = new ArrayList<Hive>();
+    public ArrayList<Hive> getHives() { return hives; }
     // ContentProvider
     private DataProvider _dataProvider;
 
@@ -70,32 +72,34 @@ public class Controller {
         appBindingEvent.add(eventHandler);
     }
 
-    private static Event<EventArgs> hivesListChange;
-    public static void SubscribeToHivesListChange(EventHandler<EventArgs> eventHandler) {
+    private Event<EventArgs> hivesListChange;
+    public void SubscribeToHivesListChange(EventHandler<EventArgs> eventHandler) {
         if (hivesListChange == null)
             hivesListChange = new Event<EventArgs>();
         hivesListChange.add(eventHandler);
 
-/*        // DEBUG
-        Thread t = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                for (int i = 0; i < 12; i++) {
-                    hives.add(new Hive("Hive number: ".concat(String.valueOf(i)),""));
-                    if (hivesListChange != null) {
-                        hivesListChange.fire(hives, new EventArgs());
-                    }
-                    try {
-                        Thread.sleep(3000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+        if (StaticParameters.StandAlone) {
+            // DEBUG
+            Thread t = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    for (int i = 0; i < 12; i++) {
+                        hives.add(new Hive("Hive number: ".concat(String.valueOf(i)),"Hn".concat(String.valueOf(i))));
+                        if (hivesListChange != null) {
+                            hivesListChange.fire(hives, EventArgs.Empty());
+                        }
+                        try {
+                            Thread.sleep(3000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
-            }
-        });
-        hives.clear();
-        t.start();
-        // END DEBUG*/
+            });
+            hives.clear();
+            t.start();
+            // END DEBUG
+        }
     }
 
     private Event<ChannelEventArgs> _channelEvent;
@@ -155,6 +159,7 @@ public class Controller {
         this._dataProvider = new DataProvider(user, serverApp);
         try {
             this._dataProvider.SubscribeChannelEventHandler(new EventHandler<PubSubChannelEventArgs>(this,"onChannelEvent",PubSubChannelEventArgs.class));
+            this._dataProvider.SubscribeToOnConnect(new EventHandler<ConnectionEventArgs>(this,"onConnect",ConnectionEventArgs.class));
         } catch (NoSuchMethodException e) { }
     }
 
@@ -163,7 +168,11 @@ public class Controller {
      * @return true if connected to our server, else false
      */
     public Boolean Connect () {
-        return this._dataProvider.Connect();
+        JsonElement profile = null;
+        JsonElement hivesSubscribed = null;
+        Boolean result = this._dataProvider.Connect();
+
+        return result;
     }
 
     /**
@@ -240,5 +249,40 @@ public class Controller {
         return this._dataProvider.sendMessage(message.toJson());
 
         //return this._dataProvider.sendMessage("message=".concat(message._content.getContent().replace("+", "%2B").replace(" ", "+")).concat("&timestamp=").concat(TimestampFormatter.toString(message.getTimeStamp()).replace(":", "%3A").replace("+", "%2B").replace(" ", "+")));
+    }
+
+    public void onConnect (Object sender, ConnectionEventArgs args) {
+        JsonElement profile = args.getProfile();
+        JsonElement hivesSubscribed = args.getHivesSubscribed();
+        Boolean hiveListChanged = false;
+        if ((hivesSubscribed != null) && (!hivesSubscribed.isJsonNull())) {
+            JsonArray hivesArray = null;
+            if (hivesSubscribed.isJsonArray()) {
+                System.out.println("Is a JSON Array");
+                hivesArray = hivesSubscribed.getAsJsonArray();
+            } else if (hivesSubscribed.isJsonObject()) {
+                System.out.println("Is a JSON Object");
+                hivesArray = new JsonArray();
+                hivesArray.add(hivesSubscribed);
+            }
+            if (hivesArray != null)
+                for (JsonElement jsonElement : hivesArray)
+                    if (jsonElement.isJsonObject()) {
+                        Hive hive = new Hive(jsonElement);
+                        System.out.println(hive.getName());
+                        hiveListChanged = (hiveListChanged | this.hives.add(hive));
+                    }
+        }
+
+        for (Hive hive : this.hives) {
+            String line = "Name: ".concat(hive.getName());
+            line = line.concat(" ; NameURL: ").concat(hive.getNameURL());
+            line = line.concat(" ; Description: ").concat(hive.getDescription());
+            line = line.concat(" ; Category: ").concat(hive.getCategory());
+            line = line.concat(" ; Created: ").concat(hive.getCreationDate().toString());
+            System.out.println(line);
+        }
+
+        if (hiveListChanged) this.hivesListChange.fire(this.hives,EventArgs.Empty());
     }
 }

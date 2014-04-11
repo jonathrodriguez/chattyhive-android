@@ -174,7 +174,7 @@ public class Home_old extends Activity implements ServiceConnection {
     }
 
     @Override
-    public void onDestroy() {
+         public void onDestroy() {
         Controller.unbindApp();
         super.onDestroy();
     }

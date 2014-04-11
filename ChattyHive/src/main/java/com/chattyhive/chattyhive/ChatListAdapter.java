@@ -122,6 +122,7 @@ public class ChatListAdapter extends BaseAdapter {
 
         if (message.getUser() != null) {
             holder.username.setText(message.getUser().getUsername());
+            Log.w("ChatListAdapter - getView","User color: ".concat(message.getUser()._color));
             holder.username.setTextColor(Color.parseColor(message.getUser()._color));
         }
        /* else {

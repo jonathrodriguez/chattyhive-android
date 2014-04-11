@@ -67,7 +67,7 @@ public class LeftPanel {
         this.leftPanelListAdapter = new LeftPanelListAdapter(((Activity)this.context), ((Main)this.context)._controller.getHives(),new ArrayList(),new ArrayList<Mate>());
         ((ListView)((Activity)this.context).findViewById(R.id.left_panel_element_list)).setAdapter(this.leftPanelListAdapter);
         try {
-            Controller.SubscribeToHivesListChange(new EventHandler<EventArgs>(leftPanelListAdapter, "OnAddItem", EventArgs.class));
+            ((Main)this.context)._controller.SubscribeToHivesListChange(new EventHandler<EventArgs>(leftPanelListAdapter, "OnAddItem", EventArgs.class));
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         };
@@ -158,8 +158,8 @@ public class LeftPanel {
                 case R.id.LeftPanel_ListKind_Hives:
                     Hive h = ((Hive)v.getTag(R.id.BO_Hive));
                     View chatView = ((Main)context).ShowLayout(R.layout.main_panel_chat_layout);
-                    ((TextView)chatView.findViewById(R.id.main_panel_chat_name)).setText(h.get_name());
-                    chatView.findViewById(R.id.main_panel_chat_name).setTag(h.get_pusher_channel_name());
+                    ((TextView)chatView.findViewById(R.id.main_panel_chat_name)).setText(h.getName());
+                    chatView.findViewById(R.id.main_panel_chat_name).setTag(h.getNameURL());
 
                     chatView.findViewById(R.id.main_panel_chat_menu_icon).setOnClickListener(((Main)context).menuIcon_ClickListener);
                     chatView.findViewById(R.id.main_panel_chat_icon).setOnClickListener(((Main)context).appIcon_ClickListener);
@@ -171,7 +171,7 @@ public class LeftPanel {
                     ChatListAdapter chatListAdapter = new ChatListAdapter(((Activity)context),((Main)context)._controller.getMessages(""), R.id.MainPanelChat_ListKind_Hive);
                     ((ListView)((Activity)context).findViewById(R.id.main_panel_chat_message_list)).setAdapter(chatListAdapter);
                     try {
-                        Controller.SubscribeToHivesListChange(new EventHandler<EventArgs>(chatListAdapter, "OnAddItem", EventArgs.class));
+                        ((Main)context)._controller.SubscribeToHivesListChange(new EventHandler<EventArgs>(chatListAdapter, "OnAddItem", EventArgs.class));
                     } catch (NoSuchMethodException e) {
                         e.printStackTrace();
                     };

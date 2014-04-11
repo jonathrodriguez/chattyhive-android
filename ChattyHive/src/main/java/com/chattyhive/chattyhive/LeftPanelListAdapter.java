@@ -72,10 +72,13 @@ public class LeftPanelListAdapter extends BaseAdapter {
     public int getCount() {
         switch (this.visibleList) {
             case R.id.LeftPanel_ListKind_Hives:
+                Log.w("LefPanelListAdapter","getCount()[Hives]: ".concat(String.valueOf(this.hives_list_data.size())));
                 return this.hives_list_data.size();
             case R.id.LeftPanel_ListKind_Chats:
+                Log.w("LefPanelListAdapter","getCount()[Chats]: ".concat(String.valueOf(this.chats_list_data.size())));
                 return this.chats_list_data.size();
             case R.id.LeftPanel_ListKind_Mates:
+                Log.w("LefPanelListAdapter","getCount()[Mates]: ".concat(String.valueOf(this.mates_list_data.size())));
                 return this.mates_list_data.size();
         }
         return 0;
@@ -133,7 +136,7 @@ public class LeftPanelListAdapter extends BaseAdapter {
 
         switch (type) {
             case R.id.LeftPanel_ListKind_Hives:
-                ((HiveViewHolder)holder).hiveName.setText(((Hive)item).get_name());
+                ((HiveViewHolder)holder).hiveName.setText(((Hive)item).getName());
                 ((HiveViewHolder)holder).hiveItem.setTag(R.id.BO_Hive,item);
                 //((HiveViewHolder)holder).hiveImage = (ImageView)convertView.findViewById(R.id.left_panel_hives_list_item_img);
                 break;

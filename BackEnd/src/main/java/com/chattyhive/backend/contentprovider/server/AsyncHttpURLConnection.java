@@ -72,6 +72,11 @@ public class AsyncHttpURLConnection extends Thread {
             httpURLConnection.setRequestMethod(this._method);
             httpURLConnection.setRequestProperty("User-Agent", StaticParameters.UserAgent());
 
+            //httpURLConnection.addRequestProperty("Content-Type", "multipart/form-data");
+            if ((this._bodyData != null) && (!this._bodyData.isEmpty()))
+                httpURLConnection.addRequestProperty("Content-Type","application/json");
+            //httpURLConnection.addRequestProperty("Content-Type","application/x-www-form-urlencoded");
+
             String Cookies = this._user.getCookies();
             httpURLConnection.setRequestProperty("Cookie",Cookies);
 

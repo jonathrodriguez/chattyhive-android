@@ -1,6 +1,7 @@
 package com.chattyhive.chattyhive;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -22,10 +23,12 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import com.chattyhive.backend.Controller;
+import com.chattyhive.backend.StaticParameters;
 import com.chattyhive.backend.businessobjects.Mate;
 import com.chattyhive.backend.contentprovider.server.ServerStatus;
 import com.chattyhive.backend.util.events.EventArgs;
 import com.chattyhive.backend.util.events.EventHandler;
+import com.chattyhive.chattyhive.backgroundservice.CHService;
 
 import java.util.ArrayList;
 
@@ -56,7 +59,7 @@ public class Main extends Activity implements GestureDetector.OnGestureListener 
         setContentView(R.layout.main);
 
         setPanelBehaviour();
-
+        Log.w("Main","onCreate...");
         this._controller = Controller.getRunningController();
         Controller.bindApp();
 
@@ -80,6 +83,9 @@ public class Main extends Activity implements GestureDetector.OnGestureListener 
             this._controller.SubscribeConnectionEventHandler(new EventHandler<PubSubConnectionEventArgs>(this, "onConnectionStateChange",PubSubConnectionEventArgs.class));
         } catch (NoSuchMethodException e) { }*/
 
+        this.ConnectService();
+        this._controller.bindApp();
+
         if (this._controller.getServerUser().getStatus() != ServerStatus.LOGGED) {
             this._controller.Connect();
         }
@@ -97,6 +103,19 @@ public class Main extends Activity implements GestureDetector.OnGestureListener 
                 this.finish();
             }
         }
+    }
+
+    private void ConnectService() {
+        if (StaticParameters.BackgroundService) {
+            Context context = this.getApplicationContext();
+            context.startService(new Intent(context, CHService.class)); //If not, then start it.}
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        Controller.unbindApp();
+        super.onDestroy();
     }
 
     @Override
@@ -249,35 +268,24 @@ public class Main extends Activity implements GestureDetector.OnGestureListener 
         if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
             if (event.getAction() == KeyEvent.ACTION_DOWN
                     && event.getRepeatCount() == 0) {
-
-                // Tell the framework to start tracking this event.
-                findViewById(R.id.main_block).getKeyDispatcherState().startTracking(event, this);
-
-                return true;
-
+                if (ActiveLayoutID != R.layout.main) { // Tell the framework to start tracking this event.
+                    findViewById(R.id.main_block).getKeyDispatcherState().startTracking(event, this);
+                    return true;
+                }
             } else if (event.getAction() == KeyEvent.ACTION_UP) {
                 findViewById(R.id.main_block).getKeyDispatcherState().handleUpEvent(event);
                 if (event.isTracking() && !event.isCanceled()) {
-
                     if (ActiveLayoutID != R.layout.main) {
                         ShowLayout(R.layout.main);
                         return true;
-                    } else {
-                        return super.dispatchKeyEvent(event);
                     }
                 }
             }
-            return super.dispatchKeyEvent(event);
-        } else {
-            return super.dispatchKeyEvent(event);
         }
+        return super.dispatchKeyEvent(event);
     }
 
-    @Override
-    public void onBackPressed() {
 
-        return;
-    }
 
     @Override
     public boolean onDown(MotionEvent e) {

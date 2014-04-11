@@ -1,5 +1,8 @@
 package com.chattyhive.backend.contentprovider.server;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
 import java.net.HttpCookie;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -98,5 +101,18 @@ public class ServerUser {
      */
     public void setStatus(ServerStatus status) {
         this._status = status;
+    }
+
+    /**
+     * Converts the server user to its JSON representation.
+     * This is used to perform login before advanced security implementation. The user name and
+     * password is sent into body of login request.
+     * @return
+     */
+    public JsonElement toJson() {
+        JsonObject jsonMessage = new JsonObject();
+        jsonMessage.addProperty("user",this._login);
+        jsonMessage.addProperty("pass",this._password);
+        return jsonMessage;
     }
 }
