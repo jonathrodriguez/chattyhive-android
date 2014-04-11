@@ -9,7 +9,7 @@
     <ImageButton
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:id="@+id/imageButton"
+        android:id="@+id/explore_tab_list_favourites_button"
         android:paddingTop="10dp"
         android:paddingBottom="10dp"
         android:src="@drawable/chats_favourite"
@@ -20,7 +20,7 @@
     <ImageButton
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:id="@+id/imageButton2"
+        android:id="@+id/explore_tab_list_location_button"
         android:paddingTop="10dp"
         android:paddingBottom="10dp"
         android:src="@drawable/pestanha_hives_location"
@@ -31,7 +31,7 @@
     <ImageButton
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:id="@+id/imageButton3"
+        android:id="@+id/explore_tab_list_recent_button"
         android:paddingTop="10dp"
         android:paddingBottom="10dp"
         android:src="@drawable/pestanha_hives_historial"
@@ -42,12 +42,12 @@
     <ImageButton
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:id="@+id/imageButton4"
         android:paddingTop="10dp"
         android:paddingBottom="10dp"
         android:src="@drawable/pestanha_hives_flag"
         android:layout_weight="1"
         android:scaleType="fitCenter"
-        android:background="#ffffff" />
+        android:background="#ffffff"
+        android:id="@+id/explore_tab_list_trending_button" />
 
 </LinearLayout>

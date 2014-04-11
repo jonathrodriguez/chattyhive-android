@@ -8,7 +8,7 @@
     <ImageButton
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:id="@+id/imageButton"
+        android:id="@+id/explore_action_bar_goBack_button"
         android:background="#c0c0c0"
         android:src="@android:drawable/ic_menu_revert"
         android:scaleType="centerInside"
@@ -20,7 +20,7 @@
         android:layout_height="48dp"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="explore"
-        android:id="@+id/textView"
+        android:id="@+id/explore_action_bar_screen_title"
         android:layout_gravity="center"
         android:gravity="center_vertical|center_horizontal"
         android:background="#111111"
