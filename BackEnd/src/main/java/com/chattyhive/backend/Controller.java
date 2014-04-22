@@ -5,6 +5,7 @@ import com.chattyhive.backend.businessobjects.Message;
 import com.chattyhive.backend.businessobjects.MessageContent;
 import com.chattyhive.backend.businessobjects.User;
 import com.chattyhive.backend.contentprovider.DataProvider;
+import com.chattyhive.backend.contentprovider.server.ServerStatus;
 import com.chattyhive.backend.contentprovider.server.ServerUser;
 import com.chattyhive.backend.util.events.ChannelEventArgs;
 import com.chattyhive.backend.util.events.ConnectionEventArgs;
@@ -61,8 +62,15 @@ public class Controller {
     private HashMap<String, ArrayList<Message>> messages = new HashMap<String, ArrayList<Message>>();
     private ArrayList<Hive> hives = new ArrayList<Hive>();
     public ArrayList<Hive> getHives() { return hives; }
+
+    private ArrayList<Hive> exploreHives = new ArrayList<Hive>();
+    public ArrayList<Hive> getExploreHives() { return exploreHives; }
     // ContentProvider
     private DataProvider _dataProvider;
+
+    public Boolean getNetworkAvailable() { return this._dataProvider.getNetworkAvailable(); }
+    public void setNetworkAvailable(Boolean value) { this._dataProvider.setNetworkAvailable(value); }
+
 
     // Events
     private static Event<EventArgs> appBindingEvent;
@@ -100,6 +108,13 @@ public class Controller {
             t.start();
             // END DEBUG
         }
+    }
+
+    private Event<EventArgs> exploreHivesListChange;
+    public void SubscribeToExploreHivesListChange(EventHandler<EventArgs> eventHandler) {
+        if (exploreHivesListChange == null)
+            exploreHivesListChange = new Event<EventArgs>();
+        exploreHivesListChange.add(eventHandler);
     }
 
     private Event<ChannelEventArgs> _channelEvent;
@@ -161,6 +176,13 @@ public class Controller {
             this._dataProvider.SubscribeChannelEventHandler(new EventHandler<PubSubChannelEventArgs>(this,"onChannelEvent",PubSubChannelEventArgs.class));
             this._dataProvider.SubscribeToOnConnect(new EventHandler<ConnectionEventArgs>(this,"onConnect",ConnectionEventArgs.class));
         } catch (NoSuchMethodException e) { }
+    }
+
+    public Boolean isConnected() {
+        Boolean result;
+        result = !((this._dataProvider.getServerUser() == null) || (this._dataProvider.getServerUser().getStatus() == ServerStatus.DISCONNECTED) ||(this._dataProvider.getServerUser().getStatus() == ServerStatus.EXPIRED));
+        result = (result && this._dataProvider.isPubsubConnected());
+        return result;
     }
 
     /**
@@ -226,6 +248,67 @@ public class Controller {
             this.messages.put(channel,arrayList);
         }
         return this.messages.get(channel);
+    }
+
+    /**
+     * This method permits application to recover some hives from explore server list.
+     * @param
+     */
+    public boolean exploreHives(int offset,int length) {
+        int actualSize = exploreHives.size();
+        boolean exploreHiveListChanged = false;
+        JsonElement response = null;
+        if (!StaticParameters.StandAlone) {
+            // TODO: Implement remote hives recovering.
+            //response = this._dataProvider.ExploreHives(offset,length);
+            // TODO: Parse the response into exploreHivesList.
+            if ((response != null) && (!response.isJsonNull())) {
+                JsonArray hivesArray = null;
+                if (response.isJsonArray()) {
+                    System.out.println("Is a JSON Array");
+                    hivesArray = response.getAsJsonArray();
+                } else if (response.isJsonObject()) {
+                    System.out.println("Is a JSON Object");
+                    hivesArray = new JsonArray();
+                    hivesArray.add(response);
+                }
+                if (hivesArray != null)
+                    for (JsonElement jsonElement : hivesArray)
+                        if (jsonElement.isJsonObject()) {
+                            Hive hive = new Hive(jsonElement);
+                            System.out.println(hive.getName());
+                            exploreHiveListChanged = (exploreHiveListChanged | this.exploreHives.add(hive));
+                        }
+            }
+        } else {
+            if (offset == 0) {
+                exploreHiveListChanged = (exploreHiveListChanged | this.exploreHives.add(new Hive("Sports 1","sports_1","sports","This hive is for sports!")));
+                exploreHiveListChanged = (exploreHiveListChanged | this.exploreHives.add(new Hive("Sports 2","sports_2","sports","This hive is for sports!")));
+                exploreHiveListChanged = (exploreHiveListChanged | this.exploreHives.add(new Hive("Sports 3","sports_3","sports","This hive is for sports!")));
+                exploreHiveListChanged = (exploreHiveListChanged | this.exploreHives.add(new Hive("Free time 1","free_time_1","free time","This hive is for free time!")));
+                exploreHiveListChanged = (exploreHiveListChanged | this.exploreHives.add(new Hive("Free time 2","free_time_2","free time","This hive is for free time!")));
+                exploreHiveListChanged = (exploreHiveListChanged | this.exploreHives.add(new Hive("Free time 3","free_time_3","free time","This hive is for free time!")));
+                exploreHiveListChanged = (exploreHiveListChanged | this.exploreHives.add(new Hive("Science 1","science_1","Science","This hive is for science!")));
+                exploreHiveListChanged = (exploreHiveListChanged | this.exploreHives.add(new Hive("Science 2","science_2","Science","This hive is for science!")));
+                exploreHiveListChanged = (exploreHiveListChanged | this.exploreHives.add(new Hive("Science 3","science_3","Science","This hive is for science!")));
+                length = 9;
+            } else if (offset >= 9) {
+                exploreHiveListChanged = (exploreHiveListChanged | this.exploreHives.add(new Hive("Sports 4","sports_4","sports","This hive is for sports!")));
+                exploreHiveListChanged = (exploreHiveListChanged | this.exploreHives.add(new Hive("Sports 5","sports_5","sports","This hive is for sports!")));
+                exploreHiveListChanged = (exploreHiveListChanged | this.exploreHives.add(new Hive("Sports 6","sports_6","sports","This hive is for sports!")));
+                exploreHiveListChanged = (exploreHiveListChanged | this.exploreHives.add(new Hive("Free time 4","free_time_4","free time","This hive is for free time!")));
+                exploreHiveListChanged = (exploreHiveListChanged | this.exploreHives.add(new Hive("Free time 5","free_time_5","free time","This hive is for free time!")));
+                exploreHiveListChanged = (exploreHiveListChanged | this.exploreHives.add(new Hive("Science 4","science_4","Science","This hive is for science!")));
+                exploreHiveListChanged = (exploreHiveListChanged | this.exploreHives.add(new Hive("Science 5","science_5","Science","This hive is for science!")));
+                length = 9;
+            }
+
+        }
+
+        if ((exploreHiveListChanged) && (this.exploreHivesListChange != null))
+            this.exploreHivesListChange.fire(this.exploreHives,EventArgs.Empty());
+
+        return ((exploreHives.size() - actualSize) >= length);
     }
 
     /**

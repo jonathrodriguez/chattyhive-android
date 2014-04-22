@@ -18,8 +18,8 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
 
-        <!--
-            <service
+
+        <service
             android:name="com.chattyhive.chattyhive.backgroundservice.CHService"
             android:enabled="true"
             android:exported="true" >
@@ -30,12 +30,13 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
-        <receiver android:name="com.chattyhive.chattyhive.backgroundservice.CHServiceNetworkListener" >
+
+        <receiver android:name="com.chattyhive.chattyhive.backgroundservice.CHServiceNetworkListener">
             <intent-filter>
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
             </intent-filter>
         </receiver>
-        -->
+
 
         <activity
             android:name="com.chattyhive.chattyhive.Main"

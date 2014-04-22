@@ -132,7 +132,11 @@ public class DataProvider {
         //
         // TODO: Save message.
         //
-        return this.server.SendMessage(message.toString());
+        Boolean result = false;
+        if (this.networkAvailable) {
+            result = this.server.SendMessage(message.toString());
+        }
+        return result;
     }
 
     /**
@@ -143,7 +147,11 @@ public class DataProvider {
         //
         // TODO: Save message.
         //
-        return this.server.SendMessage(message);
+        Boolean result = false;
+        if (this.networkAvailable) {
+            result = this.server.SendMessage(message);
+        }
+        return result;
     }
 
     /**
@@ -207,5 +215,14 @@ public class DataProvider {
      * @return a Boolean value indicating network availability.
      */
     public Boolean getNetworkAvailable() { return this.networkAvailable; }
+
+    /**
+     * Returns a value indicating if the PubSub underlying service is connected or connecting.
+     * @return a Boolean value indicating if the PubSub service is connected or connecting.
+     */
+    public Boolean isPubsubConnected() {
+        ConnectionState cs = this.pubSub.GetConnectionState();
+        return ((cs == ConnectionState.CONNECTED) || (cs == ConnectionState.CONNECTING));
+    }
 }
 

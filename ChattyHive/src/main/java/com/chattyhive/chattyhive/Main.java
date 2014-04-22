@@ -17,6 +17,7 @@ import android.view.View;
 
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -35,6 +36,7 @@ import java.util.ArrayList;
 
 public class Main extends Activity implements GestureDetector.OnGestureListener {
     static final int OP_CODE_LOGIN = 1;
+    static final int OP_CODE_EXPLORE = 2;
 
     GestureDetector _detector;
     MotionEvent _lastOnScrollMotionEvent = null;
@@ -58,10 +60,13 @@ public class Main extends Activity implements GestureDetector.OnGestureListener 
         ActiveLayoutID = R.layout.main;
         setContentView(R.layout.main);
 
+        ((Button)findViewById(R.id.temp_explore_button)).setOnClickListener(this.explore_button_click);
         setPanelBehaviour();
-        Log.w("Main","onCreate...");
+        //Log.w("Main","onCreate..."); //DEBUG
         this._controller = Controller.getRunningController();
         Controller.bindApp();
+
+        this.ConnectService();
 
         if ((this._controller == null) || (this._controller.getServerUser() == null) ||
                 (this._controller.getServerUser().getLogin().isEmpty())) {
@@ -83,9 +88,6 @@ public class Main extends Activity implements GestureDetector.OnGestureListener 
             this._controller.SubscribeConnectionEventHandler(new EventHandler<PubSubConnectionEventArgs>(this, "onConnectionStateChange",PubSubConnectionEventArgs.class));
         } catch (NoSuchMethodException e) { }*/
 
-        this.ConnectService();
-        this._controller.bindApp();
-
         if (this._controller.getServerUser().getStatus() != ServerStatus.LOGGED) {
             this._controller.Connect();
         }
@@ -95,13 +97,22 @@ public class Main extends Activity implements GestureDetector.OnGestureListener 
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == OP_CODE_LOGIN) {
-            if (resultCode == RESULT_OK) {
-                this.Logged();
-            } else {
-                Controller.disposeRunningController();
-                this.finish();
-            }
+        switch (requestCode) {
+            case OP_CODE_LOGIN:
+                    if (resultCode == RESULT_OK) {
+                        this.Logged();
+                    } else {
+                        Controller.disposeRunningController();
+                        this.finish();
+                    }
+                break;
+            case OP_CODE_EXPLORE:
+                    if (resultCode == RESULT_OK) {
+                        Log.w("ExploreActionResult","Has to show hives...");
+                    } else {
+                        Log.w("ExploreActionResult","Don't move from here...");
+                    }
+                break;
         }
     }
 
@@ -262,6 +273,15 @@ public class Main extends Activity implements GestureDetector.OnGestureListener 
 
         main_block.startAnimation(animation);
     }
+
+    protected View.OnClickListener explore_button_click = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+
+            Intent intent = new Intent(getApplicationContext(),Explore.class);
+            startActivityForResult(intent, OP_CODE_EXPLORE);
+        }
+    };
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {

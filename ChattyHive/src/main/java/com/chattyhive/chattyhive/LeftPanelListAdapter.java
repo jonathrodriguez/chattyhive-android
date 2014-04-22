@@ -72,13 +72,13 @@ public class LeftPanelListAdapter extends BaseAdapter {
     public int getCount() {
         switch (this.visibleList) {
             case R.id.LeftPanel_ListKind_Hives:
-                Log.w("LefPanelListAdapter","getCount()[Hives]: ".concat(String.valueOf(this.hives_list_data.size())));
+                //Log.w("LefPanelListAdapter","getCount()[Hives]: ".concat(String.valueOf(this.hives_list_data.size())));
                 return this.hives_list_data.size();
             case R.id.LeftPanel_ListKind_Chats:
-                Log.w("LefPanelListAdapter","getCount()[Chats]: ".concat(String.valueOf(this.chats_list_data.size())));
+                //Log.w("LefPanelListAdapter","getCount()[Chats]: ".concat(String.valueOf(this.chats_list_data.size())));
                 return this.chats_list_data.size();
             case R.id.LeftPanel_ListKind_Mates:
-                Log.w("LefPanelListAdapter","getCount()[Mates]: ".concat(String.valueOf(this.mates_list_data.size())));
+                //Log.w("LefPanelListAdapter","getCount()[Mates]: ".concat(String.valueOf(this.mates_list_data.size())));
                 return this.mates_list_data.size();
         }
         return 0;
