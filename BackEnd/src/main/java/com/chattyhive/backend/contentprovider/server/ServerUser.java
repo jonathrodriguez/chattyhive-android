@@ -1,9 +1,11 @@
 package com.chattyhive.backend.contentprovider.server;
 
+import com.chattyhive.backend.contentprovider.OSStorageProvider.LoginLocalStorageInterface;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import java.net.HttpCookie;
+import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -20,14 +22,22 @@ public class ServerUser {
     private HashMap<String, HttpCookie> _cookies;
     private ServerStatus _status;
 
+    public ServerUser(LoginLocalStorageInterface loginLocalStorage) {
+        AbstractMap.SimpleEntry<String,String> userData = loginLocalStorage.RecoverLoginPassword();
+
+        this._login = userData.getKey();
+        this._password = userData.getValue();
+        this._cookies = new HashMap<String, HttpCookie>();
+    }
+
     /**
      * Public constructor.
      * @param login the user login. It can be a username or a email address.
      * @param password the user password to login.
      */
     public ServerUser(String login, String password) {
-        this._login = login;
-        this._password = password;
+        this._login = (login != null)?login:"";
+        this._password = (password != null)?password:"";
         this._cookies = new HashMap<String, HttpCookie>();
     }
 

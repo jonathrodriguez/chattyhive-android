@@ -15,9 +15,12 @@ import android.widget.TextView;
 import com.chattyhive.backend.businessobjects.Hive;
 import com.chattyhive.backend.businessobjects.Mate;
 import com.chattyhive.backend.businessobjects.Message;
+import com.chattyhive.backend.util.events.ChannelEventArgs;
 import com.chattyhive.backend.util.events.EventArgs;
+import com.chattyhive.backend.util.formatters.TimestampFormatter;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * Created by Jonathan on 25/03/14.
@@ -26,10 +29,10 @@ public class ChatListAdapter extends BaseAdapter {
     private Context context;
     private ListView listView;
     private LayoutInflater inflater;
-    private ArrayList<Message> chatMessages;
+    private Collection<Message> chatMessages;
     private int chatKind;
 
-    public ChatListAdapter (Context activityContext,ArrayList<Message> chatMessages, int chatKind) {
+    public ChatListAdapter (Context activityContext,Collection<Message> chatMessages, int chatKind) {
         this.chatMessages = chatMessages;
 
         this.context = activityContext;
@@ -39,8 +42,7 @@ public class ChatListAdapter extends BaseAdapter {
         this.chatKind = chatKind;
     }
 
-
-    public void OnAddItem(Object sender, EventArgs args) {
+    public void OnAddItem(Object sender, ChannelEventArgs args) {
         ((Activity)this.context).runOnUiThread(new Runnable(){
             public void run() {
                 notifyDataSetChanged();
@@ -50,7 +52,8 @@ public class ChatListAdapter extends BaseAdapter {
 
     @Override
     public int getItemViewType(int position) {
-        boolean mineMessage = ((this.chatMessages.get(position).getUser() != null) && (this.chatMessages.get(position).getUser().isMe()));
+        Message m = chatMessages.toArray(new Message[0])[position];
+        boolean mineMessage = ((m.getUser() != null) && (m.getUser().isMe()));
         switch (this.chatKind) {
             case R.id.MainPanelChat_ListKind_Hive:
                 return ((mineMessage)?R.id.MainPanelChat_ListKind_Hive_Me:R.id.MainPanelChat_ListKind_Hive_Other);
@@ -78,7 +81,7 @@ public class ChatListAdapter extends BaseAdapter {
 
     @Override
     public Object getItem(int position){
-        return this.chatMessages.get(position);
+        return chatMessages.toArray(new Message[0])[position];
     }
 
     @Override
@@ -102,12 +105,10 @@ public class ChatListAdapter extends BaseAdapter {
                     break;
                 case R.id.MainPanelChat_ListKind_Hive_Me:
                     convertView = this.inflater.inflate(R.layout.main_panel_chat_hive_message_me,parent,false);
-                    Log.w("ChatListAdapter", "Is me...");
                     holder.username = (TextView)convertView.findViewById(R.id.main_panel_chat_username);
                     holder.messageText = (TextView)convertView.findViewById(R.id.main_panel_chat_messageText);
                     holder.timeStamp = (TextView)convertView.findViewById(R.id.main_panel_chat_timeStamp);
                     holder.avatarThumbnail = (ImageView)convertView.findViewById(R.id.main_panel_chat_avatarThumbnail);
-                    Log.w("ChatListAdapter", "What is wrong?");
                     break;
             }
 
@@ -116,22 +117,18 @@ public class ChatListAdapter extends BaseAdapter {
             holder = (ViewHolder)convertView.getTag(R.id.MainPanelChat_ListViewHolder);
         }
 
-        Message message = this.chatMessages.get(position);
+        Message message = chatMessages.toArray(new Message[0])[position];
 
         convertView.setTag(R.id.BO_Message,message);
 
         if (message.getUser() != null) {
-            holder.username.setText(message.getUser().getUsername());
-            Log.w("ChatListAdapter - getView","User color: ".concat(message.getUser()._color));
-            holder.username.setTextColor(Color.parseColor(message.getUser()._color));
+            holder.username.setText(message.getUser().getPublicName());
+            //Log.w("ChatListAdapter - getView","User color: ".concat(message.getUser().color));
+            holder.username.setTextColor(Color.parseColor(message.getUser().color));
         }
-       /* else {
-            holder.username.setText("noName");
-            holder.username.setTextColor(Color.parseColor("#111111"));
-        }*/
 
         holder.messageText.setText(message.getMessage().getContent());
-        holder.timeStamp.setText(message.getTimeStamp().toString());
+        holder.timeStamp.setText(TimestampFormatter.toLocaleString(message.getTimeStamp()));
 
         return convertView;
     }

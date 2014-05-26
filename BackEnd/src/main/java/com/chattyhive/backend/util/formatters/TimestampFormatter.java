@@ -19,12 +19,9 @@ public final class TimestampFormatter {
      * The other representations are set to provide compatibility with server's first version.
      */
     private static final String[] _formats = {"yyyy-MM-dd'T'HH:mm:ss.sss",
-                                              "yyyy-MM-dd'T'HH:mm:ss.sss'Z'",
-                                              "HH:mm:ss z",
-                                              "EEE MMM dd HH:mm:ss z yyyy",
-                                              "EEE MMM dd HH:mm:ss yyyy 'GMT'Z",
-                                              "HH:mm:ss 'GMT'Z"};
-
+                                              "HH:mm" ,
+                                              "dd/MM/yyyy HH:mm" };
+    private static final String timeZoneID = "Europe/Madrid";
     /**
      * Converts a Date object to it's string representation, referred to UTC, according to the
      * format: "yyyy-MM-dd'T'HH:mm:ss.sss"
@@ -35,7 +32,22 @@ public final class TimestampFormatter {
         SimpleDateFormat simpleDateFormat;
         if ((_formats != null) && (_formats.length > 0) && (_formats[0] != null) && (!_formats[0].isEmpty())) {
             simpleDateFormat = new SimpleDateFormat(_formats[0]);
-            simpleDateFormat.setTimeZone(TimeZone.getTimeZone("GMT+0000"));
+            simpleDateFormat.setTimeZone(TimeZone.getTimeZone(timeZoneID));
+            return simpleDateFormat.format(timestamp);
+        } else {
+            return timestamp.toString();
+        }
+    }
+
+    public static final String toLocaleString(Date timestamp) {
+        SimpleDateFormat simpleDateFormat;
+        Boolean recent = (((new Date()).getTime() - timestamp.getTime())/(60*60*1000) <= 18);
+        if ((_formats != null) && (_formats.length > 1) && (_formats[1] != null) && (!_formats[1].isEmpty()) && (recent)) {
+            simpleDateFormat = new SimpleDateFormat(_formats[1]);
+            return simpleDateFormat.format(timestamp);
+        }
+        else if ((_formats != null) && (_formats.length > 2) && (_formats[2] != null) && (!_formats[2].isEmpty()) && (!recent)) {
+            simpleDateFormat = new SimpleDateFormat(_formats[2]);
             return simpleDateFormat.format(timestamp);
         } else {
             return timestamp.toString();
@@ -53,6 +65,7 @@ public final class TimestampFormatter {
         while (formatIterator.hasNext()) {
             String format = formatIterator.next();
             simpleDateFormat = new SimpleDateFormat(format);
+            simpleDateFormat.setTimeZone(TimeZone.getTimeZone(timeZoneID));
             try {
                 return simpleDateFormat.parse(timestamp);
             } catch (ParseException e) { }

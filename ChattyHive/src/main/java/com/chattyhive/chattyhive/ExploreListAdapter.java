@@ -100,6 +100,8 @@ public class ExploreListAdapter extends BaseAdapter {
             holder.usersText = (TextView)convertView.findViewById(R.id.explore_list_item_users_textview);
             holder.usersImage = (ImageView)convertView.findViewById(R.id.explore_list_item_users_image_view);
 
+            convertView.setOnClickListener(((Explore)this.context).join_button_click);
+
             convertView.setTag(R.id.Explore_ListViewHolder,holder);
         } else {
             holder = (ViewHolder)convertView.getTag(R.id.Explore_ListViewHolder);
@@ -111,6 +113,7 @@ public class ExploreListAdapter extends BaseAdapter {
 
         if (hive.getName() != null) {
             holder.mainTitle.setText(hive.getName());
+            holder.mainTitle.setTag(hive.getNameURL());
             //holder.username.setTextColor(Color.parseColor(message.getUser()._color));
         }
        /* else {

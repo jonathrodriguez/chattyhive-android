@@ -5,6 +5,8 @@ import com.chattyhive.backend.businessobjects.Message;
 import com.chattyhive.backend.businessobjects.MessageContent;
 import com.chattyhive.backend.businessobjects.User;
 import com.chattyhive.backend.contentprovider.DataProvider;
+import com.chattyhive.backend.contentprovider.OSStorageProvider.LoginLocalStorageInterface;
+import com.chattyhive.backend.contentprovider.OSStorageProvider.MessageLocalStorageInterface;
 import com.chattyhive.backend.contentprovider.server.ServerStatus;
 import com.chattyhive.backend.contentprovider.server.ServerUser;
 import com.chattyhive.backend.util.events.ChannelEventArgs;
@@ -17,10 +19,12 @@ import com.chattyhive.backend.util.events.PubSubConnectionEventArgs;
 import com.chattyhive.backend.util.formatters.TimestampFormatter;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.TreeSet;
 
 /**
  * Created by Jonathan on 11/12/13.
@@ -34,14 +38,22 @@ import java.util.HashMap;
 public class Controller {
     private static Controller _controller;
     private static Boolean appBounded = false;
-
-    private static User user;
+    private LoginLocalStorageInterface loginLocalStorage;
+    private MessageLocalStorageInterface messageLocalStorage;
 
     public static Controller getRunningController() {
-        if (_controller == null)
-            _controller = new Controller();
         return _controller;
     }
+
+    public static Controller getRunningController(LoginLocalStorageInterface loginLocalStorage) {
+        if (_controller == null)
+            _controller = new Controller(loginLocalStorage);
+        else if (_controller.loginLocalStorage == null) {
+            _controller.setLoginLocalStorage(loginLocalStorage);
+        }
+        return _controller;
+    }
+
     public static void disposeRunningController() {
         _controller = null;
     }
@@ -59,9 +71,21 @@ public class Controller {
             appBindingEvent.fire(_controller,EventArgs.Empty());
     } 
     // BusinessObjects
-    private HashMap<String, ArrayList<Message>> messages = new HashMap<String, ArrayList<Message>>();
+    private HashMap<String, TreeSet<Message>> messages = new HashMap<String, TreeSet<Message>>();
     private ArrayList<Hive> hives = new ArrayList<Hive>();
     public ArrayList<Hive> getHives() { return hives; }
+    public Hive getHiveFromUrlName(String UrlName) {
+        if ((UrlName != null) && (!UrlName.isEmpty()))
+            for (Hive h : this.hives)
+                if (h.getNameURL().equalsIgnoreCase(UrlName)) return h;
+        return null;
+    }
+    public Hive getHiveFromName(String Name) {
+        if ((Name != null) && (!Name.isEmpty()))
+            for (Hive h : this.hives)
+                if (h.getName().equalsIgnoreCase(Name)) return h;
+        return null;
+    }
 
     private ArrayList<Hive> exploreHives = new ArrayList<Hive>();
     public ArrayList<Hive> getExploreHives() { return exploreHives; }
@@ -150,18 +174,9 @@ public class Controller {
     public void setServerApp(String serverApp) {
         this._dataProvider.setServerApp(serverApp);
     }
-    public Controller() {
-        this(new ServerUser("",""),StaticParameters.DefaultServerAppName);
-    }
-
-    /**
-     * Public constructor. Instantiates a DataProvider and subscribes to PubSubChannelEvent.
-     * Since this constructor takes no arguments about server application, the DefaultServerAppName
-     * application will be used.
-     * @param user A ServerUser with data needed to login to server.
-     */
-    public Controller(ServerUser user) {
-        this(user,StaticParameters.DefaultServerAppName);
+    public Controller(LoginLocalStorageInterface loginLocalStorage) {
+        this(new ServerUser(loginLocalStorage),StaticParameters.DefaultServerAppName);
+        this.setLoginLocalStorage(loginLocalStorage);
     }
 
     /**
@@ -176,6 +191,7 @@ public class Controller {
             this._dataProvider.SubscribeChannelEventHandler(new EventHandler<PubSubChannelEventArgs>(this,"onChannelEvent",PubSubChannelEventArgs.class));
             this._dataProvider.SubscribeToOnConnect(new EventHandler<ConnectionEventArgs>(this,"onConnect",ConnectionEventArgs.class));
         } catch (NoSuchMethodException e) { }
+        new User(user.getLogin());
     }
 
     public Boolean isConnected() {
@@ -190,11 +206,44 @@ public class Controller {
      * @return true if connected to our server, else false
      */
     public Boolean Connect () {
-        JsonElement profile = null;
-        JsonElement hivesSubscribed = null;
         Boolean result = this._dataProvider.Connect();
 
+        if (result) {
+            ServerUser su = this.getServerUser();
+            this.loginLocalStorage.StoreLoginPassword(su.getLogin(),su.getPassword());
+        }
         return result;
+    }
+
+    public Boolean JoinHive(String hive) {
+        JsonObject jsonParams = new JsonObject();
+        jsonParams.addProperty("user",this.getServerUser().getLogin());
+        jsonParams.addProperty("hive",hive);
+
+        Boolean result = this._dataProvider.JoinHive(jsonParams.toString());
+
+        if (result) {
+            for (Hive h : exploreHives) {
+                if (h.getNameURL().equalsIgnoreCase(hive)) {
+                    this.hives.add(h);
+                    exploreHives.remove(h);
+                }
+            }
+        }
+        
+        return result;
+    }
+
+    public void JoinTMP (String channel) {
+        this._dataProvider.Join(channel);
+    }
+
+    public void Join(String channel) {
+        //this._dataProvider.Join(channel);
+    }
+
+    public void Leave(String channel) {
+        //this._dataProvider.Leave(channel);
     }
 
     /**
@@ -214,20 +263,32 @@ public class Controller {
      */
     public void onChannelEvent (Object sender, PubSubChannelEventArgs args) {
         Message m;
-        if (args.getEventName().compareTo("msg")==0){
+
+       // System.out.println("Channel event: ".concat(args.getChannelName()).concat(" -> ").concat(args.getEventName()).concat(" : ").concat(args.getMessage()));
+
+        if (args.getEventName().equalsIgnoreCase("msg")){
+            //System.out.println("Detected as message.");
             JsonParser jsonParser = new JsonParser();
             JsonElement jsonElement = jsonParser.parse(args.getMessage());
             m = new Message(jsonElement);
-            if (!((m.getUser() != null) && (m.getUser().isMe()))) {
-                if (this.messages.containsKey(args.getChannelName())) {
-                    this.messages.get(args.getChannelName()).add(m);
-                } else {
-                    ArrayList<Message> arrayList = new ArrayList<Message>();
-                    arrayList.add(m);
-                    this.messages.put(args.getChannelName(),arrayList);
+            if (m.getHive() == null) m.hive = this.getHiveFromUrlName(args.getChannelName());
+
+            //System.out.println("Received Message: ".concat(m.toJson().toString()));
+
+            if (!this.messages.containsKey(args.getChannelName()))
+                this.messages.put(args.getChannelName(),new TreeSet<Message>());
+
+            if (!this.messages.get(args.getChannelName()).contains(m)) {
+                //System.out.println("Nuevo mensaje recibido. Tamaño de lista de mensajes: ".concat(String.valueOf(this.messages.get(args.getChannelName()).size())));
+                this.messages.get(args.getChannelName()).add(m);
+                //System.out.println(" -- MESSAGE SAVED -- ");
+                if (this.messageLocalStorage != null) {
+                    this.messageLocalStorage.StoreMessage(args.getChannelName(),m.toJson().toString());
                 }
             }
+
         } else {
+           // System.out.println("Detected as NOT a message.");
             m = new Message(new MessageContent(args.getMessage()),TimestampFormatter.toDate(args.getMessage()));
         }
 
@@ -240,14 +301,31 @@ public class Controller {
      * business model classes to return. Probably better option is to return an ArrayList sorted by
      * message timestamp.
      */
-    public ArrayList<Message> getMessages(String channel) {
-        // TODO: Implement local and remote message recovering.
-        //this._dataProvider.RecoverMessages(channel);
-        if (!this.messages.containsKey(channel)) {
-            ArrayList<Message> arrayList = new ArrayList<Message>();
-            this.messages.put(channel,arrayList);
+    public TreeSet<Message> getMessages(String channel) {
+        if (!this.messages.containsKey(channel))
+            this.messages.put(channel,new TreeSet<Message>());
+
+        TreeSet<Message> messageList = this.messages.get(channel);
+
+        // Local message recovering
+        if (this.messageLocalStorage != null) {
+            String[] localMessages = this.messageLocalStorage.RecoverMessage(channel);
+            if (localMessages != null) {
+                JsonParser jsonParser = new JsonParser();
+                JsonElement jsonElement;
+                Message m;
+                for (String jsonMessage : localMessages) {
+                    jsonElement = jsonParser.parse(jsonMessage);
+                    m = new Message(jsonElement);
+                    if (!messageList.contains(m)) messageList.add(m);
+                }
+            }
         }
-        return this.messages.get(channel);
+
+        // TODO: Implement remote message recovering.
+        //this._dataProvider.RecoverMessages(channel);
+
+        return messageList;
     }
 
     /**
@@ -255,20 +333,19 @@ public class Controller {
      * @param
      */
     public boolean exploreHives(int offset,int length) {
+        if (offset == 0) { exploreHives.clear(); }
         int actualSize = exploreHives.size();
         boolean exploreHiveListChanged = false;
         JsonElement response = null;
         if (!StaticParameters.StandAlone) {
-            // TODO: Implement remote hives recovering.
-            //response = this._dataProvider.ExploreHives(offset,length);
-            // TODO: Parse the response into exploreHivesList.
+
+            response = this._dataProvider.ExploreHives(offset,length);
+
             if ((response != null) && (!response.isJsonNull())) {
                 JsonArray hivesArray = null;
                 if (response.isJsonArray()) {
-                    System.out.println("Is a JSON Array");
                     hivesArray = response.getAsJsonArray();
                 } else if (response.isJsonObject()) {
-                    System.out.println("Is a JSON Object");
                     hivesArray = new JsonArray();
                     hivesArray.add(response);
                 }
@@ -276,10 +353,17 @@ public class Controller {
                     for (JsonElement jsonElement : hivesArray)
                         if (jsonElement.isJsonObject()) {
                             Hive hive = new Hive(jsonElement);
-                            System.out.println(hive.getName());
-                            exploreHiveListChanged = (exploreHiveListChanged | this.exploreHives.add(hive));
+                            Boolean alreadyJoined = false;
+                            for (Hive h : hives) {
+                                if (h.getNameURL().equalsIgnoreCase(hive.getNameURL()))
+                                    alreadyJoined = true;
+
+                            }
+                            exploreHiveListChanged = ((!alreadyJoined) && (exploreHiveListChanged | this.exploreHives.add(hive)));
                         }
             }
+            // TODO: This is for server 0.2.0 which does not support list indexing.
+            actualSize = this.exploreHives.size();
         } else {
             if (offset == 0) {
                 exploreHiveListChanged = (exploreHiveListChanged | this.exploreHives.add(new Hive("Sports 1","sports_1","sports","This hive is for sports!")));
@@ -318,18 +402,32 @@ public class Controller {
      * @param message The message to be sent.
      */
     public Boolean sendMessage(Message message,String channel) {
-        if (user == null) {
-            user = new User(this._dataProvider.getUser(),true);
-        }
-        message._user = user;
+
+        message._user = User.getMe();
+        message.hive = getHiveFromUrlName(channel);
+
 
         if (!this.messages.containsKey(channel))
-            this.messages.put(channel,new ArrayList<Message>());
-        this.messages.get(channel).add(message);
+            this.messages.put(channel,new TreeSet<Message>());
+
+        if (!this.messages.get(channel).contains(message)) {
+            this.messages.get(channel).add(message);
+
+        }
+
+        Boolean result = this._dataProvider.sendMessage(message.toJson());
+
+        if ((!result) && (this.messages.get(channel).contains(message))) {
+         //   System.out.println("Mensaje enviado. Tamaño de lista de mensajes: ".concat(String.valueOf(this.messages.get(channel).size())));
+            this.messages.get(channel).remove(message);
+        }
+        if ((result) && (this.messageLocalStorage != null)) {
+                this.messageLocalStorage.StoreMessage(channel,message.toJson().toString());
+        }
 
 
         //return true;
-        return this._dataProvider.sendMessage(message.toJson());
+        return result;
 
         //return this._dataProvider.sendMessage("message=".concat(message._content.getContent().replace("+", "%2B").replace(" ", "+")).concat("&timestamp=").concat(TimestampFormatter.toString(message.getTimeStamp()).replace(":", "%3A").replace("+", "%2B").replace(" ", "+")));
     }
@@ -341,10 +439,10 @@ public class Controller {
         if ((hivesSubscribed != null) && (!hivesSubscribed.isJsonNull())) {
             JsonArray hivesArray = null;
             if (hivesSubscribed.isJsonArray()) {
-                System.out.println("Is a JSON Array");
+                //System.out.println("Is a JSON Array");
                 hivesArray = hivesSubscribed.getAsJsonArray();
             } else if (hivesSubscribed.isJsonObject()) {
-                System.out.println("Is a JSON Object");
+                //System.out.println("Is a JSON Object");
                 hivesArray = new JsonArray();
                 hivesArray.add(hivesSubscribed);
             }
@@ -352,20 +450,32 @@ public class Controller {
                 for (JsonElement jsonElement : hivesArray)
                     if (jsonElement.isJsonObject()) {
                         Hive hive = new Hive(jsonElement);
-                        System.out.println(hive.getName());
+                        this.JoinTMP(hive.getNameURL());
                         hiveListChanged = (hiveListChanged | this.hives.add(hive));
                     }
         }
-
-        for (Hive hive : this.hives) {
-            String line = "Name: ".concat(hive.getName());
-            line = line.concat(" ; NameURL: ").concat(hive.getNameURL());
-            line = line.concat(" ; Description: ").concat(hive.getDescription());
-            line = line.concat(" ; Category: ").concat(hive.getCategory());
-            line = line.concat(" ; Created: ").concat(hive.getCreationDate().toString());
-            System.out.println(line);
+        if ((profile != null) && (!profile.isJsonNull())) {
+            new User(getServerUser().getLogin());
+            User.setUpOwnProfile(profile);
         }
 
+//        for (Hive hive : this.hives) {
+//            String line = "Name: ".concat(hive.getName());
+//            line = line.concat(" ; NameURL: ").concat(hive.getNameURL());
+//            line = line.concat(" ; Description: ").concat(hive.getDescription());
+//            line = line.concat(" ; Category: ").concat(hive.getCategory());
+//            line = line.concat(" ; Created: ").concat(hive.getCreationDate().toString());
+//            System.out.println(line);
+//        }
+
         if (hiveListChanged) this.hivesListChange.fire(this.hives,EventArgs.Empty());
+    }
+
+    public void setLoginLocalStorage(LoginLocalStorageInterface loginLocalStorage) {
+        this.loginLocalStorage = loginLocalStorage;
+    }
+
+    public void setMessageLocalStorage(MessageLocalStorageInterface messageLocalStorage) {
+        this.messageLocalStorage = messageLocalStorage;
     }
 }

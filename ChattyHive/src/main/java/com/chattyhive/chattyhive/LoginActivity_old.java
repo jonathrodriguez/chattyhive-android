@@ -20,6 +20,7 @@ import android.widget.TextView;
 import com.chattyhive.backend.Controller;
 import com.chattyhive.backend.StaticParameters;
 import com.chattyhive.backend.contentprovider.server.ServerUser;
+import com.chattyhive.chattyhive.OSStorageProvider.LoginLocalStorage;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -59,7 +60,7 @@ public class LoginActivity_old extends Activity {
 
 
         setContentView(R.layout.activity_login_old);
-        this._controller = Controller.getRunningController();
+        this._controller = Controller.getRunningController(LoginLocalStorage.getLoginLocalStorage());
 
         servers = new ArrayList<String>(Arrays.asList(getResources().getStringArray(R.array.servers_array)));
         mServer = StaticParameters.DefaultServerAppName;

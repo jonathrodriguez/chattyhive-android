@@ -22,11 +22,14 @@ import com.chattyhive.backend.util.events.EventHandler;
 import com.chattyhive.backend.util.events.PubSubConnectionEventArgs;
 import com.chattyhive.chattyhive.Home_old;
 import com.chattyhive.chattyhive.Main;
+import com.chattyhive.chattyhive.OSStorageProvider.LoginLocalStorage;
+import com.chattyhive.chattyhive.OSStorageProvider.MessageLocalStorage;
 import com.chattyhive.chattyhive.R;
 
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.TreeSet;
 
 public class CHService extends Service {
     private Controller _controller;
@@ -44,14 +47,14 @@ public class CHService extends Service {
             this._pendingMsgs++;
             PendingIntent i= PendingIntent.getActivity(this, 0, new Intent(this, Main.class), 0);
             CHNotificationBuilder chNotificationBuilder = new CHNotificationBuilder(this.getApplicationContext());
-            chNotificationBuilder.setTickerText(String.format(this.getString(R.string.buzz_in_hive_Ticker),"@".concat(args.getMessage().getUser().getUsername()),":".concat(args.getChannelName())));
+            chNotificationBuilder.setTickerText(String.format(this.getString(R.string.buzz_in_hive_Ticker),"@".concat(args.getMessage().getUser().getPublicName()),":".concat(args.getChannelName())));
             chNotificationBuilder.setTitleText(String.format(this.getString(R.string.buzz_in_hive_TITLE), ":".concat(args.getChannelName())));
             chNotificationBuilder.setMainText(String.format(this.getString(R.string.buzz_in_hive_mainText), this._pendingMsgs));
 
-            ArrayList<Message> messages = this._controller.getMessages(args.getChannelName());
+            Message[] messages = this._controller.getMessages(args.getChannelName()).toArray(new Message[0]);
             ArrayList<String> subText = new ArrayList<String>();
-            for (int idx = (messages.size()-this._pendingMsgs); idx < messages.size(); idx++) {
-                subText.add(String.format(this.getString(R.string.buzz_in_hive_subText),"@".concat(messages.get(idx).getUser().getUsername()),messages.get(idx).getMessage().getContent()));
+            for (int idx = (messages.length-this._pendingMsgs); idx < messages.length; idx++) {
+                subText.add(String.format(this.getString(R.string.buzz_in_hive_subText),"@".concat(messages[idx].getUser().getPublicName()),messages[idx].getMessage().getContent()));
             }
 
             chNotificationBuilder.setSubText(subText);
@@ -71,8 +74,9 @@ public class CHService extends Service {
     }
 
     public void captureController() {
-        if ((this._controller == null) || (this._controller != Controller.getRunningController())) {
-            this._controller = Controller.getRunningController();
+        if ((this._controller == null) || (this._controller != Controller.getRunningController(LoginLocalStorage.getLoginLocalStorage()))) {
+            this._controller = Controller.getRunningController(LoginLocalStorage.getLoginLocalStorage());
+            this._controller.setMessageLocalStorage(MessageLocalStorage.getMessageLocalStorage());
             try {
                 this._controller.SubscribeChannelEventHandler(new EventHandler<ChannelEventArgs>(this,"onChannelEvent",ChannelEventArgs.class));
                 this._controller.SubscribeConnectionEventHandler(new EventHandler<PubSubConnectionEventArgs>(this,"onConnectionEvent",PubSubConnectionEventArgs.class));
@@ -161,14 +165,15 @@ public class CHService extends Service {
     private void checkConnected () {
         handleConnectivity();
         if (this._controller.getNetworkAvailable())
-            if ((this._controller.getServerUser() == null) || (this._controller.getServerUser().getLogin().isEmpty())) {
-                PendingIntent i= PendingIntent.getActivity(this, 0, new Intent(this, Main.class), 0);
+            if ((this._controller.getServerUser() == null) || (this._controller.getServerUser().getLogin() == null) || (this._controller.getServerUser().getLogin().isEmpty())) {
+               /* PendingIntent i= PendingIntent.getActivity(this, 0, new Intent(this, Main.class), 0);
                 CHNotificationBuilder chNotificationBuilder = new CHNotificationBuilder(this.getApplicationContext());
                 chNotificationBuilder.setTickerText("No user login data!");
                 chNotificationBuilder.setTitleText("Welcome to chattyhive!");
                 chNotificationBuilder.setMainText("There's no user data. Please, touch here to loggin.");
                 chNotificationBuilder.setMainAction(i);
-                _notificationManager.notify(0,chNotificationBuilder.Build());
+                _notificationManager.notify(0,chNotificationBuilder.Build());*/
+
             } else if (!this._controller.isConnected()) {
                 this._controller.Connect();
             }

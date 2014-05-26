@@ -23,6 +23,8 @@ import android.widget.ViewSwitcher;
 import com.chattyhive.backend.Controller;
 import com.chattyhive.backend.StaticParameters;
 import com.chattyhive.backend.contentprovider.server.ServerUser;
+import com.chattyhive.chattyhive.OSStorageProvider.LoginLocalStorage;
+import com.chattyhive.chattyhive.OSStorageProvider.MessageLocalStorage;
 
 public class LoginActivity extends Activity {
 
@@ -142,7 +144,8 @@ public class LoginActivity extends Activity {
     public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
         @Override
         protected Boolean doInBackground(Void... params) {
-            Controller controller = Controller.getRunningController();
+            Controller controller = Controller.getRunningController(LoginLocalStorage.getLoginLocalStorage());
+            controller.setMessageLocalStorage(MessageLocalStorage.getMessageLocalStorage());
             controller.setServerUser(new ServerUser(username,password));
             if (StaticParameters.StandAlone) {
                 //TODO: Put here a wait to simulate real server communication

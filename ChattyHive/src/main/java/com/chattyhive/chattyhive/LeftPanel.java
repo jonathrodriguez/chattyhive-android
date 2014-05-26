@@ -17,6 +17,7 @@ import android.widget.ViewSwitcher;
 import com.chattyhive.backend.Controller;
 import com.chattyhive.backend.businessobjects.Hive;
 import com.chattyhive.backend.businessobjects.Mate;
+import com.chattyhive.backend.util.events.ChannelEventArgs;
 import com.chattyhive.backend.util.events.EventArgs;
 import com.chattyhive.backend.util.events.EventHandler;
 
@@ -66,6 +67,7 @@ public class LeftPanel {
 
         this.leftPanelListAdapter = new LeftPanelListAdapter(((Activity)this.context), ((Main)this.context)._controller.getHives(),new ArrayList(),new ArrayList<Mate>());
         ((ListView)((Activity)this.context).findViewById(R.id.left_panel_element_list)).setAdapter(this.leftPanelListAdapter);
+
         try {
             ((Main)this.context)._controller.SubscribeToHivesListChange(new EventHandler<EventArgs>(leftPanelListAdapter, "OnAddItem", EventArgs.class));
         } catch (NoSuchMethodException e) {
@@ -156,6 +158,11 @@ public class LeftPanel {
         public void onClick(View v) {
             switch (leftPanelListAdapter.GetVisibleList()) {
                 case R.id.LeftPanel_ListKind_Hives:
+
+                    if (((Main)context).ActiveLayoutID == R.layout.main_panel_chat_layout) {
+                        ((Main)context)._controller.Leave((String)((Activity)context).findViewById(R.id.main_panel_chat_name).getTag());
+                    }
+
                     Hive h = ((Hive)v.getTag(R.id.BO_Hive));
                     View chatView = ((Main)context).ShowLayout(R.layout.main_panel_chat_layout);
                     ((TextView)chatView.findViewById(R.id.main_panel_chat_name)).setText(h.getName());
@@ -168,13 +175,15 @@ public class LeftPanel {
                     MainChat mainChat = new MainChat(context);
                     chatView.findViewById(R.id.main_panel_chat_send_icon).setOnClickListener(mainChat.send_button_click);
 
-                    ChatListAdapter chatListAdapter = new ChatListAdapter(((Activity)context),((Main)context)._controller.getMessages(""), R.id.MainPanelChat_ListKind_Hive);
+                    ChatListAdapter chatListAdapter = new ChatListAdapter(((Activity)context),((Main)context)._controller.getMessages(h.getNameURL()), R.id.MainPanelChat_ListKind_Hive);
                     ((ListView)((Activity)context).findViewById(R.id.main_panel_chat_message_list)).setAdapter(chatListAdapter);
                     try {
-                        ((Main)context)._controller.SubscribeToHivesListChange(new EventHandler<EventArgs>(chatListAdapter, "OnAddItem", EventArgs.class));
+                        ((Main)context)._controller.SubscribeChannelEventHandler(new EventHandler<ChannelEventArgs>(chatListAdapter, "OnAddItem", ChannelEventArgs.class));
                     } catch (NoSuchMethodException e) {
                         e.printStackTrace();
                     };
+
+                    ((Main)context)._controller.Join(h.getNameURL());
 
                     break;
                 case R.id.LeftPanel_ListKind_Chats:

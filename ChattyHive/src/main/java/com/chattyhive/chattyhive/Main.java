@@ -29,6 +29,8 @@ import com.chattyhive.backend.businessobjects.Mate;
 import com.chattyhive.backend.contentprovider.server.ServerStatus;
 import com.chattyhive.backend.util.events.EventArgs;
 import com.chattyhive.backend.util.events.EventHandler;
+import com.chattyhive.chattyhive.OSStorageProvider.LoginLocalStorage;
+import com.chattyhive.chattyhive.OSStorageProvider.MessageLocalStorage;
 import com.chattyhive.chattyhive.backgroundservice.CHService;
 
 import java.util.ArrayList;
@@ -61,14 +63,17 @@ public class Main extends Activity implements GestureDetector.OnGestureListener 
         setContentView(R.layout.main);
 
         ((Button)findViewById(R.id.temp_explore_button)).setOnClickListener(this.explore_button_click);
+        ((Button)findViewById(R.id.temp_profile_button)).setOnClickListener((new Profile(this)).open_profile);
         setPanelBehaviour();
         //Log.w("Main","onCreate..."); //DEBUG
-        this._controller = Controller.getRunningController();
+        this._controller = Controller.getRunningController(LoginLocalStorage.getLoginLocalStorage());
+        this._controller.setMessageLocalStorage(MessageLocalStorage.getMessageLocalStorage());
         Controller.bindApp();
 
         this.ConnectService();
 
         if ((this._controller == null) || (this._controller.getServerUser() == null) ||
+                (this._controller.getServerUser().getLogin() == null) ||
                 (this._controller.getServerUser().getLogin().isEmpty())) {
             this.hasToLogin();
         } else {
@@ -295,8 +300,12 @@ public class Main extends Activity implements GestureDetector.OnGestureListener 
             } else if (event.getAction() == KeyEvent.ACTION_UP) {
                 findViewById(R.id.main_block).getKeyDispatcherState().handleUpEvent(event);
                 if (event.isTracking() && !event.isCanceled()) {
+                    if (ActiveLayoutID == R.layout.main_panel_chat_layout) {
+                        this._controller.Leave((String)findViewById(R.id.main_panel_chat_name).getTag());
+                    }
                     if (ActiveLayoutID != R.layout.main) {
                         ShowLayout(R.layout.main);
+                        this.setPanelBehaviour();
                         return true;
                     }
                 }

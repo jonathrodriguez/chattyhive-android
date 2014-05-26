@@ -94,12 +94,29 @@ public class DataProvider {
 
         this.pubSub = new PubSub(this.serverUser.getLogin());
 
-        /*try {
+        try {
             this.pubSub.SubscribeChannelEventHandler(new EventHandler<PubSubChannelEventArgs>(this,"onChannelEvent",PubSubChannelEventArgs.class));
             this.pubSub.SubscribeConnectionEventHandler(new EventHandler<PubSubConnectionEventArgs>(this, "onConnectionEvent", PubSubConnectionEventArgs.class));
         } catch (NoSuchMethodException e) { }
 
-        this.pubSub.Join("public_test");*/
+        /*this.pubSub.Join("public_test");*/
+    }
+
+    public Boolean JoinHive(String jsonParams) {
+        return this.server.JoinHive(jsonParams);
+    }
+
+    public void Join(String channel) {
+        /*try{
+            this.pubSub.SubscribeChannelEventHandler(new EventHandler<PubSubChannelEventArgs>(this,"onChannelEvent",PubSubChannelEventArgs.class));
+            this.pubSub.SubscribeConnectionEventHandler(new EventHandler<PubSubConnectionEventArgs>(this, "onConnectionEvent", PubSubConnectionEventArgs.class));
+        } catch (NoSuchMethodException e) { }*/
+
+        this.pubSub.Join(channel);
+    }
+
+    public void Leave(String channel) {
+        this.pubSub.Leave(channel);
     }
 
     /**
@@ -135,21 +152,6 @@ public class DataProvider {
         Boolean result = false;
         if (this.networkAvailable) {
             result = this.server.SendMessage(message.toString());
-        }
-        return result;
-    }
-
-    /**
-     * Sends a message, which is string represented, to the server.
-     * @param message a String representing the message to be sent.
-     */
-    public Boolean sendMessage(String message) {
-        //
-        // TODO: Save message.
-        //
-        Boolean result = false;
-        if (this.networkAvailable) {
-            result = this.server.SendMessage(message);
         }
         return result;
     }
@@ -200,6 +202,10 @@ public class DataProvider {
 
         Collections.sort(messageList);
         return messageList;
+    }
+
+    public JsonElement ExploreHives(int offset,int length) {
+        return this.server.ExploreHives(null);
     }
 
     /**

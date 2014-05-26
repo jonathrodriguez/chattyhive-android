@@ -8,6 +8,7 @@ import com.chattyhive.backend.contentprovider.server.ServerStatus;
 import com.chattyhive.backend.util.events.ChannelEventArgs;
 import com.chattyhive.backend.util.events.EventHandler;
 import com.chattyhive.backend.util.events.PubSubConnectionEventArgs;
+import com.chattyhive.chattyhive.OSStorageProvider.LoginLocalStorage;
 import com.chattyhive.chattyhive.backgroundservice.CHService;
 
 import android.content.ComponentName;
@@ -49,7 +50,7 @@ public class Home_old extends Activity implements ServiceConnection {
 
         ((Button)findViewById(R.id.button)).setOnClickListener(onClick_SendButton);
 
-        this._controller = Controller.getRunningController();
+        this._controller = Controller.getRunningController(LoginLocalStorage.getLoginLocalStorage());
         Controller.bindApp();
 
         this.ConnectService();

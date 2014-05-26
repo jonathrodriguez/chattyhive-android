@@ -8,11 +8,11 @@ package com.chattyhive.backend;
 public final class StaticParameters {
     private StaticParameters() {}
 
-    public static final Boolean BackgroundService = false;
+    public static final Boolean BackgroundService = true;
 
     public static final String ProjectName = "chattyhive"; //The name of the project.
     public static final String ApplicationBase = "android"; //The name of the application.
-    public static final String ApplicationVersion = "0.2.0-"; //Application version.
+    public static final String ApplicationVersion = "0.2.0"; //Application version.
     public static final String ServerBase = "server"; //A name to identify the server.
     public static final String ServerVersion = "0.2.0"; //The server version for which application is designed.
 
@@ -20,7 +20,7 @@ public final class StaticParameters {
     public static final String DefaultServerHost = "herokuapp.com"; //Domain where server application can be found.
     public static final String DefaultServerAppProtocol = "http"; //Connection protocol. This may evolve to "https".
 
-    public static final Boolean StandAlone = true; //Used for debug purposes. When set to TRUE application will not connect to server.
+    public static final Boolean StandAlone = false; //Used for debug purposes. When set to TRUE application will not connect to server.
     /**
      * This method provides a string with a UserAgent to be set in http/https connections. This string provides information about application version and server version supported.
      * In future server versions, this string MAY be get into account to provide responses according to supported version.
