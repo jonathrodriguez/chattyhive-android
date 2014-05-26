@@ -69,10 +69,10 @@ public class CHNotificationBuilder {
     public Notification Build() {
         Notification notification;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            Bitmap largeImage = BitmapFactory.decodeResource(this.context.getResources(), R.drawable.ic_launcher);
+            Bitmap largeImage = BitmapFactory.decodeResource(this.context.getResources(), R.drawable.launcher_launcher_b);
             if ((this.subText == null) || (this.subText.isEmpty())) {
                 Notification.Builder notificationBuilder = new Notification.Builder(this.context)
-                        .setSmallIcon(R.drawable.ic_launcher)
+                        .setSmallIcon(R.drawable.home_isotipo_puro_blanco_derecho)
                         .setContentTitle(this.titleText)
                         .setContentText(this.mainText)
                         .setContentIntent(this.mainAction)
@@ -91,7 +91,7 @@ public class CHNotificationBuilder {
                 notification = notificationBuilder.build();
             } else {
                 NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this.context)
-                        .setSmallIcon(R.drawable.ic_launcher)
+                        .setSmallIcon(R.drawable.home_isotipo_puro_blanco_derecho)
                         .setContentIntent(this.mainAction)
                         .setTicker(this.tickerText);
 
@@ -119,19 +119,19 @@ public class CHNotificationBuilder {
             }
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             Notification.Builder notificationBuilder = new Notification.Builder(this.context)
-                    .setSmallIcon(R.drawable.ic_launcher)
+                    .setSmallIcon(R.drawable.home_isotipo_puro_blanco_derecho)
                     .setContentTitle(this.titleText)
                     .setContentText(this.mainText)
                     .setContentIntent(this.mainAction)
                     .setTicker(this.tickerText);
 
             notification = notificationBuilder.getNotification();
-            notification.largeIcon = (((BitmapDrawable)this.context.getResources().getDrawable(R.drawable.ic_launcher)).getBitmap());
+            notification.largeIcon = (((BitmapDrawable)this.context.getResources().getDrawable(R.drawable.launcher_launcher_b)).getBitmap());
             if ((this.subText != null) && (!this.subText.isEmpty())) {
                 notification.number = this.subText.size();
             }
         } else {
-            notification = new Notification(R.drawable.ic_launcher,this.tickerText,System.currentTimeMillis());
+            notification = new Notification(R.drawable.launcher_launcher_a,this.tickerText,System.currentTimeMillis());
             notification.setLatestEventInfo(this.context,this.titleText,this.mainText,this.mainAction);
             if ((this.subText != null) && (!this.subText.isEmpty())) {
                 notification.number = this.subText.size();

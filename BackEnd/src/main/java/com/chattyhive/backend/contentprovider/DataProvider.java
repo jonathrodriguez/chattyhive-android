@@ -7,6 +7,8 @@ import com.chattyhive.backend.contentprovider.server.Server;
 import com.chattyhive.backend.contentprovider.server.ServerUser;
 import com.chattyhive.backend.contentprovider.pubsubservice.PubSub;
 
+import com.chattyhive.backend.util.events.ConnectionEventArgs;
+import com.chattyhive.backend.util.events.Event;
 import com.chattyhive.backend.util.events.EventHandler;
 import com.chattyhive.backend.util.events.PubSubChannelEventArgs;
 import com.chattyhive.backend.util.events.PubSubConnectionEventArgs;
@@ -22,18 +24,18 @@ import java.util.Collections;
  */
 public class DataProvider {
 
-    private ServerUser _user;
-    private Server _server;
-    private PubSub _pubsub;
-    private ConnectionState _targetState;
-    private Boolean _networkAvailable = true;
+    private ServerUser serverUser;
+    private Server server;
+    private PubSub pubSub;
+    private ConnectionState targetState;
+    private Boolean networkAvailable = true;
 
     /**
      * Permits other classes to subscribe to pusher channel events.
      * @param eventHandler an event handler that points to the method to be invoked.
      */
     public void SubscribeChannelEventHandler(EventHandler<PubSubChannelEventArgs> eventHandler) {
-        this._pubsub.SubscribeChannelEventHandler(eventHandler);
+        this.pubSub.SubscribeChannelEventHandler(eventHandler);
     }
 
     /**
@@ -41,27 +43,36 @@ public class DataProvider {
      * @param eventHandler an event handler that points to the method to be invoked.
      */
     public void SubscribeConnectionEventHandler(EventHandler<PubSubConnectionEventArgs> eventHandler) {
-        this._pubsub.SubscribeConnectionEventHandler(eventHandler);
+        this.pubSub.SubscribeConnectionEventHandler(eventHandler);
+    }
+
+    /**
+     * Permits other classes to subscribe to Server OnConnect event.
+     * @param eventHandler an event handler that points to the method to be invoked.
+     */
+    public void SubscribeToOnConnect(EventHandler<ConnectionEventArgs> eventHandler) {
+        if (this.server != null)
+            this.server.SubscribeToOnConnected(eventHandler);
     }
 
     /**
      * Retrieves user login information.
      * @return a string containing the user login-
      */
-    public String getUser() { return this._user.getLogin(); }
+    public String getUser() { return this.serverUser.getLogin(); }
 
     /**
      * Retrieves the Server User.
      * @return
      */
-    public ServerUser getServerUser() { return this._user; }
+    public ServerUser getServerUser() { return this.serverUser; }
     /**
      * Changes the server user.
      * @param newUser the new server user.
      */
     public void setUser(ServerUser newUser) {
-        this._user = newUser;
-        this._server.setServerUser(this._user);
+        this.serverUser = newUser;
+        this.server.setServerUser(this.serverUser);
     }
 
     /**
@@ -69,7 +80,7 @@ public class DataProvider {
      * @param serverApp
      */
     public void setServerApp (String serverApp) {
-        this._server.setAppName(serverApp);
+        this.server.setAppName(serverApp);
     }
 
     /**
@@ -78,17 +89,34 @@ public class DataProvider {
      * @param serverApp the server application to be used.
      */
     public DataProvider(ServerUser user, String serverApp) {
-        this._user = user;
-        this._server = new Server(this._user,serverApp);
+        this.serverUser = user;
+        this.server = new Server(this.serverUser,serverApp);
 
-        this._pubsub = new PubSub(this._user.getLogin());
+        this.pubSub = new PubSub(this.serverUser.getLogin());
 
         try {
-            this._pubsub.SubscribeChannelEventHandler(new EventHandler<PubSubChannelEventArgs>(this,"onChannelEvent",PubSubChannelEventArgs.class));
-            this._pubsub.SubscribeConnectionEventHandler(new EventHandler<PubSubConnectionEventArgs>(this,"onConnectionEvent",PubSubConnectionEventArgs.class));
+            this.pubSub.SubscribeChannelEventHandler(new EventHandler<PubSubChannelEventArgs>(this,"onChannelEvent",PubSubChannelEventArgs.class));
+            this.pubSub.SubscribeConnectionEventHandler(new EventHandler<PubSubConnectionEventArgs>(this, "onConnectionEvent", PubSubConnectionEventArgs.class));
         } catch (NoSuchMethodException e) { }
 
-        this._pubsub.Join("public_test");
+        /*this.pubSub.Join("public_test");*/
+    }
+
+    public Boolean JoinHive(String jsonParams) {
+        return this.server.JoinHive(jsonParams);
+    }
+
+    public void Join(String channel) {
+        /*try{
+            this.pubSub.SubscribeChannelEventHandler(new EventHandler<PubSubChannelEventArgs>(this,"onChannelEvent",PubSubChannelEventArgs.class));
+            this.pubSub.SubscribeConnectionEventHandler(new EventHandler<PubSubConnectionEventArgs>(this, "onConnectionEvent", PubSubConnectionEventArgs.class));
+        } catch (NoSuchMethodException e) { }*/
+
+        this.pubSub.Join(channel);
+    }
+
+    public void Leave(String channel) {
+        this.pubSub.Leave(channel);
     }
 
     /**
@@ -97,10 +125,10 @@ public class DataProvider {
      */
     public Boolean Connect() {
         Boolean result = false;
-        if (this._networkAvailable) {
-            result = this._server.Connect();
-            this._targetState = ConnectionState.CONNECTED;
-            this._pubsub.Connect();
+        if (this.networkAvailable) {
+            result = this.server.Connect();
+            this.targetState = ConnectionState.CONNECTED;
+            this.pubSub.Connect();
         }
         return result;
     }
@@ -109,30 +137,23 @@ public class DataProvider {
      * Closes the connection with pusher. (The server does not provide a logout method yet).
      */
     public void Disconnect() {
-        this._targetState = ConnectionState.DISCONNECTED;
-        this._pubsub.Disconnect();
+        this.targetState = ConnectionState.DISCONNECTED;
+        this.pubSub.Disconnect();
     }
 
     /**
      * Sends a message, which is correctly JSON formatted, to the server.
      * @param message a JSONElement with the message.
      */
-    public void sendMessage(JsonElement message) {
+    public Boolean sendMessage(JsonElement message) {
         //
         // TODO: Save message.
         //
-        this._server.SendMessage(message.toString());
-    }
-
-    /**
-     * Sends a message, which is string represented, to the server.
-     * @param message a String representing the message to be sent.
-     */
-    public Boolean sendMessage(String message) {
-        //
-        // TODO: Save message.
-        //
-        return this._server.SendMessage(message);
+        Boolean result = false;
+        if (this.networkAvailable) {
+            result = this.server.SendMessage(message.toString());
+        }
+        return result;
     }
 
     /**
@@ -156,10 +177,10 @@ public class DataProvider {
      */
     public void onConnectionEvent(Object sender, PubSubConnectionEventArgs args) {
         ConnectionStateChange change = args.getChange();
-        if ((this._targetState == ConnectionState.CONNECTED) && (change.getCurrentState() == ConnectionState.DISCONNECTED)) {
-            this._pubsub.Connect();
-        } else if ((this._targetState == ConnectionState.DISCONNECTED) && (change.getCurrentState() == ConnectionState.CONNECTED)) {
-            this._pubsub.Disconnect();
+        if ((this.targetState == ConnectionState.CONNECTED) && (change.getCurrentState() == ConnectionState.DISCONNECTED)) {
+            this.pubSub.Connect();
+        } else if ((this.targetState == ConnectionState.DISCONNECTED) && (change.getCurrentState() == ConnectionState.CONNECTED)) {
+            this.pubSub.Disconnect();
         }
     }
 
@@ -183,18 +204,31 @@ public class DataProvider {
         return messageList;
     }
 
+    public JsonElement ExploreHives(int offset,int length) {
+        return this.server.ExploreHives(null);
+    }
+
     /**
      * It si very important to know network availability before trying any network operation. There are some
      * functions in android API which permit to retrieve network status, so it's necessary to provide
      * this information to the data provider.
      * @param value a Boolean value indicating whether the network is available.
      */
-    public void setNetworkAvailable(Boolean value) { this._networkAvailable = value; }
+    public void setNetworkAvailable(Boolean value) { this.networkAvailable = value; }
 
     /**
      * Returns a value indicating what the data provider was last informed about the network state
      * @return a Boolean value indicating network availability.
      */
-    public Boolean getNetworkAvailable() { return this._networkAvailable; }
+    public Boolean getNetworkAvailable() { return this.networkAvailable; }
+
+    /**
+     * Returns a value indicating if the PubSub underlying service is connected or connecting.
+     * @return a Boolean value indicating if the PubSub service is connected or connecting.
+     */
+    public Boolean isPubsubConnected() {
+        ConnectionState cs = this.pubSub.GetConnectionState();
+        return ((cs == ConnectionState.CONNECTED) || (cs == ConnectionState.CONNECTING));
+    }
 }
 
