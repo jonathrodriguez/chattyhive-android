@@ -1,21 +1,30 @@
 package com.chattyhive.backend;
 
+import com.chattyhive.backend.businessobjects.Hive;
 import com.chattyhive.backend.businessobjects.Message;
 import com.chattyhive.backend.businessobjects.MessageContent;
+import com.chattyhive.backend.businessobjects.User;
 import com.chattyhive.backend.contentprovider.DataProvider;
+import com.chattyhive.backend.contentprovider.OSStorageProvider.LoginLocalStorageInterface;
+import com.chattyhive.backend.contentprovider.OSStorageProvider.MessageLocalStorageInterface;
+import com.chattyhive.backend.contentprovider.server.ServerStatus;
 import com.chattyhive.backend.contentprovider.server.ServerUser;
 import com.chattyhive.backend.util.events.ChannelEventArgs;
+import com.chattyhive.backend.util.events.ConnectionEventArgs;
 import com.chattyhive.backend.util.events.Event;
 import com.chattyhive.backend.util.events.EventArgs;
 import com.chattyhive.backend.util.events.EventHandler;
 import com.chattyhive.backend.util.events.PubSubChannelEventArgs;
 import com.chattyhive.backend.util.events.PubSubConnectionEventArgs;
 import com.chattyhive.backend.util.formatters.TimestampFormatter;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.TreeSet;
 
 /**
  * Created by Jonathan on 11/12/13.
@@ -29,17 +38,22 @@ import java.util.HashMap;
 public class Controller {
     private static Controller _controller;
     private static Boolean appBounded = false;
-    private static Event<EventArgs> appBindingEvent;
-    public static void SubscribeToAppBindingEvent(EventHandler<EventArgs> eventHandler){
-        if (appBindingEvent == null)
-            appBindingEvent = new Event<EventArgs>();
-        appBindingEvent.add(eventHandler);
-    }
+    private LoginLocalStorageInterface loginLocalStorage;
+    private MessageLocalStorageInterface messageLocalStorage;
+
     public static Controller getRunningController() {
-        if (_controller == null)
-            _controller = new Controller();
         return _controller;
     }
+
+    public static Controller getRunningController(LoginLocalStorageInterface loginLocalStorage) {
+        if (_controller == null)
+            _controller = new Controller(loginLocalStorage);
+        else if (_controller.loginLocalStorage == null) {
+            _controller.setLoginLocalStorage(loginLocalStorage);
+        }
+        return _controller;
+    }
+
     public static void disposeRunningController() {
         _controller = null;
     }
@@ -57,16 +71,83 @@ public class Controller {
             appBindingEvent.fire(_controller,EventArgs.Empty());
     } 
     // BusinessObjects
-    private HashMap<String, ArrayList<Message>> messages = new HashMap<String, ArrayList<Message>>();
+    private HashMap<String, TreeSet<Message>> messages = new HashMap<String, TreeSet<Message>>();
+    private ArrayList<Hive> hives = new ArrayList<Hive>();
+    public ArrayList<Hive> getHives() { return hives; }
+    public Hive getHiveFromUrlName(String UrlName) {
+        if ((UrlName != null) && (!UrlName.isEmpty()))
+            for (Hive h : this.hives)
+                if (h.getNameURL().equalsIgnoreCase(UrlName)) return h;
+        return null;
+    }
+    public Hive getHiveFromName(String Name) {
+        if ((Name != null) && (!Name.isEmpty()))
+            for (Hive h : this.hives)
+                if (h.getName().equalsIgnoreCase(Name)) return h;
+        return null;
+    }
+
+    private ArrayList<Hive> exploreHives = new ArrayList<Hive>();
+    public ArrayList<Hive> getExploreHives() { return exploreHives; }
     // ContentProvider
     private DataProvider _dataProvider;
 
-    // Events
-    private Event<ChannelEventArgs> _channelEvent;
+    public Boolean getNetworkAvailable() { return this._dataProvider.getNetworkAvailable(); }
+    public void setNetworkAvailable(Boolean value) { this._dataProvider.setNetworkAvailable(value); }
 
+
+    // Events
+    private static Event<EventArgs> appBindingEvent;
+    public static void SubscribeToAppBindingEvent(EventHandler<EventArgs> eventHandler){
+        if (appBindingEvent == null)
+            appBindingEvent = new Event<EventArgs>();
+        appBindingEvent.add(eventHandler);
+    }
+
+    private Event<EventArgs> hivesListChange;
+    public void SubscribeToHivesListChange(EventHandler<EventArgs> eventHandler) {
+        if (hivesListChange == null)
+            hivesListChange = new Event<EventArgs>();
+        hivesListChange.add(eventHandler);
+
+        if (StaticParameters.StandAlone) {
+            // DEBUG
+            Thread t = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    for (int i = 0; i < 12; i++) {
+                        hives.add(new Hive("Hive number: ".concat(String.valueOf(i)),"Hn".concat(String.valueOf(i))));
+                        if (hivesListChange != null) {
+                            hivesListChange.fire(hives, EventArgs.Empty());
+                        }
+                        try {
+                            Thread.sleep(3000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            });
+            hives.clear();
+            t.start();
+            // END DEBUG
+        }
+    }
+
+    private Event<EventArgs> exploreHivesListChange;
+    public void SubscribeToExploreHivesListChange(EventHandler<EventArgs> eventHandler) {
+        if (exploreHivesListChange == null)
+            exploreHivesListChange = new Event<EventArgs>();
+        exploreHivesListChange.add(eventHandler);
+    }
+
+    private Event<ChannelEventArgs> _channelEvent;
     public void SubscribeChannelEventHandler(EventHandler<ChannelEventArgs> eventHandler) {
+        if (this._channelEvent == null)
+            this._channelEvent = new Event<ChannelEventArgs>();
         this._channelEvent.add(eventHandler);
     }
+
     public void SubscribeConnectionEventHandler(EventHandler<PubSubConnectionEventArgs> eventHandler) {
         this._dataProvider.SubscribeConnectionEventHandler(eventHandler);
     }
@@ -93,18 +174,9 @@ public class Controller {
     public void setServerApp(String serverApp) {
         this._dataProvider.setServerApp(serverApp);
     }
-    public Controller() {
-        this(new ServerUser("",""),StaticParameters.DefaultServerAppName);
-    }
-
-    /**
-     * Public constructor. Instantiates a DataProvider and subscribes to PubSubChannelEvent.
-     * Since this constructor takes no arguments about server application, the DefaultServerAppName
-     * application will be used.
-     * @param user A ServerUser with data needed to login to server.
-     */
-    public Controller(ServerUser user) {
-        this(user,StaticParameters.DefaultServerAppName);
+    public Controller(LoginLocalStorageInterface loginLocalStorage) {
+        this(new ServerUser(loginLocalStorage),StaticParameters.DefaultServerAppName);
+        this.setLoginLocalStorage(loginLocalStorage);
     }
 
     /**
@@ -117,7 +189,16 @@ public class Controller {
         this._dataProvider = new DataProvider(user, serverApp);
         try {
             this._dataProvider.SubscribeChannelEventHandler(new EventHandler<PubSubChannelEventArgs>(this,"onChannelEvent",PubSubChannelEventArgs.class));
+            this._dataProvider.SubscribeToOnConnect(new EventHandler<ConnectionEventArgs>(this,"onConnect",ConnectionEventArgs.class));
         } catch (NoSuchMethodException e) { }
+        new User(user.getLogin());
+    }
+
+    public Boolean isConnected() {
+        Boolean result;
+        result = !((this._dataProvider.getServerUser() == null) || (this._dataProvider.getServerUser().getStatus() == ServerStatus.DISCONNECTED) ||(this._dataProvider.getServerUser().getStatus() == ServerStatus.EXPIRED));
+        result = (result && this._dataProvider.isPubsubConnected());
+        return result;
     }
 
     /**
@@ -125,7 +206,44 @@ public class Controller {
      * @return true if connected to our server, else false
      */
     public Boolean Connect () {
-        return this._dataProvider.Connect();
+        Boolean result = this._dataProvider.Connect();
+
+        if (result) {
+            ServerUser su = this.getServerUser();
+            this.loginLocalStorage.StoreLoginPassword(su.getLogin(),su.getPassword());
+        }
+        return result;
+    }
+
+    public Boolean JoinHive(String hive) {
+        JsonObject jsonParams = new JsonObject();
+        jsonParams.addProperty("user",this.getServerUser().getLogin());
+        jsonParams.addProperty("hive",hive);
+
+        Boolean result = this._dataProvider.JoinHive(jsonParams.toString());
+
+        if (result) {
+            for (Hive h : exploreHives) {
+                if (h.getNameURL().equalsIgnoreCase(hive)) {
+                    this.hives.add(h);
+                    exploreHives.remove(h);
+                }
+            }
+        }
+        
+        return result;
+    }
+
+    public void JoinTMP (String channel) {
+        this._dataProvider.Join(channel);
+    }
+
+    public void Join(String channel) {
+        //this._dataProvider.Join(channel);
+    }
+
+    public void Leave(String channel) {
+        //this._dataProvider.Leave(channel);
     }
 
     /**
@@ -145,20 +263,33 @@ public class Controller {
      */
     public void onChannelEvent (Object sender, PubSubChannelEventArgs args) {
         Message m;
-        if (args.getEventName().compareTo("msg")==0){
+
+       // System.out.println("Channel event: ".concat(args.getChannelName()).concat(" -> ").concat(args.getEventName()).concat(" : ").concat(args.getMessage()));
+
+        if (args.getEventName().equalsIgnoreCase("msg")){
+            //System.out.println("Detected as message.");
             JsonParser jsonParser = new JsonParser();
             JsonElement jsonElement = jsonParser.parse(args.getMessage());
             m = new Message(jsonElement);
+            if (m.getHive() == null) m.hive = this.getHiveFromUrlName(args.getChannelName());
 
-            if (this.messages.containsKey(args.getChannelName())) {
+            //System.out.println("Received Message: ".concat(m.toJson().toString()));
+
+            if (!this.messages.containsKey(args.getChannelName()))
+                this.messages.put(args.getChannelName(),new TreeSet<Message>());
+
+            if (!this.messages.get(args.getChannelName()).contains(m)) {
+                //System.out.println("Nuevo mensaje recibido. Tamaño de lista de mensajes: ".concat(String.valueOf(this.messages.get(args.getChannelName()).size())));
                 this.messages.get(args.getChannelName()).add(m);
-            } else {
-                ArrayList<Message> arrayList = new ArrayList<Message>();
-                arrayList.add(m);
-                this.messages.put(args.getChannelName(),arrayList);
+                //System.out.println(" -- MESSAGE SAVED -- ");
+                if (this.messageLocalStorage != null) {
+                    this.messageLocalStorage.StoreMessage(args.getChannelName(),m.toJson().toString());
+                }
             }
+
         } else {
-            m = new Message(new MessageContent(""),TimestampFormatter.toDate(args.getMessage()));
+           // System.out.println("Detected as NOT a message.");
+            m = new Message(new MessageContent(args.getMessage()),TimestampFormatter.toDate(args.getMessage()));
         }
 
         this._channelEvent.fire(this,new ChannelEventArgs(args.getChannelName(),args.getEventName(),m));
@@ -170,14 +301,98 @@ public class Controller {
      * business model classes to return. Probably better option is to return an ArrayList sorted by
      * message timestamp.
      */
-    public ArrayList<Message> getMessages(String channel) {
-        // TODO: Implement local and remote message recovering.
-        //this._dataProvider.RecoverMessages(channel);
-        if (!this.messages.containsKey(channel)) {
-            ArrayList<Message> arrayList = new ArrayList<Message>();
-            this.messages.put(channel,arrayList);
+    public TreeSet<Message> getMessages(String channel) {
+        if (!this.messages.containsKey(channel))
+            this.messages.put(channel,new TreeSet<Message>());
+
+        TreeSet<Message> messageList = this.messages.get(channel);
+
+        // Local message recovering
+        if (this.messageLocalStorage != null) {
+            String[] localMessages = this.messageLocalStorage.RecoverMessage(channel);
+            if (localMessages != null) {
+                JsonParser jsonParser = new JsonParser();
+                JsonElement jsonElement;
+                Message m;
+                for (String jsonMessage : localMessages) {
+                    jsonElement = jsonParser.parse(jsonMessage);
+                    m = new Message(jsonElement);
+                    if (!messageList.contains(m)) messageList.add(m);
+                }
+            }
         }
-        return this.messages.get(channel);
+
+        // TODO: Implement remote message recovering.
+        //this._dataProvider.RecoverMessages(channel);
+
+        return messageList;
+    }
+
+    /**
+     * This method permits application to recover some hives from explore server list.
+     * @param
+     */
+    public boolean exploreHives(int offset,int length) {
+        if (offset == 0) { exploreHives.clear(); }
+        int actualSize = exploreHives.size();
+        boolean exploreHiveListChanged = false;
+        JsonElement response = null;
+        if (!StaticParameters.StandAlone) {
+
+            response = this._dataProvider.ExploreHives(offset,length);
+
+            if ((response != null) && (!response.isJsonNull())) {
+                JsonArray hivesArray = null;
+                if (response.isJsonArray()) {
+                    hivesArray = response.getAsJsonArray();
+                } else if (response.isJsonObject()) {
+                    hivesArray = new JsonArray();
+                    hivesArray.add(response);
+                }
+                if (hivesArray != null)
+                    for (JsonElement jsonElement : hivesArray)
+                        if (jsonElement.isJsonObject()) {
+                            Hive hive = new Hive(jsonElement);
+                            Boolean alreadyJoined = false;
+                            for (Hive h : hives) {
+                                if (h.getNameURL().equalsIgnoreCase(hive.getNameURL()))
+                                    alreadyJoined = true;
+
+                            }
+                            exploreHiveListChanged = ((!alreadyJoined) && (exploreHiveListChanged | this.exploreHives.add(hive)));
+                        }
+            }
+            // TODO: This is for server 0.2.0 which does not support list indexing.
+            actualSize = this.exploreHives.size();
+        } else {
+            if (offset == 0) {
+                exploreHiveListChanged = (exploreHiveListChanged | this.exploreHives.add(new Hive("Sports 1","sports_1","sports","This hive is for sports!")));
+                exploreHiveListChanged = (exploreHiveListChanged | this.exploreHives.add(new Hive("Sports 2","sports_2","sports","This hive is for sports!")));
+                exploreHiveListChanged = (exploreHiveListChanged | this.exploreHives.add(new Hive("Sports 3","sports_3","sports","This hive is for sports!")));
+                exploreHiveListChanged = (exploreHiveListChanged | this.exploreHives.add(new Hive("Free time 1","free_time_1","free time","This hive is for free time!")));
+                exploreHiveListChanged = (exploreHiveListChanged | this.exploreHives.add(new Hive("Free time 2","free_time_2","free time","This hive is for free time!")));
+                exploreHiveListChanged = (exploreHiveListChanged | this.exploreHives.add(new Hive("Free time 3","free_time_3","free time","This hive is for free time!")));
+                exploreHiveListChanged = (exploreHiveListChanged | this.exploreHives.add(new Hive("Science 1","science_1","Science","This hive is for science!")));
+                exploreHiveListChanged = (exploreHiveListChanged | this.exploreHives.add(new Hive("Science 2","science_2","Science","This hive is for science!")));
+                exploreHiveListChanged = (exploreHiveListChanged | this.exploreHives.add(new Hive("Science 3","science_3","Science","This hive is for science!")));
+                length = 9;
+            } else if (offset >= 9) {
+                exploreHiveListChanged = (exploreHiveListChanged | this.exploreHives.add(new Hive("Sports 4","sports_4","sports","This hive is for sports!")));
+                exploreHiveListChanged = (exploreHiveListChanged | this.exploreHives.add(new Hive("Sports 5","sports_5","sports","This hive is for sports!")));
+                exploreHiveListChanged = (exploreHiveListChanged | this.exploreHives.add(new Hive("Sports 6","sports_6","sports","This hive is for sports!")));
+                exploreHiveListChanged = (exploreHiveListChanged | this.exploreHives.add(new Hive("Free time 4","free_time_4","free time","This hive is for free time!")));
+                exploreHiveListChanged = (exploreHiveListChanged | this.exploreHives.add(new Hive("Free time 5","free_time_5","free time","This hive is for free time!")));
+                exploreHiveListChanged = (exploreHiveListChanged | this.exploreHives.add(new Hive("Science 4","science_4","Science","This hive is for science!")));
+                exploreHiveListChanged = (exploreHiveListChanged | this.exploreHives.add(new Hive("Science 5","science_5","Science","This hive is for science!")));
+                length = 9;
+            }
+
+        }
+
+        if ((exploreHiveListChanged) && (this.exploreHivesListChange != null))
+            this.exploreHivesListChange.fire(this.exploreHives,EventArgs.Empty());
+
+        return ((exploreHives.size() - actualSize) >= length);
     }
 
     /**
@@ -186,10 +401,81 @@ public class Controller {
      * is URL encoded.
      * @param message The message to be sent.
      */
-    public Boolean sendMessage(Message message) {
-        // TODO: Uncomment the following lines to send messages correctly and remove actual sendMessage line.
-        //message._user = new User(this._dataProvider.getUser());
-        //this._dataProvider.sendMessage(message.toJson());
-        return this._dataProvider.sendMessage("message=".concat(message._content.getContent().replace("+", "%2B").replace(" ", "+")).concat("&timestamp=").concat(TimestampFormatter.toString(message.getTimeStamp()).replace(":", "%3A").replace("+", "%2B").replace(" ", "+")));
+    public Boolean sendMessage(Message message,String channel) {
+
+        message._user = User.getMe();
+        message.hive = getHiveFromUrlName(channel);
+
+
+        if (!this.messages.containsKey(channel))
+            this.messages.put(channel,new TreeSet<Message>());
+
+        if (!this.messages.get(channel).contains(message)) {
+            this.messages.get(channel).add(message);
+
+        }
+
+        Boolean result = this._dataProvider.sendMessage(message.toJson());
+
+        if ((!result) && (this.messages.get(channel).contains(message))) {
+         //   System.out.println("Mensaje enviado. Tamaño de lista de mensajes: ".concat(String.valueOf(this.messages.get(channel).size())));
+            this.messages.get(channel).remove(message);
+        }
+        if ((result) && (this.messageLocalStorage != null)) {
+                this.messageLocalStorage.StoreMessage(channel,message.toJson().toString());
+        }
+
+
+        //return true;
+        return result;
+
+        //return this._dataProvider.sendMessage("message=".concat(message._content.getContent().replace("+", "%2B").replace(" ", "+")).concat("&timestamp=").concat(TimestampFormatter.toString(message.getTimeStamp()).replace(":", "%3A").replace("+", "%2B").replace(" ", "+")));
+    }
+
+    public void onConnect (Object sender, ConnectionEventArgs args) {
+        JsonElement profile = args.getProfile();
+        JsonElement hivesSubscribed = args.getHivesSubscribed();
+        Boolean hiveListChanged = false;
+        if ((hivesSubscribed != null) && (!hivesSubscribed.isJsonNull())) {
+            JsonArray hivesArray = null;
+            if (hivesSubscribed.isJsonArray()) {
+                //System.out.println("Is a JSON Array");
+                hivesArray = hivesSubscribed.getAsJsonArray();
+            } else if (hivesSubscribed.isJsonObject()) {
+                //System.out.println("Is a JSON Object");
+                hivesArray = new JsonArray();
+                hivesArray.add(hivesSubscribed);
+            }
+            if (hivesArray != null)
+                for (JsonElement jsonElement : hivesArray)
+                    if (jsonElement.isJsonObject()) {
+                        Hive hive = new Hive(jsonElement);
+                        this.JoinTMP(hive.getNameURL());
+                        hiveListChanged = (hiveListChanged | this.hives.add(hive));
+                    }
+        }
+        if ((profile != null) && (!profile.isJsonNull())) {
+            new User(getServerUser().getLogin());
+            User.setUpOwnProfile(profile);
+        }
+
+//        for (Hive hive : this.hives) {
+//            String line = "Name: ".concat(hive.getName());
+//            line = line.concat(" ; NameURL: ").concat(hive.getNameURL());
+//            line = line.concat(" ; Description: ").concat(hive.getDescription());
+//            line = line.concat(" ; Category: ").concat(hive.getCategory());
+//            line = line.concat(" ; Created: ").concat(hive.getCreationDate().toString());
+//            System.out.println(line);
+//        }
+
+        if (hiveListChanged) this.hivesListChange.fire(this.hives,EventArgs.Empty());
+    }
+
+    public void setLoginLocalStorage(LoginLocalStorageInterface loginLocalStorage) {
+        this.loginLocalStorage = loginLocalStorage;
+    }
+
+    public void setMessageLocalStorage(MessageLocalStorageInterface messageLocalStorage) {
+        this.messageLocalStorage = messageLocalStorage;
     }
 }

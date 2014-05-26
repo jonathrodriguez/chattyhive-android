@@ -2,6 +2,9 @@ package com.chattyhive.backend.contentprovider.server;
 
 
 import com.chattyhive.backend.StaticParameters;
+import com.chattyhive.backend.util.events.ConnectionEventArgs;
+import com.chattyhive.backend.util.events.Event;
+import com.chattyhive.backend.util.events.EventHandler;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -16,6 +19,15 @@ public class Server {
     private String _appName = "";
     private String _appProtocol = "";
     private String _host = "";
+
+
+    private Event<ConnectionEventArgs> onConnected;
+
+    public void SubscribeToOnConnected(EventHandler<ConnectionEventArgs> eventHandler){
+        if (onConnected == null)
+            onConnected = new Event<ConnectionEventArgs>();
+        onConnected.add(eventHandler);
+    }
 
     /**
      * Retrieves the server application name to which this instance is connected.
@@ -78,30 +90,65 @@ public class Server {
      */
     public Boolean Connect() {
         Boolean result = true;
-        String _function = "android.login";
+
+        if (StaticParameters.StandAlone) {
+            this._serverUser.setStatus(ServerStatus.LOGGED);
+            return true;
+        }
+
+        String _function = "android.start_session";
         String _url = _appProtocol.concat("://").concat(_appName).concat(".").concat(_host);
         _url = _url.concat("/").concat(_function);
 
-       String _rest = this._serverUser.getLogin();
+        AsyncHttpURLConnection asyncHttpURLConnection = new AsyncHttpURLConnection("GET",_url,this._serverUser,"","");
 
-        AsyncHttpURLConnection asyncHttpURLConnection = new AsyncHttpURLConnection("GET",_url,this._serverUser,"",_rest);
+        try {
+            ServerResponse response = asyncHttpURLConnection.getServerResponse();
+            if (response.getResponseCode() != 200)
+                return false;
+        } catch (InterruptedException e) {
+            return false;
+        }
+
+
+        _function = "android.login";
+        _url = _appProtocol.concat("://").concat(_appName).concat(".").concat(_host);
+        _url = _url.concat("/").concat(_function);
+
+       String _bodyData = this._serverUser.toJson().toString();
+
+        asyncHttpURLConnection = new AsyncHttpURLConnection("POST",_url,this._serverUser,_bodyData,"");
+
+        JsonElement jsonElement = null;
 
         try {
             ServerResponse response = asyncHttpURLConnection.getServerResponse();
             if (response.getResponseCode() != 200) {
                 return false;
             }
+            String res = response.getBodyData();
+            res=res.replace("\\\"","\"");
+            res=res.replace("\"{","{");
+            res=res.replace("}\"","}");
             try {
                 JsonParser jsonParser = new JsonParser();
-                JsonElement jsonElement = jsonParser.parse(response.getBodyData());
+                jsonElement = jsonParser.parse(res);
                 JsonObject responseJsonObject = jsonElement.getAsJsonObject();
                 this._serverUser.setStatus(ServerStatus.valueOf(responseJsonObject.get("status").getAsString()));
             } catch (Exception e) {
-                this._serverUser.setStatus(ServerStatus.LOGGED);
+                this._serverUser.setStatus(ServerStatus.ERROR);
             }
         } catch (InterruptedException e) {
             result = false;
         }
+
+        if ((this._serverUser.getStatus() != ServerStatus.OK) && (this._serverUser.getStatus() != ServerStatus.LOGGED)) {
+            result = false;
+        }
+
+        if ((result) && (this.onConnected != null))
+            this.onConnected.fire(this,new ConnectionEventArgs(jsonElement));
+
         return result;
     }
 
@@ -111,20 +158,15 @@ public class Server {
      * @return a boolean value indicating whether the operation has correctly been done.
      */
     public Boolean SendMessage(String jsonMSG) {
+
+        if (StaticParameters.StandAlone) {
+            return true;
+        }
+
         Boolean result = true;
         String _function = "android.chat";
         String _url = _appProtocol.concat("://").concat(_appName).concat(".").concat(_host);
         _url = _url.concat("/").concat(_function);
-
-        //JsonObject jsonObject = new JsonObject();
-        //jsonObject.addProperty("timestamp", TimestampFormatter.toString(new Date()));
-        //jsonObject.addProperty("message",msg);
-        //
-        // TODO: Officially message should be sent in JSON.
-        //
-        //String jsonString = jsonObject.toString();
-        //String ts = TimestampFormatter.toString(new Date());
-        //String jsonString = "message=".concat(msg.replace("+","%2B").replace(" ", "+")).concat("&timestamp=").concat(ts.replace(":","%3A").replace("+","%2B").replace(" ","+"));
 
         AsyncHttpURLConnection asyncHttpURLConnection = new AsyncHttpURLConnection("POST",_url,this._serverUser,jsonMSG,"");
 
@@ -140,11 +182,89 @@ public class Server {
                 ServerStatus status = ServerStatus.valueOf(responseJsonObject.get("status").getAsString());
                 if (status != this._serverUser.getStatus()) {
                     this._serverUser.setStatus(status);
-                    this.Connect();
+                    this.Connect(); // !!!!?????
                     this.SendMessage(jsonMSG);
                 }
             } catch (Exception e) {
-                this._serverUser.setStatus(ServerStatus.LOGGED);
+                this._serverUser.setStatus(ServerStatus.ERROR);
+            }
+        } catch (InterruptedException e) {
+            result = false;
+        }
+        return result;
+    }
+
+    public JsonElement ExploreHives(String jsonParams) {
+        String method = ((jsonParams != null) && (!jsonParams.isEmpty()))?"POST":"GET";
+
+        String _function = "android.explore";
+        String _url = _appProtocol.concat("://").concat(_appName).concat(".").concat(_host);
+        _url = _url.concat("/").concat(_function);
+
+        AsyncHttpURLConnection asyncHttpURLConnection = new AsyncHttpURLConnection(method,_url,this._serverUser,jsonParams,"");
+
+        JsonObject responseJsonObject = null;
+
+        try {
+            ServerResponse response = asyncHttpURLConnection.getServerResponse();
+            if (response.getResponseCode() != 200) return null;
+
+            String res = response.getBodyData();
+            res=res.replace("\\\"","\"");
+            res=res.replace("\"{","{");
+            res=res.replace("}\"","}");
+            try {
+                JsonParser jsonParser = new JsonParser();
+                JsonElement jsonResponse = jsonParser.parse(res);
+                responseJsonObject = jsonResponse.getAsJsonObject();
+                this._serverUser.setStatus(ServerStatus.valueOf(responseJsonObject.get("status").getAsString()));
+            } catch (Exception e) {
+                this._serverUser.setStatus(ServerStatus.ERROR);
+            }
+        } catch (InterruptedException e) {
+            return null;
+        }
+
+        if ((this._serverUser.getStatus() != ServerStatus.OK) && (this._serverUser.getStatus() != ServerStatus.LOGGED)) {
+            return null;
+        }
+
+        if (responseJsonObject != null) {
+            return responseJsonObject.get("hives");
+        }
+
+        return null;
+    }
+
+    public Boolean JoinHive(String jsonParams) {
+        if (StaticParameters.StandAlone) {
+            return true;
+        }
+
+        Boolean result = true;
+        String _function = "android.join";
+        String _url = _appProtocol.concat("://").concat(_appName).concat(".").concat(_host);
+        _url = _url.concat("/").concat(_function);
+
+        AsyncHttpURLConnection asyncHttpURLConnection = new AsyncHttpURLConnection("POST",_url,this._serverUser,jsonParams,"");
+
+        try {
+            ServerResponse response = asyncHttpURLConnection.getServerResponse();
+            if (response.getResponseCode() != 200) {
+                return false;
+            }
+            try {
+                JsonParser jsonParser = new JsonParser();
+                JsonElement jsonElement = jsonParser.parse(response.getBodyData());
+                JsonObject responseJsonObject = jsonElement.getAsJsonObject();
+                ServerStatus status = ServerStatus.valueOf(responseJsonObject.get("status").getAsString());
+                if (status != this._serverUser.getStatus()) {
+                    this._serverUser.setStatus(status);
+                    this.Connect(); // !!!!?????
+                    this.JoinHive(jsonParams);
+                }
+            } catch (Exception e) {
+                this._serverUser.setStatus(ServerStatus.ERROR);
             }
         } catch (InterruptedException e) {
             result = false;

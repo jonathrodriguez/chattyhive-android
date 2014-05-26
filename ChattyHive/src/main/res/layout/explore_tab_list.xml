@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ffffff"
+    android:baselineAligned="false">
+
+    <ImageButton
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:id="@+id/explore_tab_list_favourites_button"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:src="@drawable/chats_favourite"
+        android:layout_weight="1"
+        android:scaleType="fitCenter"
+        android:background="#ffffff" />
+
+    <ImageButton
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:id="@+id/explore_tab_list_location_button"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:src="@drawable/pestanha_hives_location"
+        android:layout_weight="1"
+        android:scaleType="fitCenter"
+        android:background="#ffffff" />
+
+    <ImageButton
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:id="@+id/explore_tab_list_recent_button"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:src="@drawable/pestanha_hives_historial"
+        android:layout_weight="1"
+        android:scaleType="fitCenter"
+        android:background="#ffffff" />
+
+    <ImageButton
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:src="@drawable/pestanha_hives_flag"
+        android:layout_weight="1"
+        android:scaleType="fitCenter"
+        android:background="#ffffff"
+        android:id="@+id/explore_tab_list_trending_button" />
+
+</LinearLayout>

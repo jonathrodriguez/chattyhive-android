@@ -1,5 +1,6 @@
 package com.chattyhive.backend.businessobjects;
 
+import com.chattyhive.backend.Controller;
 import com.chattyhive.backend.util.formatters.TimestampFormatter;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -15,6 +16,7 @@ public class Message implements Comparable{
     public User _user;
     public MessageContent _content;
     public Date _timeStamp;
+    public Hive hive;
 
     /**
      * Public constructor.
@@ -22,10 +24,11 @@ public class Message implements Comparable{
      * @param content The content of the message
      * @param timeStamp The timestamp of the message
      */
-    public Message(User user, MessageContent content, Date timeStamp) {
+    public Message(User user, Hive hive, MessageContent content, Date timeStamp) {
         this._user = user;
         this._content = content;
         this._timeStamp = timeStamp;
+        this.hive = hive;
     }
 
     /**
@@ -55,6 +58,14 @@ public class Message implements Comparable{
     }
 
     /**
+     * Retrieves the hive to which this message belongs
+     * @return
+     */
+    public Hive getHive() {
+        return this.hive;
+    }
+
+    /**
      * Retrieves the message content.
      * @return
      */
@@ -77,8 +88,10 @@ public class Message implements Comparable{
     public JsonElement toJson() {
         JsonObject jsonMessage = new JsonObject();
         jsonMessage.addProperty("timestamp", TimestampFormatter.toString(this._timeStamp));
-        jsonMessage.add("username",this._user.toJson());
+        jsonMessage.addProperty("user",this._user.getEmail());
+        jsonMessage.addProperty("public_name",this._user.getPublicName());
         jsonMessage.add("message",this._content.toJson());
+        jsonMessage.addProperty("hive", this.hive.getName());
         return jsonMessage;
     }
 
@@ -89,11 +102,8 @@ public class Message implements Comparable{
     public void fromJson(JsonElement json) {
         if (json.isJsonObject()) {
             JsonObject jsonMessage = json.getAsJsonObject();
-            if (this._user == null) {
-                this._user = new User(jsonMessage.get("username"));
-            } else {
-                this._user.fromJson(jsonMessage.get("username"));
-            }
+
+            this._user = User.getUser(jsonMessage.get("public_name").getAsString());
 
             if (this._content == null) {
                 this._content = new MessageContent(jsonMessage.get("message"));
@@ -102,11 +112,18 @@ public class Message implements Comparable{
             }
 
             this._timeStamp = TimestampFormatter.toDate(jsonMessage.get("timestamp").getAsString());
+
+            if ((jsonMessage.get("hive") != null) && (jsonMessage.get("hive").getAsString() != null)) {
+                this.hive = Controller.getRunningController().getHiveFromName(jsonMessage.get("hive").getAsString());
+            } else {
+                this.hive = null;
+            }
         }
         else {
             this._user = null;
             this._content = null;
             this._timeStamp = null;
+            this.hive = null;
         }
     }
 
@@ -120,6 +137,22 @@ public class Message implements Comparable{
         if (o.getClass() != this.getClass()) {
             throw new ClassCastException();
         }
+        if (this.equals(o)) return 0;
+
         return this._timeStamp.compareTo(((Message)o).getTimeStamp());
+    }
+
+    public boolean equals(Object o) {
+        if ((o != null) && (o instanceof Message)) {
+            Message m = (Message)o;
+
+//            System.out.println("User: -> ".concat(String.valueOf((this.getUser().getPublicName().equalsIgnoreCase(m.getUser().getPublicName())))));
+//            System.out.println("TimeStamp: -> ".concat(String.valueOf((TimestampFormatter.toString(this.getTimeStamp()).equalsIgnoreCase(TimestampFormatter.toString(m.getTimeStamp()))))));
+//            System.out.println("Message: -> ".concat(String.valueOf((this.getMessage().getContent().equalsIgnoreCase(m.getMessage().getContent())))));
+//           System.out.println("Hive: -> ".concat(String.valueOf((this.getHive().getNameURL().equalsIgnoreCase(m.getHive().getNameURL())))));
+
+            return ((this.getUser().getPublicName().equalsIgnoreCase(m.getUser().getPublicName())) && (TimestampFormatter.toString(this.getTimeStamp()).equalsIgnoreCase(TimestampFormatter.toString(m.getTimeStamp()))) && (this.getMessage().getContent().equalsIgnoreCase(m.getMessage().getContent())) && (this.getHive().getNameURL().equalsIgnoreCase(m.getHive().getNameURL())));
+        }
+        return false;
     }
 }

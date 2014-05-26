@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="login_activity_title">Login</string>
+
+    <!-- Strings related to login -->
+    <string name="login_progress_signing_in">Signing in&#8230;</string>
+
+    <string name="server_prompt">Select server</string>
+
+    <string name="login_activity_login">Login</string>
+    <string name="login_activity_sign_up">Sign Up</string>
+
+
+    <string name="login_activity_sign_up_tab_sign_with_email">Or sign up with your email...</string>
+    <string name="login_activity_sign_up_tab_email_field_hint">Enter your email....</string>
+    <string name="login_activity_sign_up_tab_go_button">GO</string>
+    <string name="login_activity_sign_up_tab_try_it">Try it before sign up!</string>
+
+    <string name="login_activity_login_tab_email_field_hint">email / username</string>
+    <string name="login_activity_login_tab_password_field_hint">password</string>
+    <string name="login_activity_login_tab_login_button">Login to chattyhive</string>
+    <string name="login_activity_login_tab_other_social_networks">You can also login with...</string>
+    <string name="login_activity_login_tab_forgotten_password">Did you forget your password?</string>
+
+    <!-- Strings related with server -->
+    <string-array name="servers_array">
+        <item>chdev1</item>
+        <item>chdev2</item>
+        <item>chdev3</item>
+        <item>chtest1</item>
+        <item>chtest2</item>
+        <item>chtest3</item>
+        <item>chprivate</item>
+        <item>chpublic</item>
+    </string-array>
+</resources>

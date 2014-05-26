@@ -1,0 +1,62 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="${packageName}.${activityClass}">
+
+
+    <include
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        layout="@layout/explore_action_bar"
+        android:layout_gravity="center_horizontal" />
+
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0"
+        android:id="@+id/explore_tab_list_frame">
+
+        <include
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            layout="@layout/explore_tab_list"
+            android:layout_gravity="center_horizontal" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="#ffffff"
+        android:id="@+id/explore_list_frame">
+        <include
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            layout="@layout/explore_list"
+            android:layout_gravity="center_horizontal" />
+        </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="fill_parent"
+        android:layout_height="55dp"
+        android:layout_weight="0"
+        android:paddingLeft="21dp"
+        android:paddingRight="23dp"
+        android:paddingBottom="3dp"
+        android:paddingTop="4dp"
+        android:background="#ffffff"
+        android:id="@+id/explore_search_frame">
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:id="@+id/explore_search_text"
+            android:hint="@string/explore_search_hint"
+            android:gravity="center" />
+    </FrameLayout>
+
+
+</LinearLayout>

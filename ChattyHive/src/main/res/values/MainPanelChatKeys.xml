@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item type="integer" name="MainPanelChat_ListKind_Count">1</item>
+    <item type="id" name="MainPanelChat_ListKind_None"/>
+    <item type="id" name="MainPanelChat_ListKind_Hive"/>
+    <item type="id" name="MainPanelChat_ListKind_Hive_Me"/>
+    <item type="id" name="MainPanelChat_ListKind_Hive_Other"/>
+    <item type="id" name="MainPanelChat_ListKind_PrivateGroup"/>
+    <item type="id" name="MainPanelChat_ListKind_PrivateGroup_Me"/>
+    <item type="id" name="MainPanelChat_ListKind_PrivateGroup_Other"/>
+    <item type="id" name="MainPanelChat_ListKind_PrivateSingle"/>
+    <item type="id" name="MainPanelChat_ListKind_PrivateSingle_Me"/>
+    <item type="id" name="MainPanelChat_ListKind_PrivateSingle_Other"/>
+    <item type="id" name="MainPanelChat_ListKind_PublicGroup"/>
+    <item type="id" name="MainPanelChat_ListKind_PublicGroup_Me"/>
+    <item type="id" name="MainPanelChat_ListKind_PublicGroup_Other"/>
+    <item type="id" name="MainPanelChat_ListKind_PublicSingle"/>
+    <item type="id" name="MainPanelChat_ListKind_PublicSingle_Me"/>
+    <item type="id" name="MainPanelChat_ListKind_PublicSingle_Other"/>
+    <item type="id" name="MainPanelChat_ListViewHolder"/>
+</resources>

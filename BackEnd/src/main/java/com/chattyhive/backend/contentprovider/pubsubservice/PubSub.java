@@ -13,6 +13,7 @@ import com.pusher.client.connection.ConnectionEventListener;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.TreeMap;
 
 /**
  * Created by Jonathan on 17/10/13.
@@ -24,7 +25,7 @@ public class PubSub implements ChannelEventListener, ConnectionEventListener {
 	private static String CLUSTER;// = "eu";
     private Pusher pusher;
     private String nick;
-    private ArrayList lista_canales;
+    private TreeMap<String,Channel> lista_canales;
 
     private Event<PubSubChannelEventArgs> _pubSubChannelEvent;
 
@@ -60,6 +61,7 @@ public class PubSub implements ChannelEventListener, ConnectionEventListener {
      */
     public void onEvent(String channelName, String eventName, String data) {
         this._pubSubChannelEvent.fire(this,new PubSubChannelEventArgs(channelName,eventName,data));
+        System.out.println("Channel event: ".concat(channelName).concat(" -> ").concat(eventName).concat(" : ").concat(data));
     }
 
     @Override
@@ -88,7 +90,7 @@ public class PubSub implements ChannelEventListener, ConnectionEventListener {
         this._pubSubConnectionEvent = new Event<PubSubConnectionEventArgs>();
         this._pubSubChannelEvent = new Event<PubSubChannelEventArgs>();
 
-        lista_canales = new ArrayList();
+        lista_canales = new TreeMap<String,Channel>();
         nick = nickname;
         PusherOptions pO = new PusherOptions();
         pO.setEncrypted(false);
@@ -129,8 +131,18 @@ public class PubSub implements ChannelEventListener, ConnectionEventListener {
      * @param channel_name the name of the chanel to join.
      */
     public void Join(String channel_name) {
-        Channel canal = pusher.subscribe(channel_name,this);
+        Channel canal;
+        if (lista_canales.containsKey(channel_name))
+            this.Leave(channel_name);
+
+        canal = pusher.subscribe(channel_name,this);
         canal.bind("msg",this);
-        lista_canales.add(canal);
+        lista_canales.put(channel_name,canal);
+    }
+
+    public void Leave(String channel_name) {
+        lista_canales.get(channel_name).unbind("msg",this);
+        pusher.unsubscribe(channel_name);
+        lista_canales.remove(channel_name);
     }
 }

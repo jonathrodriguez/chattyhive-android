@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item type="id" name="BO_User"/>
+    <item type="id" name="BO_Hive"/>
+    <item type="id" name="BO_Chat"/>
+    <item type="id" name="BO_Mate"/>
+    <item type="id" name="BO_Message"/>
+</resources>
