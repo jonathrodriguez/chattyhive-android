@@ -264,10 +264,11 @@ public class Controller {
     public void onChannelEvent (Object sender, PubSubChannelEventArgs args) {
         Message m;
 
-       // System.out.println("Channel event: ".concat(args.getChannelName()).concat(" -> ").concat(args.getEventName()).concat(" : ").concat(args.getMessage()));
+        System.out.println("Channel event: ".concat(args.getChannelName()).concat(" -> ").concat(args.getEventName()).concat(" : ").concat(args.getMessage()));
 
         if (args.getEventName().equalsIgnoreCase("msg")){
             //System.out.println("Detected as message.");
+
             JsonParser jsonParser = new JsonParser();
             JsonElement jsonElement = jsonParser.parse(args.getMessage());
             m = new Message(jsonElement);

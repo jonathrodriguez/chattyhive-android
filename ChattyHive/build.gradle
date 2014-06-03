@@ -36,59 +36,6 @@ android {
             signingConfig signingConfigs.release
         }
     }
-
-    gradle.taskGraph.whenReady { taskGraph ->
-        if (taskGraph.hasTask('assembleRelease') || taskGraph.hasTask('installArmRelease')) {
-
-            def storePass = ''
-            def keyPass = ''
-
-            if (System.console() == null) {
-                new SwingBuilder().edt {
-                    lookAndFeel 'nimbus'
-                    dialog(modal: true, // Otherwise the build will continue running before you closed the dialog
-                            title: 'Enter passwords', // Dialog title
-                            alwaysOnTop: true, // pretty much what the name says
-                            resizable: false, // Don't allow the user to resize the dialog
-                            locationRelativeTo: null, // Place dialog in center of the screen
-                            pack: true, // We need to pack the dialog (so it will take the size of it's children)
-                            show: true // Let's show it
-                    ) {
-                        gridLayout (columns: 2, rows: 3)
-                        label(text: 'Keystore password:')
-                        inputSP = passwordField(id: 'inputSP', columns: 20)
-
-                        label(text: 'Key password:')
-                        inputKP = passwordField(id: 'inputKP', columns: 20)
-
-                        label('')
-                        button(defaultButton: true, text: 'GO', actionPerformed: {
-                            storePass = new String(inputSP.password); // Set pass variable to value of input field
-                            keyPass = new String(inputKP.password);
-                            dispose(); // Close dialog
-                        })
-                        // vbox end
-                    } // dialog end
-                } // edt end
-            } else {
-                storePass = System.console().readPassword("\nPlease enter keystore password: ")
-                keyPass = System.console().readPassword("\nPlease enter key password: ")
-
-                storePass = new String(storePass)
-                keyPass = new String(keyPass)
-            }
-
-            if ((storePass.size() <= 0) || (keyPass.size() <= 0)) {
-                throw new InvalidUserDataException("You must enter a password to proceed.")
-            }
-
-            // -----
-            // Do what you need to do with pass here!
-            // -----
-            signingConfigs.release.storePassword = storePass
-            signingConfigs.release.keyPassword = keyPass
-        }
-    }
 }
 
 dependencies {
@@ -96,4 +43,57 @@ dependencies {
     compile 'com.android.support:support-v4:19.0.0'
     compile project(':BackEnd')
     compile group: 'com.pusher', name: 'pusher-java-client', version: '0.2.0'
+}
+
+gradle.taskGraph.whenReady { taskGraph ->
+    if (taskGraph.hasTask('assembleRelease') || taskGraph.hasTask('installArmRelease')) {
+
+        def storePass = ''
+        def keyPass = ''
+
+        if (System.console() == null) {
+            new SwingBuilder().edt {
+                lookAndFeel 'nimbus'
+                dialog(modal: true, // Otherwise the build will continue running before you closed the dialog
+                        title: 'Enter passwords', // Dialog title
+                        alwaysOnTop: true, // pretty much what the name says
+                        resizable: false, // Don't allow the user to resize the dialog
+                        locationRelativeTo: null, // Place dialog in center of the screen
+                        pack: true, // We need to pack the dialog (so it will take the size of it's children)
+                        show: true // Let's show it
+                ) {
+                    gridLayout (columns: 2, rows: 3)
+                    label(text: 'Keystore password:')
+                    inputSP = passwordField(id: 'inputSP', columns: 20)
+
+                    label(text: 'Key password:')
+                    inputKP = passwordField(id: 'inputKP', columns: 20)
+
+                    label('')
+                    button(defaultButton: true, text: 'GO', actionPerformed: {
+                        storePass = new String(inputSP.password); // Set pass variable to value of input field
+                        keyPass = new String(inputKP.password);
+                        dispose(); // Close dialog
+                    })
+                    // vbox end
+                } // dialog end
+            } // edt end
+        } else {
+            storePass = System.console().readPassword("\nPlease enter keystore password: ")
+            keyPass = System.console().readPassword("\nPlease enter key password: ")
+
+            storePass = new String(storePass)
+            keyPass = new String(keyPass)
+        }
+
+        if ((storePass.size() <= 0) || (keyPass.size() <= 0)) {
+            throw new InvalidUserDataException("You must enter a password to proceed.")
+        }
+
+        // -----
+        // Do what you need to do with pass here!
+        // -----
+        android.signingConfigs.release.storePassword = storePass
+        android.signingConfigs.release.keyPassword = keyPass
+    }
 }

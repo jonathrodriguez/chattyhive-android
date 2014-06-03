@@ -87,11 +87,20 @@ public class Message implements Comparable{
      */
     public JsonElement toJson() {
         JsonObject jsonMessage = new JsonObject();
+
         jsonMessage.addProperty("timestamp", TimestampFormatter.toString(this._timeStamp));
-        jsonMessage.addProperty("user",this._user.getEmail());
-        jsonMessage.addProperty("public_name",this._user.getPublicName());
+
+        if ((this._user != null) && (this._user.getEmail() != null))
+            jsonMessage.addProperty("user",this._user.getEmail());
+
+        if ((this._user != null) && (this._user.getPublicName() != null))
+            jsonMessage.addProperty("public_name",this._user.getPublicName());
+
         jsonMessage.add("message",this._content.toJson());
-        jsonMessage.addProperty("hive", this.hive.getName());
+
+        if ((this.hive != null) && (this.hive.getName() != null))
+                jsonMessage.addProperty("hive", this.hive.getName());
+
         return jsonMessage;
     }
 
@@ -105,13 +114,22 @@ public class Message implements Comparable{
 
             this._user = User.getUser(jsonMessage.get("public_name").getAsString());
 
+                if ((jsonMessage.get("username") != null) && (jsonMessage.get("username").getAsString() != null) && ((this._user.getEmail() == null) || (this._user.getEmail().equalsIgnoreCase("NULL")))) {
+                    this._user.setEmail(jsonMessage.get("username").getAsString());
+                } else if ((jsonMessage.get("user") != null) && (jsonMessage.get("user").getAsString() != null) && ((this._user.getEmail() == null) || (this._user.getEmail().equalsIgnoreCase("NULL")))) {
+                    this._user.setEmail(jsonMessage.get("user").getAsString());
+                }
+
             if (this._content == null) {
                 this._content = new MessageContent(jsonMessage.get("message"));
             } else {
                 this._content.fromJson(jsonMessage.get("message"));
             }
 
-            this._timeStamp = TimestampFormatter.toDate(jsonMessage.get("timestamp").getAsString());
+            if ((!this._user.isMe()) && (jsonMessage.get("server_time") != null) && (jsonMessage.get("server_time").getAsString() != null))
+                this._timeStamp = TimestampFormatter.toDate(jsonMessage.get("server_time").getAsString());
+            else
+                this._timeStamp = TimestampFormatter.toDate(jsonMessage.get("timestamp").getAsString());
 
             if ((jsonMessage.get("hive") != null) && (jsonMessage.get("hive").getAsString() != null)) {
                 this.hive = Controller.getRunningController().getHiveFromName(jsonMessage.get("hive").getAsString());

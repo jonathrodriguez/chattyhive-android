@@ -40,9 +40,9 @@ public class Explore extends Activity {
     private void Initialize() {
         this.controller = Controller.getRunningController(LoginLocalStorage.getLoginLocalStorage());
         this.controller.setMessageLocalStorage(MessageLocalStorage.getMessageLocalStorage());
-        boolean moreItems = this.controller.exploreHives(0,9);
-        this.lastOffset = 9;
-        this.exploreListAdapter = new ExploreListAdapter(this,this.controller.getExploreHives(),moreItems,(ListView)this.findViewById(R.id.explore_list_listView));
+        this.lastOffset = 0;
+
+        this.exploreListAdapter = new ExploreListAdapter(this,this.controller.getExploreHives(),(ListView)this.findViewById(R.id.explore_list_listView));
 
         try {
             this.controller.SubscribeToExploreHivesListChange(new EventHandler<EventArgs>(exploreListAdapter, "OnAddItem", EventArgs.class));
