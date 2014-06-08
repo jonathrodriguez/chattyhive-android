@@ -10,8 +10,8 @@ import java.lang.reflect.Method;
  */
 public class EventHandler<T extends EventArgs> {
 
-    private Method _method;
-    private Object _subscriber;
+    private Method method;
+    private Object subscriber;
 
     /**
      * Public constructor.
@@ -23,8 +23,8 @@ public class EventHandler<T extends EventArgs> {
     //TODO: Find a better way to get the class of the Type Parameter T.
     //TODO: Find a way to get compile time errors if method does not exist. Maybe with Annotations.
     public EventHandler (Object Subscriber,String methodName, Class<T> eventArgsClass) throws NoSuchMethodException {
-            this._subscriber = Subscriber;
-            this._method = Subscriber.getClass().getMethod(methodName,Object.class,eventArgsClass);
+            this.subscriber = Subscriber;
+            this.method = Subscriber.getClass().getMethod(methodName,Object.class,eventArgsClass);
     }
 
     /**
@@ -36,6 +36,11 @@ public class EventHandler<T extends EventArgs> {
      * @throws IllegalAccessException
      */
     public void Invoke(Object sender, T eventArgs) throws InvocationTargetException, IllegalAccessException {
-        this._method.invoke(this._subscriber,sender,eventArgs);
+        this.method.invoke(this.subscriber, sender, eventArgs);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return ((o instanceof EventHandler) && (this.subscriber.equals(((EventHandler) o).subscriber)) && (this.method.getName().equalsIgnoreCase(((EventHandler) o).method.getName())));
     }
 }

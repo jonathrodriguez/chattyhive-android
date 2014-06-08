@@ -45,9 +45,7 @@ dependencies {
     compile group: 'com.pusher', name: 'pusher-java-client', version: '0.2.0'
 }
 
-gradle.taskGraph.whenReady { taskGraph ->
-    if (taskGraph.hasTask('assembleRelease') || taskGraph.hasTask('installArmRelease')) {
-
+task getPasswords << {
         def storePass = ''
         def keyPass = ''
 
@@ -95,5 +93,6 @@ gradle.taskGraph.whenReady { taskGraph ->
         // -----
         android.signingConfigs.release.storePassword = storePass
         android.signingConfigs.release.keyPassword = keyPass
-    }
 }
+
+assembleRelease.dependsOn getPasswords
