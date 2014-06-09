@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.Button;
@@ -25,9 +26,13 @@ import android.widget.LinearLayout;
 import com.chattyhive.backend.Controller;
 import com.chattyhive.backend.StaticParameters;
 import com.chattyhive.backend.contentprovider.server.ServerStatus;
+import com.chattyhive.backend.util.events.EventHandler;
 import com.chattyhive.chattyhive.OSStorageProvider.LoginLocalStorage;
 import com.chattyhive.chattyhive.OSStorageProvider.MessageLocalStorage;
 import com.chattyhive.chattyhive.backgroundservice.CHService;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 
 public class Main extends Activity implements GestureDetector.OnGestureListener {
@@ -47,6 +52,8 @@ public class Main extends Activity implements GestureDetector.OnGestureListener 
 
     int ActiveLayoutID;
 
+    Method updatePositionMethod = null;
+
     protected void retrieveParameters() {
         mainPanelOffset = 0;
         leftPanelWidth = Math.round(getResources().getDimension(R.dimen.chat_list_width));
@@ -54,16 +61,57 @@ public class Main extends Activity implements GestureDetector.OnGestureListener 
         //Log.w("Main.retrieveParameters()","Parameters retrieved.");
     }
 
+    public void updatePositionMargin() {
+        LinearLayout mainBlock = (LinearLayout)findViewById(R.id.main_block);
+        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams)mainBlock.getLayoutParams();
+        params.setMargins(mainPanelOffset-leftPanelWidth,params.topMargin,-1*mainPanelOffset,params.bottomMargin);
+        mainBlock.destroyDrawingCache();
+        mainBlock.setLayoutParams(params);
+//        Log.w("Main.updatePosition","Using updatePositionMargin()");
+    }
+
+    public void updatePositionPadding() {
+        LinearLayout mainBlock = (LinearLayout)findViewById(R.id.main_block);
+        mainBlock.destroyDrawingCache();
+        mainBlock.setPadding(mainPanelOffset,mainBlock.getPaddingTop(),-1*mainPanelOffset,mainBlock.getPaddingBottom());
+//        Log.w("Main.updatePosition","Using updatePositionPadding()");
+    }
+
     protected void updatePosition(int offset) {
         //findViewById(R.id.main_block).offsetLeftAndRight(offset);
-        LinearLayout mainBlock = (LinearLayout)findViewById(R.id.main_block);
+        /*LinearLayout mainBlock = (LinearLayout)findViewById(R.id.main_block);*/
         mainPanelOffset += offset;
-        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams)mainBlock.getLayoutParams();
+        /*FrameLayout.LayoutParams params = (FrameLayout.LayoutParams)mainBlock.getLayoutParams();
         params.setMargins(mainPanelOffset-leftPanelWidth,params.topMargin,-1*mainPanelOffset,params.bottomMargin);
         //findViewById(R.id.main_block).setLayoutParams(params);
         FrameLayout mainBlockParent = ((FrameLayout)mainBlock.getParent());
         mainBlockParent.removeView(mainBlock);
-        mainBlockParent.addView(mainBlock,params);
+        mainBlockParent.addView(mainBlock,params);*/
+        try {
+            if (updatePositionMethod == null) {
+                LinearLayout mainBlock = (LinearLayout) findViewById(R.id.main_block);
+
+                //Log.w("Main.updatePosition",String.format("[BEFORE] mainBlock..leftMargin = %d",((ViewGroup.MarginLayoutParams)mainBlock.getLayoutParams()).leftMargin));
+                updatePositionMargin();
+                int margin = ((ViewGroup.MarginLayoutParams)mainBlock.getLayoutParams()).leftMargin;
+                //Log.w("Main.updatePosition",String.format("[AFTER] mainBlock.leftMargin = %d",margin));
+
+                if (margin != (mainPanelOffset - leftPanelWidth)) {
+                    updatePositionPadding();
+                    this.updatePositionMethod = this.getClass().getMethod("updatePositionPadding");
+                } else {
+                    this.updatePositionMethod = this.getClass().getMethod("updatePositionMargin");
+                }
+            } else {
+                updatePositionMethod.invoke(this);
+            }
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
     }
 
     protected View ShowLayout (int layoutID) {
