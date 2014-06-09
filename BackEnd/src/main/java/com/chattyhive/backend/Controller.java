@@ -264,10 +264,11 @@ public class Controller {
     public void onChannelEvent (Object sender, PubSubChannelEventArgs args) {
         Message m;
 
-       // System.out.println("Channel event: ".concat(args.getChannelName()).concat(" -> ").concat(args.getEventName()).concat(" : ").concat(args.getMessage()));
+        System.out.println("Channel event: ".concat(args.getChannelName()).concat(" -> ").concat(args.getEventName()).concat(" : ").concat(args.getMessage()));
 
         if (args.getEventName().equalsIgnoreCase("msg")){
             //System.out.println("Detected as message.");
+
             JsonParser jsonParser = new JsonParser();
             JsonElement jsonElement = jsonParser.parse(args.getMessage());
             m = new Message(jsonElement);
@@ -478,4 +479,29 @@ public class Controller {
     public void setMessageLocalStorage(MessageLocalStorageInterface messageLocalStorage) {
         this.messageLocalStorage = messageLocalStorage;
     }
+
+    public void clearUserData() {
+        this._dataProvider.Disconnect();
+        this._dataProvider.setUser(null);
+        if (this.loginLocalStorage != null)
+            this.loginLocalStorage.ClearStoredLogin();
+    }
+
+    public void clearAllChats() {
+        for (String channel : this.messages.keySet()) {
+            this.clearChat(channel);
+        }
+    }
+
+    private void clearChat(String channel) {
+        if (this.messages.containsKey(channel)) {
+            this.messages.get(channel).clear();
+            this.messages.remove(channel);
+            if (this.messageLocalStorage != null)
+                this.messageLocalStorage.ClearMessages(channel);
+
+            this._channelEvent.fire(this,new ChannelEventArgs(channel,"clear",null));
+        }
+    }
+
 }

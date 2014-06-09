@@ -6,4 +6,5 @@ package com.chattyhive.backend.contentprovider.OSStorageProvider;
 public interface MessageLocalStorageInterface {
     public void StoreMessage(String channel,String jsonMessage);
     public String[] RecoverMessage(String channel);
+    public void ClearMessages(String channel);
 }

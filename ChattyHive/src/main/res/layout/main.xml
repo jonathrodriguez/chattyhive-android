@@ -22,7 +22,7 @@
         android:layout_height="match_parent"
         android:id="@+id/main_block"
         android:gravity="left"
-        android:layout_marginLeft="-280dp"
+        android:layout_marginLeft="-281dp"
         android:layout_gravity="left"
         android:measureAllChildren="true"
         android:textAlignment="gravity">

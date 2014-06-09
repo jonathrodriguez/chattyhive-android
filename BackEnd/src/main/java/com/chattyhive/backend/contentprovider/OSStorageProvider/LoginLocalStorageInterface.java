@@ -8,4 +8,5 @@ import java.util.AbstractMap;
 public interface LoginLocalStorageInterface {
     public void StoreLoginPassword(String username, String password);
     public AbstractMap.SimpleEntry<String,String> RecoverLoginPassword();
+    public void ClearStoredLogin();
 }

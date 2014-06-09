@@ -60,9 +60,13 @@ public class Event<T extends EventArgs> {
                 eventHandler.Invoke(sender,eventArgs);
             } catch (InvocationTargetException invocationTargetException) {
                 iterator.remove();
+                System.out.println("InvocationTargetException.");
+                invocationTargetException.printStackTrace();
                 continue;
             } catch (IllegalAccessException illegalAccessException) {
                 iterator.remove();
+                System.out.println("IllegalAccessException.");
+                illegalAccessException.printStackTrace();
                 continue;
             }
         }

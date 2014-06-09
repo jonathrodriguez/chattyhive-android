@@ -40,15 +40,22 @@ public class ExploreListAdapter extends BaseAdapter {
         });
     }
 
-    public ExploreListAdapter (Context activityContext,ArrayList<Hive> hivesList, Boolean moreItems, ListView listView) {
+    public ExploreListAdapter (Context activityContext,ArrayList<Hive> hivesList, ListView listView) {
         this.hives_list_data = hivesList;
-        this.moreItems = moreItems;
+        this.moreItems = true;
 
         this.context = activityContext;
         this.inflater = ((Activity)this.context).getLayoutInflater();
 
         this.listView = listView;
         this.listView.setAdapter(this);
+
+        new Thread() {
+            @Override
+            public void run() {
+                moreItems = ((Explore)context).GetMoreHives();
+            }
+        }.start();
     }
 
     @Override
