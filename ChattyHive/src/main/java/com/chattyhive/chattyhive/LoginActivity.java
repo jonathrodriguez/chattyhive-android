@@ -161,8 +161,8 @@ public class LoginActivity extends Activity {
 
 
             if (success) {
-                Intent intent = new Intent();
-                setResult(RESULT_OK, intent);
+                //Intent intent = new Intent();
+                setResult(RESULT_OK);
                 finish();
             } else {
 

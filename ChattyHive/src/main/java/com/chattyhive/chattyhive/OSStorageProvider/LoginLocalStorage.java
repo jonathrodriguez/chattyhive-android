@@ -28,7 +28,6 @@ public class LoginLocalStorage implements LoginLocalStorageInterface {
         if (sharedPreferences.contains("pass")) sharedPreferencesEditor.remove("pass");
         sharedPreferencesEditor.putString("user",username);
         sharedPreferencesEditor.putString("pass",password);
-        sharedPreferencesEditor.commit();
         sharedPreferencesEditor.apply();
 
         sharedPreferencesEditor = null;
@@ -50,5 +49,19 @@ public class LoginLocalStorage implements LoginLocalStorageInterface {
         context = null;
 
         return new AbstractMap.SimpleEntry<String,String>(username,password);
+    }
+
+    @Override
+    public void ClearStoredLogin() {
+        Context context = ApplicationContextProvider.getContext();
+        SharedPreferences sharedPreferences = context.getSharedPreferences("chattyhive",context.MODE_PRIVATE);
+        SharedPreferences.Editor sharedPreferencesEditor = sharedPreferences.edit();
+        if (sharedPreferences.contains("user")) sharedPreferencesEditor.remove("user");
+        if (sharedPreferences.contains("pass")) sharedPreferencesEditor.remove("pass");
+        sharedPreferencesEditor.apply();
+
+        sharedPreferencesEditor = null;
+        sharedPreferences = null;
+        context = null;
     }
 }

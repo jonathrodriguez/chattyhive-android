@@ -65,10 +65,12 @@ public class User {
      * @return
      */
     public String getPublicName() {
-        return this.public_name;
+        return ((this.public_name != null)?this.public_name:"NULL");
     }
 
-    public String getEmail() { return this.email; }
+    public String getEmail() { return ((this.email != null)?this.email:"NULL"); }
+
+    public void setEmail(String value) { this.email = value; }
 
     public static User getMe() { return User.me; }
 
@@ -127,13 +129,15 @@ public class User {
     }
 
     public static User getUser(String public_name) {
+        if (User.knownUsers == null) { User.knownUsers = new TreeMap<String, User>(); }
         if (User.me.public_name.equalsIgnoreCase(public_name)) return User.me;
+
         if (!User.knownUsers.containsKey(public_name)) {
             User u = new User();
             u.public_name = public_name;
             User.knownUsers.put(public_name,u);
         }
 
-        return User.knownUsers.get("public_name");
+        return User.knownUsers.get(public_name);
     }
 }

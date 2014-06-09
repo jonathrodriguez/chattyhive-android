@@ -61,7 +61,7 @@ public class PubSub implements ChannelEventListener, ConnectionEventListener {
      */
     public void onEvent(String channelName, String eventName, String data) {
         this._pubSubChannelEvent.fire(this,new PubSubChannelEventArgs(channelName,eventName,data));
-        System.out.println("Channel event: ".concat(channelName).concat(" -> ").concat(eventName).concat(" : ").concat(data));
+        //System.out.println("Channel event: ".concat(channelName).concat(" -> ").concat(eventName).concat(" : ").concat(data));
     }
 
     @Override

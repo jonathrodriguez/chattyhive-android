@@ -20,7 +20,11 @@ public final class TimestampFormatter {
      */
     private static final String[] _formats = {"yyyy-MM-dd'T'HH:mm:ss.sss",
                                               "HH:mm" ,
-                                              "dd/MM/yyyy HH:mm" };
+                                              "dd/MM/yyyy HH:mm" ,
+                                              "HH:mm:ss 'GMT'Z" ,
+                                              "HH:mm:ss zzzz" ,
+                                              "HH:mm:ss Z" ,
+                                              "yyyy-MM-dd'T'HH:mm:ss.sssZ" };
     private static final String timeZoneID = "Europe/Madrid";
     /**
      * Converts a Date object to it's string representation, referred to UTC, according to the
