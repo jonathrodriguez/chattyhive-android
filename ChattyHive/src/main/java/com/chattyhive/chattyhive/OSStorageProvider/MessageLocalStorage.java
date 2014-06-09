@@ -2,6 +2,7 @@ package com.chattyhive.chattyhive.OSStorageProvider;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import com.chattyhive.backend.contentprovider.OSStorageProvider.MessageLocalStorageInterface;
 import com.chattyhive.chattyhive.Util.ApplicationContextProvider;
@@ -31,7 +32,6 @@ public class MessageLocalStorage implements MessageLocalStorageInterface {
             key = "message".concat(String.valueOf(count));
         }
         sharedPreferencesEditor.putString(key,jsonMessage);
-        sharedPreferencesEditor.commit();
         sharedPreferencesEditor.apply();
 
         sharedPreferencesEditor = null;
@@ -53,5 +53,14 @@ public class MessageLocalStorage implements MessageLocalStorageInterface {
         context = null;
 
         return messages;
+    }
+
+    @Override
+    public void ClearMessages(String channel) {
+        Context context = ApplicationContextProvider.getContext();
+        SharedPreferences sharedPreferences = context.getSharedPreferences(channel,context.MODE_PRIVATE);
+        sharedPreferences.edit().clear().apply();
+        sharedPreferences = null;
+        context = null;
     }
 }
