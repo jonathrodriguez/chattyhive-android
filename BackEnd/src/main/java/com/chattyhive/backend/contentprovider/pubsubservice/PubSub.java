@@ -134,15 +134,18 @@ public class PubSub implements ChannelEventListener, ConnectionEventListener {
         Channel canal;
         if (lista_canales.containsKey(channel_name))
             this.Leave(channel_name);
-
-        canal = pusher.subscribe(channel_name,this);
-        canal.bind("msg",this);
-        lista_canales.put(channel_name,canal);
+        try {
+            canal = pusher.subscribe(channel_name, this);
+            canal.bind("msg", this);
+            lista_canales.put(channel_name,canal);
+        } catch (IllegalArgumentException e) { return; }
     }
 
     public void Leave(String channel_name) {
         lista_canales.get(channel_name).unbind("msg",this);
-        pusher.unsubscribe(channel_name);
         lista_canales.remove(channel_name);
+        try {
+            pusher.unsubscribe(channel_name);
+        } catch (IllegalStateException e) { return; }
     }
 }

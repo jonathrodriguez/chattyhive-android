@@ -53,6 +53,7 @@ public class ChatListAdapter extends BaseAdapter {
 
     @Override
     public int getItemViewType(int position) {
+        Log.w("ChatListAdapter.getItemViewType",String.format("Position: %d",position));
         Message m = chatMessages.toArray(new Message[0])[position];
         boolean mineMessage = ((m.getUser() != null) && (m.getUser().isMe()));
         switch (this.chatKind) {
@@ -72,11 +73,12 @@ public class ChatListAdapter extends BaseAdapter {
 
     @Override
     public int getViewTypeCount() {
-        return this.context.getResources().getInteger(R.integer.MainPanelChat_ListKind_Count);
+        return 2;
     }
 
     @Override
     public int getCount() {
+        Log.w("ChatListAdapter.getCount()",String.format("Item count: %d",this.chatMessages.size()));
         return this.chatMessages.size();
     }
 
@@ -111,6 +113,9 @@ public class ChatListAdapter extends BaseAdapter {
                     holder.timeStamp = (TextView)convertView.findViewById(R.id.main_panel_chat_timeStamp);
                     holder.avatarThumbnail = (ImageView)convertView.findViewById(R.id.main_panel_chat_avatarThumbnail);
                     break;
+                default:
+                    Log.e("ChatListAdapter.getView()","Incompatible type!");
+                    return null;
             }
 
             convertView.setTag(R.id.MainPanelChat_ListViewHolder,holder);
