@@ -94,10 +94,7 @@ public class CHService extends Service {
 
     public void onConnectionEvent (Object sender, PubSubConnectionEventArgs args) {
         if (args.getChange().getCurrentState() == ConnectionState.DISCONNECTED) {
-            handleConnectivity();
-            if (this.controller.getNetworkAvailable()) {
-                this.controller.Connect();
-            }
+            checkConnected();
         }
     }
 

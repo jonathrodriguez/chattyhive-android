@@ -50,7 +50,7 @@
             android:name=".LoginActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.WithNoActionBar"
-            android:windowSoftInputMode="adjustPan|stateUnchanged" >
+            android:windowSoftInputMode="adjustResize|stateUnchanged" >
         </activity>
         <activity
             android:name=".Explore"

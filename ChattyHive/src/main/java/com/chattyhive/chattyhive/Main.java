@@ -26,7 +26,6 @@ import android.widget.LinearLayout;
 import com.chattyhive.backend.Controller;
 import com.chattyhive.backend.StaticParameters;
 import com.chattyhive.backend.contentprovider.server.ServerStatus;
-import com.chattyhive.backend.util.events.EventHandler;
 import com.chattyhive.chattyhive.OSStorageProvider.LoginLocalStorage;
 import com.chattyhive.chattyhive.OSStorageProvider.MessageLocalStorage;
 import com.chattyhive.chattyhive.backgroundservice.CHService;
@@ -48,7 +47,7 @@ public class Main extends Activity implements GestureDetector.OnGestureListener 
 
     int mainPanelOffset;
     int leftPanelWidth;
-    int rigthPanelWidth;
+    int rightPanelWidth;
 
     int ActiveLayoutID;
 
@@ -57,7 +56,7 @@ public class Main extends Activity implements GestureDetector.OnGestureListener 
     protected void retrieveParameters() {
         mainPanelOffset = 0;
         leftPanelWidth = Math.round(getResources().getDimension(R.dimen.chat_list_width));
-        rigthPanelWidth = Math.round(getResources().getDimension(R.dimen.right_menu_width));
+        rightPanelWidth = Math.round(getResources().getDimension(R.dimen.right_menu_width));
         //Log.w("Main.retrieveParameters()","Parameters retrieved.");
     }
 
@@ -127,8 +126,10 @@ public class Main extends Activity implements GestureDetector.OnGestureListener 
         ActiveLayoutID = R.layout.main;
         setContentView(R.layout.main);
 
-        ((Button)findViewById(R.id.temp_explore_button)).setOnClickListener(this.explore_button_click);
-        ((Button)findViewById(R.id.temp_profile_button)).setOnClickListener((new Profile(this)).open_profile);
+        findViewById(R.id.temp_explore_button).setOnClickListener(this.explore_button_click);
+        findViewById(R.id.temp_profile_button).setOnClickListener((new Profile(this)).open_profile);
+        findViewById(R.id.temp_logout_button).setOnClickListener(this.logout_button_click);
+        findViewById(R.id.temp_clear_chats_button).setOnClickListener(this.clear_chats_button_click);
         retrieveParameters();
         setPanelBehaviour();
 
@@ -139,6 +140,11 @@ public class Main extends Activity implements GestureDetector.OnGestureListener 
 
         this.ConnectService();
 
+        this.checkLogin();
+
+    }
+
+    private void checkLogin() {
         if ((this._controller == null) || (this._controller.getServerUser() == null) ||
                 (this._controller.getServerUser().getLogin() == null) ||
                 (this._controller.getServerUser().getLogin().isEmpty())) {
@@ -146,7 +152,6 @@ public class Main extends Activity implements GestureDetector.OnGestureListener 
         } else {
             this.Logged();
         }
-
     }
 
     private void hasToLogin() {
@@ -269,7 +274,7 @@ public class Main extends Activity implements GestureDetector.OnGestureListener 
             final LinearLayout main_block = (LinearLayout)findViewById(R.id.main_block);
             final int translate;
 
-            int distance = rigthPanelWidth;
+            int distance = rightPanelWidth;
 
             if (mainPanelOffset < 0) { //If rightPanel is visible then hide it.
                 translate = -1*mainPanelOffset;
@@ -354,6 +359,21 @@ public class Main extends Activity implements GestureDetector.OnGestureListener 
         }
     };
 
+    protected View.OnClickListener logout_button_click = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            _controller.clearUserData();
+            checkLogin();
+        }
+    };
+
+    protected View.OnClickListener clear_chats_button_click = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            _controller.clearAllChats();
+        }
+    };
+
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
         if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
@@ -375,6 +395,7 @@ public class Main extends Activity implements GestureDetector.OnGestureListener 
                         return true;
                     } else if (mainPanelOffset != 0) {
                         movePanel((LinearLayout)findViewById(R.id.main_block),-1*mainPanelOffset,250);
+                        return true;
                     }
                 }
             }
@@ -411,7 +432,7 @@ public class Main extends Activity implements GestureDetector.OnGestureListener 
                 DisplayMetrics metrics = new DisplayMetrics();
                 this.getWindowManager().getDefaultDisplay().getMetrics(metrics);
                 int screen_width = metrics.widthPixels;
-                if (e1.getX() > (screen_width-rigthPanelWidth)) return false;
+                if (e1.getX() > (screen_width- rightPanelWidth)) return false;
             }
         }
 
@@ -430,7 +451,7 @@ public class Main extends Activity implements GestureDetector.OnGestureListener 
         _lastOnScrollMotionEvent = e2;
 
         int max_scroll_right = leftPanelWidth;
-        int max_scroll_left = -1*rigthPanelWidth;
+        int max_scroll_left = -1* rightPanelWidth;
 
         int offset = Math.round(-1*distanceX);
 
@@ -448,7 +469,7 @@ public class Main extends Activity implements GestureDetector.OnGestureListener 
             _firstOnScrollMotionEvent = null;
 
             int chat_list_width =leftPanelWidth;
-            int right_menu_width = rigthPanelWidth;
+            int right_menu_width = rightPanelWidth;
             int translate;
 
             if ((mainPanelOffset <= (0.5*chat_list_width)) && (mainPanelOffset >= (-0.5*right_menu_width))) { // Show center panel (main window)
@@ -488,15 +509,15 @@ public class Main extends Activity implements GestureDetector.OnGestureListener 
 
         if (origin > (0.5*leftPanelWidth)) { // leftPanel is visible
             if (e1.getX() < leftPanelWidth) return false;
-        } else if (origin < (-0.5*rigthPanelWidth)) { // rightPanel is visible
+        } else if (origin < (-0.5* rightPanelWidth)) { // rightPanel is visible
             DisplayMetrics metrics = new DisplayMetrics();
             this.getWindowManager().getDefaultDisplay().getMetrics(metrics);
             int screen_width = metrics.widthPixels;
-            if (e1.getX() > (screen_width-rigthPanelWidth)) return false;
+            if (e1.getX() > (screen_width- rightPanelWidth)) return false;
         }
 
         int chat_list_width = leftPanelWidth;
-        int right_menu_width = rigthPanelWidth;
+        int right_menu_width = rightPanelWidth;
 
         int translate;
 

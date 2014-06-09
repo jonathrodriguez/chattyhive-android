@@ -43,6 +43,7 @@ public class ChatListAdapter extends BaseAdapter {
     }
 
     public void OnAddItem(Object sender, ChannelEventArgs args) {
+        Log.w("ChatListAdapter.OnAddItem()",String.format("Event triggered. Message count: %d",chatMessages.size()));
         ((Activity)this.context).runOnUiThread(new Runnable(){
             public void run() {
                 notifyDataSetChanged();

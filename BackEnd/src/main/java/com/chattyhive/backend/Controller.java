@@ -479,4 +479,29 @@ public class Controller {
     public void setMessageLocalStorage(MessageLocalStorageInterface messageLocalStorage) {
         this.messageLocalStorage = messageLocalStorage;
     }
+
+    public void clearUserData() {
+        this._dataProvider.Disconnect();
+        this._dataProvider.setUser(null);
+        if (this.loginLocalStorage != null)
+            this.loginLocalStorage.ClearStoredLogin();
+    }
+
+    public void clearAllChats() {
+        for (String channel : this.messages.keySet()) {
+            this.clearChat(channel);
+        }
+    }
+
+    private void clearChat(String channel) {
+        if (this.messages.containsKey(channel)) {
+            this.messages.get(channel).clear();
+            this.messages.remove(channel);
+            if (this.messageLocalStorage != null)
+                this.messageLocalStorage.ClearMessages(channel);
+
+            this._channelEvent.fire(this,new ChannelEventArgs(channel,"clear",null));
+        }
+    }
+
 }
