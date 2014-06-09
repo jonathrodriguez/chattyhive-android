@@ -126,6 +126,7 @@ public class Main extends Activity implements GestureDetector.OnGestureListener 
         ActiveLayoutID = R.layout.main;
         setContentView(R.layout.main);
 
+
         findViewById(R.id.temp_explore_button).setOnClickListener(this.explore_button_click);
         findViewById(R.id.temp_profile_button).setOnClickListener((new Profile(this)).open_profile);
         findViewById(R.id.temp_logout_button).setOnClickListener(this.logout_button_click);
@@ -137,6 +138,8 @@ public class Main extends Activity implements GestureDetector.OnGestureListener 
         this._controller = Controller.getRunningController(LoginLocalStorage.getLoginLocalStorage());
         this._controller.setMessageLocalStorage(MessageLocalStorage.getMessageLocalStorage());
         Controller.bindApp();
+
+        LeftPanel lp = new LeftPanel(this);
 
         this.ConnectService();
 
@@ -168,8 +171,6 @@ public class Main extends Activity implements GestureDetector.OnGestureListener 
         if (this._controller.getServerUser().getStatus() != ServerStatus.LOGGED) {
             this._controller.Connect();
         }
-
-        LeftPanel lp = new LeftPanel(this);
     }
 
     @Override
@@ -461,7 +462,8 @@ public class Main extends Activity implements GestureDetector.OnGestureListener 
             offset = max_scroll_right-mainPanelOffset;
         }
 
-        movePanel((LinearLayout)findViewById(R.id.main_block),offset,0);
+        //movePanel((LinearLayout)findViewById(R.id.main_block),offset,0);
+        updatePosition(offset);
 
         if (e2.getAction() == MotionEvent.ACTION_UP) {
             _performScroll = false;

@@ -112,7 +112,9 @@ public class DataProvider {
             this.pubSub.SubscribeConnectionEventHandler(new EventHandler<PubSubConnectionEventArgs>(this, "onConnectionEvent", PubSubConnectionEventArgs.class));
         } catch (NoSuchMethodException e) { }*/
 
-        this.pubSub.Join(channel);
+        while (!this.pubSub.Join(channel)) {
+            this.pubSub.Leave(channel);
+        }
     }
 
     public void Leave(String channel) {

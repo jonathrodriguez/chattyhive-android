@@ -107,25 +107,27 @@ public class User {
     }
 
     public void setUpProfile(JsonElement profile) {
-        if ((profile != null) && (profile.isJsonPrimitive())) {
-            this.public_name = profile.getAsString();
-            System.out.println("Profile element: ".concat(profile.toString()));
-        } else if ((profile != null) && (profile.isJsonObject())) {
-            System.out.println("Profile object: ".concat(profile.toString()));
-            JsonObject jsonProfile = profile.getAsJsonObject();
-            this.public_name = jsonProfile.get("public_name").getAsString();
-            this.first_name = jsonProfile.get("first_name").getAsString();
-            this.last_name = jsonProfile.get("last_name").getAsString();
-            this.sex = jsonProfile.get("sex").getAsString();
-            this.language = jsonProfile.get("language").getAsString();
-            this.location = jsonProfile.get("location").getAsString();
-            this.private_show_age = jsonProfile.get("private_show_age").getAsBoolean();
-            this.public_show_age = jsonProfile.get("public_show_age").getAsBoolean();
-            this.show_location = jsonProfile.get("show_location").getAsBoolean();
-        } else {
-            System.out.println("Profile unknown: ".concat(profile.toString()));
-            this.public_name = "";
-        }
+        try {
+            if ((profile != null) && (profile.isJsonPrimitive())) {
+                this.public_name = profile.getAsString();
+                System.out.println("Profile element: ".concat(profile.toString()));
+            } else if ((profile != null) && (profile.isJsonObject())) {
+                System.out.println("Profile object: ".concat(profile.toString()));
+                JsonObject jsonProfile = profile.getAsJsonObject();
+                this.public_name = jsonProfile.get("public_name").getAsString();
+                this.first_name = jsonProfile.get("first_name").getAsString();
+                this.last_name = jsonProfile.get("last_name").getAsString();
+                this.sex = jsonProfile.get("sex").getAsString();
+                this.language = jsonProfile.get("language").getAsString();
+                this.location = jsonProfile.get("location").getAsString();
+                this.private_show_age = jsonProfile.get("private_show_age").getAsBoolean();
+                this.public_show_age = jsonProfile.get("public_show_age").getAsBoolean();
+                this.show_location = jsonProfile.get("show_location").getAsBoolean();
+            } else {
+                System.out.println("Profile unknown: ".concat(profile.toString()));
+                this.public_name = "";
+            }
+        } catch (Exception e) { return; }
     }
 
     public static User getUser(String public_name) {
@@ -139,5 +141,9 @@ public class User {
         }
 
         return User.knownUsers.get(public_name);
+    }
+
+    public static void removeMe() {
+        me = null;
     }
 }

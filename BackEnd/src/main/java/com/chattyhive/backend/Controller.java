@@ -437,8 +437,16 @@ public class Controller {
         JsonElement profile = args.getProfile();
         JsonElement hivesSubscribed = args.getHivesSubscribed();
         Boolean hiveListChanged = false;
+        System.out.println("onConnect()");
+        if ((profile != null) && (!profile.isJsonNull())) {
+            System.out.println(profile.toString());
+            new User(getServerUser().getLogin());
+            User.setUpOwnProfile(profile);
+        }
         if ((hivesSubscribed != null) && (!hivesSubscribed.isJsonNull())) {
+            System.out.println(String.format("HivesSubscribed: %s",hivesSubscribed.toString()));
             JsonArray hivesArray = null;
+            this.hives.clear();
             if (hivesSubscribed.isJsonArray()) {
                 //System.out.println("Is a JSON Array");
                 hivesArray = hivesSubscribed.getAsJsonArray();
@@ -452,13 +460,11 @@ public class Controller {
                     if (jsonElement.isJsonObject()) {
                         Hive hive = new Hive(jsonElement);
                         this.JoinTMP(hive.getNameURL());
+                        System.out.println(String.format("Hive: %s",hive.getName()));
                         hiveListChanged = (hiveListChanged | this.hives.add(hive));
                     }
         }
-        if ((profile != null) && (!profile.isJsonNull())) {
-            new User(getServerUser().getLogin());
-            User.setUpOwnProfile(profile);
-        }
+
 
 //        for (Hive hive : this.hives) {
 //            String line = "Name: ".concat(hive.getName());
@@ -469,7 +475,7 @@ public class Controller {
 //            System.out.println(line);
 //        }
 
-        if (hiveListChanged) this.hivesListChange.fire(this.hives,EventArgs.Empty());
+        if (hiveListChanged && (this.hivesListChange != null)) this.hivesListChange.fire(this.hives,EventArgs.Empty());
     }
 
     public void setLoginLocalStorage(LoginLocalStorageInterface loginLocalStorage) {
@@ -485,6 +491,7 @@ public class Controller {
         this._dataProvider.setUser(null);
         if (this.loginLocalStorage != null)
             this.loginLocalStorage.ClearStoredLogin();
+        User.removeMe();
     }
 
     public void clearAllChats() {
@@ -496,7 +503,6 @@ public class Controller {
     private void clearChat(String channel) {
         if (this.messages.containsKey(channel)) {
             this.messages.get(channel).clear();
-            this.messages.remove(channel);
             if (this.messageLocalStorage != null)
                 this.messageLocalStorage.ClearMessages(channel);
 

@@ -18,13 +18,13 @@ public final class TimestampFormatter {
      * Collection of string formats for Timestamps. Only the first representation may be used.
      * The other representations are set to provide compatibility with server's first version.
      */
-    private static final String[] _formats = {"yyyy-MM-dd'T'HH:mm:ss.sss",
+    private static final String[] _formats = {"yyyy-MM-dd'T'HH:mm:ss.SSS",
                                               "HH:mm" ,
                                               "dd/MM/yyyy HH:mm" ,
                                               "HH:mm:ss 'GMT'Z" ,
                                               "HH:mm:ss zzzz" ,
                                               "HH:mm:ss Z" ,
-                                              "yyyy-MM-dd'T'HH:mm:ss.sssZ" };
+                                              "yyyy-MM-dd'T'HH:mm:ss.SSSZ" };
     private static final String timeZoneID = "Europe/Madrid";
     /**
      * Converts a Date object to it's string representation, referred to UTC, according to the
