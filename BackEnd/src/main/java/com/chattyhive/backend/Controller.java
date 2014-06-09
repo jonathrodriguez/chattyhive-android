@@ -503,7 +503,6 @@ public class Controller {
     private void clearChat(String channel) {
         if (this.messages.containsKey(channel)) {
             this.messages.get(channel).clear();
-            this.messages.remove(channel);
             if (this.messageLocalStorage != null)
                 this.messageLocalStorage.ClearMessages(channel);
 

@@ -130,7 +130,7 @@ public class PubSub implements ChannelEventListener, ConnectionEventListener {
      * Subscribes to a channel and binds the msg event.
      * @param channel_name the name of the chanel to join.
      */
-    public void Join(String channel_name) {
+    public Boolean Join(String channel_name) {
         Channel canal;
         if (lista_canales.containsKey(channel_name))
             this.Leave(channel_name);
@@ -138,14 +138,16 @@ public class PubSub implements ChannelEventListener, ConnectionEventListener {
             canal = pusher.subscribe(channel_name, this);
             canal.bind("msg", this);
             lista_canales.put(channel_name,canal);
-        } catch (IllegalArgumentException e) { return; }
+        } catch (IllegalArgumentException e) { return false; }
+        return true;
     }
 
-    public void Leave(String channel_name) {
+    public Boolean Leave(String channel_name) {
         lista_canales.get(channel_name).unbind("msg",this);
         lista_canales.remove(channel_name);
         try {
             pusher.unsubscribe(channel_name);
-        } catch (IllegalStateException e) { return; }
+        } catch (IllegalStateException e) { return false; }
+        return true;
     }
 }
