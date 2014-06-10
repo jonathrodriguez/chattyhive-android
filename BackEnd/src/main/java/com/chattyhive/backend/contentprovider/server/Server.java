@@ -107,6 +107,7 @@ public class Server {
             if (response.getResponseCode() != 200)
                 return false;
         } catch (InterruptedException e) {
+            e.printStackTrace();
             return false;
         }
 

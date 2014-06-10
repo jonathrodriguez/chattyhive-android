@@ -94,12 +94,22 @@ public class AsyncHttpURLConnection extends Thread {
             }
 
             responseCode = httpURLConnection.getResponseCode();
+            System.out.println(String.format("Code: %d",responseCode));
+
+            BufferedReader inputReader = new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream()));
+            String inputLine;
+            StringBuffer response = new StringBuffer();
+
+            while ((inputLine = inputReader.readLine()) != null) {
+                response.append(inputLine);
+            }
+            inputReader.close();
+
+            responseBody = response.toString();
+
+
 
             if (responseCode == 200) {
-
-                BufferedReader inputReader = new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream()));
-                String inputLine;
-                StringBuffer response = new StringBuffer();
 
                 List<String> setCookies = httpURLConnection.getHeaderFields().get("Set-Cookie");
                 if (setCookies != null) {
@@ -110,21 +120,18 @@ public class AsyncHttpURLConnection extends Thread {
                         }
                     }
                 }
-
-
-                while ((inputLine = inputReader.readLine()) != null) {
-                    response.append(inputLine);
-                }
-                inputReader.close();
-
-                responseBody = response.toString();
             }
+                System.out.println(String.format("Code: %d\n%s",responseCode,responseBody));
+
 
         } catch (MalformedURLException e) {
+            e.printStackTrace();
             responseCode = 0;
         } catch (ProtocolException e) {
+            e.printStackTrace();
             responseCode = 10;
         } catch (IOException e) {
+            e.printStackTrace();
             responseCode = 20;
         }
 
