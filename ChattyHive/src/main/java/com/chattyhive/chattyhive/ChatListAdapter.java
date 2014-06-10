@@ -17,6 +17,7 @@ import com.chattyhive.backend.businessobjects.Mate;
 import com.chattyhive.backend.businessobjects.Message;
 import com.chattyhive.backend.util.events.ChannelEventArgs;
 import com.chattyhive.backend.util.events.EventArgs;
+import com.chattyhive.backend.util.formatters.DateFormatter;
 import com.chattyhive.backend.util.formatters.TimestampFormatter;
 
 import java.util.ArrayList;
@@ -55,6 +56,7 @@ public class ChatListAdapter extends BaseAdapter {
     @Override
     public int getItemViewType(int position) {
         Message m = chatMessages.toArray(new Message[0])[position];
+        if ((m.getUser() == null) && (m.getHive() == null)) return context.getResources().getInteger(R.integer.MainPanelChat_ListKind_None);
         boolean mineMessage = ((m.getUser() != null) && (m.getUser().isMe()));
 //        Log.w("ChatListAdapter.getItemViewType",String.format("MainPanelChat_ListKind_Hive: %d",R.id.MainPanelChat_ListKind_Hive));
 //        Log.w("ChatListAdapter.getItemViewType",String.format("MainPanelChat_ListKind_PrivateGroup: %d",R.id.MainPanelChat_ListKind_PrivateGroup));
@@ -104,6 +106,7 @@ public class ChatListAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder = null;
         int type = getItemViewType(position);
+        Boolean separator = (type == context.getResources().getInteger(R.integer.MainPanelChat_ListKind_None));
         if(convertView==null){
             holder = new ViewHolder();
             switch (chatKind) {
@@ -112,14 +115,18 @@ public class ChatListAdapter extends BaseAdapter {
                         convertView = this.inflater.inflate(R.layout.main_panel_chat_hive_message_me, parent, false);
                     } else if (type == context.getResources().getInteger(R.integer.MainPanelChat_ListKind_Other)) {
                         convertView = this.inflater.inflate(R.layout.main_panel_chat_hive_message_other, parent, false);
+                    } else if (separator) {
+                        convertView = this.inflater.inflate(R.layout.main_panel_chat_day_marker,parent,false);
                     } else {
                         Log.e("ChatListAdapter.getView()","Incompatible type!");
                         return null;
                     }
-                    holder.username = (TextView) convertView.findViewById(R.id.main_panel_chat_username);
-                    holder.messageText = (TextView) convertView.findViewById(R.id.main_panel_chat_messageText);
+                    if (!separator) {
+                        holder.username = (TextView) convertView.findViewById(R.id.main_panel_chat_username);
+                        holder.messageText = (TextView) convertView.findViewById(R.id.main_panel_chat_messageText);
+                        holder.avatarThumbnail = (ImageView) convertView.findViewById(R.id.main_panel_chat_avatarThumbnail);
+                    }
                     holder.timeStamp = (TextView) convertView.findViewById(R.id.main_panel_chat_timeStamp);
-                    holder.avatarThumbnail = (ImageView) convertView.findViewById(R.id.main_panel_chat_avatarThumbnail);
                     break;
                 default:
                     Log.e("ChatListAdapter.getView()","Incompatible type!");
@@ -135,15 +142,18 @@ public class ChatListAdapter extends BaseAdapter {
 
         convertView.setTag(R.id.BO_Message,message);
 
-        if (message.getUser() != null) {
-            holder.username.setText(message.getUser().getPublicName());
-            //Log.w("ChatListAdapter - getView","User color: ".concat(message.getUser().color));
-            holder.username.setTextColor(Color.parseColor(message.getUser().color));
+        if (!separator) {
+            if (message.getUser() != null) {
+                holder.username.setText(message.getUser().getPublicName());
+                //Log.w("ChatListAdapter - getView","User color: ".concat(message.getUser().color));
+                holder.username.setTextColor(Color.parseColor(message.getUser().color));
+            }
+
+            holder.messageText.setText(message.getMessage().getContent());
+            holder.timeStamp.setText(TimestampFormatter.toLocaleString(message.getTimeStamp()));
+        } else {
+            holder.timeStamp.setText(DateFormatter.toHumanReadableString(message.getTimeStamp()));
         }
-
-        holder.messageText.setText(message.getMessage().getContent());
-        holder.timeStamp.setText(TimestampFormatter.toLocaleString(message.getTimeStamp()));
-
         return convertView;
     }
 

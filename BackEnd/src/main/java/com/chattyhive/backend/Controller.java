@@ -16,6 +16,7 @@ import com.chattyhive.backend.util.events.EventArgs;
 import com.chattyhive.backend.util.events.EventHandler;
 import com.chattyhive.backend.util.events.PubSubChannelEventArgs;
 import com.chattyhive.backend.util.events.PubSubConnectionEventArgs;
+import com.chattyhive.backend.util.formatters.DateFormatter;
 import com.chattyhive.backend.util.formatters.TimestampFormatter;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -286,6 +287,8 @@ public class Controller {
                 if (this.messageLocalStorage != null) {
                     this.messageLocalStorage.StoreMessage(args.getChannelName(),m.toJson().toString());
                 }
+                m = new Message(new MessageContent(""), DateFormatter.toDate(DateFormatter.toString(m.getTimeStamp())));
+                if (!this.messages.get(args.getChannelName()).contains(m)) this.messages.get(args.getChannelName()).add(m);
             }
 
         } else {
@@ -318,6 +321,8 @@ public class Controller {
                 for (String jsonMessage : localMessages) {
                     jsonElement = jsonParser.parse(jsonMessage);
                     m = new Message(jsonElement);
+                    if (!messageList.contains(m)) messageList.add(m);
+                    m = new Message(new MessageContent(""), DateFormatter.toDate(DateFormatter.toString(m.getTimeStamp())));
                     if (!messageList.contains(m)) messageList.add(m);
                 }
             }
@@ -424,6 +429,8 @@ public class Controller {
         }
         if ((result) && (this.messageLocalStorage != null)) {
                 this.messageLocalStorage.StoreMessage(channel,message.toJson().toString());
+            Message m = new Message(new MessageContent(""), DateFormatter.toDate(DateFormatter.toString(message.getTimeStamp())));
+            if (!this.messages.get(channel).contains(m)) this.messages.get(channel).add(m);
         }
 
 

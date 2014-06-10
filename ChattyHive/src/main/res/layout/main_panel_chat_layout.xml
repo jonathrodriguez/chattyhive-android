@@ -68,7 +68,8 @@
         android:scrollingCache="true"
         android:smoothScrollbar="true"
         android:fastScrollEnabled="true"
-        android:transcriptMode="normal" />
+        android:transcriptMode="normal"
+        android:choiceMode="none" />
 
     <LinearLayout
         android:orientation="horizontal"

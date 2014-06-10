@@ -16,9 +16,11 @@ public final class DateFormatter {
      * String format for Dates.
      */
     private static final String format = "yyyy-MM-dd";
+    private static final String humanReadableFormat = "EEEE, dd 'de' MMMM 'de' yyyy";
 
+    private static final String timeZoneID = "Europe/Madrid";
     /**
-     * Converts a Date object to it's string representation, referred to UTC, according to the
+     * Converts a Date object to it's string representation, referred to Europe/Madrid, according to the
      * format: "yyyy-MM-dd"
      * @param date Date object representing the date to be converted.
      * @return A string containing the representation of the date.
@@ -27,7 +29,7 @@ public final class DateFormatter {
         SimpleDateFormat simpleDateFormat;
         if ((format != null) && (!format.isEmpty())) {
             simpleDateFormat = new SimpleDateFormat(format);
-            simpleDateFormat.setTimeZone(TimeZone.getTimeZone("GMT+0000"));
+            simpleDateFormat.setTimeZone(TimeZone.getTimeZone(timeZoneID));
             return simpleDateFormat.format(date);
         } else {
             return date.toString();
@@ -41,6 +43,7 @@ public final class DateFormatter {
      */
     public static final Date toDate(String date) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
+        simpleDateFormat.setTimeZone(TimeZone.getTimeZone(timeZoneID));
         try {
             return simpleDateFormat.parse(date);
         } catch (ParseException e) { }
@@ -48,5 +51,20 @@ public final class DateFormatter {
         return (new Date());
     }
 
+    /**
+     * Converts a Date object to it's string representation, referred to Locale, according to the
+     * format: "EEEE, dd 'de' MMMM 'de' yyyy"
+     * @param date Date object representing the date to be converted.
+     * @return A string containing the representation of the date.
+     */
+    public static final String toHumanReadableString(Date date) {
+        SimpleDateFormat simpleDateFormat;
+        if ((humanReadableFormat != null) && (!humanReadableFormat.isEmpty())) {
+            simpleDateFormat = new SimpleDateFormat(humanReadableFormat);
+            return simpleDateFormat.format(date);
+        } else {
+            return date.toString();
+        }
+    }
 }
 

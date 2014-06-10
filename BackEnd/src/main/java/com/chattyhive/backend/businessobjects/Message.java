@@ -152,24 +152,45 @@ public class Message implements Comparable{
      * their timestamps.
      */
     public int compareTo(Object o) {
-        if (o.getClass() != this.getClass()) {
+        if (!(o instanceof Message)) {
             throw new ClassCastException();
         }
         if (this.equals(o)) return 0;
 
-        return this._timeStamp.compareTo(((Message)o).getTimeStamp());
+        int compareRes = this._timeStamp.compareTo(((Message)o).getTimeStamp());
+
+        if (compareRes == 0) {
+            if ((this.getUser() == null) && (((Message) o).getUser() != null))
+                return 1;
+            else if ((this.getUser() != null) && (((Message) o).getUser() == null))
+                return -1;
+            else if ((this.getUser() == null) && (((Message) o).getUser() == null)) {
+                if ((this.getMessage() != null && (this.getMessage().getContent().isEmpty())) && (!(((Message) o).getMessage() != null && (((Message) o).getMessage().getContent().isEmpty()))))
+                    return 1;
+                else if ((!(this.getMessage() != null && (this.getMessage().getContent().isEmpty()))) && (((Message) o).getMessage() != null && (((Message) o).getMessage().getContent().isEmpty())))
+                    return -1;
+            }
+        }
+
+        return compareRes;
     }
 
     public boolean equals(Object o) {
         if ((o != null) && (o instanceof Message)) {
             Message m = (Message)o;
 
+            Boolean result = true;
 //            System.out.println("User: -> ".concat(String.valueOf((this.getUser().getPublicName().equalsIgnoreCase(m.getUser().getPublicName())))));
 //            System.out.println("TimeStamp: -> ".concat(String.valueOf((TimestampFormatter.toString(this.getTimeStamp()).equalsIgnoreCase(TimestampFormatter.toString(m.getTimeStamp()))))));
 //            System.out.println("Message: -> ".concat(String.valueOf((this.getMessage().getContent().equalsIgnoreCase(m.getMessage().getContent())))));
 //           System.out.println("Hive: -> ".concat(String.valueOf((this.getHive().getNameURL().equalsIgnoreCase(m.getHive().getNameURL())))));
 
-            return ((this.getUser().getPublicName().equalsIgnoreCase(m.getUser().getPublicName())) && (TimestampFormatter.toString(this.getTimeStamp()).equalsIgnoreCase(TimestampFormatter.toString(m.getTimeStamp()))) && (this.getMessage().getContent().equalsIgnoreCase(m.getMessage().getContent())) && (this.getHive().getNameURL().equalsIgnoreCase(m.getHive().getNameURL())));
+            result = result && ((this.getUser() != null) && (m.getUser() != null) && (this.getUser().getPublicName() != null) && (m.getUser().getPublicName() != null) && (this.getUser().getPublicName().equalsIgnoreCase(m.getUser().getPublicName())));
+            result = result && (TimestampFormatter.toString(this.getTimeStamp()).equalsIgnoreCase(TimestampFormatter.toString(m.getTimeStamp())));
+            result = result && ((this.getMessage() != null) && (m.getMessage() != null) && (this.getMessage().getContent() != null) && (m.getMessage().getContent() != null) && (this.getMessage().getContent().equalsIgnoreCase(m.getMessage().getContent())));
+            result = result && ((this.getHive() != null) && (m.getHive() != null) && (this.getHive().getNameURL() != null) && (m.getHive().getNameURL() != null) && (this.getHive().getNameURL().equalsIgnoreCase(m.getHive().getNameURL())));
+            
+            return result;
         }
         return false;
     }

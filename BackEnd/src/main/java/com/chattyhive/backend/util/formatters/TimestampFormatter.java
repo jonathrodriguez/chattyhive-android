@@ -45,7 +45,7 @@ public final class TimestampFormatter {
 
     public static final String toLocaleString(Date timestamp) {
         SimpleDateFormat simpleDateFormat;
-        Boolean recent = (((new Date()).getTime() - timestamp.getTime())/(60*60*1000) <= 18);
+        Boolean recent = true;//(((new Date()).getTime() - timestamp.getTime())/(60*60*1000) <= 18);
         if ((_formats != null) && (_formats.length > 1) && (_formats[1] != null) && (!_formats[1].isEmpty()) && (recent)) {
             simpleDateFormat = new SimpleDateFormat(_formats[1]);
             return simpleDateFormat.format(timestamp);
