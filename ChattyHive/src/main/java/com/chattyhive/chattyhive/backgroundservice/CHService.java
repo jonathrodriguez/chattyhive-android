@@ -13,7 +13,7 @@ import android.os.Binder;
 import android.os.IBinder;
 
 import com.chattyhive.backend.Controller;
-import com.chattyhive.backend.businessobjects.Message;
+import com.chattyhive.backend.businessobjects.Chats.Messages.Message;
 import com.chattyhive.backend.contentprovider.pubsubservice.ConnectionState;
 import com.chattyhive.backend.util.events.ChannelEventArgs;
 import com.chattyhive.backend.util.events.EventArgs;
@@ -151,7 +151,7 @@ public class CHService extends Service {
             Message[] messages = this.controller.getMessages(args.getChannelName()).toArray(new Message[0]);
             ArrayList<String> subText = new ArrayList<String>();
             for (int idx = (messages.length-this.pendingMsgs); idx < messages.length; idx++) {
-                subText.add(String.format(this.getString(R.string.buzz_in_hive_subText),"@".concat(messages[idx].getUser().getPublicName()),messages[idx].getMessage().getContent()));
+                subText.add(String.format(this.getString(R.string.buzz_in_hive_subText),"@".concat(messages[idx].getUser().getPublicName()),messages[idx].getMessageContent().getContent()));
             }
 
             chNotificationBuilder.setSubText(subText);

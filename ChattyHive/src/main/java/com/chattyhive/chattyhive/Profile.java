@@ -5,11 +5,9 @@ import android.content.Context;
 import android.graphics.Color;
 import android.view.View;
 import android.widget.CheckBox;
-import android.widget.ListView;
 import android.widget.TextView;
 
-import com.chattyhive.backend.businessobjects.User;
-import com.chattyhive.backend.util.events.ChannelEventArgs;
+import com.chattyhive.backend.businessobjects.Users.User;
 
 /**
  * Created by Jonathan on 20/05/2014.

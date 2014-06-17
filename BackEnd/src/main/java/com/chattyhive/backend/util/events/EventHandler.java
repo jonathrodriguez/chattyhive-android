@@ -21,7 +21,7 @@ public class EventHandler<T extends EventArgs> {
      * @throws NoSuchMethodException If the method is not found in the subscriber.
      */
     //TODO: Find a better way to get the class of the Type Parameter T.
-    //TODO: Find a way to get compile time errors if method does not exist. Maybe with Annotations.
+    //TODO: Find a way to get compile time errors if method does not exist. Maybe with Annotations or LINT.
     public EventHandler (Object Subscriber,String methodName, Class<T> eventArgsClass) throws NoSuchMethodException {
             this.subscriber = Subscriber;
             this.method = Subscriber.getClass().getMethod(methodName,Object.class,eventArgsClass);

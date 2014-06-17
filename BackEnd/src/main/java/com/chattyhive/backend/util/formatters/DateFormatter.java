@@ -43,7 +43,7 @@ public final class DateFormatter {
      */
     public static final Date toDate(String date) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
-        simpleDateFormat.setTimeZone(TimeZone.getTimeZone(timeZoneID));
+        //simpleDateFormat.setTimeZone(TimeZone.getTimeZone(timeZoneID));
         try {
             return simpleDateFormat.parse(date);
         } catch (ParseException e) { }

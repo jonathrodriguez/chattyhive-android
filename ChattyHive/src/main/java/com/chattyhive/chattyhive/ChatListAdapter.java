@@ -12,15 +12,11 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.chattyhive.backend.businessobjects.Hive;
-import com.chattyhive.backend.businessobjects.Mate;
-import com.chattyhive.backend.businessobjects.Message;
+import com.chattyhive.backend.businessobjects.Chats.Messages.Message;
 import com.chattyhive.backend.util.events.ChannelEventArgs;
-import com.chattyhive.backend.util.events.EventArgs;
 import com.chattyhive.backend.util.formatters.DateFormatter;
 import com.chattyhive.backend.util.formatters.TimestampFormatter;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -149,7 +145,7 @@ public class ChatListAdapter extends BaseAdapter {
                 holder.username.setTextColor(Color.parseColor(message.getUser().color));
             }
 
-            holder.messageText.setText(message.getMessage().getContent());
+            holder.messageText.setText(message.getMessageContent().getContent());
             holder.timeStamp.setText(TimestampFormatter.toLocaleString(message.getTimeStamp()));
         } else {
             holder.timeStamp.setText(DateFormatter.toHumanReadableString(message.getTimeStamp()));

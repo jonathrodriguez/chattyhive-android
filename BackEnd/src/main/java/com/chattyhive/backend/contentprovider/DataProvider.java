@@ -1,6 +1,6 @@
 package com.chattyhive.backend.contentprovider;
 
-import com.chattyhive.backend.businessobjects.Message;
+import com.chattyhive.backend.businessobjects.Chats.Messages.Message;
 import com.chattyhive.backend.contentprovider.pubsubservice.ConnectionState;
 import com.chattyhive.backend.contentprovider.pubsubservice.ConnectionStateChange;
 import com.chattyhive.backend.contentprovider.server.Server;
@@ -8,7 +8,6 @@ import com.chattyhive.backend.contentprovider.server.ServerUser;
 import com.chattyhive.backend.contentprovider.pubsubservice.PubSub;
 
 import com.chattyhive.backend.util.events.ConnectionEventArgs;
-import com.chattyhive.backend.util.events.Event;
 import com.chattyhive.backend.util.events.EventHandler;
 import com.chattyhive.backend.util.events.PubSubChannelEventArgs;
 import com.chattyhive.backend.util.events.PubSubConnectionEventArgs;

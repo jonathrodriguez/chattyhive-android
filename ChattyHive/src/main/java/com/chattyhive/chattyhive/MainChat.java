@@ -6,8 +6,8 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.chattyhive.backend.businessobjects.Message;
-import com.chattyhive.backend.businessobjects.MessageContent;
+import com.chattyhive.backend.businessobjects.Chats.Messages.Message;
+import com.chattyhive.backend.businessobjects.Chats.Messages.MessageContent;
 import com.chattyhive.backend.util.events.ChannelEventArgs;
 
 import java.util.Date;

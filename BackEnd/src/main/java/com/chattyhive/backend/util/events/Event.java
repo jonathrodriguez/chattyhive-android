@@ -1,7 +1,7 @@
 package com.chattyhive.backend.util.events;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 
 /**
@@ -17,33 +17,51 @@ import java.util.Iterator;
  * other objects to subscribe to the event, else firing the event will do nothing as there will not
  * be any method to invoke.
  */
-// TODO: Provide a way to unsubscribe.
 
 public class Event<T extends EventArgs> {
-    private ArrayList<EventHandler<T>> _eventHandler;
+    private HashSet<EventHandler<T>> eventHandlers;
 
     /**
      * Public constructor. Initialises the ArrayList which will contain the eventHandlers
      * to the methods to be invoked.
      */
     public Event () {
-        this._eventHandler = new ArrayList<EventHandler<T>>();
+        this.eventHandlers = new HashSet<EventHandler<T>>();
     }
 
 
     /**
      * Adds an eventHandler to the list.
      * @param eventHandler An eventHandler to the method which may be invoked when event is fired.
+     * @return true if list has changed-m else returns false;
      */
-    public void add(EventHandler<T> eventHandler) {
-        this._eventHandler.add(eventHandler);
+    public boolean add(EventHandler<T> eventHandler) {
+        return this.eventHandlers.add(eventHandler);
     }
+
+    /**
+     * Removes an eventHandler from the list.
+     * @param eventHandler An eventHandler wich may equals the eventHandler to remove.
+     * @return true if list has changed; else returns false.
+     */
+    public boolean remove(EventHandler<T> eventHandler) {
+        if (this.eventHandlers.contains(eventHandler))
+            return this.eventHandlers.remove(eventHandler);
+        else
+            return false;
+    }
+
+    /**
+     * Retrieves actual size of event handlers list.
+     * @return
+     */
+    public int count() { return this.eventHandlers.size(); }
 
     /**
      * Clears the list, leaving it empty. Useful for memory freeing on object destruction.
      */
     public void clear() {
-        this._eventHandler.clear();
+        this.eventHandlers.clear();
     }
 
     /**
@@ -53,7 +71,7 @@ public class Event<T extends EventArgs> {
      * @param eventArgs The event arguments. They CAN be of any class but HAVE TO extend EventArgs.
      */
     public void fire(Object sender,T eventArgs) {
-        Iterator<EventHandler<T>> iterator = this._eventHandler.iterator();
+        Iterator<EventHandler<T>> iterator = this.eventHandlers.iterator();
         while (iterator.hasNext()) {
             EventHandler<T> eventHandler = iterator.next();
             try {
@@ -70,5 +88,11 @@ public class Event<T extends EventArgs> {
                 continue;
             }
         }
+    }
+
+    @Override
+    protected void finalize() {
+        this.eventHandlers.clear();
+        this.eventHandlers = null;
     }
 }

@@ -1,11 +1,10 @@
-package com.chattyhive.backend.businessobjects;
+package com.chattyhive.backend.businessobjects.Users;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
 import java.util.TreeMap;
-import java.util.TreeSet;
 
 /**
  * Created by Jonathan on 11/12/13.

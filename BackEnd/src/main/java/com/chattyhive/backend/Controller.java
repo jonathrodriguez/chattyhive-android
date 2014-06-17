@@ -1,9 +1,9 @@
 package com.chattyhive.backend;
 
-import com.chattyhive.backend.businessobjects.Hive;
-import com.chattyhive.backend.businessobjects.Message;
-import com.chattyhive.backend.businessobjects.MessageContent;
-import com.chattyhive.backend.businessobjects.User;
+import com.chattyhive.backend.businessobjects.Chats.Hive;
+import com.chattyhive.backend.businessobjects.Chats.Messages.Message;
+import com.chattyhive.backend.businessobjects.Chats.Messages.MessageContent;
+import com.chattyhive.backend.businessobjects.Users.User;
 import com.chattyhive.backend.contentprovider.DataProvider;
 import com.chattyhive.backend.contentprovider.OSStorageProvider.LoginLocalStorageInterface;
 import com.chattyhive.backend.contentprovider.OSStorageProvider.MessageLocalStorageInterface;
@@ -409,7 +409,7 @@ public class Controller {
      */
     public Boolean sendMessage(Message message,String channel) {
 
-        message._user = User.getMe();
+        message.user = User.getMe();
         message.hive = getHiveFromUrlName(channel);
 
 
@@ -437,7 +437,7 @@ public class Controller {
         //return true;
         return result;
 
-        //return this._dataProvider.sendMessage("message=".concat(message._content.getContent().replace("+", "%2B").replace(" ", "+")).concat("&timestamp=").concat(TimestampFormatter.toString(message.getTimeStamp()).replace(":", "%3A").replace("+", "%2B").replace(" ", "+")));
+        //return this._dataProvider.sendMessage("message=".concat(message.content.getContent().replace("+", "%2B").replace(" ", "+")).concat("&timestamp=").concat(TimestampFormatter.toString(message.getTimeStamp()).replace(":", "%3A").replace("+", "%2B").replace(" ", "+")));
     }
 
     public void onConnect (Object sender, ConnectionEventArgs args) {

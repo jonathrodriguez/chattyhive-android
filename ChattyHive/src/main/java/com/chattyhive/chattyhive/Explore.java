@@ -3,24 +3,16 @@ package com.chattyhive.chattyhive;
 import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.chattyhive.backend.Controller;
-import com.chattyhive.backend.businessobjects.Message;
-import com.chattyhive.backend.businessobjects.MessageContent;
-import com.chattyhive.backend.util.events.ChannelEventArgs;
 import com.chattyhive.backend.util.events.EventArgs;
 import com.chattyhive.backend.util.events.EventHandler;
 import com.chattyhive.chattyhive.OSStorageProvider.LoginLocalStorage;
 import com.chattyhive.chattyhive.OSStorageProvider.MessageLocalStorage;
-
-import java.util.Date;
 
 public class Explore extends Activity {
 

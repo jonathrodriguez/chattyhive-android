@@ -2,7 +2,6 @@ package com.chattyhive.chattyhive;
 
 import android.app.Activity;
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,11 +11,10 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.chattyhive.backend.businessobjects.Hive;
-import com.chattyhive.backend.businessobjects.Mate;
+import com.chattyhive.backend.businessobjects.Chats.Hive;
+import com.chattyhive.backend.businessobjects.Users.Mate;
 import com.chattyhive.backend.util.events.EventArgs;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 /**
