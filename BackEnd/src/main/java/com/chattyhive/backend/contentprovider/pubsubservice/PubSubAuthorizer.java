@@ -1,6 +1,6 @@
 package com.chattyhive.backend.contentprovider.pubsubservice;
 
-import com.chattyhive.backend.businessobjects.User;
+import com.chattyhive.backend.businessobjects.Users.User;
 import com.chattyhive.backend.contentprovider.server.ServerStatus;
 import com.chattyhive.backend.contentprovider.server.ServerUser;
 import com.google.gson.JsonObject;
