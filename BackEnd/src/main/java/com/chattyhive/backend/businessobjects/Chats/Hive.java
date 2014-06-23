@@ -39,33 +39,33 @@ public class Hive extends Group {
     /*****************************************
      Constructor
      *****************************************/
-    private Hive(String channelName) {
-        super(channelName);
+    private Hive(String hiveName) {
+        super(hiveName);
 
         //TODO: Implement server and local information recovering
     }
 
-    public static Hive getHive(String channelName) {
+    public static Hive getHive(String hiveName) {
         if ((Hive.Hives == null) || (Hive.Hives.isEmpty())) throw new NullPointerException("There are no hives.");
-        else if (channelName == null) throw new NullPointerException("channelName must not be null.");
-        else if (channelName.isEmpty()) throw  new IllegalArgumentException("channelName must not be empty.");
+        else if (hiveName == null) throw new NullPointerException("hiveName must not be null.");
+        else if (hiveName.isEmpty()) throw  new IllegalArgumentException("hiveName must not be empty.");
 
-        if (Hive.Hives.containsKey(channelName))
-            return Hive.Hives.get(channelName);
+        if (Hive.Hives.containsKey(hiveName))
+            return Hive.Hives.get(hiveName);
         else {
-            Hive h = new Hive(channelName);
-            Hive.Hives.put(channelName,h);
+            Hive h = new Hive(hiveName);
+            Hive.Hives.put(hiveName,h);
             return h;
         }
     }
 
     public static Hive createHive(String name, String categroy, String description) {
         //TODO: implement server communication
-        String channelName = ""; //Recovered from server.
+        String hiveName = ""; //Recovered from server.
         //TODO: implement local storage
 
-        Hive h = new Hive(channelName);
-        Hive.Hives.put(channelName,h);
+        Hive h = new Hive(hiveName);
+        Hive.Hives.put(hiveName,h);
         return h;
     }
 
@@ -86,44 +86,13 @@ public class Hive extends Group {
     public String getCategory() { return this.category; }
 
 
-
-
-    // Constructor
-    public Hive(String name, String name_url) {
-        this.name = name;
-        this.name_url = name_url;
-        this.category = "";
-        this.description = "";
-        this.creation_date = new Date();
-    }
-
-    public Hive(String name, String name_url, String category) {
-        this.name = name;
-        this.name_url = name_url;
-        this.category = category;
-        this.description = "";
-        this.creation_date = new Date();
-    }
-
-    public Hive(String name, String name_url, String category, String description) {
-        this.name = name;
-        this.name_url = name_url;
-        this.category = category;
-        this.description = description;
-        this.creation_date = new Date();
-    }
-
-    public Hive(JsonElement json) {
-        this.fromJSON(json);
-    }
-
     public JsonElement toJSON() {
         JsonObject jsonHive = new JsonObject();
         jsonHive.addProperty("name", this.name);
-        jsonHive.addProperty("name_url", this.name_url);
+        jsonHive.addProperty("name_url", this.groupName);
         jsonHive.addProperty("description", this.description);
         jsonHive.addProperty("category", this.category);
-        jsonHive.addProperty("creation_date", DateFormatter.toString(this.creation_date));
+        jsonHive.addProperty("creation_date", DateFormatter.toString(this.creationDate));
         return jsonHive;
     }
 
@@ -131,16 +100,16 @@ public class Hive extends Group {
         if (json.isJsonObject()) {
             JsonObject jsonHive = json.getAsJsonObject(); 
             this.name = jsonHive.get("name").getAsString();
-            this.name_url = jsonHive.get("name_url").getAsString();
+            this.groupName = jsonHive.get("name_url").getAsString();
             this.description = jsonHive.get("description").getAsString();
             this.category = jsonHive.get("category").getAsString();
-            this.creation_date = DateFormatter.toDate(jsonHive.get("creation_date").getAsString());
+            this.creationDate = DateFormatter.toDate(jsonHive.get("creation_date").getAsString());
         } else {
             this.name = null;
-            this.name_url = null;
+            this.groupName = null;
             this.description = null;
             this.category = null;
-            this.creation_date = null;
+            this.creationDate = null;
         }
     }
 }

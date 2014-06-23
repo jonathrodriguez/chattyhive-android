@@ -1,15 +1,12 @@
 package com.chattyhive.backend.businessobjects.Chats;
 
 import com.chattyhive.backend.Controller;
-import com.chattyhive.backend.businessobjects.Chats.Messages.AbstractMessageItem;
-import com.chattyhive.backend.businessobjects.Chats.Messages.Message;
 import com.chattyhive.backend.businessobjects.Users.User;
 import com.chattyhive.backend.contentprovider.OSStorageProvider.MessageLocalStorageInterface;
 
 import java.util.Collection;
 import java.util.Date;
 import java.util.TreeMap;
-import java.util.TreeSet;
 
 /**
  * Created by Jonathan on 16/06/2014.
@@ -37,8 +34,8 @@ public class Group {
          Chat management
      **************************/
 
-    protected String pubsubChannelName;
-    public String getPubsubChannelName() { return this.pubsubChannelName; }
+    protected String groupName;
+    public String getGroupName() { return this.groupName; }
 
     protected Chat chat;
     public Chat getChat() { return this.chat; }
@@ -46,36 +43,36 @@ public class Group {
     /*****************************************
                  Constructor
      *****************************************/
-    protected Group(String channelName) {
+    protected Group(String groupName) {
         this.users = new TreeMap<String,User>();
         this.subgroups = new TreeMap<String, Group>();
 
-        this.pubsubChannelName = channelName;
+        this.groupName = groupName;
 
         //TODO: Implement server and local information recovering
     }
 
-    public static Group getGroup(String channelName) {
+    public static Group getGroup(String groupName) {
         if ((Group.Groups == null) || (Group.Groups.isEmpty())) throw new NullPointerException("There are no groups.");
-        else if (channelName == null) throw new NullPointerException("channelName must not be null.");
-        else if (channelName.isEmpty()) throw  new IllegalArgumentException("channelName must not be empty.");
+        else if (groupName == null) throw new NullPointerException("groupName must not be null.");
+        else if (groupName.isEmpty()) throw  new IllegalArgumentException("groupName must not be empty.");
 
-        if (Group.Groups.containsKey(channelName))
-            return Group.Groups.get(channelName);
+        if (Group.Groups.containsKey(groupName))
+            return Group.Groups.get(groupName);
         else {
-            Group g = new Group(channelName);
-            Group.Groups.put(channelName,g);
+            Group g = new Group(groupName);
+            Group.Groups.put(groupName,g);
             return g;
         }
     }
 
     public static Group createGroup(Collection<User> users,String parentGroup) {
         //TODO: implement server communication
-        String channelName = ""; //Recovered from server.
+        String groupName = ""; //Recovered from server.
         //TODO: implement local storage
 
-        Group g = new Group(channelName);
-        Group.Groups.put(channelName,g);
+        Group g = new Group(groupName);
+        Group.Groups.put(groupName,g);
         return g;
     }
     /*****************************************
@@ -110,17 +107,17 @@ public class Group {
                 subgroups list
      *****************************************/
     protected TreeMap<String,Group> subgroups;
-    public Group getSubgroup(String channelName) {
+    public Group getSubgroup(String groupName) {
         if ((this.subgroups == null) || (this.subgroups.isEmpty())) throw new NullPointerException("There are no subgroups for this group.");
-        else if (channelName == null) throw new NullPointerException("channelName must not be null.");
-        else if (channelName.isEmpty()) throw  new IllegalArgumentException("channelName must not be empty.");
+        else if (groupName == null) throw new NullPointerException("groupName must not be null.");
+        else if (groupName.isEmpty()) throw  new IllegalArgumentException("groupName must not be empty.");
 
-        return subgroups.get("channelName");
+        return subgroups.get("groupName");
     }
     public void addSubgroup(Group subgroup) {
         if (subgroup == null) throw new NullPointerException("subgroup must not be null.");
 
-        subgroups.put(subgroup.getPubsubChannelName(), subgroup);
+        subgroups.put(subgroup.getGroupName(), subgroup);
     }
 
     /*****************************************
@@ -148,7 +145,16 @@ public class Group {
         //TODO: implement local update
     }
 
+    protected String nameURL;
+    public String getNameURL() { return this.nameURL; }
+    public void setNameURL(String value) { this.nameURL = value; }
+
+
     protected Date creationDate;
     public Date getCreationDate() { return this.creationDate; }
     public void setCreationDate(Date value) { this.creationDate = value; }
+
+    protected String pusherChannel;
+    public String getPusherChannel() { return this.pusherChannel; }
+    public void setPusherChannel(String value) { this.pusherChannel = value; }
 }
