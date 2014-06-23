@@ -91,7 +91,7 @@ public class DataProvider {
         this.serverUser = user;
         this.server = new Server(this.serverUser,serverApp);
 
-        this.pubSub = new PubSub(this.serverUser.getLogin());
+        this.pubSub = new PubSub(this.serverUser);
 
         try {
             this.pubSub.SubscribeChannelEventHandler(new EventHandler<PubSubChannelEventArgs>(this,"onChannelEvent",PubSubChannelEventArgs.class));
