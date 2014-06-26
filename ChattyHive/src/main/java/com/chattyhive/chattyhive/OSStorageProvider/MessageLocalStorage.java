@@ -24,9 +24,9 @@ public class MessageLocalStorage implements MessageLocalStorageInterface {
     }
 
     @Override
-    public void StoreMessage(String channel, String jsonMessage) {
+    public void StoreMessage(String PusherChannel, String jsonMessage) {
         Context context = ApplicationContextProvider.getContext();
-        SharedPreferences sharedPreferences = context.getSharedPreferences(channel,context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = context.getSharedPreferences(PusherChannel,context.MODE_PRIVATE);
         int count = sharedPreferences.getAll().size();
         SharedPreferences.Editor sharedPreferencesEditor = sharedPreferences.edit();
         String key = String.format("message%d",count);
@@ -39,11 +39,11 @@ public class MessageLocalStorage implements MessageLocalStorageInterface {
     }
 
     @Override
-    public String[] RecoverMessage(String channel) {
+    public String[] RecoverMessage(String PusherChannel) {
         String[] messages = null;
 
         Context context = ApplicationContextProvider.getContext();
-        SharedPreferences sharedPreferences = context.getSharedPreferences(channel,context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = context.getSharedPreferences(PusherChannel,context.MODE_PRIVATE);
 
         if (sharedPreferences.getAll().size() > 0)
             messages = sharedPreferences.getAll().values().toArray(new String[0]);
@@ -52,16 +52,16 @@ public class MessageLocalStorage implements MessageLocalStorageInterface {
     }
 
     @Override
-    public void ClearMessages(String channel) {
+    public void ClearMessages(String PusherChannel) {
         Context context = ApplicationContextProvider.getContext();
-        SharedPreferences sharedPreferences = context.getSharedPreferences(channel,context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = context.getSharedPreferences(PusherChannel,context.MODE_PRIVATE);
         sharedPreferences.edit().clear().apply();
     }
 
     @Override
-    public void RemoveMessage(String channel, String jsonMessage) {
+    public void RemoveMessage(String PusherChannel, String jsonMessage) {
         Context context = ApplicationContextProvider.getContext();
-        SharedPreferences sharedPreferences = context.getSharedPreferences(channel,context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = context.getSharedPreferences(PusherChannel,context.MODE_PRIVATE);
 
         if (sharedPreferences.getAll().size() > 0) {
             ArrayList<String> messagesList = new ArrayList<String>((Collection<String>)sharedPreferences.getAll().values());
@@ -82,9 +82,9 @@ public class MessageLocalStorage implements MessageLocalStorageInterface {
     }
 
     @Override
-    public void TrimStoredMessages(String channel,int numberOfMessages) {
+    public void TrimStoredMessages(String PusherChannel,int numberOfMessages) {
         Context context = ApplicationContextProvider.getContext();
-        SharedPreferences sharedPreferences = context.getSharedPreferences(channel,context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = context.getSharedPreferences(PusherChannel,context.MODE_PRIVATE);
 
         if (sharedPreferences.getAll().size() > numberOfMessages) {
             ArrayList<String> messagesList = new ArrayList<String>((Collection<String>)sharedPreferences.getAll().values());
