@@ -25,43 +25,38 @@ public class Chat {
     private static MessageLocalStorageInterface localStorage;
     private static Controller controller;
 
-    private static TreeMap<String,Chat> Chats;
-
     public static void Initialize(Controller controller, MessageLocalStorageInterface messageLocalStorageInterface) {
-        if (Chat.Chats == null) {
-            Chat.Chats = new TreeMap<String, Chat>();
-        }
-
         Chat.controller = controller;
         Chat.localStorage = messageLocalStorageInterface;
-
-        //TODO: Implement local recovering of chats.
     }
 
     /**************************
        Proper chat management
      **************************/
-
-    private String pubsubChannelName;
-    public String getPubsubChannelName() { return this.pubsubChannelName; }
-
-    private ChatKind chatKind;
-    public ChatKind getChatKind() { return this.chatKind; }
-    public void setChatKind(ChatKind value) { this.chatKind = value; }
-
-    private Object parent;
-    public Object getParent() { return this.parent; }
-    public void setParent(Object value) { this.parent = value; }
-
-    private int showingIndex;
     private Boolean chatWindowActive;
-    public void setChatWindowActive(Boolean value) {
-        this.chatWindowActive = true;
+    private Boolean moreMessages;
+    private Group parent;
+    private int showingIndex;
 
-        this.showingIndex = this.messages.size() - 100;
+    public Group getParent() { return this.parent; }
+    public void setParent(Group value) { this.parent = value; }
+
+
+
+    public void setChatWindowActive(Boolean value) {
+        if (this.chatWindowActive == value) return;
+
+        this.chatWindowActive = value;
+        if (value) {
+            this.showingIndex = this.messages.size() - 100;
+            this.controller.Join(this.parent.pusherChannel);
+        }
+        else {
+            this.controller.Leave(this.parent.pusherChannel);
+            this.showingIndex = -1;
+        }
     }
 
-    private Boolean moreMessages;
     public Boolean hasMoreMessages() { return this.moreMessages; }
 
     /*****************************************
@@ -70,20 +65,12 @@ public class Chat {
     private Chat(String channelName) {
         this.messages = new TreeSet<AbstractMessageItem>();
         this.messagesByID = new TreeMap<String, Message>();
-    }
 
-    public static Chat getChat(String channelName) {
-        if ((Chat.Chats == null) || (Chat.Chats.isEmpty())) throw new NullPointerException("There are no chats.");
-        else if (channelName == null) throw new NullPointerException("channelName must not be null.");
-        else if (channelName.isEmpty()) throw  new IllegalArgumentException("channelName must not be empty.");
+        String[] messages = Chat.localStorage.RecoverMessages(channelName);
 
-        if (Chat.Chats.containsKey(channelName))
-            return Chat.Chats.get(channelName);
-        else {
-            Chat c = new Chat(channelName);
-            Chat.Chats.put(channelName,c);
-            return c;
-        }
+        //TODO: recover local messages.
+        //TODO: recover send pending messages.
+        //TODO: identify holes.
     }
 
     /*****************************************
@@ -126,21 +113,21 @@ public class Chat {
                 this.messageListModifiedEvent.fire(this, EventArgs.Empty());
 
             if (idReceived) {
-                Chat.localStorage.RemoveMessage(String.format("Sending-%s",this.pubsubChannelName),m.toJson().toString());
-                Chat.localStorage.StoreMessage(this.pubsubChannelName, m.toJson().toString());
+                Chat.localStorage.RemoveMessage(String.format("Sending-%s",this.parent.pusherChannel),m.toJson().toString());
+                Chat.localStorage.StoreMessage(this.parent.pusherChannel, m.toJson().toString());
                 if (StaticParameters.MaxLocalMessages > 0)
-                    Chat.localStorage.TrimStoredMessages(this.pubsubChannelName, StaticParameters.MaxLocalMessages);
+                    Chat.localStorage.TrimStoredMessages(this.parent.pusherChannel, StaticParameters.MaxLocalMessages);
             }
 
             if (confirmationReceived) { //TODO: think about update method.
-                Chat.localStorage.RemoveMessage(this.pubsubChannelName,m.toJson().toString());
-                Chat.localStorage.StoreMessage(this.pubsubChannelName, m.toJson().toString());
+                Chat.localStorage.RemoveMessage(this.parent.pusherChannel,m.toJson().toString());
+                Chat.localStorage.StoreMessage(this.parent.pusherChannel, m.toJson().toString());
             }
         }
     }
 
     public void onMessageReceived(Object sender,ChannelEventArgs eventArgs) {
-        if ((eventArgs.getChannelName().equalsIgnoreCase(this.pubsubChannelName)) && (eventArgs.getEventName().equalsIgnoreCase("msg"))) {
+        if ((eventArgs.getChannelName().equalsIgnoreCase(this.parent.pusherChannel)) && (eventArgs.getEventName().equalsIgnoreCase("msg"))) {
             Message m = eventArgs.getMessage();
             this.addMessage(m);
             //TODO: Confirm message received;
@@ -182,7 +169,7 @@ public class Chat {
         try {
             if (message.getId() == null)
                 message.subscribeIdReceived(new EventHandler<EventArgs>(this, "onMessageChanged", EventArgs.class));
-            if ((this.chatKind == ChatKind.PUBLIC_SINGLE) || (this.chatKind == ChatKind.PRIVATE_SINGLE))
+            if ((this.parent.groupKind == GroupKind.PUBLIC_SINGLE) || (this.parent.groupKind == GroupKind.PRIVATE_SINGLE))
                 message.subscribeConfirmationReceived(new EventHandler<EventArgs>(this, "onMessageChanged", EventArgs.class));
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
@@ -200,12 +187,12 @@ public class Chat {
 
         if ((message.getId() != null) && (!message.getId().isEmpty())) {
             if (StaticParameters.MaxLocalMessages != 0) {
-                Chat.localStorage.StoreMessage(this.pubsubChannelName, message.toJson().toString());
+                Chat.localStorage.StoreMessage(this.parent.pusherChannel, message.toJson().toString());
                 if (StaticParameters.MaxLocalMessages > 0)
-                    Chat.localStorage.TrimStoredMessages(this.pubsubChannelName, StaticParameters.MaxLocalMessages);
+                    Chat.localStorage.TrimStoredMessages(this.parent.pusherChannel, StaticParameters.MaxLocalMessages);
             }
         } else {
-            Chat.localStorage.StoreMessage(String.format("Sending-%s",this.pubsubChannelName),message.toJson().toString());
+            Chat.localStorage.StoreMessage(String.format("Sending-%s",this.parent.pusherChannel),message.toJson().toString());
         }
 
     }
@@ -215,7 +202,7 @@ public class Chat {
         this.messagesByID.remove(ID);
         this.messages.remove(toBeRemoved);
         if (StaticParameters.MaxLocalMessages != 0)
-            Chat.localStorage.RemoveMessage(this.pubsubChannelName,toBeRemoved.toJson().toString());
+            Chat.localStorage.RemoveMessage(this.parent.pusherChannel,toBeRemoved.toJson().toString());
     }
 
     public void getMoreMessages() {

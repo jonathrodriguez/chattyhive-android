@@ -1,6 +1,9 @@
 package com.chattyhive.backend.contentprovider.pubsubservice;
 
+import com.chattyhive.backend.Controller;
 import com.chattyhive.backend.businessobjects.Users.User;
+import com.chattyhive.backend.contentprovider.server.AsyncHttpURLConnection;
+import com.chattyhive.backend.contentprovider.server.ServerResponse;
 import com.chattyhive.backend.contentprovider.server.ServerStatus;
 import com.chattyhive.backend.contentprovider.server.ServerUser;
 import com.google.gson.JsonObject;
@@ -41,37 +44,27 @@ public class PubSubAuthorizer implements Authorizer {
             throw new AuthorizationFailureException("No user connected.");
         }
 
-        String authToken = "";
-        List<HttpCookie> cookieList = HttpCookie.parse(this.serverUser.getCookies());
+        String method = "POST";
+        String URL = "http://chtest2.herokuapp.com/chat_auth";
+        ServerUser user = Controller.getRunningController().getServerUser();
+        String bodyData = "channel_name=" + channelName + "\nsocket_id=" + socketId;
+        String RESTData = "";
 
-        for (HttpCookie cookie : cookieList)
-            if ((!cookie.hasExpired()) && (!cookie.getName().equalsIgnoreCase("csrftoken")))
-                authToken = authToken.concat(cookie.getValue());
+        AsyncHttpURLConnection asyncHttpURLConnection = new AsyncHttpURLConnection(method, URL, user, bodyData, RESTData);
 
-        if (authToken.isEmpty())
-            throw new AuthorizationFailureException("No user connected.");
-
-        JsonObject authorization = new JsonObject();
-        authorization.addProperty("auth",authToken);
-
-        if (channelName.startsWith("presence-")) {
-            User me = User.getMe();
-            if (me == null)
-                throw new AuthorizationFailureException("No user profile available.");
-
-            JsonObject channelData = new JsonObject();
-            channelData.addProperty("user-id",me.getPublicName());
-
-            /*HashMap<String,String> userInfoMap = new HashMap<String, String>();
-            //Add user info
-            JsonObject userInfo = new JsonObject();
-            for (Map.Entry<String,String> entry : userInfoMap.entrySet())
-                userInfo.addProperty(entry.getKey(),entry.getValue());
-            channelData.add("user-info",userInfo);*/
-
-            authorization.add("channelData",channelData);
+        try {
+            ServerResponse res = asyncHttpURLConnection.getServerResponse();
+            if (res.getResponseCode() == 200) {
+                System.out.println(res.getBodyData());
+                return res.getBodyData();
+            } else {
+                System.out.println(res.getResponseCode());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
-        return authorization.toString();
+
+        return "";
     }
 }

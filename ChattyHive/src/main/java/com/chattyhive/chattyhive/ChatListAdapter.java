@@ -52,7 +52,7 @@ public class ChatListAdapter extends BaseAdapter {
     @Override
     public int getItemViewType(int position) {
         Message m = chatMessages.toArray(new Message[0])[position];
-        if ((m.getUser() == null) && (m.getHive() == null)) return context.getResources().getInteger(R.integer.MainPanelChat_ListKind_None);
+        if ((m.getUser() == null) && (m.getChat() == null)) return context.getResources().getInteger(R.integer.MainPanelChat_ListKind_None);
         boolean mineMessage = ((m.getUser() != null) && (m.getUser().isMe()));
 //        Log.w("ChatListAdapter.getItemViewType",String.format("MainPanelChat_ListKind_Hive: %d",R.id.MainPanelChat_ListKind_Hive));
 //        Log.w("ChatListAdapter.getItemViewType",String.format("MainPanelChat_ListKind_PrivateGroup: %d",R.id.MainPanelChat_ListKind_PrivateGroup));

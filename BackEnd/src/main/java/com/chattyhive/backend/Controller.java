@@ -273,7 +273,7 @@ public class Controller {
             JsonParser jsonParser = new JsonParser();
             JsonElement jsonElement = jsonParser.parse(args.getMessage());
             m = new Message(jsonElement);
-            if (m.getHive() == null) m.hive = this.getHiveFromUrlName(args.getChannelName());
+            if (m.getChat() == null) m.chat = this.getHiveFromUrlName(args.getChannelName());
 
             //System.out.println("Received Message: ".concat(m.toJson().toString()));
 
@@ -313,7 +313,7 @@ public class Controller {
 
         // Local message recovering
         if (this.messageLocalStorage != null) {
-            String[] localMessages = this.messageLocalStorage.RecoverMessage(channel);
+            String[] localMessages = this.messageLocalStorage.RecoverMessages(channel);
             if (localMessages != null) {
                 JsonParser jsonParser = new JsonParser();
                 JsonElement jsonElement;
@@ -410,7 +410,7 @@ public class Controller {
     public Boolean sendMessage(Message message,String channel) {
 
         message.user = User.getMe();
-        message.hive = getHiveFromUrlName(channel);
+        message.chat = getHiveFromUrlName(channel);
 
 
         if (!this.messages.containsKey(channel))

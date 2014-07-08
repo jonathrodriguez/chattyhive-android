@@ -24,22 +24,31 @@ public class MessageLocalStorage implements MessageLocalStorageInterface {
     }
 
     @Override
-    public void StoreMessage(String PusherChannel, String jsonMessage) {
+    public void StoreMessage(String PusherChannel,String messageId, String jsonMessage) {
         Context context = ApplicationContextProvider.getContext();
         SharedPreferences sharedPreferences = context.getSharedPreferences(PusherChannel,context.MODE_PRIVATE);
-        int count = sharedPreferences.getAll().size();
         SharedPreferences.Editor sharedPreferencesEditor = sharedPreferences.edit();
-        String key = String.format("message%d",count);
-        while (sharedPreferences.contains(key)) {
-            count++;
-            key = String.format("message%d",count);
-        }
-        sharedPreferencesEditor.putString(key,jsonMessage);
+        if (sharedPreferences.contains(messageId))
+            sharedPreferencesEditor.remove(messageId);
+        sharedPreferencesEditor.putString(messageId,jsonMessage);
         sharedPreferencesEditor.apply();
     }
 
     @Override
-    public String[] RecoverMessage(String PusherChannel) {
+    public String RecoverMessage(String PusherChannel, String messageId) {
+        String message = null;
+
+        Context context = ApplicationContextProvider.getContext();
+        SharedPreferences sharedPreferences = context.getSharedPreferences(PusherChannel,context.MODE_PRIVATE);
+
+        if (sharedPreferences.contains(messageId))
+            message = sharedPreferences.getString(messageId,null);
+
+        return message;
+    }
+
+    @Override
+    public String[] RecoverMessages(String PusherChannel) {
         String[] messages = null;
 
         Context context = ApplicationContextProvider.getContext();
@@ -59,19 +68,19 @@ public class MessageLocalStorage implements MessageLocalStorageInterface {
     }
 
     @Override
-    public void RemoveMessage(String PusherChannel, String jsonMessage) {
+    public void RemoveMessage(String PusherChannel, String messageId) {
         Context context = ApplicationContextProvider.getContext();
         SharedPreferences sharedPreferences = context.getSharedPreferences(PusherChannel,context.MODE_PRIVATE);
 
         if (sharedPreferences.getAll().size() > 0) {
             ArrayList<String> messagesList = new ArrayList<String>((Collection<String>)sharedPreferences.getAll().values());
 
-            if (messagesList.contains(jsonMessage)) {
+            if (messagesList.contains(messageId)) {
                 SharedPreferences.Editor sharedPreferencesEditor = sharedPreferences.edit();
                 sharedPreferencesEditor.clear();
                 int i = 0;
                 for (String message : messagesList) {
-                    if (!message.equalsIgnoreCase(jsonMessage)) {
+                    if (!message.equalsIgnoreCase(messageId)) {
                         sharedPreferencesEditor.putString(String.format("message%d",i),message);
                         i++;
                     }

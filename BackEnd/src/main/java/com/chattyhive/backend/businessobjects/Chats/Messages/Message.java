@@ -1,15 +1,22 @@
 package com.chattyhive.backend.businessobjects.Chats.Messages;
 
 import com.chattyhive.backend.Controller;
-import com.chattyhive.backend.businessobjects.Chats.Hive;
+import com.chattyhive.backend.businessobjects.Chats.Chat;
+import com.chattyhive.backend.businessobjects.Chats.Group;
 import com.chattyhive.backend.businessobjects.Users.User;
+import com.chattyhive.backend.contentprovider.formats.Format;
+import com.chattyhive.backend.contentprovider.formats.MESSAGE;
+import com.chattyhive.backend.contentprovider.formats.MESSAGE_ACK;
+import com.chattyhive.backend.contentprovider.formats.MESSAGE_CONTENT;
+import com.chattyhive.backend.contentprovider.formats.MESSAGE_COUNT;
+import com.chattyhive.backend.contentprovider.formats.MESSAGE_ID;
+import com.chattyhive.backend.contentprovider.formats.PROFILE_ID;
 import com.chattyhive.backend.util.events.Event;
 import com.chattyhive.backend.util.events.EventArgs;
 import com.chattyhive.backend.util.events.EventHandler;
 import com.chattyhive.backend.util.formatters.TimestampFormatter;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.annotations.SerializedName;
 
 import java.util.Date;
 
@@ -18,22 +25,31 @@ import java.util.Date;
  * This class represents a message. A message is one of the most basic business objects.
  * Generally a message is sent by a user, in a concrete date and time (timestamp) and it has a content.
  */
-public class Message extends AbstractMessageItem {
-    @SerializedName("id")
-    public String id;
+public class Message implements Comparable {
 
-    @SerializedName("user")
-    public User user;
+    protected Chat chat;
+    protected MessageContent content;
+    protected String id;
+    protected Date serverTimeStamp;
+    protected Date timeStamp;  
 
-    @SerializedName("servertimestamp")
-    public Date serverTimeStamp;
+    protected User user;
+    protected Boolean confirmed;
 
-    @SerializedName("chat")
-    public Hive hive;
-
-    private Boolean confirmed;
+    /*
+     * Events for class message.
+     */
     private Event<EventArgs> confirmationReceived;
-    public void subscribeConfirmationReceived(EventHandler<EventArgs> eventHandler) { if (this.confirmationReceived == null) this.confirmationReceived = new Event<EventArgs>(); this.confirmationReceived.add(eventHandler); }
+    private Event<EventArgs> idReceived;
+
+    /*
+     * Subscription methods for events.
+     */
+    public void subscribeConfirmationReceived(EventHandler<EventArgs> eventHandler) {
+        if (this.confirmationReceived == null)
+            this.confirmationReceived = new Event<EventArgs>();
+        this.confirmationReceived.add(eventHandler);
+    }
     public Boolean unsubscribeConfirmationReceived(EventHandler<EventArgs> eventHandler) {
         Boolean result = false;
         if (this.confirmationReceived != null) {
@@ -43,12 +59,12 @@ public class Message extends AbstractMessageItem {
         }
         return result;
     }
-    public void setConfirmed (Boolean value) { this.confirmed = value; if (this.confirmationReceived != null) this.confirmationReceived.fire(this,EventArgs.Empty()); }
-    public Boolean getConfirmed() { return this.confirmed; }
 
-
-    private Event<EventArgs> idReceived;
-    public void subscribeIdReceived(EventHandler<EventArgs> eventHandler) { if (this.idReceived == null) { this.idReceived = new Event<EventArgs>(); } this.idReceived.add(eventHandler); }
+    public void subscribeIdReceived(EventHandler<EventArgs> eventHandler) {
+        if (this.idReceived == null)
+            this.idReceived = new Event<EventArgs>();
+        this.idReceived.add(eventHandler);
+    }
     public Boolean unsubscribeIdReceived(EventHandler<EventArgs> eventHandler) {
         Boolean result = false;
         if (this.idReceived != null) {
@@ -59,8 +75,71 @@ public class Message extends AbstractMessageItem {
         return result;
     }
 
-    public void setId (String value) { this.id = value; if (this.idReceived != null) this.idReceived.fire(this, EventArgs.Empty());}
-    public String getId() { return this.serverTimeStamp.toString(); } //TODO: return this.id;
+    /*
+     * Getters and setters.
+     */
+    public void setChat(Chat value) {
+        this.chat = value;
+    }
+    public Chat getChat() {
+        return this.chat;
+    }
+
+    public void setMessageContent (MessageContent value) {
+        this.content = value;
+    }
+    public MessageContent getMessageContent() {
+        return this.content;
+    }
+
+    public void setId (String value) {
+        this.id = value;
+        if (this.idReceived != null)
+            this.idReceived.fire(this, EventArgs.Empty());
+    }
+    public String getId() {
+        return this.id;
+    }
+
+    public void setServerTimeStamp (Date value) {
+        this.serverTimeStamp = value;
+    }
+    public Date getServerTimeStamp() {
+        return this.serverTimeStamp;
+    }
+
+    public void setTimeStamp(Date value) {
+        this.timeStamp = value;
+    }
+    public Date getTimeStamp() {
+        return this.timeStamp;
+    }
+
+    public void setUser(User value) {
+        this.user = value;
+    }
+    public User getUser() {
+        return this.user;
+    }
+
+    public void setConfirmed (Boolean value) {
+        this.confirmed = value;
+        if (this.confirmationReceived != null)
+            this.confirmationReceived.fire(this,EventArgs.Empty());
+    }
+    public Boolean getConfirmed() {
+        return this.confirmed;
+    }
+
+    /*
+     * Special getters
+     */
+    public Date getOrdinationTimeStamp() {
+        if (this.serverTimeStamp != null)
+            return this.serverTimeStamp;
+        else
+            return this.timeStamp;
+    }
 
     /**
      * Public constructor.
@@ -68,11 +147,11 @@ public class Message extends AbstractMessageItem {
      * @param content The content of the message
      * @param timeStamp The timestamp of the message
      */
-    public Message(User user, Hive hive, MessageContent content, Date timeStamp) {
+    public Message(User user, Chat chat, MessageContent content, Date timeStamp) {
         this.user = user;
         this.content = content;
         this.timeStamp = timeStamp;
-        this.hive = hive;
+        this.chat = chat;
     }
 
     /**
@@ -93,99 +172,66 @@ public class Message extends AbstractMessageItem {
         this.fromJson(jsonMessage);
     }
 
-    /**
-     * Retrieves the user who sent the message
-     * @return
-     */
-    public User getUser() {
-        return this.user;
+
+
+    
+    
+
+    public JsonElement toJson(Format format) {
+        return this.toFormat(format).toJSON();
     }
 
-    /**
-     * Retrieves the hive to which this message belongs
-     * @return
-     */
-    public Hive getHive() {
-        return this.hive;
-    }
-
-    /**
-     * Retrieves the message content.
-     * @return
-     */
-    public MessageContent getMessageContent() {
-        return this.content;
-    }
-
-    /**
-     * Retrieves the timestamp of the message.
-     * @return
-     */
-    public Date getTimeStamp() {
-        return this.timeStamp;
-    }
-
-    /**
-     * Converts the message to its JSON representation.
-     * @return
-     */
-    public JsonElement toJson() {
-        JsonObject jsonMessage = new JsonObject();
-
-        jsonMessage.addProperty("timestamp", TimestampFormatter.toString(this.timeStamp));
-
-        if ((this.user != null) && (this.user.getEmail() != null))
-            jsonMessage.addProperty("user",this.user.getEmail());
-
-        if ((this.user != null) && (this.user.getPublicName() != null))
-            jsonMessage.addProperty("public_name",this.user.getPublicName());
-
-        jsonMessage.add("message", this.content.toJson());
-
-        if ((this.hive != null) && (this.hive.getName() != null))
-                jsonMessage.addProperty("hive", this.hive.getName());
-
-        return jsonMessage;
-    }
-
-    /**
-     * Retrieves the message from its JSON representation.
-     * @param json
-     */
     public void fromJson(JsonElement json) {
-        if (json.isJsonObject()) {
-            JsonObject jsonMessage = json.getAsJsonObject();
+        Format[] formats = Format.getFormat(json);
 
-            this.user = User.getUser(jsonMessage.get("public_name").getAsString());
-
-                if ((jsonMessage.get("username") != null) && (jsonMessage.get("username").getAsString() != null) && ((this.user.getEmail() == null) || (this.user.getEmail().equalsIgnoreCase("NULL")))) {
-                    this.user.setEmail(jsonMessage.get("username").getAsString());
-                } else if ((jsonMessage.get("user") != null) && (jsonMessage.get("user").getAsString() != null) && ((this.user.getEmail() == null) || (this.user.getEmail().equalsIgnoreCase("NULL")))) {
-                    this.user.setEmail(jsonMessage.get("user").getAsString());
-                }
-
-            if (this.content == null) {
-                this.content = new MessageContent(jsonMessage.get("message"));
-            } else {
-                this.content.fromJson(jsonMessage.get("message"));
-            }
-
-            if ((!this.user.isMe()) && (jsonMessage.get("server_time") != null) && (jsonMessage.get("server_time").getAsString() != null))
-                this.timeStamp = TimestampFormatter.toDate(jsonMessage.get("server_time").getAsString());
-            else
-                this.timeStamp = TimestampFormatter.toDate(jsonMessage.get("timestamp").getAsString());
-
-            if ((jsonMessage.get("hive") != null) && (jsonMessage.get("hive").getAsString() != null)) {
-                this.hive = Controller.getRunningController().getHiveFromName(jsonMessage.get("hive").getAsString());
-            } else {
-                this.hive = null;
+        for (Format format : formats) {
+            if ((format instanceof MESSAGE) || (format instanceof MESSAGE_ACK) || (format instanceof MESSAGE_ID)) {
+                this.fromFormat(format);
+                break;
             }
         }
-        else {
-            this.user = null;
-            this.content = null;
-            this.timeStamp = null;
-            this.hive = null;
+
+        throw new IllegalArgumentException("MESSAGE, MESSAGE_ACK or MESSAGE_ID formats expected in json parser.");
+    }
+
+    public Format toFormat(Format format) {
+        if (format instanceof MESSAGE) {
+            ((MESSAGE)format).ID = this.id;
+            ((MESSAGE) format).TIMESTAMP = this.timeStamp;
+            ((MESSAGE) format).SERVER_TIMESTAMP = this.serverTimeStamp;
+            ((MESSAGE) format).CONFIRMED = this.confirmed;
+            ((MESSAGE) format).CONTENT = (MESSAGE_CONTENT)this.content.toFormat(new MESSAGE_CONTENT());
+            ((MESSAGE) format).PROFILE = (PROFILE_ID)this.user.toFormat(new PROFILE_ID());
+            ((MESSAGE) format).CHANNEL_UNICODE = this.chat.getParent().getChannelUnicode();
+        } else if (format instanceof MESSAGE_ACK) {
+            ((MESSAGE_ACK) format).ID = this.id;
+            ((MESSAGE_ACK) format).SERVER_TIMESTAMP = this.serverTimeStamp;
+        } else if (format instanceof MESSAGE_ID) {
+            ((MESSAGE_ID) format).ID = this.id;
+        } else {
+            throw new IllegalArgumentException("MESSAGE, MESSAGE_ACK or MESSAGE_ID formats expected in format parser.");
+        }
+
+        return format;
+    }
+
+    public void fromFormat(Format format) {
+        if (format instanceof MESSAGE) {
+            this.id = ((MESSAGE)format).ID;
+            this.timeStamp = ((MESSAGE) format).TIMESTAMP;
+            this.serverTimeStamp = ((MESSAGE) format).SERVER_TIMESTAMP;
+            this.confirmed = ((MESSAGE) format).CONFIRMED;
+            this.content = new MessageContent(((MESSAGE) format).CONTENT);
+            this.user = User.getUser( ((((MESSAGE) format).PROFILE.PUBLIC_NAME == null) || (((MESSAGE) format).PROFILE.PUBLIC_NAME.isEmpty()))?((MESSAGE) format).PROFILE.USER_ID:((MESSAGE) format).PROFILE.PUBLIC_NAME );
+            this.chat = Group.getGroup(((MESSAGE) format).CHANNEL_UNICODE,true).getChat();
+        } else if (format instanceof MESSAGE_ACK) {
+            this.id = ((MESSAGE_ACK) format).ID;
+            this.serverTimeStamp = ((MESSAGE_ACK) format).SERVER_TIMESTAMP;
+            this.idReceived.fire(this, EventArgs.Empty());
+        } else if (format instanceof MESSAGE_ID) {
+            this.id = ((MESSAGE_ID) format).ID;
+        } else {
+            throw new IllegalArgumentException("MESSAGE, MESSAGE_ACK or MESSAGE_ID formats expected in format parser.");
         }
     }
 
@@ -201,18 +247,25 @@ public class Message extends AbstractMessageItem {
         }
         if (this.equals(o)) return 0;
 
-        int compareRes = this.timeStamp.compareTo(((Message)o).getTimeStamp());
+        int compareRes = this.getOrdinationTimeStamp().compareTo(((Message)o).getOrdinationTimeStamp());
 
         if (compareRes == 0) {
-            if ((this.getUser() == null) && (((Message) o).getUser() != null))
-                return 1;
-            else if ((this.getUser() != null) && (((Message) o).getUser() == null))
-                return -1;
-            else if ((this.getUser() == null) && (((Message) o).getUser() == null)) {
-                if ((this.getMessageContent() != null && (this.getMessageContent().getContent().isEmpty())) && (!(((Message) o).getMessageContent() != null && (((Message) o).getMessageContent().getContent().isEmpty()))))
-                    return 1;
-                else if ((!(this.getMessageContent() != null && (this.getMessageContent().getContent().isEmpty()))) && (((Message) o).getMessageContent() != null && (((Message) o).getMessageContent().getContent().isEmpty())))
-                    return -1;
+            if ((this.getId() == null) && (((Message) o).getId() != null))
+                compareRes = 1;
+            else if ((this.getId() != null) && (((Message) o).getId() == null))
+                compareRes = -1;
+            else if ((this.getId() != null) && (((Message) o).getId() != null)) {
+                compareRes = (this.getId().compareToIgnoreCase(((Message) o).getId()));
+            }
+        }
+
+        if (compareRes == 0) {
+            if ((this.getChat() == null) && (((Message) o).getChat() != null))
+                compareRes = 1;
+            else if ((this.getChat() != null) && (((Message) o).getChat() == null))
+                compareRes = -1;
+            else if ((this.getChat() != null) && (((Message) o).getChat() != null)) {
+                compareRes = (this.getChat().getParent().getChannelUnicode().compareToIgnoreCase(((Message) o).getChat().getParent().getChannelUnicode()));
             }
         }
 
@@ -220,20 +273,18 @@ public class Message extends AbstractMessageItem {
     }
 
     @Override
+    /**
+     * Method from the "Object" class.
+     * It compares two messages and returns an boolean value indicating whether the messages are equal or not.
+     */
     public boolean equals(Object o) {
         if ((o != null) && (o instanceof Message)) {
             Message m = (Message)o;
 
             Boolean result = true;
-//            System.out.println("User: -> ".concat(String.valueOf((this.getUser().getPublicName().equalsIgnoreCase(m.getUser().getPublicName())))));
-//            System.out.println("TimeStamp: -> ".concat(String.valueOf((TimestampFormatter.toString(this.getTimeStamp()).equalsIgnoreCase(TimestampFormatter.toString(m.getTimeStamp()))))));
-//            System.out.println("Message: -> ".concat(String.valueOf((this.getMessageContent().getContent().equalsIgnoreCase(m.getMessageContent().getContent())))));
-//           System.out.println("Hive: -> ".concat(String.valueOf((this.getHive().getNameURL().equalsIgnoreCase(m.getHive().getNameURL())))));
 
-            result = result && ((this.getUser() != null) && (m.getUser() != null) && (this.getUser().getPublicName() != null) && (m.getUser().getPublicName() != null) && (this.getUser().getPublicName().equalsIgnoreCase(m.getUser().getPublicName())));
-            result = result && (TimestampFormatter.toString(this.getTimeStamp()).equalsIgnoreCase(TimestampFormatter.toString(m.getTimeStamp())));
-            result = result && ((this.getMessageContent() != null) && (m.getMessageContent() != null) && (this.getMessageContent().getContent() != null) && (m.getMessageContent().getContent() != null) && (this.getMessageContent().getContent().equalsIgnoreCase(m.getMessageContent().getContent())));
-            result = result && ((this.getHive() != null) && (m.getHive() != null) && (this.getHive().getNameURL() != null) && (m.getHive().getNameURL() != null) && (this.getHive().getNameURL().equalsIgnoreCase(m.getHive().getNameURL())));
+            result = result && (this.getChat().getParent().getChannelUnicode().equalsIgnoreCase(m.getChat().getParent().getChannelUnicode()));
+            result = result && (this.getId().equalsIgnoreCase(m.getId()));
             
             return result;
         }
