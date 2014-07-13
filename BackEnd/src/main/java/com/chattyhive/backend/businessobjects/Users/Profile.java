@@ -103,7 +103,6 @@ public abstract class Profile {
     }
     public void fromJson(JsonElement jsonElement) {
         Format[] formats = Format.getFormat(jsonElement);
-        Boolean parsed = false;
         for (Format format : formats)
             if (this.fromFormat(format)) return;
 

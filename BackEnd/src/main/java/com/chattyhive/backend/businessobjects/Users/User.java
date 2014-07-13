@@ -4,12 +4,15 @@ import com.chattyhive.backend.contentprovider.OSStorageProvider.UserLocalStorage
 import com.chattyhive.backend.contentprovider.formats.Format;
 import com.chattyhive.backend.contentprovider.formats.LOCAL_USER_PROFILE;
 import com.chattyhive.backend.contentprovider.formats.PRIVATE_PROFILE;
+import com.chattyhive.backend.contentprovider.formats.PROFILE_ID;
 import com.chattyhive.backend.contentprovider.formats.PUBLIC_PROFILE;
+import com.chattyhive.backend.util.events.FormatReceivedEventArgs;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
 
+import java.util.ArrayList;
 import java.util.TreeMap;
 
 /**
@@ -36,12 +39,18 @@ public class User {
             Format[] formats = Format.getFormat((new JsonParser()).parse(user));
             for (Format format : formats) {
                 User u = new User(format);
+
+                u.unloadProfile(); //There is no need to keep in memory complete user profiles.
+
                 User.knownUsers.put(u.getUserID(),u);
             }
         }
 
         String localUser = userLocalStorage.RecoverLocalUserProfile();
-        me = new User(localUser);
+        Format[] formats = Format.getFormat((new JsonParser()).parse(localUser));
+        for (Format format : formats) {
+            me = new User(format);
+        }
     }
 
     public static User getUser(String userID) {
@@ -63,6 +72,20 @@ public class User {
             return u;
         }
     }
+    public static User getUser(PROFILE_ID profile_id) {
+        if (User.knownUsers == null) throw new IllegalStateException("Users must be initialized.");
+        else if (profile_id == null) throw new NullPointerException("PROFILE_ID must not be null.");
+        else if (((profile_id.PUBLIC_NAME == null) || profile_id.PUBLIC_NAME.isEmpty()) && ((profile_id.USER_ID == null) || profile_id.USER_ID.isEmpty())) throw new IllegalArgumentException("PROFILE_ID must not be empty.");
+
+        String userID = ((profile_id.PUBLIC_NAME == null) || profile_id.PUBLIC_NAME.isEmpty())?profile_id.USER_ID:profile_id.PUBLIC_NAME;
+
+        return User.getUser(userID);
+    }
+
+    public static void unloadProfiles() {
+        for (User user : User.knownUsers.values())
+            user.unloadProfile();
+    }
 
     public static User getMe() {
         return User.me;
@@ -70,7 +93,47 @@ public class User {
     public static void removeMe() {
         me = null;
     }
+
     /***********************************/
+    /*        STATIC CALLBACKS         */
+    /***********************************/
+
+    public static void onFormatReceived(Object sender, FormatReceivedEventArgs args) {
+        if (args.countReceivedFormats() > 0) {
+            ArrayList<Format> formats = args.getReceivedFormats();
+            for (Format format : formats) {
+                if (format instanceof LOCAL_USER_PROFILE) {
+                    if (User.me != null)
+                        User.getMe().fromFormat(format);
+                    else
+                        User.me = new User(format);
+                } else if (format instanceof PUBLIC_PROFILE) {
+                    User.getUser(((PUBLIC_PROFILE) format).PUBLIC_NAME).fromFormat(format);
+                } else if  (format instanceof PRIVATE_PROFILE) {
+                    User.getUser(((PRIVATE_PROFILE) format).USER_ID).fromFormat(format);
+                }
+            }
+        }
+    }
+
+
+    /***********************************/
+    /***********************************/
+    /***********************************/
+    /***********************************/
+
+    /***********************************/
+    /*      DINAMYC MANAGEMENT         */
+    /***********************************/
+
+    /***********************************/
+    /*          SYNC FIELDS            */
+    /***********************************/
+    private Boolean loading;
+
+    public Boolean isLoading() {
+        return this.loading;
+    }
 
     /***********************************/
     /*      GENERAL USER FIELDS        */
@@ -133,40 +196,31 @@ public class User {
         else
             return this.userPublicProfile;
     }
-    /***********************************/
 
-
-    /*************************************/
-    /*         CONSTRCUCTORS             */
-    /*************************************/
-    /**
-     * Public constructor.
-     * @param userID a string with the user's ID.
-     */
-    public User (String userID) {
-
-        Format[] formats = Format.getFormat((new JsonParser()).parse(User.userLocalStorage.RecoverCompleteUserProfile(userID)));
-        for(Format format : formats)
-            if (format instanceof PUBLIC_PROFILE) {
-                PublicProfile profile = new PublicProfile(format);
-                this.isMe = false;
-                this.userID = profile.getID();
-                this.color = profile.getColor();
-                this.showingName = profile.getShowingName();
-                this.imageURL = profile.getImageURL();
-                this.userPublicProfile = profile;
-            } else if (format instanceof PRIVATE_PROFILE) {
-                PrivateProfile profile = new PrivateProfile(format);
-                this.isMe = false;
-                this.userID = profile.getID();
-                this.color = profile.getColor();
-                this.showingName = profile.getShowingName();
-                this.imageURL = profile.getImageURL();
-                this.userPrivateProfile = profile;
-            }
-
-        if ((this.userID == null) || (!this.userID.equals(userID))) {
-            formats = Format.getFormat((new JsonParser()).parse(User.userLocalStorage.RecoverLocalUserProfile()));
+    public Boolean loadProfile() {
+        //TODO: Load profile from local storage
+        if (!this.isMe()) {
+            Format[] formats = Format.getFormat((new JsonParser()).parse(User.userLocalStorage.RecoverCompleteUserProfile(this.getUserID())));
+            for (Format format : formats)
+                if (format instanceof PUBLIC_PROFILE) {
+                    PublicProfile profile = new PublicProfile(format);
+                    this.isMe = false;
+                    this.userID = profile.getID();
+                    this.color = profile.getColor();
+                    this.showingName = profile.getShowingName();
+                    this.imageURL = profile.getImageURL();
+                    this.userPublicProfile = profile;
+                } else if (format instanceof PRIVATE_PROFILE) {
+                    PrivateProfile profile = new PrivateProfile(format);
+                    this.isMe = false;
+                    this.userID = profile.getID();
+                    this.color = profile.getColor();
+                    this.showingName = profile.getShowingName();
+                    this.imageURL = profile.getImageURL();
+                    this.userPrivateProfile = profile;
+                }
+        } else {
+            Format[] formats = Format.getFormat((new JsonParser()).parse(User.userLocalStorage.RecoverLocalUserProfile()));
             for(Format format : formats)
                 if (format instanceof LOCAL_USER_PROFILE) {
                     this.isMe = true;
@@ -181,7 +235,40 @@ public class User {
                 }
         }
 
+        if ((this.userPublicProfile != null) || (this.userPrivateProfile != null))
+            return true;
+
+
+        //TODO: Load profile from server
+        return false;
+    }
+    public void unloadProfile() {
+        if (this.isMe()) return;
+        if (this.isPrivate())
+            this.userPrivateProfile = null;
+        else if (!this.isPrivate())
+            this.userPublicProfile = null;
+    }
+    /***********************************/
+
+
+    /*************************************/
+    /*         CONSTRCUCTORS             */
+    /*************************************/
+    /**
+     * Public constructor.
+     * @param userID a string with the user's ID.
+     */
+    public User (String userID) {
+
+        this.fromJson((new JsonParser()).parse(User.userLocalStorage.RecoverCompleteUserProfile(userID)));
+
+        if ((this.userID == null) || (!this.userID.equals(userID)))
+            this.fromJson((new JsonParser()).parse(User.userLocalStorage.RecoverLocalUserProfile()));
+
         if ((this.userID == null) || (!this.userID.equals(userID))) {
+            this.userID = userID;
+            this.loading = true;
             //TODO: Implement server information recovering
         }
     }
@@ -191,6 +278,32 @@ public class User {
     }
 
     public User (Format format) {
+        if (!this.fromFormat(format))
+            throw new IllegalArgumentException("LOCAL_USER_PROFILE, PUBLIC_PROFILE or PRIVATE_PROFILE expected.");
+    }
+    /***********************************/
+
+    /*************************************/
+    /*         PARSE METHODS             */
+    /*************************************/
+    public Format toFormat(Format format) {
+        if ((format instanceof LOCAL_USER_PROFILE) && (!this.isMe())) throw new IllegalArgumentException("Can`t convert general user to LOCAL_USER_PROFILE");
+        else if ((format instanceof PUBLIC_PROFILE) && (!this.isMe()) && (this.isPrivate())) throw  new IllegalArgumentException("Can't convert private profile to public profile");
+        else if ((format instanceof PRIVATE_PROFILE) && (!this.isMe()) && (!this.isPrivate())) throw  new IllegalArgumentException("Can't convert public profile to private profile");
+
+        if (format instanceof LOCAL_USER_PROFILE) {
+            ((LOCAL_USER_PROFILE) format).EMAIL = this.email;
+            ((LOCAL_USER_PROFILE) format).USER_PUBLIC_PROFILE = ((PUBLIC_PROFILE)this.userPublicProfile.toFormat(new PUBLIC_PROFILE()));
+            ((LOCAL_USER_PROFILE) format).USER_PRIVATE_PROFILE = ((PRIVATE_PROFILE)this.userPrivateProfile.toFormat(new PRIVATE_PROFILE()));
+        } else if (format instanceof PUBLIC_PROFILE) {
+            format = this.userPublicProfile.toFormat(format);
+        } else if (format instanceof PRIVATE_PROFILE) {
+            format = this.userPrivateProfile.toFormat(format);
+        }
+
+        return format;
+    }
+    public Boolean fromFormat(Format format) {
         if (format instanceof PUBLIC_PROFILE) {
             PublicProfile profile = new PublicProfile(format);
             this.isMe = false;
@@ -200,6 +313,8 @@ public class User {
             this.imageURL = profile.getImageURL();
             this.userPublicProfile = profile;
             this.isPrivate = false;
+
+            return true;
         } else if (format instanceof PRIVATE_PROFILE) {
             PrivateProfile profile = new PrivateProfile(format);
             this.isMe = false;
@@ -209,6 +324,8 @@ public class User {
             this.imageURL = profile.getImageURL();
             this.userPrivateProfile = profile;
             this.isPrivate = true;
+
+            return true;
         } else if (format instanceof LOCAL_USER_PROFILE) {
             this.isMe = true;
             this.email = ((LOCAL_USER_PROFILE) format).EMAIL;
@@ -220,65 +337,21 @@ public class User {
             this.color = this.userPrivateProfile.getColor();
             this.showingName = this.userPrivateProfile.getShowingName();
             this.imageURL = this.userPrivateProfile.getImageURL();
+
+            return true;
         }
+
+        return false;
     }
 
-
-    /**
-     * Retrieves the JSON representation of this user object.
-     * @return
-     */
-    public JsonElement toJson() {
-        return new JsonPrimitive(this.public_name);
+    public JsonElement toJson(Format format) {
+        return this.toFormat(format).toJSON();
     }
+    public void fromJson(JsonElement jsonElement) {
+        Format[] formats = Format.getFormat(jsonElement);
+        for (Format format : formats)
+            if (this.fromFormat(format)) return;
 
-    public static void setUpProfile(String public_name, JsonElement profile) {
-        if (!User.knownUsers.containsKey(public_name)) {
-            User.knownUsers.put(public_name, new User());
-            User.knownUsers.get(public_name).public_name = public_name;
-        }
-        User u = User.knownUsers.get(public_name);
-        u.setUpProfile(profile);
-
-        if (u.public_name.isEmpty())
-            User.knownUsers.remove(public_name);
-        else if (u.getEmail().isEmpty())
-            u.email = u.public_name;
+        throw  new IllegalArgumentException("Expected LOCAL_USER_PROFILE, PUBLIC_PROFILE or PRIVATE_PROFILE formats.");
     }
-
-    public static void setUpOwnProfile(JsonElement profile) {
-        if (User.me == null)
-            User.me = new User();
-
-        User.me.setUpProfile(profile);
-        User.me.isMe = true;
-    }
-
-    public void setUpProfile(JsonElement profile) {
-        try {
-            if ((profile != null) && (profile.isJsonPrimitive())) {
-                this.public_name = profile.getAsString();
-                System.out.println("Profile element: ".concat(profile.toString()));
-            } else if ((profile != null) && (profile.isJsonObject())) {
-                System.out.println("Profile object: ".concat(profile.toString()));
-                JsonObject jsonProfile = profile.getAsJsonObject();
-                this.public_name = jsonProfile.get("public_name").getAsString();
-                this.first_name = jsonProfile.get("first_name").getAsString();
-                this.last_name = jsonProfile.get("last_name").getAsString();
-                this.sex = jsonProfile.get("sex").getAsString();
-                this.language = jsonProfile.get("language").getAsString();
-                this.location = jsonProfile.get("location").getAsString();
-                this.private_show_age = jsonProfile.get("private_show_age").getAsBoolean();
-                this.public_show_age = jsonProfile.get("public_show_age").getAsBoolean();
-                this.show_location = jsonProfile.get("show_location").getAsBoolean();
-            } else {
-                System.out.println("Profile unknown: ".concat(profile.toString()));
-                this.public_name = "";
-            }
-        } catch (Exception e) { return; }
-    }
-
-
-
-
 }

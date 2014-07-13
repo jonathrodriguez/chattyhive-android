@@ -1,6 +1,5 @@
 package com.chattyhive.backend.businessobjects.Chats.Messages;
 
-import com.chattyhive.backend.Controller;
 import com.chattyhive.backend.businessobjects.Chats.Chat;
 import com.chattyhive.backend.businessobjects.Chats.Group;
 import com.chattyhive.backend.businessobjects.Users.User;
@@ -8,15 +7,11 @@ import com.chattyhive.backend.contentprovider.formats.Format;
 import com.chattyhive.backend.contentprovider.formats.MESSAGE;
 import com.chattyhive.backend.contentprovider.formats.MESSAGE_ACK;
 import com.chattyhive.backend.contentprovider.formats.MESSAGE_CONTENT;
-import com.chattyhive.backend.contentprovider.formats.MESSAGE_COUNT;
-import com.chattyhive.backend.contentprovider.formats.MESSAGE_ID;
 import com.chattyhive.backend.contentprovider.formats.PROFILE_ID;
 import com.chattyhive.backend.util.events.Event;
 import com.chattyhive.backend.util.events.EventArgs;
 import com.chattyhive.backend.util.events.EventHandler;
-import com.chattyhive.backend.util.formatters.TimestampFormatter;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 
 import java.util.Date;
 
@@ -141,6 +136,26 @@ public class Message implements Comparable {
             return this.timeStamp;
     }
 
+    //CONSTRUCTOR FOR DATE SEPARATOR
+    public Message(Chat chat, Date timeStamp) {
+        this.user = null;
+        this.chat = chat;
+        this.content = new MessageContent("DATE_SEPARATOR",null);
+        this.timeStamp = timeStamp;
+        this.serverTimeStamp = timeStamp;
+        this.id = this.serverTimeStamp.toString().concat("-DATE_SEPARATOR");
+    }
+
+    //TODO: CONSTRUCTOR FOR MESSAGE HOLE
+    public Message(Chat chat, Date timeStamp, int holeSize) {
+        this.user = null;
+        this.chat = chat;
+        this.content = new MessageContent("DATE_SEPARATOR",null);
+        this.timeStamp = timeStamp;
+        this.serverTimeStamp = timeStamp;
+        this.id = this.serverTimeStamp.toString().concat("-DATE_SEPARATOR");
+    }
+
     /**
      * Public constructor.
      * @param user The user who sent the message
@@ -172,10 +187,9 @@ public class Message implements Comparable {
         this.fromJson(jsonMessage);
     }
 
-
-
-    
-    
+    public Message(Format format) {
+        this.fromFormat(format);
+    }
 
     public JsonElement toJson(Format format) {
         return this.toFormat(format).toJSON();
@@ -184,12 +198,8 @@ public class Message implements Comparable {
     public void fromJson(JsonElement json) {
         Format[] formats = Format.getFormat(json);
 
-        for (Format format : formats) {
-            if ((format instanceof MESSAGE) || (format instanceof MESSAGE_ACK) || (format instanceof MESSAGE_ID)) {
-                this.fromFormat(format);
-                break;
-            }
-        }
+        for (Format format : formats)
+            if (this.fromFormat(format)) break;
 
         throw new IllegalArgumentException("MESSAGE, MESSAGE_ACK or MESSAGE_ID formats expected in json parser.");
     }
@@ -206,16 +216,14 @@ public class Message implements Comparable {
         } else if (format instanceof MESSAGE_ACK) {
             ((MESSAGE_ACK) format).ID = this.id;
             ((MESSAGE_ACK) format).SERVER_TIMESTAMP = this.serverTimeStamp;
-        } else if (format instanceof MESSAGE_ID) {
-            ((MESSAGE_ID) format).ID = this.id;
         } else {
-            throw new IllegalArgumentException("MESSAGE, MESSAGE_ACK or MESSAGE_ID formats expected in format parser.");
+            throw new IllegalArgumentException("MESSAGE or MESSAGE_ACK formats expected in format parser.");
         }
 
         return format;
     }
 
-    public void fromFormat(Format format) {
+    public Boolean fromFormat(Format format) {
         if (format instanceof MESSAGE) {
             this.id = ((MESSAGE)format).ID;
             this.timeStamp = ((MESSAGE) format).TIMESTAMP;
@@ -224,15 +232,17 @@ public class Message implements Comparable {
             this.content = new MessageContent(((MESSAGE) format).CONTENT);
             this.user = User.getUser( ((((MESSAGE) format).PROFILE.PUBLIC_NAME == null) || (((MESSAGE) format).PROFILE.PUBLIC_NAME.isEmpty()))?((MESSAGE) format).PROFILE.USER_ID:((MESSAGE) format).PROFILE.PUBLIC_NAME );
             this.chat = Group.getGroup(((MESSAGE) format).CHANNEL_UNICODE,true).getChat();
+
+            return true;
         } else if (format instanceof MESSAGE_ACK) {
             this.id = ((MESSAGE_ACK) format).ID;
             this.serverTimeStamp = ((MESSAGE_ACK) format).SERVER_TIMESTAMP;
             this.idReceived.fire(this, EventArgs.Empty());
-        } else if (format instanceof MESSAGE_ID) {
-            this.id = ((MESSAGE_ID) format).ID;
-        } else {
-            throw new IllegalArgumentException("MESSAGE, MESSAGE_ACK or MESSAGE_ID formats expected in format parser.");
+
+            return true;
         }
+
+        return false;
     }
 
     @Override

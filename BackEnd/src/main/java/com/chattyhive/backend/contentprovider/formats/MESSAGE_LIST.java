@@ -4,26 +4,28 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 
 import java.util.ArrayList;
-    
+     
 
  /*
-  * Automatically generated code by ChattyHive API Manager Code Generator on 30/06/2014.
+  * Automatically generated code by ChattyHive API Manager Code Generator on 13/07/2014.
   * Be careful to not modify this file since your changes will not be included in future
   * versions of this file.
   *
   * ChattyHive API Manager Code Generator was created by Jonathan on 25/06/2014.
  */
-public class USER_CHATS extends Format {
-	ArrayList<CHAT_SYNC> USER_CHAT_LIST;
+public class MESSAGE_LIST extends Format {
+	public ArrayList<MESSAGE> MESSAGES;
+    public Integer NUMBER_MESSAGES;
     
 
-    public USER_CHATS() {
+    public MESSAGE_LIST() {
         super();
     }
 
-    public USER_CHATS(JsonElement data) {
+    public MESSAGE_LIST(JsonElement data) {
         this();
         this.fromJSON(data);
     }
@@ -32,49 +34,58 @@ public class USER_CHATS extends Format {
     public JsonElement toJSON() {
         JsonObject jsonObject = new JsonObject();
 
-	    if (this.USER_CHAT_LIST != null) {
+	    if (this.MESSAGES != null) {
             JsonArray jsonArray = new JsonArray();
-            for (CHAT_SYNC element : this.USER_CHAT_LIST) {
-                JsonElement jsonElement = element.toJSON();
+            for (MESSAGE element : this.MESSAGES) {
+                JsonElement jsonElement =   element.toJSON()
+  ;
                 if (!jsonElement.isJsonNull())
                     jsonArray.add(jsonElement);
             }
 
             if (jsonArray.size() > 0)
-                jsonObject.add("USER_CHAT_LIST",jsonArray);
+                jsonObject.add("MESSAGES",jsonArray);
         }
         
+        if (this.NUMBER_MESSAGES != null)
+            jsonObject.addProperty("NUMBER_MESSAGES",this.NUMBER_MESSAGES);
+            
       
 
         if (jsonObject.entrySet().isEmpty())
             return JsonNull.INSTANCE;
 
         JsonObject result = new JsonObject();
-        result.add("USER_CHATS",jsonObject);
+        result.add("MESSAGE_LIST",jsonObject);
 
         return result;
     }
 
     @Override
     public void fromJSON(JsonElement data) {
-        JsonObject object = data.getAsJsonObject().getAsJsonObject("USER_CHATS");
+        JsonObject object = data.getAsJsonObject().getAsJsonObject("MESSAGE_LIST");
         if ((object == null) || (!object.isJsonObject())) {
             object = data.getAsJsonObject();
         }
         if ((object == null) || (!object.isJsonObject())) {
-            throw new IllegalArgumentException("Data is not an USER_CHATS object.");
+            throw new IllegalArgumentException("Data is not an MESSAGE_LIST object.");
         }
 
         JsonElement property;
 
-	    property = object.get("USER_CHAT_LIST");
+	    property = object.get("MESSAGES");
         if ((property != null) && (property.isJsonArray())) {
-            this.USER_CHAT_LIST = new ArrayList<CHAT_SYNC>();
+            this.MESSAGES = new ArrayList<MESSAGE>();
             JsonArray array = property.getAsJsonArray();
             for (JsonElement jsonElement : array)
-                this.USER_CHAT_LIST.add(new CHAT_SYNC(jsonElement));
+                this.MESSAGES.add(  new MESSAGE(jsonElement)
+      );
         }
         
+        property = object.get("NUMBER_MESSAGES");
+        if ((property != null) && (property.isJsonPrimitive()) && (((JsonPrimitive)property).isNumber()))
+            this.NUMBER_MESSAGES = property.getAsInt();
+            
       
     }
 }

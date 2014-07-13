@@ -88,7 +88,7 @@ public class AsyncHttpURLConnection extends Thread {
             if ((this._method.equalsIgnoreCase("POST")) && (this._bodyData != null) && (!this._bodyData.isEmpty())) {
                 httpURLConnection.setDoOutput(true);
                 DataOutputStream wr = new DataOutputStream(httpURLConnection.getOutputStream());
-                wr.writeBytes(this._bodyData);
+                wr.writeUTF(this._bodyData);
                 wr.flush();
                 wr.close();
             }

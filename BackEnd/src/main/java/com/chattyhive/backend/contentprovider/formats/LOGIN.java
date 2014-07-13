@@ -4,19 +4,20 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 
   
 
  /*
-  * Automatically generated code by ChattyHive API Manager Code Generator on 30/06/2014.
+  * Automatically generated code by ChattyHive API Manager Code Generator on 13/07/2014.
   * Be careful to not modify this file since your changes will not be included in future
   * versions of this file.
   *
   * ChattyHive API Manager Code Generator was created by Jonathan on 25/06/2014.
  */
 public class LOGIN extends Format {
-	String USER;
-    String PASS;
+	public String USER;
+    public String PASS;
     
 
     public LOGIN() {

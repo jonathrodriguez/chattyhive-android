@@ -1,5 +1,7 @@
 package com.chattyhive.backend;
 
+import com.chattyhive.backend.businessobjects.Chats.Chat;
+import com.chattyhive.backend.businessobjects.Chats.Group;
 import com.chattyhive.backend.businessobjects.Chats.Hive;
 import com.chattyhive.backend.businessobjects.Chats.Messages.Message;
 import com.chattyhive.backend.businessobjects.Chats.Messages.MessageContent;
@@ -193,6 +195,10 @@ public class Controller {
             this._dataProvider.SubscribeToOnConnect(new EventHandler<ConnectionEventArgs>(this,"onConnect",ConnectionEventArgs.class));
         } catch (NoSuchMethodException e) { }
         new User(user.getLogin());
+
+        Hive.Initialize(this,null);
+        Group.Initialize(this,null);
+        Chat.Initialize(this,null);
     }
 
     public Boolean isConnected() {

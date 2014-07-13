@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 
  import java.util.ArrayList;
     import com.chattyhive.backend.contentprovider.formats.PUBLIC_PROFILE;
@@ -11,7 +12,7 @@ import com.google.gson.JsonObject;
     
 
  /*
-  * Automatically generated code by ChattyHive API Manager Code Generator on 30/06/2014.
+  * Automatically generated code by ChattyHive API Manager Code Generator on 13/07/2014.
   * Be careful to not modify this file since your changes will not be included in future
   * versions of this file.
   *
@@ -43,7 +44,8 @@ public class LOCAL_USER_PROFILE extends Format {
         if (this.HIVES_SUBSCRIBED != null) {
             JsonArray jsonArray = new JsonArray();
             for (HIVE_ID element : this.HIVES_SUBSCRIBED) {
-                JsonElement jsonElement = element.toJSON();
+                JsonElement jsonElement =   element.toJSON()
+  ;
                 if (!jsonElement.isJsonNull())
                     jsonArray.add(jsonElement);
             }
@@ -96,7 +98,8 @@ public class LOCAL_USER_PROFILE extends Format {
             this.HIVES_SUBSCRIBED = new ArrayList<HIVE_ID>();
             JsonArray array = property.getAsJsonArray();
             for (JsonElement jsonElement : array)
-                this.HIVES_SUBSCRIBED.add(new HIVE_ID(jsonElement));
+                this.HIVES_SUBSCRIBED.add(  new HIVE_ID(jsonElement)
+      );
         }
         
         property = object.get("USER_PUBLIC_PROFILE");

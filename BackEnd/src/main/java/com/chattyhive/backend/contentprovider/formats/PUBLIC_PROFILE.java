@@ -6,13 +6,13 @@ import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
-import java.util.Date;
+   import java.util.Date;
 import com.chattyhive.backend.util.formatters.TimestampFormatter;
-import java.util.ArrayList;
+    import java.util.ArrayList;
          
 
  /*
-  * Automatically generated code by ChattyHive API Manager Code Generator on 30/06/2014.
+  * Automatically generated code by ChattyHive API Manager Code Generator on 13/07/2014.
   * Be careful to not modify this file since your changes will not be included in future
   * versions of this file.
   *
@@ -59,7 +59,7 @@ public class PUBLIC_PROFILE extends Format {
         if (this.LANGUAGE != null) {
             JsonArray jsonArray = new JsonArray();
             for (String element : this.LANGUAGE) {
-                JsonElement jsonElement = new JsonPrimitive(element);
+                JsonElement jsonElement =   new JsonPrimitive(element);
                 if (!jsonElement.isJsonNull())
                     jsonArray.add(jsonElement);
             }

@@ -9,21 +9,21 @@ import com.google.gson.JsonPrimitive;
  
 
  /*
-  * Automatically generated code by ChattyHive API Manager Code Generator on 30/06/2014.
+  * Automatically generated code by ChattyHive API Manager Code Generator on 13/07/2014.
   * Be careful to not modify this file since your changes will not be included in future
   * versions of this file.
   *
   * ChattyHive API Manager Code Generator was created by Jonathan on 25/06/2014.
  */
-public class MESSAGE_COUNT extends Format {
-	Integer NUMBER_MESSAGES;
+public class USER_EMAIL extends Format {
+	public String EMAIL;
     
 
-    public MESSAGE_COUNT() {
+    public USER_EMAIL() {
         super();
     }
 
-    public MESSAGE_COUNT(JsonElement data) {
+    public USER_EMAIL(JsonElement data) {
         this();
         this.fromJSON(data);
     }
@@ -32,8 +32,8 @@ public class MESSAGE_COUNT extends Format {
     public JsonElement toJSON() {
         JsonObject jsonObject = new JsonObject();
 
-	    if (this.NUMBER_MESSAGES != null)
-            jsonObject.addProperty("NUMBER_MESSAGES",this.NUMBER_MESSAGES);
+	    if ((this.EMAIL != null) && (!this.EMAIL.isEmpty()))
+            jsonObject.addProperty("EMAIL",this.EMAIL);
             
       
 
@@ -41,25 +41,27 @@ public class MESSAGE_COUNT extends Format {
             return JsonNull.INSTANCE;
 
         JsonObject result = new JsonObject();
-        result.add("MESSAGE_COUNT",jsonObject);
+        result.add("USER_EMAIL",jsonObject);
 
         return result;
     }
 
     @Override
     public void fromJSON(JsonElement data) {
-        JsonObject object = data.getAsJsonObject().getAsJsonObject("MESSAGE_COUNT");
+        JsonObject object = data.getAsJsonObject().getAsJsonObject("USER_EMAIL");
         if ((object == null) || (!object.isJsonObject())) {
             object = data.getAsJsonObject();
         }
         if ((object == null) || (!object.isJsonObject())) {
-            throw new IllegalArgumentException("Data is not an MESSAGE_COUNT object.");
+            throw new IllegalArgumentException("Data is not an USER_EMAIL object.");
         }
 
         JsonElement property;
 
-	    property = object.get("NUMBER_MESSAGES");
-        if ((property != null) && (property.isJsonPrimitive()) && (((JsonPrimitive)property).isNumber()))
-            this.NUMBER_MESSAGES = property.getAsInt();
+	    property = object.get("EMAIL");
+        if ((property != null) && (property.isJsonPrimitive()) && (property.getAsString() != null) && (!property.getAsString().isEmpty()))
+            this.EMAIL = property.getAsString();
+            
+      
     }
 }

@@ -2,10 +2,9 @@ package com.chattyhive.backend.businessobjects.Chats;
 
 import com.chattyhive.backend.Controller;
 import com.chattyhive.backend.StaticParameters;
-import com.chattyhive.backend.businessobjects.Chats.Messages.AbstractMessageItem;
 import com.chattyhive.backend.businessobjects.Chats.Messages.Message;
-import com.chattyhive.backend.businessobjects.Chats.Messages.MessageSeparator;
 import com.chattyhive.backend.contentprovider.OSStorageProvider.MessageLocalStorageInterface;
+import com.chattyhive.backend.contentprovider.formats.MESSAGE;
 import com.chattyhive.backend.util.events.ChannelEventArgs;
 import com.chattyhive.backend.util.events.Event;
 import com.chattyhive.backend.util.events.EventArgs;
@@ -62,22 +61,30 @@ public class Chat {
     /*****************************************
                     Constructor
      *****************************************/
-    private Chat(String channelName) {
-        this.messages = new TreeSet<AbstractMessageItem>();
+    public Chat(Group parent) {
+        this.messages = new TreeSet<Message>();
         this.messagesByID = new TreeMap<String, Message>();
 
-        String[] messages = Chat.localStorage.RecoverMessages(channelName);
+        this.parent = parent;
+
+        this.chatWindowActive = false;
+        this.showingIndex = 0;
+        this.moreMessages = true;
+    }
+
+    /*****************************************
+                  Message lists
+     *****************************************/
+    public void loadPendingMessages() {
+        String[] messages = Chat.localStorage.RecoverMessages(this.parent.pusherChannel);
 
         //TODO: recover local messages.
         //TODO: recover send pending messages.
         //TODO: identify holes.
     }
 
-    /*****************************************
-                  Message lists
-     *****************************************/
     private TreeMap<String,Message> messagesByID;
-    private TreeSet<AbstractMessageItem> messages;
+    private TreeSet<Message> messages;
 
     private Event<EventArgs> messageListModifiedEvent;
     public void subscribeMessageListModified(EventHandler<EventArgs> eventHandler) {
@@ -113,15 +120,15 @@ public class Chat {
                 this.messageListModifiedEvent.fire(this, EventArgs.Empty());
 
             if (idReceived) {
-                Chat.localStorage.RemoveMessage(String.format("Sending-%s",this.parent.pusherChannel),m.toJson().toString());
-                Chat.localStorage.StoreMessage(this.parent.pusherChannel, m.toJson().toString());
+                Chat.localStorage.RemoveMessage(String.format("Sending-%s", this.parent.pusherChannel),m.getId());
+                Chat.localStorage.StoreMessage(this.parent.pusherChannel,m.getId(), m.toJson(new MESSAGE()).toString());
                 if (StaticParameters.MaxLocalMessages > 0)
                     Chat.localStorage.TrimStoredMessages(this.parent.pusherChannel, StaticParameters.MaxLocalMessages);
             }
 
             if (confirmationReceived) { //TODO: think about update method.
-                Chat.localStorage.RemoveMessage(this.parent.pusherChannel,m.toJson().toString());
-                Chat.localStorage.StoreMessage(this.parent.pusherChannel, m.toJson().toString());
+                Chat.localStorage.RemoveMessage(this.parent.pusherChannel,m.getId());
+                Chat.localStorage.StoreMessage(this.parent.pusherChannel, m.getId(),m.toJson(new MESSAGE()).toString());
             }
         }
     }
@@ -145,17 +152,17 @@ public class Chat {
     public Message getLastMessage() {
         if ((this.messages == null) || (this.messages.isEmpty())) throw new NullPointerException("There are no messages for this chat.");
 
-        for (AbstractMessageItem item : this.messages.descendingSet()) {
-            if(item instanceof  Message) return (Message)item;
+        for (Message item : this.messages.descendingSet()) {
+            if (!item.getMessageContent().getContentType().endsWith("_SEPARATOR")) return item;
         }
 
         throw new NullPointerException("There are no messages for this chat.");
     }
 
-    public AbstractMessageItem getMessageByIndex(int index) {
+    public Message getMessageByIndex(int index) {
         if ((this.messages == null) || (this.messages.isEmpty())) throw new NullPointerException("There are no messages for this chat.");
         if ((index < 0) || (index >= this.messages.size())) throw new ArrayIndexOutOfBoundsException(String.format("Index %d is out of bounds of array with size %d",index,this.messages.size()));
-        return this.messages.toArray(new AbstractMessageItem[0])[index];
+        return this.messages.toArray(new Message[0])[index];
     }
 
     public void addMessage(Message message) {
@@ -164,7 +171,7 @@ public class Chat {
         boolean newDay = !(DateFormatter.toString(this.getLastMessage().getTimeStamp()).equalsIgnoreCase(DateFormatter.toString(message.getTimeStamp())));
 
         if (newDay)
-            this.messages.add(new MessageSeparator(message.getTimeStamp()));
+            this.messages.add(new Message(this,DateFormatter.toDate(DateFormatter.toString(message.getTimeStamp()))));
 
         try {
             if (message.getId() == null)
@@ -187,12 +194,12 @@ public class Chat {
 
         if ((message.getId() != null) && (!message.getId().isEmpty())) {
             if (StaticParameters.MaxLocalMessages != 0) {
-                Chat.localStorage.StoreMessage(this.parent.pusherChannel, message.toJson().toString());
+                Chat.localStorage.StoreMessage(this.parent.pusherChannel,message.getId(), message.toJson(new MESSAGE()).toString());
                 if (StaticParameters.MaxLocalMessages > 0)
                     Chat.localStorage.TrimStoredMessages(this.parent.pusherChannel, StaticParameters.MaxLocalMessages);
             }
         } else {
-            Chat.localStorage.StoreMessage(String.format("Sending-%s",this.parent.pusherChannel),message.toJson().toString());
+            Chat.localStorage.StoreMessage(String.format("Sending-%s",this.parent.pusherChannel),message.getId(),message.toJson(new MESSAGE()).toString());
         }
 
     }
@@ -202,7 +209,7 @@ public class Chat {
         this.messagesByID.remove(ID);
         this.messages.remove(toBeRemoved);
         if (StaticParameters.MaxLocalMessages != 0)
-            Chat.localStorage.RemoveMessage(this.parent.pusherChannel,toBeRemoved.toJson().toString());
+            Chat.localStorage.RemoveMessage(this.parent.pusherChannel,toBeRemoved.getId());
     }
 
     public void getMoreMessages() {

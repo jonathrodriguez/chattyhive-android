@@ -1,16 +1,11 @@
 package com.chattyhive.backend.contentprovider.formats;
 
 import com.google.gson.JsonElement;
-
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.Set;
-
+import com.chattyhive.backend.contentprovider.formats.USER_EMAIL;
 import com.chattyhive.backend.contentprovider.formats.LOGIN;
 import com.chattyhive.backend.contentprovider.formats.CHAT_ID;
-import com.chattyhive.backend.contentprovider.formats.MESSAGE_ID;
-import com.chattyhive.backend.contentprovider.formats.MESSAGE_INTERVAL;
-import com.chattyhive.backend.contentprovider.formats.MESSAGE_SPAN;
+import com.chattyhive.backend.contentprovider.formats.MESSAGE_INTERVAL (URL);
+import com.chattyhive.backend.contentprovider.formats.CSRF_TOKEN;
 import com.chattyhive.backend.contentprovider.formats.COMMON;
 import com.chattyhive.backend.contentprovider.formats.LOCAL_USER_PROFILE;
 import com.chattyhive.backend.contentprovider.formats.PUBLIC_PROFILE;
@@ -22,15 +17,13 @@ import com.chattyhive.backend.contentprovider.formats.CHAT;
 import com.chattyhive.backend.contentprovider.formats.MESSAGE;
 import com.chattyhive.backend.contentprovider.formats.MESSAGE_CONTENT;
 import com.chattyhive.backend.contentprovider.formats.MESSAGE_ACK;
-import com.chattyhive.backend.contentprovider.formats.MESSAGE_COUNT;
-import com.chattyhive.backend.contentprovider.formats.LAST_MESSAGE;
+import com.chattyhive.backend.contentprovider.formats.MESSAGE_LIST;
 import com.chattyhive.backend.contentprovider.formats.CHAT_SYNC;
-import com.chattyhive.backend.contentprovider.formats.USER_CHATS;
 
       
 
  /*
-  * Automatically generated code by ChattyHive API Manager Code Generator on 30/06/2014.
+  * Automatically generated code by ChattyHive API Manager Code Generator on 13/07/2014.
   * Be careful to not modify this file since your changes will not be included in future
   * versions of this file.
   *
@@ -49,16 +42,16 @@ public abstract class Format {
                 Format f = null;
                 if ((entry.getKey() == null) || (entry.getKey().isEmpty())) {
                     continue;
+                } else if (entry.getKey().equalsIgnoreCase("USER_EMAIL")) {
+                    f = new USER_EMAIL(data);
                 } else if (entry.getKey().equalsIgnoreCase("LOGIN")) {
                     f = new LOGIN(data);
                 } else if (entry.getKey().equalsIgnoreCase("CHAT_ID")) {
                     f = new CHAT_ID(data);
-                } else if (entry.getKey().equalsIgnoreCase("MESSAGE_ID")) {
-                    f = new MESSAGE_ID(data);
-                } else if (entry.getKey().equalsIgnoreCase("MESSAGE_INTERVAL")) {
-                    f = new MESSAGE_INTERVAL(data);
-                } else if (entry.getKey().equalsIgnoreCase("MESSAGE_SPAN")) {
-                    f = new MESSAGE_SPAN(data);
+                } else if (entry.getKey().equalsIgnoreCase("MESSAGE_INTERVAL (URL)")) {
+                    f = new MESSAGE_INTERVAL (URL)(data);
+                } else if (entry.getKey().equalsIgnoreCase("CSRF_TOKEN")) {
+                    f = new CSRF_TOKEN(data);
                 } else if (entry.getKey().equalsIgnoreCase("COMMON")) {
                     f = new COMMON(data);
                 } else if (entry.getKey().equalsIgnoreCase("LOCAL_USER_PROFILE")) {
@@ -81,15 +74,12 @@ public abstract class Format {
                     f = new MESSAGE_CONTENT(data);
                 } else if (entry.getKey().equalsIgnoreCase("MESSAGE_ACK")) {
                     f = new MESSAGE_ACK(data);
-                } else if (entry.getKey().equalsIgnoreCase("MESSAGE_COUNT")) {
-                    f = new MESSAGE_COUNT(data);
-                } else if (entry.getKey().equalsIgnoreCase("LAST_MESSAGE")) {
-                    f = new LAST_MESSAGE(data);
+                } else if (entry.getKey().equalsIgnoreCase("MESSAGE_LIST")) {
+                    f = new MESSAGE_LIST(data);
                 } else if (entry.getKey().equalsIgnoreCase("CHAT_SYNC")) {
                     f = new CHAT_SYNC(data);
-                } else if (entry.getKey().equalsIgnoreCase("USER_CHATS")) {
-                    f = new USER_CHATS(data);
                 } 
+      
 
                 if (f != null) result.add(f);
             }

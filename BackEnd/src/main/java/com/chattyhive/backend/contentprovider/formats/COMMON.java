@@ -9,15 +9,15 @@ import com.google.gson.JsonPrimitive;
   
 
  /*
-  * Automatically generated code by ChattyHive API Manager Code Generator on 30/06/2014.
+  * Automatically generated code by ChattyHive API Manager Code Generator on 13/07/2014.
   * Be careful to not modify this file since your changes will not be included in future
   * versions of this file.
   *
   * ChattyHive API Manager Code Generator was created by Jonathan on 25/06/2014.
  */
 public class COMMON extends Format {
-	String STATUS;
-    Integer ERROR;
+	public String STATUS;
+    public Integer ERROR;
     
 
     public COMMON() {

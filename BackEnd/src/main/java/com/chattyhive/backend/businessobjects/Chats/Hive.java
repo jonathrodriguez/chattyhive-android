@@ -5,8 +5,10 @@ import com.chattyhive.backend.businessobjects.Users.User;
 import com.chattyhive.backend.contentprovider.OSStorageProvider.GroupLocalStorageInterface;
 import com.chattyhive.backend.contentprovider.OSStorageProvider.HiveLocalStorageInterface;
 import com.chattyhive.backend.contentprovider.OSStorageProvider.MessageLocalStorageInterface;
+import com.chattyhive.backend.contentprovider.formats.CHAT;
 import com.chattyhive.backend.contentprovider.formats.Format;
 import com.chattyhive.backend.contentprovider.formats.HIVE;
+import com.chattyhive.backend.contentprovider.formats.HIVE_ID;
 import com.chattyhive.backend.util.formatters.DateFormatter;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -146,4 +148,51 @@ public class Hive {
     public String getNameUrl() { return this.nameUrl; }
 
     public Group getPublicChat() { return this.publicChat; }
+
+    /*************************************/
+    /*         PARSE METHODS             */
+    /*************************************/
+    public Format toFormat(Format format) {
+        if (format instanceof HIVE) {
+            ((HIVE) format).NAME_URL = this.nameUrl;
+            ((HIVE) format).NAME = this.name;
+            ((HIVE) format).CATEGORY = this.category;
+            ((HIVE) format).CREATION_DATE = this.creationDate;
+            ((HIVE) format).DESCRIPTION = this.description;
+            ((HIVE) format).PUBLIC_CHAT = (CHAT)this.publicChat.toFormat(new CHAT());
+        } else if (format instanceof HIVE_ID) {
+            ((HIVE_ID) format).NAME_URL = this.nameUrl;
+        }
+
+        return format;
+    }
+    public Boolean fromFormat(Format format) {
+        if (format instanceof HIVE) {
+            this.name = ((HIVE) format).NAME;
+            this.nameUrl = ((HIVE) format).NAME_URL;
+            this.category = ((HIVE) format).CATEGORY;
+            this.description = ((HIVE) format).DESCRIPTION;
+            this.creationDate = ((HIVE) format).CREATION_DATE;
+            this.publicChat = Group.getGroup(((HIVE) format).PUBLIC_CHAT);
+
+            return true;
+        } else if (format instanceof HIVE_ID) {
+            this.nameUrl = ((HIVE_ID) format).NAME_URL;
+
+            return true;
+        }
+
+        return false;
+    }
+
+    public JsonElement toJson(Format format) {
+        return this.toFormat(format).toJSON();
+    }
+    public void fromJson(JsonElement jsonElement) {
+        Format[] formats = Format.getFormat(jsonElement);
+        for (Format format : formats)
+            if (this.fromFormat(format)) return;
+
+        throw  new IllegalArgumentException("Expected HIVE or HIVE_ID formats.");
+    }
 }

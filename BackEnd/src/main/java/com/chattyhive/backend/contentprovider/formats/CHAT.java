@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 
   import java.util.ArrayList;
     import java.util.Date;
@@ -12,18 +13,18 @@ import com.chattyhive.backend.util.formatters.TimestampFormatter;
     
 
  /*
-  * Automatically generated code by ChattyHive API Manager Code Generator on 30/06/2014.
+  * Automatically generated code by ChattyHive API Manager Code Generator on 13/07/2014.
   * Be careful to not modify this file since your changes will not be included in future
   * versions of this file.
   *
   * ChattyHive API Manager Code Generator was created by Jonathan on 25/06/2014.
  */
 public class CHAT extends Format {
-     public String CHANNEL_UNICODE;
-     public String PUSHER_CHANNEL;
-     public ArrayList<PROFILE_ID> MEMBERS;
-     public Date CREATION_DATE;
-     public HIVE_ID PARENT_HIVE;
+	public String CHANNEL_UNICODE;
+    public String PUSHER_CHANNEL;
+    public ArrayList<PROFILE_ID> MEMBERS;
+    public Date CREATION_DATE;
+    public HIVE_ID PARENT_HIVE;
     
 
     public CHAT() {
@@ -48,7 +49,8 @@ public class CHAT extends Format {
         if (this.MEMBERS != null) {
             JsonArray jsonArray = new JsonArray();
             for (PROFILE_ID element : this.MEMBERS) {
-                JsonElement jsonElement = element.toJSON();
+                JsonElement jsonElement =   element.toJSON()
+  ;
                 if (!jsonElement.isJsonNull())
                     jsonArray.add(jsonElement);
             }
@@ -102,7 +104,8 @@ public class CHAT extends Format {
             this.MEMBERS = new ArrayList<PROFILE_ID>();
             JsonArray array = property.getAsJsonArray();
             for (JsonElement jsonElement : array)
-                this.MEMBERS.add(new PROFILE_ID(jsonElement));
+                this.MEMBERS.add(  new PROFILE_ID(jsonElement)
+      );
         }
         
         property = object.get("CREATION_DATE");

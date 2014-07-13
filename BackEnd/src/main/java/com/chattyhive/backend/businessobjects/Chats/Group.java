@@ -1,11 +1,18 @@
 package com.chattyhive.backend.businessobjects.Chats;
 
 import com.chattyhive.backend.Controller;
+import com.chattyhive.backend.businessobjects.Chats.Messages.Message;
 import com.chattyhive.backend.businessobjects.Users.User;
 import com.chattyhive.backend.contentprovider.OSStorageProvider.GroupLocalStorageInterface;
 import com.chattyhive.backend.contentprovider.formats.CHAT;
+import com.chattyhive.backend.contentprovider.formats.CHAT_ID;
+import com.chattyhive.backend.contentprovider.formats.CHAT_SYNC;
 import com.chattyhive.backend.contentprovider.formats.Format;
-import com.chattyhive.backend.contentprovider.formats.HIVE;
+import com.chattyhive.backend.contentprovider.formats.HIVE_ID;
+import com.chattyhive.backend.contentprovider.formats.MESSAGE;
+import com.chattyhive.backend.contentprovider.formats.PROFILE_ID;
+import com.chattyhive.backend.contentprovider.formats.USER_CHATS;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
 import java.util.ArrayList;
@@ -42,25 +49,17 @@ public class Group {
                 }
             }
         }
+
+        //TODO: Implement remote recovering of groups
     }
 
     /*****************************************
                  Constructor
      *****************************************/
-    public Group(CHAT data) {
+    public Group(Format format) {
         this.members = new TreeMap<String, User>();
-
-        this.channelUnicode = data.CHANNEL_UNICODE;
-        this.creationDate = data.CREATION_DATE;
-        this.description = ""; //TODO: There is no description.
-        this.name = ""; //TODO: There is no name;
-        if ((data.PARENT_HIVE != null) && (data.PARENT_HIVE.NAME_URL != null) && (!data.PARENT_HIVE.NAME_URL.isEmpty()))
-            this.parentHive = Hive.getHive(data.PARENT_HIVE.NAME_URL);
-        else
-            this.parentHive = null;
-        this.pusherChannel = data.PUSHER_CHANNEL;
-
-        this.chat = null; //TODO: implement chat
+        this.chat = new Chat(this);
+        this.fromFormat(format);
     }
 
     protected Group(String channelUnicode) {
@@ -106,6 +105,21 @@ public class Group {
             return g;
         } else {
             return null;
+        }
+    }
+
+    public static Group getGroup(Format format) {
+        Group g = new Group(format);
+        if ((g.channelUnicode != null) && (!g.channelUnicode.isEmpty())) {
+            Group existent = Group.getGroup(g.channelUnicode,false);
+            if (existent == null) {
+                Group.Groups.put(g.channelUnicode,g);
+                return g;
+            } else {
+                return existent;
+            }
+        } else {
+            throw new IllegalArgumentException("Specified format is not correct.");
         }
     }
 
@@ -202,4 +216,70 @@ public class Group {
 
     public String getPusherChannel() { return this.pusherChannel; }
     public void setPusherChannel(String value) { this.pusherChannel = value; }
+
+
+    /*************************************/
+    /*         PARSE METHODS             */
+    /*************************************/
+    public Format toFormat(Format format) {
+        if (format instanceof CHAT) {
+            ((CHAT) format).CHANNEL_UNICODE = this.channelUnicode;
+            ((CHAT) format).PARENT_HIVE = (HIVE_ID)this.parentHive.toFormat(new HIVE_ID());
+            ((CHAT) format).CREATION_DATE = this.creationDate;
+            ((CHAT) format).PUSHER_CHANNEL = this.pusherChannel;
+            ((CHAT) format).MEMBERS = new ArrayList<PROFILE_ID>();
+            for (User user : this.members.values())
+                ((CHAT) format).MEMBERS.add((PROFILE_ID)user.toFormat(new PROFILE_ID()));
+        } else if (format instanceof CHAT_ID) {
+            ((CHAT_ID) format).CHANNEL_UNICODE = this.channelUnicode;
+            ((CHAT_ID) format).PUSHER_CHANNEL = this.pusherChannel;
+        } else if (format instanceof CHAT_SYNC) {
+            ((CHAT_SYNC) format).CHANNEL_UNICODE = this.channelUnicode;
+            ((CHAT_SYNC) format).PUSHER_CHANNEL = this.pusherChannel;
+            ((CHAT_SYNC) format).LAST_MESSAGE = (MESSAGE)this.chat.getLastMessage().toFormat(new MESSAGE());
+        } else if (format instanceof USER_CHATS) {
+            ((USER_CHATS) format).USER_CHAT_LIST = new ArrayList<CHAT_SYNC>();
+            for (Group group : Group.Groups.values())
+                ((USER_CHATS) format).USER_CHAT_LIST.add((CHAT_SYNC)group.toFormat(new CHAT_SYNC()));
+        }
+
+        return format;
+    }
+    public Boolean fromFormat(Format format) {
+        if (format instanceof CHAT) {
+            this.channelUnicode = ((CHAT) format).CHANNEL_UNICODE;
+            this.creationDate = ((CHAT) format).CREATION_DATE;
+            this.pusherChannel = ((CHAT) format).PUSHER_CHANNEL;
+            this.members = new TreeMap<String, User>();
+            for (PROFILE_ID profile_id : ((CHAT) format).MEMBERS)
+                this.addMember(User.getUser(profile_id));
+
+            return true;
+        } else if (format instanceof CHAT_ID) {
+            this.channelUnicode = ((CHAT_ID) format).CHANNEL_UNICODE;
+            this.pusherChannel = ((CHAT_ID) format).PUSHER_CHANNEL;
+
+            return true;
+        } else if (format instanceof CHAT_SYNC) {
+            this.channelUnicode = ((CHAT_SYNC) format).CHANNEL_UNICODE;
+            this.pusherChannel = ((CHAT_SYNC) format).PUSHER_CHANNEL;
+            this.chat.addMessage(new Message(((CHAT_SYNC) format).LAST_MESSAGE));
+
+            return true;
+        }
+
+        return false;
+    }
+
+    public JsonElement toJson(Format format) {
+        return this.toFormat(format).toJSON();
+    }
+    public void fromJson(JsonElement jsonElement) {
+        Format[] formats = Format.getFormat(jsonElement);
+        for (Format format : formats)
+            if (this.fromFormat(format)) return;
+
+        throw  new IllegalArgumentException("Expected CHAT, CHAT_ID, CHAT_SYNC or USER_CHATS formats.");
+    }
+
 }

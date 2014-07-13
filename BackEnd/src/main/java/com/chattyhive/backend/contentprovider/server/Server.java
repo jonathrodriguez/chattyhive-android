@@ -2,12 +2,29 @@ package com.chattyhive.backend.contentprovider.server;
 
 
 import com.chattyhive.backend.StaticParameters;
+import com.chattyhive.backend.contentprovider.formats.Format;
+import com.chattyhive.backend.util.events.CommandCallbackEventArgs;
 import com.chattyhive.backend.util.events.ConnectionEventArgs;
 import com.chattyhive.backend.util.events.Event;
+import com.chattyhive.backend.util.events.EventArgs;
 import com.chattyhive.backend.util.events.EventHandler;
+import com.chattyhive.backend.util.events.FormatReceivedEventArgs;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.lang.reflect.InvocationTargetException;
+import java.net.HttpCookie;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Created by Jonathan on 20/11/13.
@@ -19,7 +36,6 @@ public class Server {
     private String _appName = "";
     private String _appProtocol = "";
     private String _host = "";
-
 
     private Event<ConnectionEventArgs> onConnected;
 
@@ -271,5 +287,120 @@ public class Server {
             result = false;
         }
         return result;
+    }
+
+
+    private Event<FormatReceivedEventArgs> responseEvent;
+
+    public void SubscribeToFormatReceivedEvent(EventHandler<FormatReceivedEventArgs> eventHandler) {
+        if (responseEvent == null)
+            responseEvent = new Event<FormatReceivedEventArgs>();
+        responseEvent.add(eventHandler);
+    }
+
+    public Boolean unsubscribeFromFormatReceivedEvent(EventHandler<FormatReceivedEventArgs> eventHandler) {
+        Boolean result = false;
+        if (this.responseEvent != null) {
+            result = this.responseEvent.remove(eventHandler);
+            if (this.responseEvent.count() == 0)
+                this.responseEvent = null;
+        }
+        return result;
+    }
+
+    public void RunCommand(ServerCommand.AvailableCommands command, final Format... formats) {
+        this.RunCommand(command,null,formats);
+    }
+
+    public void RunCommand(ServerCommand.AvailableCommands command, final EventHandler<CommandCallbackEventArgs> Callback, final Format... formats) {
+        if (StaticParameters.StandAlone) { return; }
+
+        ServerCommand serverCommand = ServerCommand.GetCommand(command);
+        if (serverCommand == null) { return; }
+        if (!serverCommand.checkFormats(formats)) { return; }
+
+        final String Url = String.format("%s://%s.%s/%s",_appProtocol,_appName,_host,serverCommand.getUrl(formats));
+        final String BodyData = serverCommand.getBodyData(formats);
+        final String Method = serverCommand.getMethod();
+
+        new Thread() {
+            @Override
+            public void run() {
+
+                try {
+                    URL url = new URL(Url);
+
+                    HttpURLConnection httpURLConnection = (HttpURLConnection)url.openConnection();
+                    httpURLConnection.setRequestMethod(Method);
+                    httpURLConnection.setRequestProperty("User-Agent", StaticParameters.UserAgent());
+
+                    if ((BodyData != null) && (!BodyData.isEmpty()))
+                        httpURLConnection.addRequestProperty("Content-Type","application/json");
+
+                    String Cookies = _serverUser.getCookies();
+                    httpURLConnection.setRequestProperty("Cookie",Cookies);
+
+                    HttpCookie csrfCookie = _serverUser.getCookie("csrftoken");
+                    if (csrfCookie != null) {
+                        httpURLConnection.setRequestProperty("X-CSRFToken",csrfCookie.getValue());
+                    }
+
+                    if ((Method.equalsIgnoreCase("POST")) && (BodyData != null) && (!BodyData.isEmpty())) {
+                        httpURLConnection.setDoOutput(true);
+                        DataOutputStream wr = new DataOutputStream(httpURLConnection.getOutputStream());
+                        wr.writeUTF(BodyData);
+                        wr.flush();
+                        wr.close();
+                    }
+
+                    int responseCode = httpURLConnection.getResponseCode();
+
+                    BufferedReader inputReader = new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream()));
+                    String inputLine;
+                    StringBuffer response = new StringBuffer();
+
+                    while ((inputLine = inputReader.readLine()) != null) {
+                        response.append(inputLine);
+                    }
+                    inputReader.close();
+
+                    String responseBody = response.toString();
+
+                    Format[] receivedFormats = null;
+
+                    if (responseCode == 200) {
+                        List<String> setCookies = httpURLConnection.getHeaderFields().get("Set-Cookie");
+                        if (setCookies != null) {
+                            for (String setCookie : setCookies) {
+                                List<HttpCookie> cookies = HttpCookie.parse(setCookie);
+                                for (HttpCookie cookie : cookies) {
+                                    _serverUser.setCookie(cookie);
+                                }
+                            }
+                        }
+
+                        receivedFormats = Format.getFormat(new JsonParser().parse(responseBody));
+                        //TODO: Check COMMON for operation Status.
+                    }
+
+                    System.out.println(String.format("Code: %d\n%s",responseCode,responseBody));
+
+                    if (Callback != null)
+                        Callback.Invoke(httpURLConnection, new CommandCallbackEventArgs(Arrays.asList(receivedFormats),Arrays.asList(formats)));
+
+                    if (responseEvent != null)
+                        responseEvent.fire(httpURLConnection, new FormatReceivedEventArgs(Arrays.asList(receivedFormats)));
+
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                } catch (InvocationTargetException e) {
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }.start();
     }
 }

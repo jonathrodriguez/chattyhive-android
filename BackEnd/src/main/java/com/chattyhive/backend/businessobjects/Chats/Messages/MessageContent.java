@@ -19,6 +19,12 @@ public class MessageContent {
      */
     public MessageContent(String text) {
         this.text = text;
+        this.contentType = "TEXT";
+    }
+
+    public MessageContent(String contentType, String text) {
+        this.contentType = contentType;
+        this.text = text;
     }
 
     /**
@@ -48,6 +54,14 @@ public class MessageContent {
         return this.text;
     }
 
+
+    public void setContentType(String value) {
+        this.contentType = value;
+    }
+
+    public String getContentType() {
+        return this.contentType;
+    }
     /**
      * Returns a JSONElement with the content of this message content object.
      * @return a JSONElement representing this object.
