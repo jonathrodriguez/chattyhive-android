@@ -1,13 +1,21 @@
 package com.chattyhive.backend.contentprovider;
 
 import com.chattyhive.backend.businessobjects.Chats.Messages.Message;
+import com.chattyhive.backend.contentprovider.OSStorageProvider.GroupLocalStorageInterface;
+import com.chattyhive.backend.contentprovider.OSStorageProvider.HiveLocalStorageInterface;
+import com.chattyhive.backend.contentprovider.OSStorageProvider.LoginLocalStorageInterface;
+import com.chattyhive.backend.contentprovider.OSStorageProvider.MessageLocalStorageInterface;
+import com.chattyhive.backend.contentprovider.OSStorageProvider.UserLocalStorageInterface;
 import com.chattyhive.backend.contentprovider.pubsubservice.ConnectionState;
 import com.chattyhive.backend.contentprovider.pubsubservice.ConnectionStateChange;
 import com.chattyhive.backend.contentprovider.server.Server;
 import com.chattyhive.backend.contentprovider.server.ServerUser;
 import com.chattyhive.backend.contentprovider.pubsubservice.PubSub;
 
+import com.chattyhive.backend.util.events.CancelableEventArgs;
 import com.chattyhive.backend.util.events.ConnectionEventArgs;
+import com.chattyhive.backend.util.events.Event;
+import com.chattyhive.backend.util.events.EventArgs;
 import com.chattyhive.backend.util.events.EventHandler;
 import com.chattyhive.backend.util.events.PubSubChannelEventArgs;
 import com.chattyhive.backend.util.events.PubSubConnectionEventArgs;
@@ -22,9 +30,168 @@ import java.util.Collections;
  * from where data comes from. Possible data origins are local, server and pusher.
  */
 public class DataProvider {
+    /************************************************************************/
+    /*                       STATIC MANAGEMENT                              */
+    /************************************************************************/
 
-    private ServerUser serverUser;
+    public static void Initialize() {
+        DisposingDataProvider = new Event<CancelableEventArgs>();
+        DataProviderDisposed = new Event<EventArgs>();
+
+    }
+
+    public static void Initialize(Object... LocalStorage) {
+        Initialize();
+        setLocalStorage(LocalStorage);
+    }
+
+    //COMMON STATIC
+    private static DataProvider dataProvider;
+
+    public static Event<CancelableEventArgs> DisposingDataProvider;
+    public static Event<EventArgs> DataProviderDisposed;
+
+    public static DataProvider GetDataProvider() {
+        return GetDataProvider(false);
+    }
+    public static DataProvider GetDataProvider(Boolean initialize) {
+        if ((dataProvider == null) && (initialize))
+            dataProvider = new DataProvider(LoginLocalStorage);
+
+        return dataProvider;
+    }
+    public static DataProvider GetDataProvider(Object... LocalStorage) {
+        GetDataProvider(true);
+        setLocalStorage(LocalStorage);
+        return dataProvider;
+    }
+    public static void DisposeDataProvider() {
+        Boolean disposeCanceled = false;
+
+        if (DisposingDataProvider != null) {
+            CancelableEventArgs eventArgs = new CancelableEventArgs();
+            DisposingDataProvider.fire(dataProvider,eventArgs);
+            disposeCanceled = eventArgs.isCanceled();
+        }
+
+        if (disposeCanceled) return;
+
+        if (DataProviderDisposed != null)
+            DataProviderDisposed.fire(dataProvider,EventArgs.Empty());
+
+        dataProvider = null;
+    }
+
+    //STORAGE STATIC
+
+
+    public static GroupLocalStorageInterface GroupLocalStorage;
+    public static HiveLocalStorageInterface HiveLocalStorage;
+    public static LoginLocalStorageInterface LoginLocalStorage;
+    public static MessageLocalStorageInterface MessageLocalStorage;
+    public static UserLocalStorageInterface UserLocalStorage;
+
+    public static void setLocalStorage(Object... LocalStorage) {
+        for (Object localStorage : LocalStorage) {
+            if (localStorage instanceof GroupLocalStorageInterface) {
+                GroupLocalStorage = (GroupLocalStorageInterface) localStorage;
+            } else if (localStorage instanceof HiveLocalStorageInterface) {
+                HiveLocalStorage = (HiveLocalStorageInterface) localStorage;
+            } else if (localStorage instanceof LoginLocalStorageInterface) {
+                LoginLocalStorage = (LoginLocalStorageInterface) localStorage;
+            } else if (localStorage instanceof MessageLocalStorageInterface) {
+                MessageLocalStorage = (MessageLocalStorageInterface) localStorage;
+            } else if (localStorage instanceof UserLocalStorageInterface) {
+                UserLocalStorage = (UserLocalStorageInterface) localStorage;
+            }
+        }
+    }
+
+    /************************************************************************/
+    /************************************************************************/
+    /************************************************************************/
+
+    /************************************************************************/
+    /*                       DYNAMIC MANAGEMENT                              */
+    /************************************************************************/
+
     private Server server;
+
+    @Deprecated
+    public Server getServer() {
+        return this.server;
+    }
+
+    /************************************************************************/
+    //CONSTRUCTORS
+
+    public DataProvider () {
+        this.server = new Server();
+
+        this.InitializeEvents();
+    }
+
+    public DataProvider(Object... LocalStorage) {
+        DataProvider.setLocalStorage(LocalStorage);
+
+        this.server = new Server(LoginLocalStorage);
+
+        this.InitializeEvents();
+    }
+
+    private void InitializeEvents() {
+        this.ConnectionAvailabilityChanged = new Event<EventArgs>();
+        this.ServerConnectionStateChanged = new Event<ConnectionEventArgs>();
+    }
+    /************************************************************************/
+    //CONNECTION MANAGEMENT
+
+    private Boolean connectionAvailable;
+    public Event<EventArgs> ConnectionAvailabilityChanged;
+
+    private Boolean connectionState;
+    public Event<ConnectionEventArgs> ServerConnectionStateChanged;
+
+    public Boolean isConnectionAvailable() {
+        return this.connectionAvailable;
+    }
+    public void setConnectionAvailable(Boolean value) {
+        if (this.connectionAvailable != value) {
+            this.connectionAvailable = value;
+            if (ConnectionAvailabilityChanged != null)
+                ConnectionAvailabilityChanged.fire(this, EventArgs.Empty());
+        }
+    }
+
+    public Boolean isServerConnected() {
+        return this.connectionState;
+    }
+    public void Connect() {
+        if (this.connectionAvailable) {
+            this.server.Connect();
+            this.targetState = ConnectionState.CONNECTED;
+            this.pubSub.Connect();
+        }
+    }
+    public void Disconnect() {
+        this.server.Disconnect();
+        this.targetState = ConnectionState.DISCONNECTED;
+        this.pubSub.Disconnect();
+    }
+
+    public void onServerConnectionStateChanged(Object sender, ConnectionEventArgs eventArgs) {
+        if (this.ServerConnectionStateChanged != null)
+            this.ServerConnectionStateChanged.fire(sender,eventArgs);
+    }
+    /************************************************************************/
+    //EXPLORE
+
+
+    /************************************************************************/
+
+    /************************************************************************/
+    private ServerUser serverUser;
+
     private PubSub pubSub;
     private ConnectionState targetState;
     private Boolean networkAvailable = true;
@@ -120,27 +287,6 @@ public class DataProvider {
         this.pubSub.Leave(channel);
     }
 
-    /**
-     * Establishes the connection with server and pusher.
-     * @return true if connected to our server, else false
-     */
-    public Boolean Connect() {
-        Boolean result = false;
-        if (this.networkAvailable) {
-            result = this.server.Connect();
-            this.targetState = ConnectionState.CONNECTED;
-            this.pubSub.Connect();
-        }
-        return result;
-    }
-
-    /**
-     * Closes the connection with pusher. (The server does not provide a logout method yet).
-     */
-    public void Disconnect() {
-        this.targetState = ConnectionState.DISCONNECTED;
-        this.pubSub.Disconnect();
-    }
 
     /**
      * Sends a message, which is correctly JSON formatted, to the server.

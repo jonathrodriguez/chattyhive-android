@@ -30,7 +30,7 @@ public class Explore extends Activity {
     }
 
     private void Initialize() {
-        this.controller = Controller.getRunningController(LoginLocalStorage.getLoginLocalStorage());
+        this.controller = Controller.GetRunningController(LoginLocalStorage.getLoginLocalStorage());
         this.controller.setMessageLocalStorage(MessageLocalStorage.getMessageLocalStorage());
         this.lastOffset = 0;
 

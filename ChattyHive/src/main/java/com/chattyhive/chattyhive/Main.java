@@ -18,7 +18,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -135,7 +134,7 @@ public class Main extends Activity implements GestureDetector.OnGestureListener 
         setPanelBehaviour();
 
         //Log.w("Main","onCreate..."); //DEBUG
-        this._controller = Controller.getRunningController(LoginLocalStorage.getLoginLocalStorage());
+        this._controller = Controller.GetRunningController(LoginLocalStorage.getLoginLocalStorage());
         this._controller.setMessageLocalStorage(MessageLocalStorage.getMessageLocalStorage());
         Controller.bindApp();
 
@@ -180,7 +179,7 @@ public class Main extends Activity implements GestureDetector.OnGestureListener 
                     if (resultCode == RESULT_OK) {
                         this.Logged();
                     } else {
-                        Controller.disposeRunningController();
+                        Controller.DisposeRunningController();
                         this.finish();
                     }
                 break;

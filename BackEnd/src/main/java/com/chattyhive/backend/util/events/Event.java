@@ -87,6 +87,10 @@ public class Event<T extends EventArgs> {
                 illegalAccessException.printStackTrace();
                 continue;
             }
+            if (eventArgs instanceof CancelableEventArgs) {
+                if (((CancelableEventArgs) eventArgs).isCanceled())
+                    return;
+            }
         }
     }
 

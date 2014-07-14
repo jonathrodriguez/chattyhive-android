@@ -7,10 +7,14 @@ import com.chattyhive.backend.businessobjects.Chats.Messages.Message;
 import com.chattyhive.backend.businessobjects.Chats.Messages.MessageContent;
 import com.chattyhive.backend.businessobjects.Users.User;
 import com.chattyhive.backend.contentprovider.DataProvider;
+import com.chattyhive.backend.contentprovider.OSStorageProvider.GroupLocalStorageInterface;
+import com.chattyhive.backend.contentprovider.OSStorageProvider.HiveLocalStorageInterface;
 import com.chattyhive.backend.contentprovider.OSStorageProvider.LoginLocalStorageInterface;
 import com.chattyhive.backend.contentprovider.OSStorageProvider.MessageLocalStorageInterface;
+import com.chattyhive.backend.contentprovider.OSStorageProvider.UserLocalStorageInterface;
 import com.chattyhive.backend.contentprovider.server.ServerStatus;
 import com.chattyhive.backend.contentprovider.server.ServerUser;
+import com.chattyhive.backend.util.events.CancelableEventArgs;
 import com.chattyhive.backend.util.events.ChannelEventArgs;
 import com.chattyhive.backend.util.events.ConnectionEventArgs;
 import com.chattyhive.backend.util.events.Event;
@@ -26,7 +30,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.TreeSet;
 
 /**
@@ -39,56 +42,155 @@ import java.util.TreeSet;
  * interface data mapping.
  */
 public class Controller {
-    private static Controller _controller;
-    private static Boolean appBounded = false;
-    private LoginLocalStorageInterface loginLocalStorage;
-    private MessageLocalStorageInterface messageLocalStorage;
+    /************************************************************************/
+    /*                       STATIC MANAGEMENT                              */
+    /************************************************************************/
 
-    public static Controller getRunningController() {
-        return _controller;
+    //COMMON STATIC
+    private static Controller controller;
+
+    public static Event<CancelableEventArgs> DisposingRunningController;
+    public static Event<EventArgs> RunningControllerDisposed;
+
+    public static Controller GetRunningController() {
+        return GetRunningController(false);
     }
+    public static Controller GetRunningController(Boolean initialize) {
+        if ((controller == null) && (initialize))
+            controller = new Controller(LoginLocalStorage);
 
-    public static Controller getRunningController(LoginLocalStorageInterface loginLocalStorage) {
-        if (_controller == null)
-            _controller = new Controller(loginLocalStorage);
-        else if (_controller.loginLocalStorage == null) {
-            _controller.setLoginLocalStorage(loginLocalStorage);
+        return controller;
+    }
+    public static Controller GetRunningController(Object... LocalStorage) {
+        GetRunningController(true);
+        setLocalStorage(LocalStorage);
+        return controller;
+    }
+    public static void DisposeRunningController() {
+        Boolean disposeCanceled = false;
+
+        if (DisposingRunningController != null) {
+            CancelableEventArgs eventArgs = new CancelableEventArgs();
+            DisposingRunningController.fire(controller,eventArgs);
+            disposeCanceled = eventArgs.isCanceled();
         }
-        return _controller;
+
+        if (disposeCanceled) return;
+
+        if (RunningControllerDisposed != null)
+            RunningControllerDisposed.fire(controller,EventArgs.Empty());
+
+        controller = null;
     }
 
-    public static void disposeRunningController() {
-        _controller = null;
-    }
+    //APP STATIC
+    private static Boolean appBounded = false;
+
+    public static Event<EventArgs> AppBindingEvent;
+
     public static Boolean isAppBounded() {
         return appBounded;
     }
     public static void bindApp() {
         appBounded = true;
-        if (appBindingEvent != null)
-            appBindingEvent.fire(_controller, EventArgs.Empty());
+        if (AppBindingEvent != null)
+            AppBindingEvent.fire(controller, EventArgs.Empty());
     }
     public static void unbindApp() {
         appBounded = false;
-        if (appBindingEvent != null)
-            appBindingEvent.fire(_controller,EventArgs.Empty());
-    } 
+        if (AppBindingEvent != null)
+            AppBindingEvent.fire(controller,EventArgs.Empty());
+    }
+
+    //STORAGE STATIC
+
+
+    public static GroupLocalStorageInterface GroupLocalStorage;
+    public static HiveLocalStorageInterface HiveLocalStorage;
+    public static LoginLocalStorageInterface LoginLocalStorage;
+    public static MessageLocalStorageInterface MessageLocalStorage;
+    public static UserLocalStorageInterface UserLocalStorage;
+
+    public static void setLocalStorage(Object... LocalStorage) {
+        for (Object localStorage : LocalStorage) {
+            if (localStorage instanceof GroupLocalStorageInterface) {
+                GroupLocalStorage = (GroupLocalStorageInterface) localStorage;
+            } else if (localStorage instanceof HiveLocalStorageInterface) {
+                HiveLocalStorage = (HiveLocalStorageInterface) localStorage;
+            } else if (localStorage instanceof LoginLocalStorageInterface) {
+                LoginLocalStorage = (LoginLocalStorageInterface) localStorage;
+            } else if (localStorage instanceof MessageLocalStorageInterface) {
+                MessageLocalStorage = (MessageLocalStorageInterface) localStorage;
+            } else if (localStorage instanceof UserLocalStorageInterface) {
+                UserLocalStorage = (UserLocalStorageInterface) localStorage;
+            }
+        }
+    }
+
+    /************************************************************************/
+    /************************************************************************/
+    /************************************************************************/
+
+    /************************************************************************/
+    /*                       DYNAMIC MANAGEMENT                              */
+    /************************************************************************/
+    private DataProvider dataProvider;
+
+    /************************************************************************/
+    //CONSTRUCTORS
+
+    public Controller () {
+        this.ConnectionAvailabilityChanged = new Event<EventArgs>();
+        this.ServerConnectionStateChanged = new Event<ConnectionEventArgs>();
+        this.dataProvider = DataProvider.GetDataProvider();
+        try {
+            this.dataProvider.ConnectionAvailabilityChanged.add(new EventHandler<EventArgs>(this,"onConnectionAvailabilityChanged",EventArgs.class));
+            this.dataProvider.ServerConnectionStateChanged.add(new EventHandler<ConnectionEventArgs>(this,"onServerConnectionStateChanged",ConnectionEventArgs.class));
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /************************************************************************/
+    //CONNECTION MANAGEMENT
+
+    public Event<EventArgs> ConnectionAvailabilityChanged;
+    public Event<ConnectionEventArgs> ServerConnectionStateChanged;
+
+    public Boolean isConnectionAvailable() {
+        return this.dataProvider.isConnectionAvailable();
+    }
+    public void setConnectionAvailable(Boolean value) {
+       this.dataProvider.setConnectionAvailable(value);
+    }
+    public void onConnectionAvailabilityChanged(Object sender, EventArgs eventArgs) {
+        if (this.ConnectionAvailabilityChanged != null)
+            this.ConnectionAvailabilityChanged.fire(sender,eventArgs);
+    }
+
+    public Boolean isServerConnected() {
+        return this.dataProvider.isServerConnected();
+    }
+    public void Connect() {
+        this.dataProvider.Connect();
+    }
+    public void Disconnect() {
+        this.dataProvider.Disconnect();
+    }
+    public void onServerConnectionStateChanged(Object sender, ConnectionEventArgs eventArgs) {
+        if (this.ServerConnectionStateChanged != null)
+            this.ServerConnectionStateChanged.fire(sender,eventArgs);
+    }
+    /************************************************************************/
+    //EXPLORE
+
+
+    /************************************************************************/
+
+
+
     // BusinessObjects
-    private HashMap<String, TreeSet<Message>> messages = new HashMap<String, TreeSet<Message>>();
-    private ArrayList<Hive> hives = new ArrayList<Hive>();
-    public ArrayList<Hive> getHives() { return hives; }
-    public Hive getHiveFromUrlName(String UrlName) {
-        if ((UrlName != null) && (!UrlName.isEmpty()))
-            for (Hive h : this.hives)
-                if (h.getNameURL().equalsIgnoreCase(UrlName)) return h;
-        return null;
-    }
-    public Hive getHiveFromName(String Name) {
-        if ((Name != null) && (!Name.isEmpty()))
-            for (Hive h : this.hives)
-                if (h.getName().equalsIgnoreCase(Name)) return h;
-        return null;
-    }
+
 
     private ArrayList<Hive> exploreHives = new ArrayList<Hive>();
     public ArrayList<Hive> getExploreHives() { return exploreHives; }
@@ -98,14 +200,6 @@ public class Controller {
     public Boolean getNetworkAvailable() { return this._dataProvider.getNetworkAvailable(); }
     public void setNetworkAvailable(Boolean value) { this._dataProvider.setNetworkAvailable(value); }
 
-
-    // Events
-    private static Event<EventArgs> appBindingEvent;
-    public static void SubscribeToAppBindingEvent(EventHandler<EventArgs> eventHandler){
-        if (appBindingEvent == null)
-            appBindingEvent = new Event<EventArgs>();
-        appBindingEvent.add(eventHandler);
-    }
 
     private Event<EventArgs> hivesListChange;
     public void SubscribeToHivesListChange(EventHandler<EventArgs> eventHandler) {
@@ -178,7 +272,7 @@ public class Controller {
         this._dataProvider.setServerApp(serverApp);
     }
     public Controller(LoginLocalStorageInterface loginLocalStorage) {
-        this(new ServerUser(loginLocalStorage),StaticParameters.DefaultServerAppName);
+        this(new ServerUser(loginLocalStorage), StaticParameters.DefaultServerAppName);
         this.setLoginLocalStorage(loginLocalStorage);
     }
 
@@ -208,19 +302,6 @@ public class Controller {
         return result;
     }
 
-    /**
-     * Performs server connection. The connection to pusher service is also done.
-     * @return true if connected to our server, else false
-     */
-    public Boolean Connect () {
-        Boolean result = this._dataProvider.Connect();
-
-        if (result) {
-            ServerUser su = this.getServerUser();
-            this.loginLocalStorage.StoreLoginPassword(su.getLogin(),su.getPassword());
-        }
-        return result;
-    }
 
     public Boolean JoinHive(String hive) {
         JsonObject jsonParams = new JsonObject();
@@ -253,12 +334,7 @@ public class Controller {
         //this._dataProvider.Leave(channel);
     }
 
-    /**
-     * Disconnects from server and pusher service.
-     */
-    public void Disconnect () {
-        this._dataProvider.Disconnect();
-    }
+
 
     /**
      * Private method to respond to PubSubChannelEvents. It has to be declared as public, else the

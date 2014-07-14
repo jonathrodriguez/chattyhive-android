@@ -66,8 +66,8 @@ public class CHService extends Service {
     }
 
     public void captureController() {
-        if ((this.controller == null) || (this.controller != Controller.getRunningController(LoginLocalStorage.getLoginLocalStorage()))) {
-            this.controller = Controller.getRunningController(LoginLocalStorage.getLoginLocalStorage());
+        if ((this.controller == null) || (this.controller != Controller.GetRunningController(LoginLocalStorage.getLoginLocalStorage()))) {
+            this.controller = Controller.GetRunningController(LoginLocalStorage.getLoginLocalStorage());
             this.controller.setMessageLocalStorage(MessageLocalStorage.getMessageLocalStorage());
             try {
                 this.controller.SubscribeChannelEventHandler(new EventHandler<ChannelEventArgs>(this,"onChannelEvent",ChannelEventArgs.class));
@@ -172,7 +172,7 @@ public class CHService extends Service {
     @Override
     //Called by the system to notify a Service that it is no longer used and is being removed.
     public void onDestroy() {
-        Controller.disposeRunningController();
+        Controller.DisposeRunningController();
         this.controller = null;
     }
 

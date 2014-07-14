@@ -60,7 +60,7 @@ public class LoginActivity_old extends Activity {
 
 
         setContentView(R.layout.activity_login_old);
-        this._controller = Controller.getRunningController(LoginLocalStorage.getLoginLocalStorage());
+        this._controller = Controller.GetRunningController(LoginLocalStorage.getLoginLocalStorage());
 
         servers = new ArrayList<String>(Arrays.asList(getResources().getStringArray(R.array.servers_array)));
         mServer = StaticParameters.DefaultServerAppName;

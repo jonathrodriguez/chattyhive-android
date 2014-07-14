@@ -403,4 +403,7 @@ public class Server {
             }
         }.start();
     }
+
+    public void Disconnect() {
+    }
 }

@@ -50,7 +50,7 @@ public class Home_old extends Activity implements ServiceConnection {
 
         ((Button)findViewById(R.id.button)).setOnClickListener(onClick_SendButton);
 
-        this._controller = Controller.getRunningController(LoginLocalStorage.getLoginLocalStorage());
+        this._controller = Controller.GetRunningController(LoginLocalStorage.getLoginLocalStorage());
         Controller.bindApp();
 
         this.ConnectService();
@@ -74,7 +74,7 @@ public class Home_old extends Activity implements ServiceConnection {
             if (resultCode == RESULT_OK) {
                 this.Logged();
             } else {
-                Controller.disposeRunningController();
+                Controller.DisposeRunningController();
                 this.finish();
             }
         }
