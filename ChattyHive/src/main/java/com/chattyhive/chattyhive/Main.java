@@ -25,8 +25,12 @@ import android.widget.LinearLayout;
 import com.chattyhive.backend.Controller;
 import com.chattyhive.backend.StaticParameters;
 import com.chattyhive.backend.contentprovider.server.ServerStatus;
+import com.chattyhive.chattyhive.OSStorageProvider.CookieStore;
+import com.chattyhive.chattyhive.OSStorageProvider.GroupLocalStorage;
+import com.chattyhive.chattyhive.OSStorageProvider.HiveLocalStorage;
 import com.chattyhive.chattyhive.OSStorageProvider.LoginLocalStorage;
 import com.chattyhive.chattyhive.OSStorageProvider.MessageLocalStorage;
+import com.chattyhive.chattyhive.OSStorageProvider.UserLocalStorage;
 import com.chattyhive.chattyhive.backgroundservice.CHService;
 
 import java.lang.reflect.InvocationTargetException;
@@ -134,8 +138,10 @@ public class Main extends Activity implements GestureDetector.OnGestureListener 
         setPanelBehaviour();
 
         //Log.w("Main","onCreate..."); //DEBUG
-        this._controller = Controller.GetRunningController(LoginLocalStorage.getLoginLocalStorage());
-        this._controller.setMessageLocalStorage(MessageLocalStorage.getMessageLocalStorage());
+        Object[] LocalStorage = {LoginLocalStorage.getLoginLocalStorage(), GroupLocalStorage.getGroupLocalStorage(), HiveLocalStorage.getHiveLocalStorage(), MessageLocalStorage.getMessageLocalStorage(), UserLocalStorage.getUserLocalStorage()};
+        Controller.Initialize(new CookieStore(),LocalStorage);
+
+        this._controller = Controller.GetRunningController(true);
         Controller.bindApp();
 
         LeftPanel lp = new LeftPanel(this);
@@ -147,9 +153,7 @@ public class Main extends Activity implements GestureDetector.OnGestureListener 
     }
 
     private void checkLogin() {
-        if ((this._controller == null) || (this._controller.getServerUser() == null) ||
-                (this._controller.getServerUser().getLogin() == null) ||
-                (this._controller.getServerUser().getLogin().isEmpty())) {
+        if ((this._controller == null) || (LoginLocalStorage.getLoginLocalStorage().RecoverLoginPassword() == null)) {
             this.hasToLogin();
         } else {
             this.Logged();
@@ -167,7 +171,7 @@ public class Main extends Activity implements GestureDetector.OnGestureListener 
             this._controller.SubscribeConnectionEventHandler(new EventHandler<PubSubConnectionEventArgs>(this, "onConnectionStateChange",PubSubConnectionEventArgs.class));
         } catch (NoSuchMethodException e) { }*/
 
-        if (this._controller.getServerUser().getStatus() != ServerStatus.LOGGED) {
+        if (!this._controller.isServerConnected()) {
             this._controller.Connect();
         }
     }

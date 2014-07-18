@@ -3,14 +3,19 @@ package com.chattyhive.backend.businessobjects.Chats;
 import com.chattyhive.backend.Controller;
 import com.chattyhive.backend.StaticParameters;
 import com.chattyhive.backend.businessobjects.Chats.Messages.Message;
+import com.chattyhive.backend.contentprovider.DataProvider;
 import com.chattyhive.backend.contentprovider.OSStorageProvider.MessageLocalStorageInterface;
+import com.chattyhive.backend.contentprovider.formats.Format;
 import com.chattyhive.backend.contentprovider.formats.MESSAGE;
+import com.chattyhive.backend.contentprovider.formats.MESSAGE_LIST;
 import com.chattyhive.backend.util.events.ChannelEventArgs;
 import com.chattyhive.backend.util.events.Event;
 import com.chattyhive.backend.util.events.EventArgs;
 import com.chattyhive.backend.util.events.EventHandler;
+import com.chattyhive.backend.util.events.FormatReceivedEventArgs;
 import com.chattyhive.backend.util.formatters.DateFormatter;
 
+import java.util.ArrayList;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -27,6 +32,29 @@ public class Chat {
     public static void Initialize(Controller controller, MessageLocalStorageInterface messageLocalStorageInterface) {
         Chat.controller = controller;
         Chat.localStorage = messageLocalStorageInterface;
+
+        try {
+            DataProvider.GetDataProvider().onMessageReceived.add(new EventHandler<FormatReceivedEventArgs>(Chat.class, "onFormatReceived", FormatReceivedEventArgs.class));
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /***********************************/
+    /*        STATIC CALLBACKS         */
+    /***********************************/
+
+    public static void onFormatReceived(Object sender, FormatReceivedEventArgs args) {
+        if (args.countReceivedFormats() > 0) {
+            ArrayList<Format> formats = args.getReceivedFormats();
+            for (Format format : formats) {
+                if (format instanceof MESSAGE) {
+                    Group.getGroup(((MESSAGE) format).CHANNEL_UNICODE).getChat().addMessage(new Message(format));
+                } else if (format instanceof MESSAGE_LIST) {
+                    Chat.onFormatReceived(sender,new FormatReceivedEventArgs(((MESSAGE_LIST) format).MESSAGES));
+                }
+            }
+        }
     }
 
     /**************************
@@ -107,12 +135,12 @@ public class Chat {
             boolean confirmationReceived = false;
             try {
                 if ((m.getId() != null) && (!m.getId().isEmpty())) {
-                    idReceived = m.unsubscribeIdReceived(new EventHandler<EventArgs>(this, "onMessageChanged", EventArgs.class));
+                    idReceived = m.IdReceived.remove(new EventHandler<EventArgs>(this, "onMessageChanged", EventArgs.class));
                     if (!this.messagesByID.containsKey(m.getId()))
                         this.messagesByID.put(m.getId(),m);
                 }
                 if (m.getConfirmed())
-                    confirmationReceived = m.unsubscribeConfirmationReceived(new EventHandler<EventArgs>(this, "onMessageChanged", EventArgs.class));
+                    confirmationReceived = m.ConfirmationReceived.remove(new EventHandler<EventArgs>(this, "onMessageChanged", EventArgs.class));
             } catch (NoSuchMethodException e) {
                 e.printStackTrace();
             }
@@ -168,16 +196,31 @@ public class Chat {
     public void addMessage(Message message) {
         if (message == null) throw new NullPointerException("message must not be null.");
 
-        boolean newDay = !(DateFormatter.toString(this.getLastMessage().getTimeStamp()).equalsIgnoreCase(DateFormatter.toString(message.getTimeStamp())));
+        Message previous = this.messages.floor(message);
+        Message next = this.messages.ceiling(message);
 
-        if (newDay)
+        boolean previousNewDay = false;
+        boolean nextNewDay = false;
+
+        if ((previous != null) && (previous.getMessageContent().getContentType().endsWith("_SEPARATOR")))
+            previousNewDay = !(DateFormatter.toString(previous.getTimeStamp()).equalsIgnoreCase(DateFormatter.toString(message.getTimeStamp())));
+        else if (previous.getMessageContent().getContentType().endsWith("_SEPARATOR"))
+            previousNewDay = true;
+
+        if ((next != null) && (next.getMessageContent().getContentType().endsWith("_SEPARATOR")))
+            nextNewDay = !(DateFormatter.toString(previous.getTimeStamp()).equalsIgnoreCase(DateFormatter.toString(message.getTimeStamp())));
+
+        if (previousNewDay)
             this.messages.add(new Message(this,DateFormatter.toDate(DateFormatter.toString(message.getTimeStamp()))));
+
+        if (nextNewDay)
+            this.messages.add(new Message(this,DateFormatter.toDate(DateFormatter.toString(next.getTimeStamp()))));
 
         try {
             if (message.getId() == null)
-                message.subscribeIdReceived(new EventHandler<EventArgs>(this, "onMessageChanged", EventArgs.class));
+                message.IdReceived.add(new EventHandler<EventArgs>(this, "onMessageChanged", EventArgs.class));
             if ((this.parent.groupKind == GroupKind.PUBLIC_SINGLE) || (this.parent.groupKind == GroupKind.PRIVATE_SINGLE))
-                message.subscribeConfirmationReceived(new EventHandler<EventArgs>(this, "onMessageChanged", EventArgs.class));
+                message.ConfirmationReceived.add(new EventHandler<EventArgs>(this, "onMessageChanged", EventArgs.class));
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
@@ -201,7 +244,6 @@ public class Chat {
         } else {
             Chat.localStorage.StoreMessage(String.format("Sending-%s",this.parent.pusherChannel),message.getId(),message.toJson(new MESSAGE()).toString());
         }
-
     }
 
     public void removeMessage(String ID) {
@@ -210,6 +252,13 @@ public class Chat {
         this.messages.remove(toBeRemoved);
         if (StaticParameters.MaxLocalMessages != 0)
             Chat.localStorage.RemoveMessage(this.parent.pusherChannel,toBeRemoved.getId());
+    }
+
+    public void clearAllMessages() {
+        this.messagesByID.clear();
+        this.messages.clear();
+        if (StaticParameters.MaxLocalMessages != 0)
+            Chat.localStorage.ClearMessages(this.parent.pusherChannel);
     }
 
     public void getMoreMessages() {

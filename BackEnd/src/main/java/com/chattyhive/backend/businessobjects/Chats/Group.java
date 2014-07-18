@@ -3,6 +3,7 @@ package com.chattyhive.backend.businessobjects.Chats;
 import com.chattyhive.backend.Controller;
 import com.chattyhive.backend.businessobjects.Chats.Messages.Message;
 import com.chattyhive.backend.businessobjects.Users.User;
+import com.chattyhive.backend.contentprovider.DataProvider;
 import com.chattyhive.backend.contentprovider.OSStorageProvider.GroupLocalStorageInterface;
 import com.chattyhive.backend.contentprovider.formats.CHAT;
 import com.chattyhive.backend.contentprovider.formats.CHAT_ID;
@@ -11,7 +12,9 @@ import com.chattyhive.backend.contentprovider.formats.Format;
 import com.chattyhive.backend.contentprovider.formats.HIVE_ID;
 import com.chattyhive.backend.contentprovider.formats.MESSAGE;
 import com.chattyhive.backend.contentprovider.formats.PROFILE_ID;
-import com.chattyhive.backend.contentprovider.formats.USER_CHATS;
+import com.chattyhive.backend.contentprovider.server.ServerCommand;
+import com.chattyhive.backend.util.events.EventHandler;
+import com.chattyhive.backend.util.events.FormatReceivedEventArgs;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
@@ -39,7 +42,13 @@ public class Group {
         Group.controller = controller;
         Group.localStorage = groupLocalStorageInterface;
 
-        //TODO: Implement local recovering of groups.
+        try {
+            DataProvider.GetDataProvider().onChatProfileReceived.add(new EventHandler<FormatReceivedEventArgs>(Group.class, "onFormatReceived", FormatReceivedEventArgs.class));
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+
+        //Local recovering of groups.
         String[] groups = groupLocalStorageInterface.RecoverGroups();
         for(String group : groups) {
             Format[] formats = Format.getFormat((new JsonParser()).parse(group));
@@ -50,7 +59,10 @@ public class Group {
             }
         }
 
-        //TODO: Implement remote recovering of groups
+        //Remote recovering of groups
+        if (DataProvider.isConnectionAvailable()) {
+            DataProvider.GetDataProvider().InvokeServerCommand(ServerCommand.AvailableCommands.ChatList,null);
+        }
     }
 
     /*****************************************
@@ -132,6 +144,48 @@ public class Group {
         Group.Groups.put(groupName,g);
         return g;
     }
+
+    public static void removeGroup(String channelUnicode) {
+        if (Group.Groups == null) throw new IllegalStateException("Groups must be initialized.");
+        else if (channelUnicode == null) throw new NullPointerException("ChannelUnicode must not be null.");
+        else if (channelUnicode.isEmpty()) throw  new IllegalArgumentException("ChannelUnicode must not be empty.");
+
+        if (Group.Groups.containsKey(channelUnicode)) {
+            Group.Groups.get(channelUnicode).chat.clearAllMessages();
+            Group.Groups.remove(channelUnicode);
+        }
+
+        Group.localStorage.RemoveGroup(channelUnicode);
+    }
+    public static void clearGroups() {
+        if (Group.Groups == null) throw new IllegalStateException("Groups must be initialized.");
+
+        for (Group group : Group.Groups.values())
+            group.chat.clearAllMessages();
+
+        Group.Groups.clear();
+        Group.localStorage.ClearGroups();
+    }
+
+    /***********************************/
+    /*        STATIC CALLBACKS         */
+    /***********************************/
+
+    public static void onFormatReceived(Object sender, FormatReceivedEventArgs args) {
+        if (args.countReceivedFormats() > 0) {
+            ArrayList<Format> formats = args.getReceivedFormats();
+            for (Format format : formats) {
+                if (format instanceof CHAT) {
+                    Group.getGroup(((CHAT) format).CHANNEL_UNICODE).fromFormat(format);
+                } else if (format instanceof CHAT_ID) {
+                    Group.getGroup(((CHAT_ID) format).CHANNEL_UNICODE).fromFormat(format);
+                } else if  (format instanceof CHAT_SYNC) {
+                    Group.getGroup(((CHAT_SYNC) format).CHANNEL_UNICODE).fromFormat(format);
+                }
+            }
+        }
+    }
+
     /*****************************************
                 users list
      *****************************************/
@@ -156,15 +210,10 @@ public class Group {
     }
 
     public void requestMembers() {
-        //TODO: implement server request
-        //TODO: implement local update
+        //TODO: implement server request (NOT AVAILABLE)
     }
     public void inviteMember(String identifier) {
-        //TODO: implement server request
-
-        //TODO: implement local update
-        User u = User.getUser(identifier);
-        this.addMember(u);
+        //TODO: implement server request (NOT AVAILABLE)
     }
 
     /*****************************************
@@ -232,15 +281,11 @@ public class Group {
                 ((CHAT) format).MEMBERS.add((PROFILE_ID)user.toFormat(new PROFILE_ID()));
         } else if (format instanceof CHAT_ID) {
             ((CHAT_ID) format).CHANNEL_UNICODE = this.channelUnicode;
-            ((CHAT_ID) format).PUSHER_CHANNEL = this.pusherChannel;
+
         } else if (format instanceof CHAT_SYNC) {
             ((CHAT_SYNC) format).CHANNEL_UNICODE = this.channelUnicode;
-            ((CHAT_SYNC) format).PUSHER_CHANNEL = this.pusherChannel;
+
             ((CHAT_SYNC) format).LAST_MESSAGE = (MESSAGE)this.chat.getLastMessage().toFormat(new MESSAGE());
-        } else if (format instanceof USER_CHATS) {
-            ((USER_CHATS) format).USER_CHAT_LIST = new ArrayList<CHAT_SYNC>();
-            for (Group group : Group.Groups.values())
-                ((USER_CHATS) format).USER_CHAT_LIST.add((CHAT_SYNC)group.toFormat(new CHAT_SYNC()));
         }
 
         return format;
@@ -257,12 +302,10 @@ public class Group {
             return true;
         } else if (format instanceof CHAT_ID) {
             this.channelUnicode = ((CHAT_ID) format).CHANNEL_UNICODE;
-            this.pusherChannel = ((CHAT_ID) format).PUSHER_CHANNEL;
 
             return true;
         } else if (format instanceof CHAT_SYNC) {
             this.channelUnicode = ((CHAT_SYNC) format).CHANNEL_UNICODE;
-            this.pusherChannel = ((CHAT_SYNC) format).PUSHER_CHANNEL;
             this.chat.addMessage(new Message(((CHAT_SYNC) format).LAST_MESSAGE));
 
             return true;
@@ -279,7 +322,7 @@ public class Group {
         for (Format format : formats)
             if (this.fromFormat(format)) return;
 
-        throw  new IllegalArgumentException("Expected CHAT, CHAT_ID, CHAT_SYNC or USER_CHATS formats.");
+        throw  new IllegalArgumentException("Expected CHAT, CHAT_ID or CHAT_SYNC formats.");
     }
 
 }

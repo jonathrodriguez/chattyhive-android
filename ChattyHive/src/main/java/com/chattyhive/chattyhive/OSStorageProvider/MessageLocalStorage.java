@@ -14,7 +14,6 @@ import java.util.Collection;
  * Created by Jonathan on 26/05/2014.
  */
 public class MessageLocalStorage implements MessageLocalStorageInterface {
-
     private MessageLocalStorage() {}
     static MessageLocalStorage instance = null;
 

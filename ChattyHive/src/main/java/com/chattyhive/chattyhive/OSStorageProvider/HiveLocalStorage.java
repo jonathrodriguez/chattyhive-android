@@ -10,6 +10,14 @@ import com.chattyhive.chattyhive.Util.ApplicationContextProvider;
  * Created by Jonathan on 01/07/2014.
  */
 public class HiveLocalStorage implements HiveLocalStorageInterface {
+    private HiveLocalStorage() {}
+    static HiveLocalStorage instance;
+
+    public static HiveLocalStorage getHiveLocalStorage() {
+        if (instance == null) { instance = new HiveLocalStorage(); }
+        return instance;
+    }
+
     private static String HIVE_PROFILES = "chHive";
 
     @Override

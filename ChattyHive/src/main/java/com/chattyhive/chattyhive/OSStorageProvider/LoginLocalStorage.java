@@ -13,7 +13,7 @@ import java.util.AbstractMap;
  */
 public class LoginLocalStorage implements LoginLocalStorageInterface {
     private LoginLocalStorage() {}
-    static LoginLocalStorage instance = null;
+    static LoginLocalStorage instance;
 
     public static LoginLocalStorage getLoginLocalStorage() {
         if (instance == null) { instance = new LoginLocalStorage(); }
@@ -29,10 +29,6 @@ public class LoginLocalStorage implements LoginLocalStorageInterface {
         sharedPreferencesEditor.putString("user",username);
         sharedPreferencesEditor.putString("pass",password);
         sharedPreferencesEditor.apply();
-
-        sharedPreferencesEditor = null;
-        sharedPreferences = null;
-        context = null;
     }
 
     public AbstractMap.SimpleEntry<String,String> RecoverLoginPassword() {
@@ -45,10 +41,10 @@ public class LoginLocalStorage implements LoginLocalStorageInterface {
         if (sharedPreferences.contains("user")) username = sharedPreferences.getString("user",null);
         if (sharedPreferences.contains("pass")) password = sharedPreferences.getString("pass",null);
 
-        sharedPreferences = null;
-        context = null;
+        if ((username != null) && (password != null))
+            return new AbstractMap.SimpleEntry<String,String>(username,password);
 
-        return new AbstractMap.SimpleEntry<String,String>(username,password);
+        return null;
     }
 
     @Override
@@ -59,9 +55,5 @@ public class LoginLocalStorage implements LoginLocalStorageInterface {
         if (sharedPreferences.contains("user")) sharedPreferencesEditor.remove("user");
         if (sharedPreferences.contains("pass")) sharedPreferencesEditor.remove("pass");
         sharedPreferencesEditor.apply();
-
-        sharedPreferencesEditor = null;
-        sharedPreferences = null;
-        context = null;
     }
 }

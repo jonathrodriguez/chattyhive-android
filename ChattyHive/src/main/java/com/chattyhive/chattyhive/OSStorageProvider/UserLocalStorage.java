@@ -13,6 +13,13 @@ import java.util.Collection;
  * Created by Jonathan on 23/06/2014.
  */
 public class UserLocalStorage implements UserLocalStorageInterface {
+    private UserLocalStorage() {}
+    static UserLocalStorage instance = null;
+
+    public static UserLocalStorage getUserLocalStorage() {
+        if (instance == null) { instance = new UserLocalStorage(); }
+        return instance;
+    }
 
     private static String OTHER_USER_PROFILES = "chProfiles";
     private static String LOCAL_USER_PROFILE = "chUser";

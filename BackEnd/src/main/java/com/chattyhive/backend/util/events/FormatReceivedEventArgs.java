@@ -14,7 +14,7 @@ public class FormatReceivedEventArgs extends EventArgs {
 
     public FormatReceivedEventArgs() { super(); }
 
-    public FormatReceivedEventArgs(Collection<Format> receivedFormats) {
+    public FormatReceivedEventArgs(Collection<? extends Format> receivedFormats) {
         super();
         this.receivedFormats = new ArrayList<Format>(receivedFormats);
     }

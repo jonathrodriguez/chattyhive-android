@@ -3,16 +3,20 @@ package com.chattyhive.backend.businessobjects.Chats.Messages;
 import com.chattyhive.backend.businessobjects.Chats.Chat;
 import com.chattyhive.backend.businessobjects.Chats.Group;
 import com.chattyhive.backend.businessobjects.Users.User;
+import com.chattyhive.backend.contentprovider.DataProvider;
 import com.chattyhive.backend.contentprovider.formats.Format;
 import com.chattyhive.backend.contentprovider.formats.MESSAGE;
 import com.chattyhive.backend.contentprovider.formats.MESSAGE_ACK;
 import com.chattyhive.backend.contentprovider.formats.MESSAGE_CONTENT;
 import com.chattyhive.backend.contentprovider.formats.PROFILE_ID;
+import com.chattyhive.backend.contentprovider.server.ServerCommand;
+import com.chattyhive.backend.util.events.CommandCallbackEventArgs;
 import com.chattyhive.backend.util.events.Event;
 import com.chattyhive.backend.util.events.EventArgs;
 import com.chattyhive.backend.util.events.EventHandler;
 import com.google.gson.JsonElement;
 
+import java.io.IOException;
 import java.util.Date;
 
 /**
@@ -34,41 +38,8 @@ public class Message implements Comparable {
     /*
      * Events for class message.
      */
-    private Event<EventArgs> confirmationReceived;
-    private Event<EventArgs> idReceived;
-
-    /*
-     * Subscription methods for events.
-     */
-    public void subscribeConfirmationReceived(EventHandler<EventArgs> eventHandler) {
-        if (this.confirmationReceived == null)
-            this.confirmationReceived = new Event<EventArgs>();
-        this.confirmationReceived.add(eventHandler);
-    }
-    public Boolean unsubscribeConfirmationReceived(EventHandler<EventArgs> eventHandler) {
-        Boolean result = false;
-        if (this.confirmationReceived != null) {
-            result = this.confirmationReceived.remove(eventHandler);
-            if (this.confirmationReceived.count() == 0)
-                this.confirmationReceived = null;
-        }
-        return result;
-    }
-
-    public void subscribeIdReceived(EventHandler<EventArgs> eventHandler) {
-        if (this.idReceived == null)
-            this.idReceived = new Event<EventArgs>();
-        this.idReceived.add(eventHandler);
-    }
-    public Boolean unsubscribeIdReceived(EventHandler<EventArgs> eventHandler) {
-        Boolean result = false;
-        if (this.idReceived != null) {
-            result = this.idReceived.remove(eventHandler);
-            if (this.idReceived.count() == 0)
-                this.idReceived = null;
-        }
-        return result;
-    }
+    public Event<EventArgs> ConfirmationReceived;
+    public Event<EventArgs> IdReceived;
 
     /*
      * Getters and setters.
@@ -89,8 +60,8 @@ public class Message implements Comparable {
 
     public void setId (String value) {
         this.id = value;
-        if (this.idReceived != null)
-            this.idReceived.fire(this, EventArgs.Empty());
+        if (this.IdReceived != null)
+            this.IdReceived.fire(this, EventArgs.Empty());
     }
     public String getId() {
         return this.id;
@@ -119,8 +90,8 @@ public class Message implements Comparable {
 
     public void setConfirmed (Boolean value) {
         this.confirmed = value;
-        if (this.confirmationReceived != null)
-            this.confirmationReceived.fire(this,EventArgs.Empty());
+        if (this.ConfirmationReceived != null)
+            this.ConfirmationReceived.fire(this,EventArgs.Empty());
     }
     public Boolean getConfirmed() {
         return this.confirmed;
@@ -146,14 +117,14 @@ public class Message implements Comparable {
         this.id = this.serverTimeStamp.toString().concat("-DATE_SEPARATOR");
     }
 
-    //TODO: CONSTRUCTOR FOR MESSAGE HOLE
+    //CONSTRUCTOR FOR MESSAGE HOLE
     public Message(Chat chat, Date timeStamp, int holeSize) {
         this.user = null;
         this.chat = chat;
-        this.content = new MessageContent("DATE_SEPARATOR",null);
+        this.content = new MessageContent("HOLE_SEPARATOR",String.format("%d",holeSize));
         this.timeStamp = timeStamp;
         this.serverTimeStamp = timeStamp;
-        this.id = this.serverTimeStamp.toString().concat("-DATE_SEPARATOR");
+        this.id = this.serverTimeStamp.toString().concat("-HOLE_SEPARATOR");
     }
 
     /**
@@ -167,17 +138,11 @@ public class Message implements Comparable {
         this.content = content;
         this.timeStamp = timeStamp;
         this.chat = chat;
+
+        this.InitializeEvents();
     }
 
-    /**
-     * Public constructor
-     * @param content The content of the message
-     * @param timeStamp The timestamp of the message
-     */
-    public Message(MessageContent content, Date timeStamp) {
-        this.content = content;
-        this.timeStamp = timeStamp;
-    }
+
 
     /**
      * Public constructor. This constructor parses the message from a JSONObject.
@@ -189,6 +154,32 @@ public class Message implements Comparable {
 
     public Message(Format format) {
         this.fromFormat(format);
+    }
+
+    private void InitializeEvents() {
+        this.IdReceived = new Event<EventArgs>();
+        this.ConfirmationReceived = new Event<EventArgs>();
+    }
+
+
+    public void SendMessage() throws IOException {
+        if ((this.user == null) || (this.chat == null) || (this.content == null) || (this.timeStamp == null) || (this.content.getContentType().endsWith("_SEPARATOR"))) throw new IOException("Cannot send message");
+
+        this.chat.addMessage(this);
+        DataProvider dataProvider = DataProvider.GetDataProvider();
+        try {
+            dataProvider.InvokeServerCommand(ServerCommand.AvailableCommands.SendMessage,new EventHandler<CommandCallbackEventArgs>(this,"onMessageSendCallback",CommandCallbackEventArgs.class),this.toFormat(new MESSAGE()));
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void onMessageSendCallback (Object sender, CommandCallbackEventArgs eventArgs) {
+        for (Format format : eventArgs.getReceivedFormats()) {
+            if (format instanceof MESSAGE_ACK) {
+                this.fromFormat(format);
+            }
+        }
     }
 
     public JsonElement toJson(Format format) {
@@ -230,14 +221,14 @@ public class Message implements Comparable {
             this.serverTimeStamp = ((MESSAGE) format).SERVER_TIMESTAMP;
             this.confirmed = ((MESSAGE) format).CONFIRMED;
             this.content = new MessageContent(((MESSAGE) format).CONTENT);
-            this.user = User.getUser( ((((MESSAGE) format).PROFILE.PUBLIC_NAME == null) || (((MESSAGE) format).PROFILE.PUBLIC_NAME.isEmpty()))?((MESSAGE) format).PROFILE.USER_ID:((MESSAGE) format).PROFILE.PUBLIC_NAME );
+            this.user = User.getUser(((MESSAGE) format).PROFILE);
             this.chat = Group.getGroup(((MESSAGE) format).CHANNEL_UNICODE,true).getChat();
 
             return true;
         } else if (format instanceof MESSAGE_ACK) {
             this.id = ((MESSAGE_ACK) format).ID;
             this.serverTimeStamp = ((MESSAGE_ACK) format).SERVER_TIMESTAMP;
-            this.idReceived.fire(this, EventArgs.Empty());
+            this.IdReceived.fire(this, EventArgs.Empty());
 
             return true;
         }

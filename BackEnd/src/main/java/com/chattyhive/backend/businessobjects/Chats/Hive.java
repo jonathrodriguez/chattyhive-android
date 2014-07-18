@@ -1,20 +1,19 @@
 package com.chattyhive.backend.businessobjects.Chats;
 
 import com.chattyhive.backend.Controller;
-import com.chattyhive.backend.businessobjects.Users.User;
-import com.chattyhive.backend.contentprovider.OSStorageProvider.GroupLocalStorageInterface;
+import com.chattyhive.backend.contentprovider.DataProvider;
 import com.chattyhive.backend.contentprovider.OSStorageProvider.HiveLocalStorageInterface;
-import com.chattyhive.backend.contentprovider.OSStorageProvider.MessageLocalStorageInterface;
 import com.chattyhive.backend.contentprovider.formats.CHAT;
 import com.chattyhive.backend.contentprovider.formats.Format;
 import com.chattyhive.backend.contentprovider.formats.HIVE;
 import com.chattyhive.backend.contentprovider.formats.HIVE_ID;
-import com.chattyhive.backend.util.formatters.DateFormatter;
+import com.chattyhive.backend.util.events.EventHandler;
+import com.chattyhive.backend.util.events.FormatReceivedEventArgs;
+
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.TreeMap;
 
@@ -38,6 +37,13 @@ public class Hive {
 
         Hive.localStorage = hiveLocalStorageInterface;
 
+        try {
+            DataProvider.GetDataProvider().onHiveProfileReceived.add(new EventHandler<FormatReceivedEventArgs>(Hive.class, "onFormatReceived", FormatReceivedEventArgs.class));
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+
+        //Local recovering of hives
         String[] hives = Hive.localStorage.RecoverHives();
         for(String hive : hives) {
             Format[] formats = Format.getFormat((new JsonParser()).parse(hive));
@@ -45,13 +51,32 @@ public class Hive {
                 if (format instanceof HIVE)
                     Hive.Hives.put(((HIVE)format).NAME_URL,new Hive((HIVE)format));
         }
-        //TODO: Implement remote recovering of hives.
+
+        //Remote recovering of hives.
+        /* This will be recovered with local user profile.*/
+    }
+
+    /***********************************/
+    /*        STATIC CALLBACKS         */
+    /***********************************/
+
+    public static void onFormatReceived(Object sender, FormatReceivedEventArgs args) {
+        if (args.countReceivedFormats() > 0) {
+            ArrayList<Format> formats = args.getReceivedFormats();
+            for (Format format : formats) {
+                if (format instanceof HIVE) {
+                    Hive.getHive(((HIVE) format).NAME_URL).fromFormat(format);
+                } else if (format instanceof HIVE_ID) {
+                    Hive.getHive(((HIVE_ID) format).NAME_URL).fromFormat(format);
+                }
+            }
+        }
     }
 
     /*****************************************
      Constructor
      *****************************************/
-    private Hive(HIVE data) {
+    public Hive(HIVE data) {
         this.category = data.CATEGORY;
         this.creationDate = data.CREATION_DATE;
         this.description = data.DESCRIPTION;
@@ -59,9 +84,13 @@ public class Hive {
         this.name = data.NAME;
         this.nameUrl = data.NAME_URL;
 
-        this.publicChat = Group.getGroup(data.PUBLIC_CHAT.CHANNEL_UNICODE,false);
-        if (this.publicChat == null) {
-            this.publicChat = new Group(data.PUBLIC_CHAT);
+        this.publicChat = null;
+
+        if (data.PUBLIC_CHAT != null) {
+            this.publicChat = Group.getGroup(data.PUBLIC_CHAT.CHANNEL_UNICODE, false);
+            if (this.publicChat == null) {
+                this.publicChat = new Group(data.PUBLIC_CHAT);
+            }
         }
     }
     private Hive(String nameUrl) {
@@ -87,7 +116,7 @@ public class Hive {
             }
 
         if ((this.nameUrl == null) || (!this.nameUrl.equals(nameUrl))) {
-            //TODO: Implement server information recovering
+            //TODO: Implement server information recovering (NOT AVAILABLE)
         }
     }
 
@@ -106,12 +135,15 @@ public class Hive {
     }
 
     public static Hive createHive(String name, String category, String description) {
-        //TODO: implement server communication
+        //TODO: implement server communication (NOT AVAILABLE)
         String hiveName = ""; //Recovered from server.
-        //TODO: implement local storage
 
         Hive h = new Hive(hiveName);
         Hive.Hives.put(hiveName,h);
+
+        //Local storage
+        Hive.localStorage.StoreHive(h.nameUrl,h.toJson(new HIVE()).toString());
+
         return h;
     }
 
@@ -119,8 +151,7 @@ public class Hive {
      users list
      *****************************************/
     public void requestUsers() {
-        //TODO: implement server request
-        //TODO: implement local update
+        //TODO: implement server request (NOT AVAILABLE)
     }
 
     /*****************************************
@@ -148,6 +179,7 @@ public class Hive {
     public String getNameUrl() { return this.nameUrl; }
 
     public Group getPublicChat() { return this.publicChat; }
+    public void setPublicChat(Group value) { this.publicChat = value; }
 
     /*************************************/
     /*         PARSE METHODS             */
@@ -159,7 +191,10 @@ public class Hive {
             ((HIVE) format).CATEGORY = this.category;
             ((HIVE) format).CREATION_DATE = this.creationDate;
             ((HIVE) format).DESCRIPTION = this.description;
-            ((HIVE) format).PUBLIC_CHAT = (CHAT)this.publicChat.toFormat(new CHAT());
+            if (this.publicChat != null)
+                ((HIVE) format).PUBLIC_CHAT = (CHAT)this.publicChat.toFormat(new CHAT());
+            else
+                ((HIVE) format).PUBLIC_CHAT = null;
         } else if (format instanceof HIVE_ID) {
             ((HIVE_ID) format).NAME_URL = this.nameUrl;
         }
@@ -173,8 +208,14 @@ public class Hive {
             this.category = ((HIVE) format).CATEGORY;
             this.description = ((HIVE) format).DESCRIPTION;
             this.creationDate = ((HIVE) format).CREATION_DATE;
-            this.publicChat = Group.getGroup(((HIVE) format).PUBLIC_CHAT);
+            this.publicChat = null;
 
+            if (((HIVE) format).PUBLIC_CHAT != null) {
+                this.publicChat = Group.getGroup(((HIVE) format).PUBLIC_CHAT);
+                if (this.publicChat == null) {
+                    this.publicChat = new Group(((HIVE) format).PUBLIC_CHAT);
+                }
+            }
             return true;
         } else if (format instanceof HIVE_ID) {
             this.nameUrl = ((HIVE_ID) format).NAME_URL;

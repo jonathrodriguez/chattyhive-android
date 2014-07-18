@@ -174,6 +174,8 @@ public class ServerCommand {
         return field.get(parameterFormat).toString();
     }
     public String getBodyData(Format... formats) {
+        if ((formats == null) || (formats.length == 0)) return null;
+
         JsonObject bodyData = new JsonObject();
 
         for (Format f : formats) {
@@ -188,10 +190,12 @@ public class ServerCommand {
     //TODO: Find a way to use this verification in compilation time instead of run time.
     public Boolean checkFormats(Format... formats) {
         TreeMap<String,Boolean> requiredFormats = new TreeMap<String,Boolean>();
-        for (Class<?> format : this.inputFormats)
-            requiredFormats.put(format.getName(),false);
-        for (Class<?> format : this.paramFormats)
-            requiredFormats.put(format.getName(),false);
+        if (this.inputFormats != null)
+            for (Class<?> format : this.inputFormats)
+                requiredFormats.put(format.getName(),false);
+        if (this.paramFormats != null)
+            for (Class<?> format : this.paramFormats)
+                requiredFormats.put(format.getName(),false);
 
         for(Format format : formats)
             if (requiredFormats.containsKey(format.getClass().getName()))

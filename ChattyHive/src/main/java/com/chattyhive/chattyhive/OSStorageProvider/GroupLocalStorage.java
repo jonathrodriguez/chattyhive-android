@@ -10,6 +10,14 @@ import com.chattyhive.chattyhive.Util.ApplicationContextProvider;
  * Created by Jonathan on 23/06/2014.
  */
 public class GroupLocalStorage implements GroupLocalStorageInterface {
+    private GroupLocalStorage() {}
+    static GroupLocalStorage instance;
+
+    public static GroupLocalStorage getGroupLocalStorage() {
+        if (instance == null) { instance = new GroupLocalStorage(); }
+        return instance;
+    }
+
     private static String CHAT_PROFILES = "chChat";
 
     @Override

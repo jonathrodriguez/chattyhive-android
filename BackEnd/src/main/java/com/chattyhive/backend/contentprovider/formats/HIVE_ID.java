@@ -53,7 +53,7 @@ public class HIVE_ID extends Format {
             object = data.getAsJsonObject();
         }
         if ((object == null) || (!object.isJsonObject())) {
-            throw new IllegalArgumentException("Data is not an HIVE_ID object.");
+            throw new IllegalArgumentException("Data is not a HIVE_ID object.");
         }
 
         JsonElement property;

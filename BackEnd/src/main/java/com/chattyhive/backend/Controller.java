@@ -12,10 +12,16 @@ import com.chattyhive.backend.contentprovider.OSStorageProvider.HiveLocalStorage
 import com.chattyhive.backend.contentprovider.OSStorageProvider.LoginLocalStorageInterface;
 import com.chattyhive.backend.contentprovider.OSStorageProvider.MessageLocalStorageInterface;
 import com.chattyhive.backend.contentprovider.OSStorageProvider.UserLocalStorageInterface;
+import com.chattyhive.backend.contentprovider.formats.COMMON;
+import com.chattyhive.backend.contentprovider.formats.Format;
+import com.chattyhive.backend.contentprovider.formats.HIVE;
+import com.chattyhive.backend.contentprovider.formats.HIVE_ID;
+import com.chattyhive.backend.contentprovider.server.ServerCommand;
 import com.chattyhive.backend.contentprovider.server.ServerStatus;
 import com.chattyhive.backend.contentprovider.server.ServerUser;
 import com.chattyhive.backend.util.events.CancelableEventArgs;
 import com.chattyhive.backend.util.events.ChannelEventArgs;
+import com.chattyhive.backend.util.events.CommandCallbackEventArgs;
 import com.chattyhive.backend.util.events.ConnectionEventArgs;
 import com.chattyhive.backend.util.events.Event;
 import com.chattyhive.backend.util.events.EventArgs;
@@ -29,6 +35,10 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import java.net.CookieHandler;
+import java.net.CookieManager;
+import java.net.CookiePolicy;
+import java.net.CookieStore;
 import java.util.ArrayList;
 import java.util.TreeSet;
 
@@ -45,6 +55,40 @@ public class Controller {
     /************************************************************************/
     /*                       STATIC MANAGEMENT                              */
     /************************************************************************/
+    private static Boolean Initialized = false;
+    private static Boolean PrivateInitialize() {
+        if (Initialized) return false;
+
+        DisposingRunningController = new Event<CancelableEventArgs>();
+        RunningControllerDisposed = new Event<EventArgs>();
+        ConnectionAvailabilityChanged = new Event<EventArgs>();
+
+        DataProvider.Initialize();
+        ServerCommand.Initialize();
+
+        return (Initialized = true);
+    }
+    public static void Initialize() {
+        Controller.PrivateInitialize();
+        CookieHandler.setDefault(new CookieManager());
+    }
+    public static void Initialize(Object... LocalStorage) {
+        PrivateInitialize();
+        setLocalStorage(LocalStorage);
+        DataProvider.Initialize(LocalStorage);
+        CookieHandler.setDefault(new CookieManager());
+    }
+    public static void Initialize(CookieStore cookieStore) {
+        PrivateInitialize();
+        CookieHandler.setDefault(new CookieManager(cookieStore, CookiePolicy.ACCEPT_ALL));
+    }
+    public static void Initialize(CookieStore cookieStore, Object... LocalStorage) {
+        PrivateInitialize();
+        setLocalStorage(LocalStorage);
+        DataProvider.Initialize(LocalStorage);
+
+        CookieHandler.setDefault(new CookieManager(cookieStore, CookiePolicy.ACCEPT_ALL));
+    }
 
     //COMMON STATIC
     private static Controller controller;
@@ -57,14 +101,13 @@ public class Controller {
     }
     public static Controller GetRunningController(Boolean initialize) {
         if ((controller == null) && (initialize))
-            controller = new Controller(LoginLocalStorage);
+            controller = new Controller();
 
         return controller;
     }
     public static Controller GetRunningController(Object... LocalStorage) {
-        GetRunningController(true);
         setLocalStorage(LocalStorage);
-        return controller;
+        return GetRunningController(true);
     }
     public static void DisposeRunningController() {
         Boolean disposeCanceled = false;
@@ -85,6 +128,7 @@ public class Controller {
 
     //APP STATIC
     private static Boolean appBounded = false;
+    private static Boolean svcBounded = false;
 
     public static Event<EventArgs> AppBindingEvent;
 
@@ -92,47 +136,94 @@ public class Controller {
         return appBounded;
     }
     public static void bindApp() {
+        if (appBounded) return;
         appBounded = true;
         if (AppBindingEvent != null)
             AppBindingEvent.fire(controller, EventArgs.Empty());
+
+        DataProvider dataProvider = DataProvider.GetDataProvider();
+
+        if (!dataProvider.isServerConnected())
+            dataProvider.Connect();
+
+        ArrayList<ServerCommand.AvailableCommands> commandSequence = new ArrayList<ServerCommand.AvailableCommands>();
+
+        //Load Home
+        //commandSequence.add(ServerCommand.AvailableCommands.Home);
+
+        if (!svcBounded)
+            commandSequence.add(ServerCommand.AvailableCommands.ChatList);
+
+        commandSequence.add(ServerCommand.AvailableCommands.LocalProfile);
+
+        //Execute command sequence
+        for(ServerCommand.AvailableCommands command : commandSequence)
+            dataProvider.InvokeServerCommand(command,null);
     }
     public static void unbindApp() {
+        if (!appBounded) return;
         appBounded = false;
         if (AppBindingEvent != null)
             AppBindingEvent.fire(controller,EventArgs.Empty());
     }
 
+
+    public static void bindSvc() {
+        if (svcBounded) return;
+        svcBounded = true;
+
+        DataProvider dataProvider = DataProvider.GetDataProvider();
+        if (!dataProvider.isServerConnected())
+            dataProvider.Connect();
+
+        dataProvider.InvokeServerCommand(ServerCommand.AvailableCommands.ChatList, null);
+    }
+    public static void unbindSvc() {
+        if (!svcBounded) return;
+        svcBounded = false;
+    }
     //STORAGE STATIC
 
-
+    @Deprecated
     public static GroupLocalStorageInterface GroupLocalStorage;
+    @Deprecated
     public static HiveLocalStorageInterface HiveLocalStorage;
+    @Deprecated
     public static LoginLocalStorageInterface LoginLocalStorage;
+    @Deprecated
     public static MessageLocalStorageInterface MessageLocalStorage;
+    @Deprecated
     public static UserLocalStorageInterface UserLocalStorage;
-
+    @Deprecated
     public static void setLocalStorage(Object... LocalStorage) {
         for (Object localStorage : LocalStorage) {
-            if (localStorage instanceof GroupLocalStorageInterface) {
+            if ((localStorage instanceof GroupLocalStorageInterface) && (GroupLocalStorage == null)) {
                 GroupLocalStorage = (GroupLocalStorageInterface) localStorage;
-            } else if (localStorage instanceof HiveLocalStorageInterface) {
+            } else if ((localStorage instanceof HiveLocalStorageInterface) && (HiveLocalStorage == null)) {
                 HiveLocalStorage = (HiveLocalStorageInterface) localStorage;
-            } else if (localStorage instanceof LoginLocalStorageInterface) {
+            } else if ((localStorage instanceof LoginLocalStorageInterface) && (LoginLocalStorage == null)) {
                 LoginLocalStorage = (LoginLocalStorageInterface) localStorage;
-            } else if (localStorage instanceof MessageLocalStorageInterface) {
+            } else if ((localStorage instanceof MessageLocalStorageInterface) && (MessageLocalStorage == null)) {
                 MessageLocalStorage = (MessageLocalStorageInterface) localStorage;
-            } else if (localStorage instanceof UserLocalStorageInterface) {
+            } else if ((localStorage instanceof UserLocalStorageInterface) && (UserLocalStorage == null)) {
                 UserLocalStorage = (UserLocalStorageInterface) localStorage;
             }
         }
     }
 
+
+    //CONNECTION STATIC
+    public static Event<EventArgs> ConnectionAvailabilityChanged;
+
+    public static Boolean getNetworkAvailable() { return DataProvider.isConnectionAvailable(); }
+    public static void setNetworkAvailable(Boolean value) { DataProvider.setConnectionAvailable(value); }
+
     /************************************************************************/
     /************************************************************************/
     /************************************************************************/
 
     /************************************************************************/
-    /*                       DYNAMIC MANAGEMENT                              */
+    /*                       DYNAMIC MANAGEMENT                             */
     /************************************************************************/
     private DataProvider dataProvider;
 
@@ -140,12 +231,24 @@ public class Controller {
     //CONSTRUCTORS
 
     public Controller () {
-        this.ConnectionAvailabilityChanged = new Event<EventArgs>();
         this.ServerConnectionStateChanged = new Event<ConnectionEventArgs>();
-        this.dataProvider = DataProvider.GetDataProvider();
+        this.ExploreHivesListChange = new Event<EventArgs>();
+        this.PubSubConnectionStateChanged = new Event<PubSubConnectionEventArgs>();
+
+        this.dataProvider = DataProvider.GetDataProvider(true);
+
+        Hive.Initialize(this,HiveLocalStorage);
+        Group.Initialize(this,GroupLocalStorage);
+        Chat.Initialize(this,MessageLocalStorage);
+        User.Initialize(UserLocalStorage);
+
         try {
-            this.dataProvider.ConnectionAvailabilityChanged.add(new EventHandler<EventArgs>(this,"onConnectionAvailabilityChanged",EventArgs.class));
+            DataProvider.ConnectionAvailabilityChanged.add(new EventHandler<EventArgs>(this,"onConnectionAvailabilityChanged",EventArgs.class));
             this.dataProvider.ServerConnectionStateChanged.add(new EventHandler<ConnectionEventArgs>(this,"onServerConnectionStateChanged",ConnectionEventArgs.class));
+
+            this.dataProvider.onHiveJoined.add(new EventHandler<CommandCallbackEventArgs>(this,"onJoinHiveCallback",CommandCallbackEventArgs.class));
+
+
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
@@ -154,18 +257,17 @@ public class Controller {
     /************************************************************************/
     //CONNECTION MANAGEMENT
 
-    public Event<EventArgs> ConnectionAvailabilityChanged;
     public Event<ConnectionEventArgs> ServerConnectionStateChanged;
+    public Event<PubSubConnectionEventArgs> PubSubConnectionStateChanged;
 
-    public Boolean isConnectionAvailable() {
-        return this.dataProvider.isConnectionAvailable();
+    public void onPubSubConnectionStateChanged(Object sender, PubSubConnectionEventArgs eventArgs) {
+        if (this.PubSubConnectionStateChanged != null)
+            this.PubSubConnectionStateChanged.fire(sender,eventArgs);
     }
-    public void setConnectionAvailable(Boolean value) {
-       this.dataProvider.setConnectionAvailable(value);
-    }
+
     public void onConnectionAvailabilityChanged(Object sender, EventArgs eventArgs) {
-        if (this.ConnectionAvailabilityChanged != null)
-            this.ConnectionAvailabilityChanged.fire(sender,eventArgs);
+        if (ConnectionAvailabilityChanged != null)
+            ConnectionAvailabilityChanged.fire(sender,eventArgs);
     }
 
     public Boolean isServerConnected() {
@@ -194,409 +296,107 @@ public class Controller {
 
     private ArrayList<Hive> exploreHives = new ArrayList<Hive>();
     public ArrayList<Hive> getExploreHives() { return exploreHives; }
-    // ContentProvider
-    private DataProvider _dataProvider;
 
-    public Boolean getNetworkAvailable() { return this._dataProvider.getNetworkAvailable(); }
-    public void setNetworkAvailable(Boolean value) { this._dataProvider.setNetworkAvailable(value); }
-
-
-    private Event<EventArgs> hivesListChange;
-    public void SubscribeToHivesListChange(EventHandler<EventArgs> eventHandler) {
-        if (hivesListChange == null)
-            hivesListChange = new Event<EventArgs>();
-        hivesListChange.add(eventHandler);
-
-        if (StaticParameters.StandAlone) {
-            // DEBUG
-            Thread t = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    for (int i = 0; i < 12; i++) {
-                        hives.add(new Hive("Hive number: ".concat(String.valueOf(i)),"Hn".concat(String.valueOf(i))));
-                        if (hivesListChange != null) {
-                            hivesListChange.fire(hives, EventArgs.Empty());
-                        }
-                        try {
-                            Thread.sleep(3000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            });
-            hives.clear();
-            t.start();
-            // END DEBUG
-        }
-    }
-
-    private Event<EventArgs> exploreHivesListChange;
-    public void SubscribeToExploreHivesListChange(EventHandler<EventArgs> eventHandler) {
-        if (exploreHivesListChange == null)
-            exploreHivesListChange = new Event<EventArgs>();
-        exploreHivesListChange.add(eventHandler);
-    }
-
-    private Event<ChannelEventArgs> _channelEvent;
-    public void SubscribeChannelEventHandler(EventHandler<ChannelEventArgs> eventHandler) {
-        if (this._channelEvent == null)
-            this._channelEvent = new Event<ChannelEventArgs>();
-        this._channelEvent.add(eventHandler);
-    }
-
-    public void SubscribeConnectionEventHandler(EventHandler<PubSubConnectionEventArgs> eventHandler) {
-        this._dataProvider.SubscribeConnectionEventHandler(eventHandler);
-    }
+    public Event<EventArgs> ExploreHivesListChange;
 
     /**
      * Establishes the server user.
      * @param user
      */
     public void setServerUser(ServerUser user) {
-        this._dataProvider.setUser(user);
+        this.dataProvider.setUser(user);
     }
 
-    /**
-     * Retrieves the Server User.
-     * @return
-     */
-    public ServerUser getServerUser() {
-        return this._dataProvider.getServerUser();
-    }
     /**
      * Changes the server app.
      * @param serverApp
      */
     public void setServerApp(String serverApp) {
-        this._dataProvider.setServerApp(serverApp);
-    }
-    public Controller(LoginLocalStorageInterface loginLocalStorage) {
-        this(new ServerUser(loginLocalStorage), StaticParameters.DefaultServerAppName);
-        this.setLoginLocalStorage(loginLocalStorage);
-    }
-
-    /**
-     * Public constructor. Instantiates a DataProvider and subscribes to PubSubChannelEvent.
-     * @param user A ServerUser with data needed to login to server.
-     * @param serverApp The server application to which DataProvider will connect.
-     */
-    public Controller(ServerUser user, String serverApp) {
-        this._channelEvent = new Event<ChannelEventArgs>();
-        this._dataProvider = new DataProvider(user, serverApp);
-        try {
-            this._dataProvider.SubscribeChannelEventHandler(new EventHandler<PubSubChannelEventArgs>(this,"onChannelEvent",PubSubChannelEventArgs.class));
-            this._dataProvider.SubscribeToOnConnect(new EventHandler<ConnectionEventArgs>(this,"onConnect",ConnectionEventArgs.class));
-        } catch (NoSuchMethodException e) { }
-        new User(user.getLogin());
-
-        Hive.Initialize(this,null);
-        Group.Initialize(this,null);
-        Chat.Initialize(this,null);
+        this.dataProvider.setServerApp(serverApp);
     }
 
     public Boolean isConnected() {
-        Boolean result;
-        result = !((this._dataProvider.getServerUser() == null) || (this._dataProvider.getServerUser().getStatus() == ServerStatus.DISCONNECTED) ||(this._dataProvider.getServerUser().getStatus() == ServerStatus.EXPIRED));
-        result = (result && this._dataProvider.isPubsubConnected());
-        return result;
+        return (this.dataProvider.isServerConnected() && this.dataProvider.isServerConnected());
     }
 
 
-    public Boolean JoinHive(String hive) {
-        JsonObject jsonParams = new JsonObject();
-        jsonParams.addProperty("user",this.getServerUser().getLogin());
-        jsonParams.addProperty("hive",hive);
+    public void JoinHive(String hive) {
+        for (Hive h : exploreHives)
+            if (h.getNameUrl().equalsIgnoreCase(hive))
+                this.dataProvider.JoinHive(h);
+    }
 
-        Boolean result = this._dataProvider.JoinHive(jsonParams.toString());
+    public void onJoinHiveCallback(Object sender, CommandCallbackEventArgs eventArgs)  {
+        ArrayList<Format> receivedFormats = eventArgs.getReceivedFormats();
 
-        if (result) {
-            for (Hive h : exploreHives) {
-                if (h.getNameURL().equalsIgnoreCase(hive)) {
-                    this.hives.add(h);
-                    exploreHives.remove(h);
+        Boolean exploreHivesChanged = false;
+
+        for(Format format : receivedFormats)
+            if (format instanceof COMMON) {
+                if (((COMMON) format).STATUS.equalsIgnoreCase("OK")) {
+                    ArrayList<Format> sentFormats = eventArgs.getSentFormats();
+                    for (Format sentFormat : sentFormats)
+                        if (sentFormat instanceof HIVE_ID)
+                            for (Hive h : exploreHives)
+                                if (h.getNameUrl().equalsIgnoreCase(((HIVE_ID) sentFormat).NAME_URL))
+                                    exploreHivesChanged = (exploreHivesChanged || exploreHives.remove(h));
                 }
+                break;
             }
-        }
-        
-        return result;
+
+        if ((exploreHivesChanged) && (ExploreHivesListChange != null))
+            ExploreHivesListChange.fire(exploreHives, EventArgs.Empty());
     }
 
     public void JoinTMP (String channel) {
-        this._dataProvider.Join(channel);
+        this.dataProvider.Join(channel);
     }
 
     public void Join(String channel) {
-        //this._dataProvider.Join(channel);
+        //this.dataProvider.Join(channel);
     }
 
     public void Leave(String channel) {
-        //this._dataProvider.Leave(channel);
-    }
-
-
-
-    /**
-     * Private method to respond to PubSubChannelEvents. It has to be declared as public, else the
-     * Java Reflection API could not access to the method. When this method is invoked, the message
-     * data is parsed and the ChannelEvent is fired.
-     * @param sender Object that thrown the event.
-     * @param args Event arguments. PubSubChannelEventArgs contain the channel name, the event name
-     *             and string data containing the message which accompanies the event.
-     */
-    public void onChannelEvent (Object sender, PubSubChannelEventArgs args) {
-        Message m;
-
-        System.out.println("Channel event: ".concat(args.getChannelName()).concat(" -> ").concat(args.getEventName()).concat(" : ").concat(args.getMessage()));
-
-        if (args.getEventName().equalsIgnoreCase("msg")){
-            //System.out.println("Detected as message.");
-
-            JsonParser jsonParser = new JsonParser();
-            JsonElement jsonElement = jsonParser.parse(args.getMessage());
-            m = new Message(jsonElement);
-            if (m.getChat() == null) m.chat = this.getHiveFromUrlName(args.getChannelName());
-
-            //System.out.println("Received Message: ".concat(m.toJson().toString()));
-
-            if (!this.messages.containsKey(args.getChannelName()))
-                this.messages.put(args.getChannelName(),new TreeSet<Message>());
-
-            if (!this.messages.get(args.getChannelName()).contains(m)) {
-                //System.out.println("Nuevo mensaje recibido. Tamaño de lista de mensajes: ".concat(String.valueOf(this.messages.get(args.getChannelName()).size())));
-                this.messages.get(args.getChannelName()).add(m);
-                //System.out.println(" -- MESSAGE SAVED -- ");
-                if (this.messageLocalStorage != null) {
-                    this.messageLocalStorage.StoreMessage(args.getChannelName(),m.toJson().toString());
-                }
-                m = new Message(new MessageContent(""), DateFormatter.toDate(DateFormatter.toString(m.getTimeStamp())));
-                if (!this.messages.get(args.getChannelName()).contains(m)) this.messages.get(args.getChannelName()).add(m);
-            }
-
-        } else {
-           // System.out.println("Detected as NOT a message.");
-            m = new Message(new MessageContent(args.getMessage()),TimestampFormatter.toDate(args.getMessage()));
-        }
-
-        this._channelEvent.fire(this,new ChannelEventArgs(args.getChannelName(),args.getEventName(),m));
-    }
-
-    /**
-     * This method permits application to recover all messages from a given channel. Method is not
-     * yet implemented, but it  has to get the data returned by DataProvider and format it into
-     * business model classes to return. Probably better option is to return an ArrayList sorted by
-     * message timestamp.
-     */
-    public TreeSet<Message> getMessages(String channel) {
-        if (!this.messages.containsKey(channel))
-            this.messages.put(channel,new TreeSet<Message>());
-
-        TreeSet<Message> messageList = this.messages.get(channel);
-
-        // Local message recovering
-        if (this.messageLocalStorage != null) {
-            String[] localMessages = this.messageLocalStorage.RecoverMessages(channel);
-            if (localMessages != null) {
-                JsonParser jsonParser = new JsonParser();
-                JsonElement jsonElement;
-                Message m;
-                for (String jsonMessage : localMessages) {
-                    jsonElement = jsonParser.parse(jsonMessage);
-                    m = new Message(jsonElement);
-                    if (!messageList.contains(m)) messageList.add(m);
-                    m = new Message(new MessageContent(""), DateFormatter.toDate(DateFormatter.toString(m.getTimeStamp())));
-                    if (!messageList.contains(m)) messageList.add(m);
-                }
-            }
-        }
-
-        // TODO: Implement remote message recovering.
-        //this._dataProvider.RecoverMessages(channel);
-
-        return messageList;
+        //this.dataProvider.Leave(channel);
     }
 
     /**
      * This method permits application to recover some hives from explore server list.
      * @param
      */
-    public boolean exploreHives(int offset,int length) {
+    public void exploreHives(int offset,int length) {
         if (offset == 0) { exploreHives.clear(); }
-        int actualSize = exploreHives.size();
-        boolean exploreHiveListChanged = false;
-        JsonElement response = null;
         if (!StaticParameters.StandAlone) {
-
-            response = this._dataProvider.ExploreHives(offset,length);
-
-            if ((response != null) && (!response.isJsonNull())) {
-                JsonArray hivesArray = null;
-                if (response.isJsonArray()) {
-                    hivesArray = response.getAsJsonArray();
-                } else if (response.isJsonObject()) {
-                    hivesArray = new JsonArray();
-                    hivesArray.add(response);
-                }
-                if (hivesArray != null)
-                    for (JsonElement jsonElement : hivesArray)
-                        if (jsonElement.isJsonObject()) {
-                            Hive hive = new Hive(jsonElement);
-                            Boolean alreadyJoined = false;
-                            for (Hive h : hives) {
-                                if (h.getNameURL().equalsIgnoreCase(hive.getNameURL()))
-                                    alreadyJoined = true;
-
-                            }
-                            exploreHiveListChanged = ((!alreadyJoined) && (exploreHiveListChanged | this.exploreHives.add(hive)));
-                        }
+            try {
+                this.dataProvider.ExploreHives(offset,length,new EventHandler<CommandCallbackEventArgs>(this,"onExploreHivesCallback",CommandCallbackEventArgs.class));
+            } catch (NoSuchMethodException e) {
+                e.printStackTrace();
             }
-            // TODO: This is for server 0.2.0 which does not support list indexing.
-            actualSize = this.exploreHives.size();
-        } else {
-            if (offset == 0) {
-                exploreHiveListChanged = (exploreHiveListChanged | this.exploreHives.add(new Hive("Sports 1","sports_1","sports","This hive is for sports!")));
-                exploreHiveListChanged = (exploreHiveListChanged | this.exploreHives.add(new Hive("Sports 2","sports_2","sports","This hive is for sports!")));
-                exploreHiveListChanged = (exploreHiveListChanged | this.exploreHives.add(new Hive("Sports 3","sports_3","sports","This hive is for sports!")));
-                exploreHiveListChanged = (exploreHiveListChanged | this.exploreHives.add(new Hive("Free time 1","free_time_1","free time","This hive is for free time!")));
-                exploreHiveListChanged = (exploreHiveListChanged | this.exploreHives.add(new Hive("Free time 2","free_time_2","free time","This hive is for free time!")));
-                exploreHiveListChanged = (exploreHiveListChanged | this.exploreHives.add(new Hive("Free time 3","free_time_3","free time","This hive is for free time!")));
-                exploreHiveListChanged = (exploreHiveListChanged | this.exploreHives.add(new Hive("Science 1","science_1","Science","This hive is for science!")));
-                exploreHiveListChanged = (exploreHiveListChanged | this.exploreHives.add(new Hive("Science 2","science_2","Science","This hive is for science!")));
-                exploreHiveListChanged = (exploreHiveListChanged | this.exploreHives.add(new Hive("Science 3","science_3","Science","This hive is for science!")));
-                length = 9;
-            } else if (offset >= 9) {
-                exploreHiveListChanged = (exploreHiveListChanged | this.exploreHives.add(new Hive("Sports 4","sports_4","sports","This hive is for sports!")));
-                exploreHiveListChanged = (exploreHiveListChanged | this.exploreHives.add(new Hive("Sports 5","sports_5","sports","This hive is for sports!")));
-                exploreHiveListChanged = (exploreHiveListChanged | this.exploreHives.add(new Hive("Sports 6","sports_6","sports","This hive is for sports!")));
-                exploreHiveListChanged = (exploreHiveListChanged | this.exploreHives.add(new Hive("Free time 4","free_time_4","free time","This hive is for free time!")));
-                exploreHiveListChanged = (exploreHiveListChanged | this.exploreHives.add(new Hive("Free time 5","free_time_5","free time","This hive is for free time!")));
-                exploreHiveListChanged = (exploreHiveListChanged | this.exploreHives.add(new Hive("Science 4","science_4","Science","This hive is for science!")));
-                exploreHiveListChanged = (exploreHiveListChanged | this.exploreHives.add(new Hive("Science 5","science_5","Science","This hive is for science!")));
-                length = 9;
-            }
-
         }
-
-        if ((exploreHiveListChanged) && (this.exploreHivesListChange != null))
-            this.exploreHivesListChange.fire(this.exploreHives,EventArgs.Empty());
-
-        return ((exploreHives.size() - actualSize) >= length);
     }
 
-    /**
-     * This method sends a message to the server through the DataProvider. Message must be passed
-     * in JSON string representation to the DataProvider, but for first server version the message
-     * is URL encoded.
-     * @param message The message to be sent.
-     */
-    public Boolean sendMessage(Message message,String channel) {
+    public void onExploreHivesCallback(Object sender,CommandCallbackEventArgs eventArgs) {
+        ArrayList<Format> receivedFormats = eventArgs.getReceivedFormats();
 
-        message.user = User.getMe();
-        message.chat = getHiveFromUrlName(channel);
+        for (Format format : receivedFormats)
+            if (format instanceof HIVE)
+                this.exploreHives.add(new Hive((HIVE)format));
 
-
-        if (!this.messages.containsKey(channel))
-            this.messages.put(channel,new TreeSet<Message>());
-
-        if (!this.messages.get(channel).contains(message)) {
-            this.messages.get(channel).add(message);
-
-        }
-
-        Boolean result = this._dataProvider.sendMessage(message.toJson());
-
-        if ((!result) && (this.messages.get(channel).contains(message))) {
-         //   System.out.println("Mensaje enviado. Tamaño de lista de mensajes: ".concat(String.valueOf(this.messages.get(channel).size())));
-            this.messages.get(channel).remove(message);
-        }
-        if ((result) && (this.messageLocalStorage != null)) {
-                this.messageLocalStorage.StoreMessage(channel,message.toJson().toString());
-            Message m = new Message(new MessageContent(""), DateFormatter.toDate(DateFormatter.toString(message.getTimeStamp())));
-            if (!this.messages.get(channel).contains(m)) this.messages.get(channel).add(m);
-        }
-
-
-        //return true;
-        return result;
-
-        //return this._dataProvider.sendMessage("message=".concat(message.content.getContent().replace("+", "%2B").replace(" ", "+")).concat("&timestamp=").concat(TimestampFormatter.toString(message.getTimeStamp()).replace(":", "%3A").replace("+", "%2B").replace(" ", "+")));
-    }
-
-    public void onConnect (Object sender, ConnectionEventArgs args) {
-        JsonElement profile = args.getProfile();
-        JsonElement hivesSubscribed = args.getHivesSubscribed();
-        Boolean hiveListChanged = false;
-        System.out.println("onConnect()");
-        if ((profile != null) && (!profile.isJsonNull())) {
-            System.out.println(profile.toString());
-            new User(getServerUser().getLogin());
-            User.setUpOwnProfile(profile);
-        }
-        if ((hivesSubscribed != null) && (!hivesSubscribed.isJsonNull())) {
-            System.out.println(String.format("HivesSubscribed: %s",hivesSubscribed.toString()));
-            JsonArray hivesArray = null;
-            this.hives.clear();
-            if (hivesSubscribed.isJsonArray()) {
-                //System.out.println("Is a JSON Array");
-                hivesArray = hivesSubscribed.getAsJsonArray();
-            } else if (hivesSubscribed.isJsonObject()) {
-                //System.out.println("Is a JSON Object");
-                hivesArray = new JsonArray();
-                hivesArray.add(hivesSubscribed);
-            }
-            if (hivesArray != null)
-                for (JsonElement jsonElement : hivesArray)
-                    if (jsonElement.isJsonObject()) {
-                        Hive hive = new Hive(jsonElement);
-                        this.JoinTMP(hive.getNameURL());
-                        System.out.println(String.format("Hive: %s",hive.getName()));
-                        hiveListChanged = (hiveListChanged | this.hives.add(hive));
-                    }
-        }
-
-
-//        for (Hive hive : this.hives) {
-//            String line = "Name: ".concat(hive.getName());
-//            line = line.concat(" ; NameURL: ").concat(hive.getNameURL());
-//            line = line.concat(" ; Description: ").concat(hive.getDescription());
-//            line = line.concat(" ; Category: ").concat(hive.getCategory());
-//            line = line.concat(" ; Created: ").concat(hive.getCreationDate().toString());
-//            System.out.println(line);
-//        }
-
-        if (hiveListChanged && (this.hivesListChange != null)) this.hivesListChange.fire(this.hives,EventArgs.Empty());
-    }
-
-    public void setLoginLocalStorage(LoginLocalStorageInterface loginLocalStorage) {
-        this.loginLocalStorage = loginLocalStorage;
-    }
-
-    public void setMessageLocalStorage(MessageLocalStorageInterface messageLocalStorage) {
-        this.messageLocalStorage = messageLocalStorage;
+        if (this.ExploreHivesListChange != null)
+            this.ExploreHivesListChange.fire(this.exploreHives,EventArgs.Empty());
     }
 
     public void clearUserData() {
-        this._dataProvider.Disconnect();
-        this._dataProvider.setUser(null);
-        if (this.loginLocalStorage != null)
-            this.loginLocalStorage.ClearStoredLogin();
+        this.dataProvider.clearSession();
         User.removeMe();
     }
 
     public void clearAllChats() {
-        for (String channel : this.messages.keySet()) {
-            this.clearChat(channel);
-        }
+        Group.clearGroups();
     }
 
-    private void clearChat(String channel) {
-        if (this.messages.containsKey(channel)) {
-            this.messages.get(channel).clear();
-            if (this.messageLocalStorage != null)
-                this.messageLocalStorage.ClearMessages(channel);
-
-            this._channelEvent.fire(this,new ChannelEventArgs(channel,"clear",null));
-        }
+    private void clearChat(String channelUnicode) {
+        Group.removeGroup(channelUnicode);
     }
 
 }
