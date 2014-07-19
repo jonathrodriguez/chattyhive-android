@@ -1,6 +1,7 @@
 package com.chattyhive.backend.contentprovider.pubsubservice;
 
 import com.chattyhive.backend.Controller;
+import com.chattyhive.backend.contentprovider.DataProvider;
 import com.chattyhive.backend.contentprovider.server.AsyncHttpURLConnection;
 import com.chattyhive.backend.contentprovider.server.ServerResponse;
 import com.chattyhive.backend.contentprovider.server.ServerStatus;
@@ -11,7 +12,7 @@ import com.pusher.client.Authorizer;
 /**
  * Created by Jonathan Rodriguez on 10/06/2014.
  */
-public class PubSubAuthorizer implements Authorizer {
+/*public class PubSubAuthorizer implements Authorizer {
 
     private ServerUser serverUser;
 
@@ -22,7 +23,7 @@ public class PubSubAuthorizer implements Authorizer {
     public ServerUser getServerUser() { return this.serverUser; }
     public void setServerUser(ServerUser serverUser) { this.serverUser = serverUser; }
 
-    /**
+    *//**
      * Called when a channel is to be authenticated.
      *
      * @param channelName The name of the channel to be authenticated.
@@ -30,12 +31,16 @@ public class PubSubAuthorizer implements Authorizer {
      *                    This uniquely identifies the connection that the subscription is being authenticated for.
      * @return An authentication token.
      * @throws com.pusher.client.AuthorizationFailureException if the authentication fails.
-     */
+     *//*
     @Override
     public String authorize(String channelName, String socketId) throws AuthorizationFailureException {
-        if ((this.serverUser == null) || (this.serverUser.getStatus() == ServerStatus.DISCONNECTED) || (this.serverUser.getCookies() == null) || (this.serverUser.getCookies().isEmpty())) {
+        if ((!DataProvider.isConnectionAvailable()) || (!DataProvider.GetDataProvider().isServerConnected())) {
             throw new AuthorizationFailureException("No user connected.");
         }
+
+        DataProvider dataProvider = DataProvider.GetDataProvider();
+
+
 
         String method = "POST";
         String URL = "http://chtest2.herokuapp.com/chat_auth";
@@ -60,4 +65,4 @@ public class PubSubAuthorizer implements Authorizer {
 
         return "";
     }
-}
+}*/

@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <item type="integer" name="MainPanelChat_ListKind_Count">3</item>
+    <item type="integer" name="MainPanelChat_ListKind_Count">5</item>
     <item type="integer" name="MainPanelChat_ListKind_None">0</item>
     <item type="integer" name="MainPanelChat_ListKind_Me">1</item>
     <item type="integer" name="MainPanelChat_ListKind_Other">2</item>
+    <item type="integer" name="MainPanelChat_ListKind_DateSeparator">3</item>
+    <item type="integer" name="MainPanelChat_ListKind_HoleSeparator">4</item>
 
-    <item type="id" name="MainPanelChat_ListKind_Hive"/>
-    <item type="id" name="MainPanelChat_ListKind_PrivateGroup"/>
-    <item type="id" name="MainPanelChat_ListKind_PrivateSingle"/>
-    <item type="id" name="MainPanelChat_ListKind_PublicGroup"/>
-    <item type="id" name="MainPanelChat_ListKind_PublicSingle"/>
     <item type="id" name="MainPanelChat_ListViewHolder"/>
 </resources>

@@ -45,6 +45,8 @@ public class Server {
     public Event<ConnectionEventArgs> onConnected;
     public Event<FormatReceivedEventArgs> responseEvent;
 
+    public Event<EventArgs> CsrfTokenChanged;
+
     private ServerUser serverUser;
 
     private String appName = "";
@@ -97,6 +99,7 @@ public class Server {
     private void InitializeEvents() {
         this.onConnected = new Event<ConnectionEventArgs>();
         this.responseEvent = new Event<FormatReceivedEventArgs>();
+        this.CsrfTokenChanged = new Event<EventArgs>();
     }
     /************************************************************************/
     /*                              METHODS                                 */
@@ -138,6 +141,8 @@ public class Server {
                     String responseBody = response.toString();
 
                     if (responseCode == 200) {
+                        if (CsrfTokenChanged != null)
+                            CsrfTokenChanged.fire(this,EventArgs.Empty());
                         /*List<String> setCookies = httpURLConnection.getHeaderFields().get("Set-Cookie");
                         if (setCookies != null) {
                             for (String setCookie : setCookies) {

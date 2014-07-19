@@ -60,6 +60,7 @@ public class Chat {
     /**************************
        Proper chat management
      **************************/
+
     private Boolean chatWindowActive;
     private Boolean moreMessages;
     private Group parent;
@@ -67,8 +68,6 @@ public class Chat {
 
     public Group getParent() { return this.parent; }
     public void setParent(Group value) { this.parent = value; }
-
-
 
     public void setChatWindowActive(Boolean value) {
         if (this.chatWindowActive == value) return;
@@ -90,6 +89,8 @@ public class Chat {
                     Constructor
      *****************************************/
     public Chat(Group parent) {
+        this.MessageListModifiedEvent = new Event<EventArgs>();
+
         this.messages = new TreeSet<Message>();
         this.messagesByID = new TreeMap<String, Message>();
 
@@ -114,20 +115,8 @@ public class Chat {
     private TreeMap<String,Message> messagesByID;
     private TreeSet<Message> messages;
 
-    private Event<EventArgs> messageListModifiedEvent;
-    public void subscribeMessageListModified(EventHandler<EventArgs> eventHandler) {
-        if (this.messageListModifiedEvent == null)
-            this.messageListModifiedEvent = new Event<EventArgs>();
+    public Event<EventArgs> MessageListModifiedEvent;
 
-        this.messageListModifiedEvent.add(eventHandler);
-    }
-    public void unsubscribeMessageListModified(EventHandler<EventArgs> eventHandler) {
-        if (this.messageListModifiedEvent != null) {
-            this.messageListModifiedEvent.remove(eventHandler);
-            if (this.messageListModifiedEvent.count() == 0)
-                this.messageListModifiedEvent = null;
-        }
-    }
     private void onMessageChanged(Object sender,EventArgs eventArgs) {
         if (sender instanceof Message) {
             Message m = (Message)sender;
@@ -144,8 +133,8 @@ public class Chat {
             } catch (NoSuchMethodException e) {
                 e.printStackTrace();
             }
-            if (this.messageListModifiedEvent != null)
-                this.messageListModifiedEvent.fire(this, EventArgs.Empty());
+            if (this.MessageListModifiedEvent != null)
+                this.MessageListModifiedEvent.fire(this, EventArgs.Empty());
 
             if (idReceived) {
                 Chat.localStorage.RemoveMessage(String.format("Sending-%s", this.parent.pusherChannel),m.getId());
@@ -193,6 +182,10 @@ public class Chat {
         return this.messages.toArray(new Message[0])[index];
     }
 
+    public int getCount() {
+        return this.messages.size();
+    }
+
     public void addMessage(Message message) {
         if (message == null) throw new NullPointerException("message must not be null.");
 
@@ -232,8 +225,8 @@ public class Chat {
             this.messagesByID.put(message.getId(),message);
         }
 
-        if ((messageListModified) && (this.messageListModifiedEvent != null))
-            this.messageListModifiedEvent.fire(this, EventArgs.Empty());
+        if ((messageListModified) && (this.MessageListModifiedEvent != null))
+            this.MessageListModifiedEvent.fire(this, EventArgs.Empty());
 
         if ((message.getId() != null) && (!message.getId().isEmpty())) {
             if (StaticParameters.MaxLocalMessages != 0) {

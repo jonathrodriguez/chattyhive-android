@@ -12,12 +12,17 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.chattyhive.backend.businessobjects.Chats.Chat;
+import com.chattyhive.backend.businessobjects.Chats.GroupKind;
 import com.chattyhive.backend.businessobjects.Chats.Messages.Message;
-import com.chattyhive.backend.util.events.ChannelEventArgs;
+import com.chattyhive.backend.contentprovider.DataProvider;
+import com.chattyhive.backend.contentprovider.formats.CHAT_ID;
+import com.chattyhive.backend.contentprovider.formats.MESSAGE_INTERVAL;
+import com.chattyhive.backend.contentprovider.server.ServerCommand;
+import com.chattyhive.backend.util.events.EventArgs;
 import com.chattyhive.backend.util.formatters.DateFormatter;
 import com.chattyhive.backend.util.formatters.TimestampFormatter;
 
-import java.util.Collection;
 
 /**
  * Created by Jonathan on 25/03/14.
@@ -26,22 +31,21 @@ public class ChatListAdapter extends BaseAdapter {
     private Context context;
     private ListView listView;
     private LayoutInflater inflater;
-    private Collection<Message> chatMessages;
-    private int chatKind;
 
-    public ChatListAdapter (Context activityContext,Collection<Message> chatMessages, int chatKind) {
-        this.chatMessages = chatMessages;
+    private GroupKind chatKind;
+    private Chat channelChat;
+
+    public ChatListAdapter (Context activityContext,Chat channelChat) {
+        this.channelChat = channelChat;
 
         this.context = activityContext;
         this.inflater = ((Activity)this.context).getLayoutInflater();
 
         this.listView = ((ListView)((Activity)this.context).findViewById(R.id.left_panel_element_list));
-//        Log.w("ChatListAdapter.new()",String.format("chatKind: %d",chatKind));
-        this.chatKind = chatKind;
+        this.chatKind = this.channelChat.getParent().getGroupKind();
     }
 
-    public void OnAddItem(Object sender, ChannelEventArgs args) {
-//        Log.w("ChatListAdapter.OnAddItem()",String.format("Event triggered. Message count: %d",chatMessages.size()));
+    public void OnAddItem(Object sender, EventArgs args) {
         ((Activity)this.context).runOnUiThread(new Runnable(){
             public void run() {
                 notifyDataSetChanged();
@@ -51,46 +55,31 @@ public class ChatListAdapter extends BaseAdapter {
 
     @Override
     public int getItemViewType(int position) {
-        Message m = chatMessages.toArray(new Message[0])[position];
-        if ((m.getUser() == null) && (m.getChat() == null)) return context.getResources().getInteger(R.integer.MainPanelChat_ListKind_None);
-        boolean mineMessage = ((m.getUser() != null) && (m.getUser().isMe()));
-//        Log.w("ChatListAdapter.getItemViewType",String.format("MainPanelChat_ListKind_Hive: %d",R.id.MainPanelChat_ListKind_Hive));
-//        Log.w("ChatListAdapter.getItemViewType",String.format("MainPanelChat_ListKind_PrivateGroup: %d",R.id.MainPanelChat_ListKind_PrivateGroup));
-//        Log.w("ChatListAdapter.getItemViewType",String.format("MainPanelChat_ListKind_PrivateSingle: %d",R.id.MainPanelChat_ListKind_PrivateSingle));
-//        Log.w("ChatListAdapter.getItemViewType",String.format("MainPanelChat_ListKind_PublicGroup: %d",R.id.MainPanelChat_ListKind_PublicGroup));
-//        Log.w("ChatListAdapter.getItemViewType",String.format("MainPanelChat_ListKind_PublicSingle: %d",R.id.MainPanelChat_ListKind_PublicSingle));
-//        Log.w("ChatListAdapter.getItemViewType",String.format("MainPanelChat_ListKind_None: %d",context.getResources().getInteger(R.integer.MainPanelChat_ListKind_None)));
-//        Log.w("ChatListAdapter.getItemViewType",String.format("MainPanelChat_ListKind_Me: %d",context.getResources().getInteger(R.integer.MainPanelChat_ListKind_Me)));
-//        Log.w("ChatListAdapter.getItemViewType",String.format("MainPanelChat_ListKind_Other: %d",context.getResources().getInteger(R.integer.MainPanelChat_ListKind_Other)));
-//        Log.w("ChatListAdapter.getItemViewType",String.format("Position: %d, Mine: %B, chatKind: %d",position,mineMessage,this.chatKind));
-
-        if ((this.chatKind != R.id.MainPanelChat_ListKind_Hive) &&
-            (this.chatKind != R.id.MainPanelChat_ListKind_PrivateGroup) &&
-            (this.chatKind != R.id.MainPanelChat_ListKind_PrivateSingle) &&
-            (this.chatKind != R.id.MainPanelChat_ListKind_PublicGroup) &&
-            (this.chatKind != R.id.MainPanelChat_ListKind_PublicSingle)) {
-            //Log.w("ChatListAdapter.getItemViewType","Returned NONE");
-            return context.getResources().getInteger(R.integer.MainPanelChat_ListKind_None);
+        Message m = this.channelChat.getMessageByIndex(position);
+        if (m.getUser() == null) {
+            if (m.getMessageContent().getContentType().equalsIgnoreCase("DATE_SEPARATOR"))
+                return context.getResources().getInteger(R.integer.MainPanelChat_ListKind_DateSeparator);
+            else if (m.getMessageContent().getContentType().equalsIgnoreCase("HOLE_SEPARATOR"))
+                return context.getResources().getInteger(R.integer.MainPanelChat_ListKind_HoleSeparator);
+            else
+                return context.getResources().getInteger(R.integer.MainPanelChat_ListKind_None);
         }
-
-        return ((mineMessage)?context.getResources().getInteger(R.integer.MainPanelChat_ListKind_Me):context.getResources().getInteger(R.integer.MainPanelChat_ListKind_Other));
+        return (((m.getUser() != null) && (m.getUser().isMe()))?context.getResources().getInteger(R.integer.MainPanelChat_ListKind_Me):context.getResources().getInteger(R.integer.MainPanelChat_ListKind_Other));
     }
 
     @Override
     public int getViewTypeCount() {
-        //Log.w("ChatListAdapter.getViewTypeCount()",String.format("MainPanelChat_ListKind_Count: %d",context.getResources().getInteger(R.integer.MainPanelChat_ListKind_Count)));
         return context.getResources().getInteger(R.integer.MainPanelChat_ListKind_Count);
     }
 
     @Override
     public int getCount() {
-        //Log.w("ChatListAdapter.getCount()",String.format("Item count: %d",this.chatMessages.size()));
-        return this.chatMessages.size();
+        return this.channelChat.getCount();
     }
 
     @Override
     public Object getItem(int position){
-        return chatMessages.toArray(new Message[0])[position];
+        return this.channelChat.getMessageByIndex(position);
     }
 
     @Override
@@ -102,27 +91,37 @@ public class ChatListAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder = null;
         int type = getItemViewType(position);
-        Boolean separator = (type == context.getResources().getInteger(R.integer.MainPanelChat_ListKind_None));
+
+        Boolean isMessage = false;
+        Boolean isHoleMarker = false;
+
         if(convertView==null){
             holder = new ViewHolder();
             switch (chatKind) {
-                case R.id.MainPanelChat_ListKind_Hive:
+                case HIVE:
                     if (type == context.getResources().getInteger(R.integer.MainPanelChat_ListKind_Me)) {
                         convertView = this.inflater.inflate(R.layout.main_panel_chat_hive_message_me, parent, false);
+                        isMessage = true;
                     } else if (type == context.getResources().getInteger(R.integer.MainPanelChat_ListKind_Other)) {
                         convertView = this.inflater.inflate(R.layout.main_panel_chat_hive_message_other, parent, false);
-                    } else if (separator) {
-                        convertView = this.inflater.inflate(R.layout.main_panel_chat_day_marker,parent,false);
+                        isMessage = true;
+                    } else if (type == context.getResources().getInteger(R.integer.MainPanelChat_ListKind_DateSeparator)) {
+                        convertView = this.inflater.inflate(R.layout.main_panel_chat_day_marker, parent, false);
+                        holder.timeStamp = (TextView) convertView.findViewById(R.id.main_panel_chat_timeStamp);
+                    } else if (type == context.getResources().getInteger(R.integer.MainPanelChat_ListKind_HoleSeparator)) {
+                        convertView = this.inflater.inflate(R.layout.main_panel_chat_message_hole, parent, false);
+                        holder.messageText = (TextView) convertView.findViewById(R.id.main_panel_chat_messageText);
+                        isHoleMarker = true;
                     } else {
                         Log.e("ChatListAdapter.getView()","Incompatible type!");
                         return null;
                     }
-                    if (!separator) {
+                    if (isMessage) {
                         holder.username = (TextView) convertView.findViewById(R.id.main_panel_chat_username);
                         holder.messageText = (TextView) convertView.findViewById(R.id.main_panel_chat_messageText);
                         holder.avatarThumbnail = (ImageView) convertView.findViewById(R.id.main_panel_chat_avatarThumbnail);
+                        holder.timeStamp = (TextView) convertView.findViewById(R.id.main_panel_chat_timeStamp);
                     }
-                    holder.timeStamp = (TextView) convertView.findViewById(R.id.main_panel_chat_timeStamp);
                     break;
                 default:
                     Log.e("ChatListAdapter.getView()","Incompatible type!");
@@ -134,21 +133,33 @@ public class ChatListAdapter extends BaseAdapter {
             holder = (ViewHolder)convertView.getTag(R.id.MainPanelChat_ListViewHolder);
         }
 
-        Message message = chatMessages.toArray(new Message[0])[position];
+        Message message = this.channelChat.getMessageByIndex(position);
 
         convertView.setTag(R.id.BO_Message,message);
 
-        if (!separator) {
+        if (isMessage) {
             if (message.getUser() != null) {
-                holder.username.setText(message.getUser().getPublicName());
-                //Log.w("ChatListAdapter - getView","User color: ".concat(message.getUser().color));
-                holder.username.setTextColor(Color.parseColor(message.getUser().color));
+                holder.username.setText(message.getUser().getShowingName());
+                holder.username.setTextColor(Color.parseColor(message.getUser().getColor()));
             }
 
             holder.messageText.setText(message.getMessageContent().getContent());
-            holder.timeStamp.setText(TimestampFormatter.toLocaleString(message.getTimeStamp()));
-        } else {
+            holder.timeStamp.setText(TimestampFormatter.toLocaleString(message.getServerTimeStamp()));
+            if (message.getUser().isMe()) {
+                if (((this.chatKind == GroupKind.PRIVATE_SINGLE) || (this.chatKind == GroupKind.PUBLIC_SINGLE)) && (message.getConfirmed())) {
+                    holder.timeStamp.setCompoundDrawablesWithIntrinsicBounds(0,0,R.drawable.pestanha_hives_show_more_users,0);
+                } else if (message.getId() != null) {
+                    holder.timeStamp.setCompoundDrawablesWithIntrinsicBounds(0,0,R.drawable.pestanha_chats_arroba,0);
+                } else {
+                    holder.timeStamp.setCompoundDrawablesWithIntrinsicBounds(0,0,R.drawable.pestanha_hives_historial,0);
+                }
+            }
+        } else if (!isHoleMarker) {
             holder.timeStamp.setText(DateFormatter.toHumanReadableString(message.getTimeStamp()));
+        } else {
+            holder.messageText.setText(String.format("Loading %s messages...",message.getMessageContent().getContent()));
+            holder.messageText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.menu_new_hive_blanco,0,0,0);
+            message.FillMessageHole(this.channelChat.getMessageByIndex(position+1).getId());
         }
         return convertView;
     }

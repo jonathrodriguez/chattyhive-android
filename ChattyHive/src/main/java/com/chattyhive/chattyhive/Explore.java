@@ -30,36 +30,48 @@ public class Explore extends Activity {
     }
 
     private void Initialize() {
-        this.controller = Controller.GetRunningController(LoginLocalStorage.getLoginLocalStorage());
-        this.controller.setMessageLocalStorage(MessageLocalStorage.getMessageLocalStorage());
+        this.controller = Controller.GetRunningController();
         this.lastOffset = 0;
 
         this.exploreListAdapter = new ExploreListAdapter(this,this.controller.getExploreHives(),(ListView)this.findViewById(R.id.explore_list_listView));
 
         try {
-            this.controller.SubscribeToExploreHivesListChange(new EventHandler<EventArgs>(exploreListAdapter, "OnAddItem", EventArgs.class));
+            this.controller.ExploreHivesListChange.add(new EventHandler<EventArgs>(exploreListAdapter, "OnAddItem", EventArgs.class));
+            this.controller.HiveJoined.add(new EventHandler<EventArgs>(this,"onHiveJoined",EventArgs.class));
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
-        };
+        }
     }
 
-
-
-    public boolean GetMoreHives() {
+    public void GetMoreHives() {
         this.lastOffset += 9;
-        return this.controller.exploreHives(this.lastOffset,9);
+        this.controller.exploreHives(this.lastOffset,9);
     }
 
     protected View.OnClickListener join_button_click = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             String hiveNameURL =((String) ((TextView)v.findViewById(R.id.explore_list_item_name)).getTag());
-            if (controller.JoinHive(hiveNameURL)) {
-                if (joined == 0)
-                    ((ImageButton)findViewById(R.id.explore_action_bar_goBack_button)).setBackgroundColor(Color.GREEN);
-                joined++;
-                ((TextView)findViewById(R.id.explore_action_bar_number_text)).setText(String.valueOf(joined));
-            }
+            controller.JoinHive(hiveNameURL);
         }
     };
+
+    public void onHiveJoined(Object sender,EventArgs eventArgs) {
+        if (joined == 0)
+            ((ImageButton)findViewById(R.id.explore_action_bar_goBack_button)).setBackgroundColor(Color.GREEN);
+        joined++;
+        ((TextView)findViewById(R.id.explore_action_bar_number_text)).setText(String.valueOf(joined));
+    }
+
+    @Override
+    protected void onDestroy(){
+        try {
+            this.controller.ExploreHivesListChange.remove(new EventHandler<EventArgs>(exploreListAdapter, "OnAddItem", EventArgs.class));
+            this.controller.HiveJoined.remove(new EventHandler<EventArgs>(this,"onHiveJoined",EventArgs.class));
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+        exploreListAdapter = null;
+        controller = null;
+    }
 }

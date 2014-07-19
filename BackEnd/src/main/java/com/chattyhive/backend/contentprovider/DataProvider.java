@@ -189,6 +189,9 @@ public class DataProvider {
         //Initialize events
         this.ServerConnectionStateChanged = new Event<ConnectionEventArgs>();
         this.PubSubConnectionStateChanged = new Event<PubSubConnectionEventArgs>();
+
+        this.CsrfTokenChanged = new Event<EventArgs>();
+
         this.onMessageReceived = new Event<FormatReceivedEventArgs>();
         this.onUserProfileReceived = new Event<FormatReceivedEventArgs>();
         this.onChatProfileReceived = new Event<FormatReceivedEventArgs>();
@@ -200,6 +203,8 @@ public class DataProvider {
         try {
             this.server.responseEvent.add(new EventHandler<FormatReceivedEventArgs>(this, "onFormatReceived", FormatReceivedEventArgs.class));
             this.server.onConnected.add(new EventHandler<ConnectionEventArgs>(this, "onServerConnectionStateChanged", ConnectionEventArgs.class));
+
+            this.server.CsrfTokenChanged.add(new EventHandler<EventArgs>(this,"onCsrfTokenChanged",EventArgs.class));
 
             this.pubSub.SubscribeChannelEventHandler(new EventHandler<PubSubChannelEventArgs>(this,"onChannelEvent",PubSubChannelEventArgs.class));
             this.pubSub.SubscribeConnectionEventHandler(new EventHandler<PubSubConnectionEventArgs>(this, "onConnectionEvent", PubSubConnectionEventArgs.class));
@@ -214,6 +219,7 @@ public class DataProvider {
     private Boolean connectionState;
     public Event<ConnectionEventArgs> ServerConnectionStateChanged;
     public Event<PubSubConnectionEventArgs> PubSubConnectionStateChanged;
+    public Event<EventArgs> CsrfTokenChanged;
 
     public Boolean isServerConnected() {
         return this.connectionState;
@@ -250,6 +256,11 @@ public class DataProvider {
         //TODO: Recover local user chat list.
         if (this.ServerConnectionStateChanged != null)
             this.ServerConnectionStateChanged.fire(sender,eventArgs);
+    }
+
+    public void onCsrfTokenChanged(Object sender, EventArgs eventArgs) {
+        if (this.CsrfTokenChanged != null)
+            this.CsrfTokenChanged.fire(sender,eventArgs);
     }
     /************************************************************************/
     //EXPLORE

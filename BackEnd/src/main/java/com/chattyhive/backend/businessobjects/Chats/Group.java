@@ -13,6 +13,8 @@ import com.chattyhive.backend.contentprovider.formats.HIVE_ID;
 import com.chattyhive.backend.contentprovider.formats.MESSAGE;
 import com.chattyhive.backend.contentprovider.formats.PROFILE_ID;
 import com.chattyhive.backend.contentprovider.server.ServerCommand;
+import com.chattyhive.backend.util.events.Event;
+import com.chattyhive.backend.util.events.EventArgs;
 import com.chattyhive.backend.util.events.EventHandler;
 import com.chattyhive.backend.util.events.FormatReceivedEventArgs;
 import com.google.gson.JsonElement;
@@ -33,8 +35,11 @@ public class Group {
     protected static GroupLocalStorageInterface localStorage;
     protected static Controller controller;
 
+    public static Event<EventArgs> GroupListChanged;
+
     private static TreeMap<String,Group> Groups;
     public static void Initialize(Controller controller, GroupLocalStorageInterface groupLocalStorageInterface) {
+        GroupListChanged = new Event<EventArgs>();
         if (Group.Groups == null) {
             Group.Groups = new TreeMap<String, Group>();
         }
@@ -65,6 +70,18 @@ public class Group {
         }
     }
 
+    /***********************************/
+    /*        STATIC LIST SUPPORT      */
+    /***********************************/
+
+    public static Group getGroupByIndex(int index) {
+        return Groups.values().toArray(new Group[Groups.size()])[index];
+    }
+
+    public static int getGroupCount() {
+        return Groups.size();
+    }
+
     /*****************************************
                  Constructor
      *****************************************/
@@ -72,6 +89,8 @@ public class Group {
         this.members = new TreeMap<String, User>();
         this.chat = new Chat(this);
         this.fromFormat(format);
+
+        this.CalculateGroupKind();
     }
 
     protected Group(String channelUnicode) {
@@ -98,6 +117,24 @@ public class Group {
         if ((this.channelUnicode == null) || (!this.channelUnicode.equals(channelUnicode))) {
             //TODO: Implement server information recovering
         }
+
+        this.CalculateGroupKind();
+    }
+
+    private void CalculateGroupKind() {
+        Boolean isSingle = this.members.size() < 2;
+        Boolean isPrivate = false;
+        for (User user : this.members.values())
+            isPrivate = isPrivate || user.isPrivate();
+
+        if (isPrivate && isSingle)
+            this.groupKind = GroupKind.PRIVATE_SINGLE;
+        else if (isPrivate && !isSingle)
+            this.groupKind = GroupKind.PRIVATE_GROUP;
+        else if (!isPrivate && !isSingle)
+            this.groupKind = GroupKind.PUBLIC_GROUP;
+        else if (!isPrivate && isSingle)
+            this.groupKind = (this.members.size() == 0)?GroupKind.HIVE:GroupKind.PUBLIC_SINGLE;
     }
 
     public static Group getGroup(String channelUnicode) {
@@ -114,6 +151,8 @@ public class Group {
         else if (addToList) {
             Group g = new Group(channelUnicode);
             Group.Groups.put(channelUnicode,g);
+            if (GroupListChanged != null)
+                GroupListChanged.fire(g,EventArgs.Empty());
             return g;
         } else {
             return null;
@@ -126,6 +165,8 @@ public class Group {
             Group existent = Group.getGroup(g.channelUnicode,false);
             if (existent == null) {
                 Group.Groups.put(g.channelUnicode,g);
+                if (GroupListChanged != null)
+                    GroupListChanged.fire(g,EventArgs.Empty());
                 return g;
             } else {
                 return existent;
@@ -142,6 +183,8 @@ public class Group {
 
         Group g = new Group(groupName);
         Group.Groups.put(groupName,g);
+        if (GroupListChanged != null)
+            GroupListChanged.fire(g,EventArgs.Empty());
         return g;
     }
 
@@ -151,8 +194,11 @@ public class Group {
         else if (channelUnicode.isEmpty()) throw  new IllegalArgumentException("ChannelUnicode must not be empty.");
 
         if (Group.Groups.containsKey(channelUnicode)) {
-            Group.Groups.get(channelUnicode).chat.clearAllMessages();
+            Group g = Group.Groups.get(channelUnicode);
+            g.chat.clearAllMessages();
             Group.Groups.remove(channelUnicode);
+            if (GroupListChanged != null)
+                GroupListChanged.fire(g,EventArgs.Empty());
         }
 
         Group.localStorage.RemoveGroup(channelUnicode);
@@ -165,6 +211,9 @@ public class Group {
 
         Group.Groups.clear();
         Group.localStorage.ClearGroups();
+
+        if (GroupListChanged != null)
+            GroupListChanged.fire(null,EventArgs.Empty());
     }
 
     /***********************************/

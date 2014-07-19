@@ -1,7 +1,10 @@
 package com.chattyhive.backend.contentprovider.pubsubservice;
 
+import com.chattyhive.backend.StaticParameters;
+import com.chattyhive.backend.contentprovider.DataProvider;
 import com.chattyhive.backend.contentprovider.server.ServerUser;
 import com.chattyhive.backend.util.events.Event;
+import com.chattyhive.backend.util.events.EventArgs;
 import com.chattyhive.backend.util.events.EventHandler;
 import com.chattyhive.backend.util.events.PubSubChannelEventArgs;
 import com.chattyhive.backend.util.events.PubSubConnectionEventArgs;
@@ -16,9 +19,16 @@ import com.pusher.client.channel.PrivateChannel;
 import com.pusher.client.channel.PrivateChannelEventListener;
 import com.pusher.client.channel.User;
 import com.pusher.client.connection.ConnectionEventListener;
+import com.pusher.client.util.HttpAuthorizer;
 
+import java.net.CookieHandler;
+import java.net.CookieManager;
+import java.net.CookieStore;
+import java.net.HttpCookie;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -31,7 +41,7 @@ public class PubSub implements ChannelEventListener, ConnectionEventListener, Pr
     private static String APP_KEY = "f073ebb6f5d1b918e59e"; //"5bec9fb4b45d83495627";
 	private static String CLUSTER;// = "eu";
     private Pusher pusher;
-    private PubSubAuthorizer pubSubAuthorizer;
+    private HttpAuthorizer pubSubAuthorizer;
     private TreeMap<String,Channel> lista_canales;
 
     private Event<PubSubChannelEventArgs> _pubSubChannelEvent;
@@ -91,14 +101,37 @@ public class PubSub implements ChannelEventListener, ConnectionEventListener, Pr
 
     /**
      * Public constructor.
-     * @param serverUser the serverUser object which provides authentication tokens.
      */
-    public PubSub(ServerUser serverUser) {
+    public PubSub() {
         this._pubSubConnectionEvent = new Event<PubSubConnectionEventArgs>();
         this._pubSubChannelEvent = new Event<PubSubChannelEventArgs>();
 
         lista_canales = new TreeMap<String,Channel>();
-        pubSubAuthorizer = new PubSubAuthorizer(serverUser);
+        pubSubAuthorizer = new HttpAuthorizer(String.format("%s://%s.%s/%s", StaticParameters.DefaultServerAppProtocol,StaticParameters.DefaultServerAppName,StaticParameters.DefaultServerHost,"chat_auth"));
+
+        HttpCookie csrfCookie = null;
+
+        CookieManager cookieManager = (CookieManager) CookieHandler.getDefault();
+        CookieStore cookieStore = cookieManager.getCookieStore();
+        List<HttpCookie> cookies = cookieStore.getCookies();
+
+        for (HttpCookie cookie : cookies)
+            if (cookie.getName().equalsIgnoreCase("csrftoken")) {
+                csrfCookie = cookie;
+                break;
+            }
+
+        if (csrfCookie != null) {
+            HashMap<String,String> headers = new HashMap<String, String>();
+            headers.put("X-CSRFToken", csrfCookie.getValue());
+            pubSubAuthorizer.setHeaders(headers);
+        }
+
+        try {
+            DataProvider.GetDataProvider().CsrfTokenChanged.add(new EventHandler<EventArgs>(this,"onCSRFTokenChanged",EventArgs.class));
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
 
         PusherOptions pO = new PusherOptions();
         pO.setEncrypted(false);
@@ -112,6 +145,26 @@ public class PubSub implements ChannelEventListener, ConnectionEventListener, Pr
         pusher.getConnection().bind(com.pusher.client.connection.ConnectionState.ALL, this);
     }
 
+
+    public void onCSRFTokenChanged(Object sender,EventArgs eventArgs) {
+        HttpCookie csrfCookie = null;
+
+        CookieManager cookieManager = (CookieManager) CookieHandler.getDefault();
+        CookieStore cookieStore = cookieManager.getCookieStore();
+        List<HttpCookie> cookies = cookieStore.getCookies();
+
+        for (HttpCookie cookie : cookies)
+            if (cookie.getName().equalsIgnoreCase("csrftoken")) {
+                csrfCookie = cookie;
+                break;
+            }
+
+        if (csrfCookie != null) {
+            HashMap<String,String> headers = new HashMap<String, String>();
+            headers.put("X-CSRFToken", csrfCookie.getValue());
+            pubSubAuthorizer.setHeaders(headers);
+        }
+    }
     /**
      * Establishes the connection with pusher.
      */

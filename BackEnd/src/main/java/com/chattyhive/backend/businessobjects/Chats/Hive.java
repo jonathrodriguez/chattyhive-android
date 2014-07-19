@@ -7,6 +7,8 @@ import com.chattyhive.backend.contentprovider.formats.CHAT;
 import com.chattyhive.backend.contentprovider.formats.Format;
 import com.chattyhive.backend.contentprovider.formats.HIVE;
 import com.chattyhive.backend.contentprovider.formats.HIVE_ID;
+import com.chattyhive.backend.util.events.Event;
+import com.chattyhive.backend.util.events.EventArgs;
 import com.chattyhive.backend.util.events.EventHandler;
 import com.chattyhive.backend.util.events.FormatReceivedEventArgs;
 
@@ -30,7 +32,11 @@ public class Hive {
     protected static HiveLocalStorageInterface localStorage;
     private static TreeMap<String,Hive> Hives;
 
+    public static Event<EventArgs> HiveListChanged;
+
     public static void Initialize(Controller controller, HiveLocalStorageInterface hiveLocalStorageInterface) {
+        HiveListChanged = new Event<EventArgs>();
+
         if (Hive.Hives == null) {
             Hive.Hives = new TreeMap<String, Hive>();
         }
@@ -51,9 +57,23 @@ public class Hive {
                 if (format instanceof HIVE)
                     Hive.Hives.put(((HIVE)format).NAME_URL,new Hive((HIVE)format));
         }
+        if ((Hives.size() > 0) && (HiveListChanged != null))
+            HiveListChanged.fire(null,EventArgs.Empty());
 
         //Remote recovering of hives.
         /* This will be recovered with local user profile.*/
+    }
+
+    /***********************************/
+    /*        STATIC LIST SUPPORT      */
+    /***********************************/
+
+    public static Hive getHiveByIndex(int index) {
+        return Hives.values().toArray(new Hive[Hives.size()])[index];
+    }
+
+    public static int getHiveCount() {
+        return Hives.size();
     }
 
     /***********************************/
@@ -130,6 +150,8 @@ public class Hive {
         else {
             Hive h = new Hive(nameUrl);
             Hive.Hives.put(nameUrl,h);
+            if (HiveListChanged != null)
+                HiveListChanged.fire(h,EventArgs.Empty());
             return h;
         }
     }
@@ -140,6 +162,9 @@ public class Hive {
 
         Hive h = new Hive(hiveName);
         Hive.Hives.put(hiveName,h);
+
+        if (HiveListChanged != null)
+            HiveListChanged.fire(h,EventArgs.Empty());
 
         //Local storage
         Hive.localStorage.StoreHive(h.nameUrl,h.toJson(new HIVE()).toString());

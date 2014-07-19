@@ -38,7 +38,7 @@ public class ExploreListAdapter extends BaseAdapter {
 
     public ExploreListAdapter (Context activityContext,ArrayList<Hive> hivesList, ListView listView) {
         this.hives_list_data = hivesList;
-        this.moreItems = true;
+        this.moreItems = false;
 
         this.context = activityContext;
         this.inflater = ((Activity)this.context).getLayoutInflater();
@@ -49,7 +49,7 @@ public class ExploreListAdapter extends BaseAdapter {
         new Thread() {
             @Override
             public void run() {
-                moreItems = ((Explore)context).GetMoreHives();
+                ((Explore)context).GetMoreHives();
             }
         }.start();
     }
@@ -72,27 +72,8 @@ public class ExploreListAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder = null;
-        //int type = getItemViewType(position);
         if(convertView==null){
             holder = new ViewHolder();
-            /*switch (type) {
-                case R.id.MainPanelChat_ListKind_Hive_Other:
-                    convertView = this.inflater.inflate(R.layout.main_panel_chat_hive_message_other,parent,false);
-                    holder.username = (TextView)convertView.findViewById(R.id.main_panel_chat_username);
-                    holder.messageText = (TextView)convertView.findViewById(R.id.main_panel_chat_messageText);
-                    holder.timeStamp = (TextView)convertView.findViewById(R.id.main_panel_chat_timeStamp);
-                    holder.avatarThumbnail = (ImageView)convertView.findViewById(R.id.main_panel_chat_avatarThumbnail);
-                    break;
-                case R.id.MainPanelChat_ListKind_Hive_Me:
-                    convertView = this.inflater.inflate(R.layout.main_panel_chat_hive_message_me,parent,false);
-                    Log.w("ChatListAdapter", "Is me...");
-                    holder.username = (TextView)convertView.findViewById(R.id.main_panel_chat_username);
-                    holder.messageText = (TextView)convertView.findViewById(R.id.main_panel_chat_messageText);
-                    holder.timeStamp = (TextView)convertView.findViewById(R.id.main_panel_chat_timeStamp);
-                    holder.avatarThumbnail = (ImageView)convertView.findViewById(R.id.main_panel_chat_avatarThumbnail);
-                    Log.w("ChatListAdapter", "What is wrong?");
-                    break;
-            }*/
 
             convertView = this.inflater.inflate(R.layout.explore_list_item,parent,false);
             holder.scoreAndImage = (TextView)convertView.findViewById(R.id.explore_list_item_image_and_score_textview);
@@ -116,13 +97,8 @@ public class ExploreListAdapter extends BaseAdapter {
 
         if (hive.getName() != null) {
             holder.mainTitle.setText(hive.getName());
-            holder.mainTitle.setTag(hive.getNameURL());
-            //holder.username.setTextColor(Color.parseColor(message.getUser()._color));
+            holder.mainTitle.setTag(hive.getNameUrl());
         }
-       /* else {
-            holder.username.setText("noName");
-            holder.username.setTextColor(Color.parseColor("#111111"));
-        }*/
 
 
 
@@ -146,7 +122,7 @@ public class ExploreListAdapter extends BaseAdapter {
         }
 
         if ((position == (this.getCount()-1)) && (this.moreItems)) {
-            this.moreItems = ((Explore)this.context).GetMoreHives();
+            ((Explore)this.context).GetMoreHives();
         }
 
         return convertView;

@@ -233,6 +233,7 @@ public class Controller {
     public Controller () {
         this.ServerConnectionStateChanged = new Event<ConnectionEventArgs>();
         this.ExploreHivesListChange = new Event<EventArgs>();
+        this.HiveJoined = new Event<EventArgs>();
         this.PubSubConnectionStateChanged = new Event<PubSubConnectionEventArgs>();
 
         this.dataProvider = DataProvider.GetDataProvider(true);
@@ -298,6 +299,7 @@ public class Controller {
     public ArrayList<Hive> getExploreHives() { return exploreHives; }
 
     public Event<EventArgs> ExploreHivesListChange;
+    public Event<EventArgs> HiveJoined;
 
     /**
      * Establishes the server user.
@@ -330,10 +332,12 @@ public class Controller {
         ArrayList<Format> receivedFormats = eventArgs.getReceivedFormats();
 
         Boolean exploreHivesChanged = false;
+        Boolean hiveJoined = false;
 
         for(Format format : receivedFormats)
             if (format instanceof COMMON) {
                 if (((COMMON) format).STATUS.equalsIgnoreCase("OK")) {
+                    hiveJoined = true;
                     ArrayList<Format> sentFormats = eventArgs.getSentFormats();
                     for (Format sentFormat : sentFormats)
                         if (sentFormat instanceof HIVE_ID)
@@ -346,6 +350,9 @@ public class Controller {
 
         if ((exploreHivesChanged) && (ExploreHivesListChange != null))
             ExploreHivesListChange.fire(exploreHives, EventArgs.Empty());
+
+        if ((hiveJoined) && (HiveJoined != null))
+            HiveJoined.fire(exploreHives,EventArgs.Empty());
     }
 
     public void JoinTMP (String channel) {

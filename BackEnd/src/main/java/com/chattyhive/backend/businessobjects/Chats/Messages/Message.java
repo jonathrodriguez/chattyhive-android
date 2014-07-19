@@ -4,16 +4,19 @@ import com.chattyhive.backend.businessobjects.Chats.Chat;
 import com.chattyhive.backend.businessobjects.Chats.Group;
 import com.chattyhive.backend.businessobjects.Users.User;
 import com.chattyhive.backend.contentprovider.DataProvider;
+import com.chattyhive.backend.contentprovider.formats.CHAT_ID;
 import com.chattyhive.backend.contentprovider.formats.Format;
 import com.chattyhive.backend.contentprovider.formats.MESSAGE;
 import com.chattyhive.backend.contentprovider.formats.MESSAGE_ACK;
 import com.chattyhive.backend.contentprovider.formats.MESSAGE_CONTENT;
+import com.chattyhive.backend.contentprovider.formats.MESSAGE_INTERVAL;
 import com.chattyhive.backend.contentprovider.formats.PROFILE_ID;
 import com.chattyhive.backend.contentprovider.server.ServerCommand;
 import com.chattyhive.backend.util.events.CommandCallbackEventArgs;
 import com.chattyhive.backend.util.events.Event;
 import com.chattyhive.backend.util.events.EventArgs;
 import com.chattyhive.backend.util.events.EventHandler;
+import com.chattyhive.backend.util.events.FormatReceivedEventArgs;
 import com.google.gson.JsonElement;
 
 import java.io.IOException;
@@ -35,6 +38,9 @@ public class Message implements Comparable {
     protected User user;
     protected Boolean confirmed;
 
+    private Boolean isMessageHole;
+    private int holeSize;
+    private Boolean filling;
     /*
      * Events for class message.
      */
@@ -125,6 +131,10 @@ public class Message implements Comparable {
         this.timeStamp = timeStamp;
         this.serverTimeStamp = timeStamp;
         this.id = this.serverTimeStamp.toString().concat("-HOLE_SEPARATOR");
+
+        this.isMessageHole = true;
+        this.filling = false;
+        this.holeSize = holeSize;
     }
 
     /**
@@ -142,7 +152,34 @@ public class Message implements Comparable {
         this.InitializeEvents();
     }
 
+    public void FillMessageHole(String nextMessageId) {
+        if ((!isMessageHole) || (filling)) return;
+        if (DataProvider.isConnectionAvailable()) {
+            DataProvider dataProvider = DataProvider.GetDataProvider();
+            if (dataProvider.isServerConnected()) {
+                CHAT_ID chat_id = new CHAT_ID();
+                chat_id.CHANNEL_UNICODE = this.chat.getParent().getChannelUnicode();
+                MESSAGE_INTERVAL message_interval = new MESSAGE_INTERVAL();
+                message_interval.COUNT = this.holeSize+1;
+                message_interval.LAST_MESSAGE_ID = nextMessageId;
 
+                try {
+                    filling = true;
+                    dataProvider.InvokeServerCommand(ServerCommand.AvailableCommands.GetMessages,new EventHandler<CommandCallbackEventArgs>(this,"onMessageHoleFilledCallback",CommandCallbackEventArgs.class),chat_id,message_interval);
+                } catch (NoSuchMethodException e) {
+                    filling = false;
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public void onMessageHoleFilledCallback (Object sender, CommandCallbackEventArgs eventArgs) {
+        if ((!isMessageHole) || (!filling)) return;
+        filling = false;
+        Chat.onFormatReceived(this,new FormatReceivedEventArgs(eventArgs.getReceivedFormats()));
+        this.chat.removeMessage(this.getId());
+    }
 
     /**
      * Public constructor. This constructor parses the message from a JSONObject.
