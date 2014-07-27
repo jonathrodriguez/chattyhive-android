@@ -66,16 +66,16 @@ public class ServerCommand {
         ServerCommand.CommandDefinitions.put(AvailableCommands.GetMessages,serverCommand);
 
         // LocalProfile
-        serverCommand = new ServerCommand(Method.GET,"android.???", null, null);
+        serverCommand = new ServerCommand(Method.GET,"android.recover_local_user_profile", null, null);
         ServerCommand.CommandDefinitions.put(AvailableCommands.LocalProfile,serverCommand);
 
         // ChatContext
-        inputFormats = new ArrayList<Class<?>>() {{add(CHAT_ID.class);}};
-        serverCommand = new ServerCommand(Method.POST,"android.???", null, inputFormats);
+        paramFormats = new ArrayList<Class<?>>() {{add(CHAT_ID.class);}};
+        serverCommand = new ServerCommand(Method.GET,"android.get_chat_context/[CHAT_ID.CHANNEL_UNICODE]", paramFormats, null);
         ServerCommand.CommandDefinitions.put(AvailableCommands.ChatContext,serverCommand);
 
         // ChatList
-        serverCommand = new ServerCommand(Method.GET,"android.???", null, null);
+        serverCommand = new ServerCommand(Method.GET,"android.get_chat_list", null, null);
         ServerCommand.CommandDefinitions.put(AvailableCommands.ChatList,serverCommand);
 
         // UserProfile
@@ -197,13 +197,17 @@ public class ServerCommand {
             for (Class<?> format : this.paramFormats)
                 requiredFormats.put(format.getName(),false);
 
-        for(Format format : formats)
-            if (requiredFormats.containsKey(format.getClass().getName()))
-               requiredFormats.put(format.getClass().getName(),true);
+        if (formats != null) {
+            for (Format format : formats)
+                if (requiredFormats.containsKey(format.getClass().getName()))
+                    requiredFormats.put(format.getClass().getName(), true);
+        }
 
-        for (Boolean value : requiredFormats.values())
-            if (!value)
-                return false;
+        if (requiredFormats.size() > 0) {
+            for (Boolean value : requiredFormats.values())
+                if (!value)
+                    return false;
+        }
 
         return true;
     }

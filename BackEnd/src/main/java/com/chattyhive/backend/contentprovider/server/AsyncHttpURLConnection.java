@@ -142,7 +142,7 @@ public class AsyncHttpURLConnection extends Thread {
 
             httpURLConnection.disconnect();
 
-            System.out.println(String.format("Code: %d\n%s",responseCode,responseBody));
+            System.out.println(String.format("Request: %s\nCode: %d\n%s",url.toString(), responseCode, responseBody));
 
 
         } catch (MalformedURLException e) {

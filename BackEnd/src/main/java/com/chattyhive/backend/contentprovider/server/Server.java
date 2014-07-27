@@ -88,7 +88,8 @@ public class Server {
     }
 
     public Server(AbstractMap.SimpleEntry<String, String> loginInfo, String appName) {
-        this.serverUser = new ServerUser(loginInfo.getKey(),loginInfo.getValue());
+        if (loginInfo != null)
+            this.serverUser = new ServerUser(loginInfo.getKey(),loginInfo.getValue());
         this.appName = appName;
         this.appProtocol = StaticParameters.DefaultServerAppProtocol;
         this.host = StaticParameters.DefaultServerHost;
@@ -156,7 +157,7 @@ public class Server {
 
                     httpURLConnection.disconnect();
 
-                    System.out.println(String.format("Code: %d\n%s", responseCode, responseBody));
+                    System.out.println(String.format("Request: %s\nCode: %d\n%s",url.toString(), responseCode, responseBody));
 
                 } catch (SocketTimeoutException e) {
                     onNetworkUnavailable();
@@ -187,6 +188,7 @@ public class Server {
             public void run() {
                 try {
                     URL url = new URL(Url);
+                    if (serverUser == null) return;
                     String BodyData = serverUser.toJson().toString();
 
                     HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
@@ -206,11 +208,13 @@ public class Server {
                         CookieStore cookieStore = cookieManager.getCookieStore();
                         List<HttpCookie> cookies = cookieStore.getCookies();
 
-                        for (HttpCookie cookie : cookies)
-                            if (cookie.getName().equalsIgnoreCase("csrftoken")) {
-                                csrfCookie = cookie;
-                                break;
-                            }
+                        if (cookies != null) {
+                            for (HttpCookie cookie : cookies)
+                                if (cookie.getName().equalsIgnoreCase("csrftoken")) {
+                                    csrfCookie = cookie;
+                                    break;
+                                }
+                        }
 
                         if (csrfCookie == null) StartSession();
                     }
@@ -281,7 +285,7 @@ public class Server {
 
                     httpURLConnection.disconnect();
 
-                    System.out.println(String.format("Code: %d\n%s", responseCode, responseBody));
+                    System.out.println(String.format("Request: %s\nCode: %d\n%s",url.toString(), responseCode, responseBody));
 
                 } catch (SocketTimeoutException e) {
                     onNetworkUnavailable();
@@ -358,12 +362,13 @@ public class Server {
                 CookieStore cookieStore = cookieManager.getCookieStore();
                 List<HttpCookie> cookies = cookieStore.getCookies();
 
-                for (HttpCookie cookie : cookies)
-                    if (cookie.getName().equalsIgnoreCase("csrftoken")) {
-                        csrfCookie = cookie;
-                        break;
-                    }
-
+                if (cookies != null) {
+                    for (HttpCookie cookie : cookies)
+                        if (cookie.getName().equalsIgnoreCase("csrftoken")) {
+                            csrfCookie = cookie;
+                            break;
+                        }
+                }
                 if (csrfCookie == null) StartSession();
             }
 
@@ -437,7 +442,7 @@ public class Server {
 
             httpURLConnection.disconnect();
 
-            System.out.println(String.format("Code: %d\n%s", responseCode, responseBody));
+            System.out.println(String.format("Request: %s\nCode: %d\n%s",url.toString(), responseCode, responseBody));
         } catch (SocketTimeoutException e) {
             result = false;
             onNetworkUnavailable();

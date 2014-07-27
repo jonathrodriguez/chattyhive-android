@@ -69,6 +69,8 @@ public class DataProvider {
         DataProviderDisposed = new Event<EventArgs>();
         ConnectionAvailabilityChanged = new Event<EventArgs>();
 
+        connectionAvailable = true;
+
         Initialized = true;
     }
     public static void Initialize(Object... LocalStorage) {
@@ -167,22 +169,39 @@ public class DataProvider {
     //CONSTRUCTORS
 
     public DataProvider () {
-        if (LoginLocalStorage == null) throw new UnsupportedOperationException("DataProvider must be previously initialized with storage objects.");
-
-        AbstractMap.SimpleEntry<String,String> loginInfo = LoginLocalStorage.RecoverLoginPassword();
-
-        this.server = new Server(loginInfo, StaticParameters.DefaultServerAppName);
-
-        this.InitializeEvents();
+        this(StaticParameters.DefaultServerAppName);
     }
 
     public DataProvider(String ServerAppName) {
         if (LoginLocalStorage == null) throw new UnsupportedOperationException("DataProvider must be previously initialized with storage objects.");
 
+        DataProvider.dataProvider = this;
+
+        this.connectionState = false;
+
+        this.InitializeEvents();
+
         AbstractMap.SimpleEntry<String,String> loginInfo = LoginLocalStorage.RecoverLoginPassword();
         this.server = new Server(loginInfo, ServerAppName);
 
-        this.InitializeEvents();
+        this.pubSub = new PubSub();
+
+        this.SubscribeEvents();
+    }
+
+    private void SubscribeEvents() {
+        //Subscribe to events
+        try {
+            this.server.responseEvent.add(new EventHandler<FormatReceivedEventArgs>(this, "onFormatReceived", FormatReceivedEventArgs.class));
+            this.server.onConnected.add(new EventHandler<ConnectionEventArgs>(this, "onServerConnectionStateChanged", ConnectionEventArgs.class));
+
+            this.server.CsrfTokenChanged.add(new EventHandler<EventArgs>(this,"onCsrfTokenChanged",EventArgs.class));
+
+            this.pubSub.SubscribeChannelEventHandler(new EventHandler<PubSubChannelEventArgs>(this,"onChannelEvent",PubSubChannelEventArgs.class));
+            this.pubSub.SubscribeConnectionEventHandler(new EventHandler<PubSubConnectionEventArgs>(this, "onConnectionEvent", PubSubConnectionEventArgs.class));
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
     }
 
     private void InitializeEvents() {
@@ -198,19 +217,6 @@ public class DataProvider {
         this.onHiveProfileReceived = new Event<FormatReceivedEventArgs>();
 
         this.onHiveJoined = new Event<CommandCallbackEventArgs>();
-
-        //Subscribe to events
-        try {
-            this.server.responseEvent.add(new EventHandler<FormatReceivedEventArgs>(this, "onFormatReceived", FormatReceivedEventArgs.class));
-            this.server.onConnected.add(new EventHandler<ConnectionEventArgs>(this, "onServerConnectionStateChanged", ConnectionEventArgs.class));
-
-            this.server.CsrfTokenChanged.add(new EventHandler<EventArgs>(this,"onCsrfTokenChanged",EventArgs.class));
-
-            this.pubSub.SubscribeChannelEventHandler(new EventHandler<PubSubChannelEventArgs>(this,"onChannelEvent",PubSubChannelEventArgs.class));
-            this.pubSub.SubscribeConnectionEventHandler(new EventHandler<PubSubConnectionEventArgs>(this, "onConnectionEvent", PubSubConnectionEventArgs.class));
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
     }
 
     /************************************************************************/
@@ -252,8 +258,7 @@ public class DataProvider {
     }
 
     public void onServerConnectionStateChanged(Object sender, ConnectionEventArgs eventArgs) {
-        //TODO: Recover local user profile.
-        //TODO: Recover local user chat list.
+        this.connectionState = eventArgs.getConnected();
         if (this.ServerConnectionStateChanged != null)
             this.ServerConnectionStateChanged.fire(sender,eventArgs);
     }

@@ -115,11 +115,13 @@ public class PubSub implements ChannelEventListener, ConnectionEventListener, Pr
         CookieStore cookieStore = cookieManager.getCookieStore();
         List<HttpCookie> cookies = cookieStore.getCookies();
 
-        for (HttpCookie cookie : cookies)
-            if (cookie.getName().equalsIgnoreCase("csrftoken")) {
-                csrfCookie = cookie;
-                break;
-            }
+        if (cookies != null) {
+            for (HttpCookie cookie : cookies)
+                if (cookie.getName().equalsIgnoreCase("csrftoken")) {
+                    csrfCookie = cookie;
+                    break;
+                }
+        }
 
         if (csrfCookie != null) {
             HashMap<String,String> headers = new HashMap<String, String>();

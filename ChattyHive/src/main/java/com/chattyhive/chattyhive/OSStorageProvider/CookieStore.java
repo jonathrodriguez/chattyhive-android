@@ -29,12 +29,15 @@ public class CookieStore implements java.net.CookieStore {
         SharedPreferences sharedPreferences = context.getSharedPreferences(STORE,context.MODE_PRIVATE);
         SharedPreferences.Editor sharedPreferencesEditor = sharedPreferences.edit();
 
-        String URIKey = uri.toASCIIString();
+        String URIKey = uri.getHost();
+        if (URIKey == null)
+            URIKey = uri.toASCIIString();
+
         List<HttpCookie> cookies = null;
 
         if (sharedPreferences.contains(URIKey)) {
             String cookieString = sharedPreferences.getString(URIKey,null);
-            if ((cookieString != null) && (cookieString.isEmpty()))
+            if ((cookieString != null) && (!cookieString.isEmpty()))
                 cookies = HTTPCookieFromString(cookieString);
         }
 
@@ -56,14 +59,20 @@ public class CookieStore implements java.net.CookieStore {
         Context context = ApplicationContextProvider.getContext();
         SharedPreferences sharedPreferences = context.getSharedPreferences(STORE,context.MODE_PRIVATE);
 
-        String URIKey = uri.toASCIIString();
+        String URIKey = uri.getHost();
+        if (URIKey == null)
+            URIKey = uri.toASCIIString();
+
         List<HttpCookie> cookies = null;
 
         if (sharedPreferences.contains(URIKey)) {
             String cookieString = sharedPreferences.getString(URIKey,null);
-            if ((cookieString != null) && (cookieString.isEmpty()))
+            if ((cookieString != null) && (!cookieString.isEmpty()))
                 cookies = HTTPCookieFromString(cookieString);
         }
+
+        if (cookies == null)
+            cookies = new ArrayList<HttpCookie>();
 
         return cookies;
     }
@@ -78,13 +87,16 @@ public class CookieStore implements java.net.CookieStore {
         for (String URIKey : sharedPreferences.getAll().keySet()) {
             if (sharedPreferences.contains(URIKey)) {
                 String cookieString = sharedPreferences.getString(URIKey, null);
-                if ((cookieString != null) && (cookieString.isEmpty()))
+                if ((cookieString != null) && (!cookieString.isEmpty()))
                     if (cookies == null)
                         cookies = HTTPCookieFromString(cookieString);
                     else
                         cookies.addAll(HTTPCookieFromString(cookieString));
             }
         }
+
+        if (cookies == null)
+            cookies = new ArrayList<HttpCookie>();
 
         return cookies;
     }
@@ -101,6 +113,9 @@ public class CookieStore implements java.net.CookieStore {
             URIs.add(URI.create(URIKey));
         }
 
+        if (URIs == null)
+            URIs = new ArrayList<URI>();
+
         return URIs;
     }
 
@@ -110,12 +125,15 @@ public class CookieStore implements java.net.CookieStore {
         SharedPreferences sharedPreferences = context.getSharedPreferences(STORE,context.MODE_PRIVATE);
         SharedPreferences.Editor sharedPreferencesEditor = sharedPreferences.edit();
 
-        String URIKey = uri.toASCIIString();
+        String URIKey = uri.getHost();
+        if (URIKey == null)
+            URIKey = uri.toASCIIString();
+
         List<HttpCookie> cookies = null;
 
         if (sharedPreferences.contains(URIKey)) {
             String cookieString = sharedPreferences.getString(URIKey,null);
-            if ((cookieString != null) && (cookieString.isEmpty()))
+            if ((cookieString != null) && (!cookieString.isEmpty()))
                 cookies = HTTPCookieFromString(cookieString);
         }
 
@@ -169,19 +187,34 @@ public class CookieStore implements java.net.CookieStore {
                 result.addAll(HTTPCookieFromJson(cookie));
         } else if (cookies.isJsonObject()) {
             JsonObject cookie = cookies.getAsJsonObject();
-            HttpCookie httpCookie = new HttpCookie(cookie.get("Name").getAsString(),cookie.get("Value").getAsString());
-            httpCookie.setMaxAge(cookie.get("MaxAge").getAsLong());
+            HttpCookie httpCookie;
+            try {
+                httpCookie = new HttpCookie(cookie.get("Name").getAsString(), cookie.get("Value").getAsString());
+            } catch (NullPointerException e) {
+                return result;
+            }
 
-            httpCookie.setComment(cookie.get("Comment").getAsString());
-            httpCookie.setCommentURL(cookie.get("CommentURL").getAsString());
+            if (!cookie.get("MaxAge").isJsonNull())
+                httpCookie.setMaxAge(cookie.get("MaxAge").getAsLong());
 
-            httpCookie.setPath(cookie.get("Path").getAsString());
-            httpCookie.setDomain(cookie.get("Domain").getAsString());
-            httpCookie.setPortlist(cookie.get("PortList").getAsString());
+            if (!cookie.get("Comment").isJsonNull())
+                httpCookie.setComment(cookie.get("Comment").getAsString());
+            if (!cookie.get("CommentURL").isJsonNull())
+                httpCookie.setCommentURL(cookie.get("CommentURL").getAsString());
 
-            httpCookie.setDiscard(cookie.get("Discard").getAsBoolean());
-            httpCookie.setSecure(cookie.get("Secure").getAsBoolean());
-            httpCookie.setVersion(cookie.get("Version").getAsInt());
+            if (!cookie.get("Path").isJsonNull())
+                httpCookie.setPath(cookie.get("Path").getAsString());
+            if (!cookie.get("Domain").isJsonNull())
+                httpCookie.setDomain(cookie.get("Domain").getAsString());
+            if (!cookie.get("PortList").isJsonNull())
+                httpCookie.setPortlist(cookie.get("PortList").getAsString());
+
+            if (!cookie.get("Discard").isJsonNull())
+                httpCookie.setDiscard(cookie.get("Discard").getAsBoolean());
+            if (!cookie.get("Secure").isJsonNull())
+                httpCookie.setSecure(cookie.get("Secure").getAsBoolean());
+            if (!cookie.get("Version").isJsonNull())
+                httpCookie.setVersion(cookie.get("Version").getAsInt());
 
             result.add(httpCookie);
         }

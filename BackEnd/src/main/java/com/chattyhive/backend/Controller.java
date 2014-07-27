@@ -59,6 +59,7 @@ public class Controller {
     private static Boolean PrivateInitialize() {
         if (Initialized) return false;
 
+        AppBindingEvent = new Event<EventArgs>();
         DisposingRunningController = new Event<CancelableEventArgs>();
         RunningControllerDisposed = new Event<EventArgs>();
         ConnectionAvailabilityChanged = new Event<EventArgs>();
@@ -176,7 +177,8 @@ public class Controller {
         if (!dataProvider.isServerConnected())
             dataProvider.Connect();
 
-        dataProvider.InvokeServerCommand(ServerCommand.AvailableCommands.ChatList, null);
+        if (!appBounded)
+            dataProvider.InvokeServerCommand(ServerCommand.AvailableCommands.ChatList, null);
     }
     public static void unbindSvc() {
         if (!svcBounded) return;
@@ -275,7 +277,8 @@ public class Controller {
         return this.dataProvider.isServerConnected();
     }
     public void Connect() {
-        this.dataProvider.Connect();
+        if ((!this.dataProvider.isServerConnected()) || (!this.dataProvider.isPubsubConnected()))
+            this.dataProvider.Connect();
     }
     public void Disconnect() {
         this.dataProvider.Disconnect();

@@ -121,10 +121,29 @@ public class LoginActivity extends Activity {
         } else {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
-            //mLoginStatusMessageView.setText(R.string.login_progress_signing_in);
-            //showProgress(true);
             dataProvider.setUser(new ServerUser(username,password));
             dataProvider.Connect();
+
+            if (StaticParameters.StandAlone) {
+                Thread t = new Thread() {
+                    @Override
+                    public void run(){
+                        try {
+                            sleep(1500);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                };
+                t.start();
+                try {
+                    t.join();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } finally {
+                    this.onServerConnectionStateChanged(this,new ConnectionEventArgs(true));
+                }
+            }
         }
     }
 

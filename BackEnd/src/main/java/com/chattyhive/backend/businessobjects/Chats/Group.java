@@ -55,11 +55,13 @@ public class Group {
 
         //Local recovering of groups.
         String[] groups = groupLocalStorageInterface.RecoverGroups();
-        for(String group : groups) {
-            Format[] formats = Format.getFormat((new JsonParser()).parse(group));
-            for (Format format : formats) {
-                if (format instanceof CHAT) {
-                    Group.Groups.put(((CHAT)format).CHANNEL_UNICODE,new Group((CHAT)format));
+        if (groups != null) {
+            for (String group : groups) {
+                Format[] formats = Format.getFormat((new JsonParser()).parse(group));
+                for (Format format : formats) {
+                    if (format instanceof CHAT) {
+                        Group.Groups.put(((CHAT) format).CHANNEL_UNICODE, new Group((CHAT) format));
+                    }
                 }
             }
         }

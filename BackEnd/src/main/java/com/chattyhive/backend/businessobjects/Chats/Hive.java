@@ -51,15 +51,16 @@ public class Hive {
 
         //Local recovering of hives
         String[] hives = Hive.localStorage.RecoverHives();
-        for(String hive : hives) {
-            Format[] formats = Format.getFormat((new JsonParser()).parse(hive));
-            for (Format format : formats)
-                if (format instanceof HIVE)
-                    Hive.Hives.put(((HIVE)format).NAME_URL,new Hive((HIVE)format));
+        if (hives != null) {
+            for (String hive : hives) {
+                Format[] formats = Format.getFormat((new JsonParser()).parse(hive));
+                for (Format format : formats)
+                    if (format instanceof HIVE)
+                        Hive.Hives.put(((HIVE) format).NAME_URL, new Hive((HIVE) format));
+            }
+            if ((Hives.size() > 0) && (HiveListChanged != null))
+                HiveListChanged.fire(null, EventArgs.Empty());
         }
-        if ((Hives.size() > 0) && (HiveListChanged != null))
-            HiveListChanged.fire(null,EventArgs.Empty());
-
         //Remote recovering of hives.
         /* This will be recovered with local user profile.*/
     }

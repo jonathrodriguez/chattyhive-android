@@ -46,21 +46,25 @@ public class User {
 
         //Load local stored users.
         String[] users = userLocalStorage.RecoverAllCompleteUserProfiles();
-        for(String user : users) {
-            Format[] formats = Format.getFormat((new JsonParser()).parse(user));
-            for (Format format : formats) {
-                User u = new User(format);
+        if (users != null) {
+            for (String user : users) {
+                Format[] formats = Format.getFormat((new JsonParser()).parse(user));
+                for (Format format : formats) {
+                    User u = new User(format);
 
-                u.unloadProfile(); //There is no need to keep in memory complete user profiles.
+                    u.unloadProfile(); //There is no need to keep in memory complete user profiles.
 
-                User.knownUsers.put(u.getUserID(),u);
+                    User.knownUsers.put(u.getUserID(), u);
+                }
             }
         }
 
         String localUser = userLocalStorage.RecoverLocalUserProfile();
-        Format[] formats = Format.getFormat((new JsonParser()).parse(localUser));
-        for (Format format : formats) {
-            me = new User(format);
+        if (localUser != null) {
+            Format[] formats = Format.getFormat((new JsonParser()).parse(localUser));
+            for (Format format : formats) {
+                me = new User(format);
+            }
         }
     }
 
