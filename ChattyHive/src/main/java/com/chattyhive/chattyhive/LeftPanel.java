@@ -162,7 +162,7 @@ public class LeftPanel {
                     }*/
 
                 Hive h = ((Hive)v.getTag(R.id.BO_Hive));
-                chatView = ((Main)context).ShowLayout(R.layout.main_panel_chat_layout);
+                chatView = ((Main)context).ShowLayout(R.layout.main_panel_chat_layout,R.layout.chat_action_bar);
                 ((TextView)chatView.findViewById(R.id.main_panel_chat_name)).setText(h.getName());
                 chatView.findViewById(R.id.main_panel_chat_name).setTag(h.getPublicChat().getChannelUnicode());
 
@@ -174,7 +174,7 @@ public class LeftPanel {
                 chatView.findViewById(R.id.main_panel_chat_send_icon).setOnClickListener(mainChat.send_button_click);
             } else if (leftPanelListAdapter.GetVisibleList() == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Chats)) {
                 Group g = ((Group)v.getTag(R.id.BO_Chat));
-                chatView = ((Main)context).ShowLayout(R.layout.main_panel_chat_layout);
+                chatView = ((Main)context).ShowLayout(R.layout.main_panel_chat_layout,R.layout.chat_action_bar);
                 ((TextView)chatView.findViewById(R.id.main_panel_chat_name)).setText(g.getName());
                 chatView.findViewById(R.id.main_panel_chat_name).setTag(g.getChannelUnicode());
 

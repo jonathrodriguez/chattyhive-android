@@ -1,55 +1,67 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.chattyhive.chattyhive.framework.FloatingPanel xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:id="@+id/FloatingPanel"
+    tools:context=".Main"
+    custom:centerActionBarRightVisibleWidth="48dp"
+    custom:centerMainPanelRightVisibleWidth="48dp">
+
+
 
     <FrameLayout
-        android:layout_width="@dimen/right_menu_width"
-        android:layout_height="match_parent"
-        android:layout_gravity="right"
-        android:id="@+id/right_panel" >
-
-        <include
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            layout="@layout/right_panel_layout" />
-
-    </FrameLayout>
-
-    <LinearLayout
-        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/main_block"
-        android:gravity="left"
-        android:layout_marginLeft="-281dp"
-        android:layout_gravity="left"
-        android:measureAllChildren="true"
-        android:textAlignment="gravity">
-        <FrameLayout
-            android:layout_width="@dimen/chat_list_width"
-            android:layout_height="match_parent"
-            android:id="@+id/left_panel" >
+        android:id="@+id/mainCenter"
+        custom:layout_position="center"
+        custom:layout_type="mainPanel">
+        <include layout="@layout/home"/>
+    </FrameLayout>
 
-            <include
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                layout="@layout/left_panel_layout" />
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/actionCenter"
+        custom:layout_position="center"
+        custom:layout_type="actionBar">
+        <include layout="@layout/action_bar_layout"/>
+    </FrameLayout>
 
-        </FrameLayout>
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/main_panel"
-            android:layout_gravity="right">
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/mainLeft"
+        custom:layout_position="left"
+        custom:layout_type="mainPanel">
+        <include layout="@layout/left_panel_layout"/>
+    </FrameLayout>
 
-            <include
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                layout="@layout/home" />
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/actionLeft"
+        custom:layout_position="left"
+        custom:layout_type="actionBar">
+        <include layout="@layout/left_panel_action_bar"/>
+    </FrameLayout>
 
-        </FrameLayout>
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/mainRight"
+        custom:layout_position="right"
+        custom:layout_type="mainPanel">
+        <include layout="@layout/right_panel_layout"/>
+    </FrameLayout>
 
-    </LinearLayout>
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/actionRight"
+        custom:layout_position="right"
+        custom:layout_type="actionBar">
+        <include layout="@layout/right_panel_action_bar"/>
+    </FrameLayout>
 
-</FrameLayout>
+</com.chattyhive.chattyhive.framework.FloatingPanel>

@@ -31,33 +31,37 @@ public class Profile {
             }*/
 
             User me = User.getMe();
-            View profileView = ((Main)context).ShowLayout(R.layout.main_panel_profile_layout);
-            ((TextView)profileView.findViewById(R.id.profile_first_name)).setText(me.getUserPrivateProfile().getFirstName());
-            ((TextView)profileView.findViewById(R.id.profile_last_name)).setText(me.getUserPrivateProfile().getLastName());
 
-            ((TextView)profileView.findViewById(R.id.profile_public_name)).setText(me.getUserPublicProfile().getPublicName());
-            ((TextView)profileView.findViewById(R.id.profile_public_name)).setTextColor(Color.parseColor(me.getColor()));
+            View profileView = ((Main)context).ShowLayout(R.layout.main_panel_profile_layout,R.layout.profile_action_bar);
 
-            ((TextView)profileView.findViewById(R.id.profile_sex)).setText(me.getUserPrivateProfile().getSex());
-            ((TextView)profileView.findViewById(R.id.profile_email)).setText(me.getEmail());
+            if (me != null) {
+                ((TextView) profileView.findViewById(R.id.profile_first_name)).setText(me.getUserPrivateProfile().getFirstName());
+                ((TextView) profileView.findViewById(R.id.profile_last_name)).setText(me.getUserPrivateProfile().getLastName());
 
-            ((TextView)profileView.findViewById(R.id.profile_location)).setText(me.getUserPrivateProfile().getLocation());
-            String Language = "";
-            ArrayList<String> Languages = me.getUserPrivateProfile().getLanguages();
-            Iterator<String> iterator = Languages.iterator();
-            if (iterator.hasNext())
-                Language = iterator.next();
-            while(iterator.hasNext())
-                Language = Language.concat("; ").concat(iterator.next());
-            ((TextView) profileView.findViewById(R.id.profile_language)).setText(Language);
+                ((TextView) profileView.findViewById(R.id.profile_public_name)).setText(me.getUserPublicProfile().getPublicName());
+                ((TextView) profileView.findViewById(R.id.profile_public_name)).setTextColor(Color.parseColor(me.getColor()));
 
-            ((CheckBox)profileView.findViewById(R.id.profile_private_show_age)).setChecked(me.getUserPrivateProfile().getShowAge());
-            ((CheckBox)profileView.findViewById(R.id.profile_public_show_age)).setChecked(me.getUserPublicProfile().getShowAge());
-            ((CheckBox)profileView.findViewById(R.id.profile_show_location)).setChecked(me.getUserPublicProfile().getShowLocation());
+                ((TextView) profileView.findViewById(R.id.profile_sex)).setText(me.getUserPrivateProfile().getSex());
+                ((TextView) profileView.findViewById(R.id.profile_email)).setText(me.getEmail());
 
-            profileView.findViewById(R.id.profile_action_bar_menu_icon).setOnClickListener(((Main)context).menuIcon_ClickListener);
-            profileView.findViewById(R.id.profile_action_bar_myPhoto_button).setOnClickListener(((Main)context).appIcon_ClickListener);
-            ((Main)context).menuIcon_ClickListener.onClick(profileView.findViewById(R.id.profile_action_bar_menu_icon));
+                ((TextView) profileView.findViewById(R.id.profile_location)).setText(me.getUserPrivateProfile().getLocation());
+                String Language = "";
+                ArrayList<String> Languages = me.getUserPrivateProfile().getLanguages();
+                Iterator<String> iterator = Languages.iterator();
+                if (iterator.hasNext())
+                    Language = iterator.next();
+                while (iterator.hasNext())
+                    Language = Language.concat("; ").concat(iterator.next());
+                ((TextView) profileView.findViewById(R.id.profile_language)).setText(Language);
+
+                ((CheckBox) profileView.findViewById(R.id.profile_private_show_age)).setChecked(me.getUserPrivateProfile().getShowAge());
+                ((CheckBox) profileView.findViewById(R.id.profile_public_show_age)).setChecked(me.getUserPublicProfile().getShowAge());
+                ((CheckBox) profileView.findViewById(R.id.profile_show_location)).setChecked(me.getUserPublicProfile().getShowLocation());
+            }
+
+            ((Main) context).findViewById(R.id.profile_action_bar_menu_icon).setOnClickListener(((Main)context).menuIcon_ClickListener);
+            ((Main) context).findViewById(R.id.profile_action_bar_myPhoto_button).setOnClickListener(((Main)context).appIcon_ClickListener);
+            ((Main)context).menuIcon_ClickListener.onClick(((Main) context).findViewById(R.id.profile_action_bar_menu_icon));
         }
     };
 }
