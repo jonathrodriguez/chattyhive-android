@@ -50,7 +50,7 @@
             android:layout_width="wrap_content"
             android:layout_height="48dp"
             android:background="#111111"
-            android:src="@drawable/chats_opciones_chat"
+            android:src="@drawable/home_menu"
             android:scaleType="centerInside"
             android:id="@+id/main_panel_chat_menu_icon"
             android:padding="5dp" />
