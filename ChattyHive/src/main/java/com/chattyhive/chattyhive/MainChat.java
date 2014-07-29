@@ -6,10 +6,16 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.chattyhive.backend.businessobjects.Message;
-import com.chattyhive.backend.businessobjects.MessageContent;
+import com.chattyhive.backend.businessobjects.Chats.Chat;
+import com.chattyhive.backend.businessobjects.Chats.Group;
+import com.chattyhive.backend.businessobjects.Chats.Messages.Message;
+import com.chattyhive.backend.businessobjects.Chats.Messages.MessageContent;
+import com.chattyhive.backend.businessobjects.Users.User;
 import com.chattyhive.backend.util.events.ChannelEventArgs;
+import com.chattyhive.backend.util.events.EventArgs;
+import com.chattyhive.backend.util.events.EventHandler;
 
+import java.io.IOException;
 import java.util.Date;
 
 /**
@@ -17,24 +23,54 @@ import java.util.Date;
  */
 public class MainChat {
     Context context;
+    TextView textInput;
+    Group channelGroup;
+    Chat channelChat;
 
-   public MainChat (Context context) {
-       this.context = context;
-   }
+    ChatListAdapter chatListAdapter;
+
+    public MainChat (Context context, String channelUnicode) {
+        this.context = context;
+        this.channelGroup = Group.getGroup(channelUnicode);
+        this.channelChat = this.channelGroup.getChat();
+        this.textInput = ((TextView)((Activity)context).findViewById(R.id.main_panel_chat_textBox));
+
+        this.channelChat.setChatWindowActive(true);
+
+        this.chatListAdapter = new ChatListAdapter(context,this.channelChat);
+        ((ListView)((Activity)context).findViewById(R.id.main_panel_chat_message_list)).setAdapter(chatListAdapter);
+
+        try {
+            this.channelChat.MessageListModifiedEvent.add(new EventHandler<EventArgs>(this.chatListAdapter,"OnAddItem",EventArgs.class));
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+    }
 
 
     protected View.OnClickListener send_button_click = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            String pusher_channel = ((String)((Activity)context).findViewById(R.id.main_panel_chat_name).getTag());
-            String text_to_send = ((TextView)((Activity)context).findViewById(R.id.main_panel_chat_textBox)).getText().toString();
+            String text_to_send = textInput.getText().toString();
 
-            Message message = new Message(new MessageContent(text_to_send),new Date());
-
-            if (((Main)context)._controller.sendMessage(message,pusher_channel)) {
-                ((TextView) ((Activity) context).findViewById(R.id.main_panel_chat_textBox)).setText("");
-                ((ChatListAdapter)((ListView)((Activity)context).findViewById(R.id.main_panel_chat_message_list)).getAdapter()).OnAddItem(this, new ChannelEventArgs());
+            try {
+                new Message(User.getMe(),channelChat,new MessageContent("TEXT",text_to_send),new Date()).SendMessage();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                textInput.setText("");
             }
         }
     };
+
+    @Override
+    public void finalize() throws Throwable {
+        super.finalize();
+        this.context = null;
+        this.channelChat.setChatWindowActive(false);
+        this.channelChat = null;
+        this.channelGroup = null;
+        this.textInput = null;
+        this.chatListAdapter = null;
+    }
 }

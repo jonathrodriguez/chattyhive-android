@@ -1,6 +1,6 @@
 package com.chattyhive.backend.util.events;
 
-import com.chattyhive.backend.businessobjects.Message;
+import com.chattyhive.backend.businessobjects.Chats.Messages.Message;
 
 /**
  * Created by Jonathan on 30/12/13.

@@ -6,6 +6,9 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.CookieHandler;
+import java.net.CookieManager;
+import java.net.CookieStore;
 import java.net.HttpCookie;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -77,31 +80,56 @@ public class AsyncHttpURLConnection extends Thread {
                 httpURLConnection.addRequestProperty("Content-Type","application/json");
             //httpURLConnection.addRequestProperty("Content-Type","application/x-www-form-urlencoded");
 
-            String Cookies = this._user.getCookies();
-            httpURLConnection.setRequestProperty("Cookie",Cookies);
+           /* String Cookies = this._user.getCookies();
+            httpURLConnection.setRequestProperty("Cookie",Cookies);*/
 
-            HttpCookie csrfCookie = this._user.getCookie("csrftoken");
+            CookieManager cookieManager = (CookieManager) CookieHandler.getDefault();
+            CookieStore cookieStore = cookieManager.getCookieStore();
+            List<HttpCookie> cookies = cookieStore.getCookies();
+            HttpCookie csrfCookie = null;
+            for (HttpCookie cookie : cookies)
+                if (cookie.getName().equalsIgnoreCase("csrftoken")) {
+                    csrfCookie = cookie;
+                    break;
+                }
+
             if (csrfCookie != null) {
-                httpURLConnection.setRequestProperty("X-CSRFToken",csrfCookie.getValue());
+                httpURLConnection.setRequestProperty("X-CSRFToken", csrfCookie.getValue());
             }
 
             if ((this._method.equalsIgnoreCase("POST")) && (this._bodyData != null) && (!this._bodyData.isEmpty())) {
                 httpURLConnection.setDoOutput(true);
                 DataOutputStream wr = new DataOutputStream(httpURLConnection.getOutputStream());
-                wr.writeBytes(this._bodyData);
+                wr.writeUTF(this._bodyData);
                 wr.flush();
                 wr.close();
             }
 
             responseCode = httpURLConnection.getResponseCode();
+            System.out.println(String.format("Code: %d",responseCode));
+
+            BufferedReader inputReader;
+
+            if (responseCode == 200)
+                inputReader = new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream()));
+            else
+                inputReader = new BufferedReader(new InputStreamReader(httpURLConnection.getErrorStream()));
+
+            String inputLine;
+            StringBuffer response = new StringBuffer();
+
+            while ((inputLine = inputReader.readLine()) != null) {
+                response.append(inputLine);
+            }
+            inputReader.close();
+
+            responseBody = response.toString();
+
+
 
             if (responseCode == 200) {
 
-                BufferedReader inputReader = new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream()));
-                String inputLine;
-                StringBuffer response = new StringBuffer();
-
-                List<String> setCookies = httpURLConnection.getHeaderFields().get("Set-Cookie");
+                /*List<String> setCookies = httpURLConnection.getHeaderFields().get("Set-Cookie");
                 if (setCookies != null) {
                     for (String setCookie : setCookies) {
                         List<HttpCookie> cookies = HttpCookie.parse(setCookie);
@@ -109,22 +137,22 @@ public class AsyncHttpURLConnection extends Thread {
                             this._user.setCookie(cookie);
                         }
                     }
-                }
-
-
-                while ((inputLine = inputReader.readLine()) != null) {
-                    response.append(inputLine);
-                }
-                inputReader.close();
-
-                responseBody = response.toString();
+                }*/
             }
 
+            httpURLConnection.disconnect();
+
+            System.out.println(String.format("Request: %s\nCode: %d\n%s",url.toString(), responseCode, responseBody));
+
+
         } catch (MalformedURLException e) {
+            e.printStackTrace();
             responseCode = 0;
         } catch (ProtocolException e) {
+            e.printStackTrace();
             responseCode = 10;
         } catch (IOException e) {
+            e.printStackTrace();
             responseCode = 20;
         }
 

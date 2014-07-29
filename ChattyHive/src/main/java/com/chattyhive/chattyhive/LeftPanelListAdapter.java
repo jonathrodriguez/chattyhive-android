@@ -2,7 +2,6 @@ package com.chattyhive.chattyhive;
 
 import android.app.Activity;
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,11 +11,12 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.chattyhive.backend.businessobjects.Hive;
-import com.chattyhive.backend.businessobjects.Mate;
+import com.chattyhive.backend.businessobjects.Chats.Group;
+import com.chattyhive.backend.businessobjects.Chats.GroupKind;
+import com.chattyhive.backend.businessobjects.Chats.Hive;
+import com.chattyhive.backend.businessobjects.Users.User;
 import com.chattyhive.backend.util.events.EventArgs;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 /**
@@ -27,9 +27,6 @@ public class LeftPanelListAdapter extends BaseAdapter {
     private Context context;
     private ListView listView;
     private LayoutInflater inflater;
-    private ArrayList<Hive> hives_list_data;
-    private ArrayList chats_list_data;
-    private ArrayList<Mate> mates_list_data;
     private int visibleList;
 
     private View.OnClickListener clickListener;
@@ -47,14 +44,9 @@ public class LeftPanelListAdapter extends BaseAdapter {
         });
     }
 
-    public LeftPanelListAdapter (Context activityContext,ArrayList<Hive> hivesList, ArrayList chatsList, ArrayList<Mate> matesList) {
-        this.hives_list_data = hivesList;
-        this.chats_list_data = chatsList;
-        this.mates_list_data = matesList;
-
+    public LeftPanelListAdapter (Context activityContext) {
         this.context = activityContext;
         this.inflater = ((Activity)this.context).getLayoutInflater();
-
         this.listView = ((ListView)((Activity)this.context).findViewById(R.id.left_panel_element_list));
     }
 
@@ -70,30 +62,29 @@ public class LeftPanelListAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        switch (this.visibleList) {
-            case R.id.LeftPanel_ListKind_Hives:
-                //Log.w("LefPanelListAdapter","getCount()[Hives]: ".concat(String.valueOf(this.hives_list_data.size())));
-                return this.hives_list_data.size();
-            case R.id.LeftPanel_ListKind_Chats:
-                //Log.w("LefPanelListAdapter","getCount()[Chats]: ".concat(String.valueOf(this.chats_list_data.size())));
-                return this.chats_list_data.size();
-            case R.id.LeftPanel_ListKind_Mates:
-                //Log.w("LefPanelListAdapter","getCount()[Mates]: ".concat(String.valueOf(this.mates_list_data.size())));
-                return this.mates_list_data.size();
+
+        if (this.visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Hives)) {
+            return Hive.getHiveCount();
+        } else if (this.visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Chats)) {
+            return Group.getGroupCount();
+        } else if (this.visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Mates)) {
+            return 0;
         }
+
         return 0;
     }
 
     @Override
     public Object getItem(int position){
-        switch (this.visibleList) {
-            case R.id.LeftPanel_ListKind_Hives:
-                return this.hives_list_data.get(position);
-            case R.id.LeftPanel_ListKind_Chats:
-                return this.chats_list_data.get(position);
-            case R.id.LeftPanel_ListKind_Mates:
-                return this.mates_list_data.get(position);
+
+        if (this.visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Hives)) {
+            return Hive.getHiveByIndex(position);
+        } else if (this.visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Chats)) {
+            return Group.getGroupByIndex(position);
+        } else if (this.visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Mates)) {
+            return null;
         }
+
         return null;
     }
 
@@ -106,26 +97,29 @@ public class LeftPanelListAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder = null;
         int type = visibleList;
-        if (type == R.id.LeftPanel_ListKind_None) { return null; }
+        if (type == context.getResources().getInteger(R.integer.LeftPanel_ListKind_None)) { return null; }
         if (convertView==null) {
-            switch (type) {
-                case R.id.LeftPanel_ListKind_Hives:
-                    holder = new HiveViewHolder();
-                    convertView = this.inflater.inflate(R.layout.left_panel_hives_list_item,parent,false);
-                    ((HiveViewHolder)holder).hiveItem = (LinearLayout)convertView.findViewById((R.id.left_panel_hives_list_item_top_view));
-                    ((HiveViewHolder)holder).hiveName = (TextView)convertView.findViewById(R.id.left_panel_hives_list_item_hive_name);
-                    ((HiveViewHolder)holder).hiveImage = (ImageView)convertView.findViewById(R.id.left_panel_hives_list_item_img);
-                    ((HiveViewHolder)holder).hiveItem.setOnClickListener(clickListener);
-                    break;
-                case R.id.LeftPanel_ListKind_Chats:
-                    //convertView = this.inflater.inflate(R.layout.main_panel_chat_hive_message_me,parent,false);
-                    holder = new ChatViewHolder();
-                    break;
-                case R.id.LeftPanel_ListKind_Mates:
-                    //convertView = this.inflater.inflate(R.layout.main_panel_chat_hive_message_me,parent,false);
-                    holder = new MateViewHolder();
-                    break;
+            if (type == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Hives)) {
+                holder = new HiveViewHolder();
+                convertView = this.inflater.inflate(R.layout.left_panel_hives_list_item,parent,false);
+                ((HiveViewHolder)holder).hiveItem = (LinearLayout)convertView.findViewById((R.id.left_panel_hives_list_item_top_view));
+                ((HiveViewHolder)holder).hiveName = (TextView)convertView.findViewById(R.id.left_panel_hives_list_item_hive_name);
+                ((HiveViewHolder)holder).hiveImage = (ImageView)convertView.findViewById(R.id.left_panel_hives_list_item_img);
+                ((HiveViewHolder)holder).hiveItem.setOnClickListener(clickListener);
+            } else if (type == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Chats)) {
+                holder = new ChatViewHolder();
+                convertView = this.inflater.inflate(R.layout.left_panel_chat_list_hive_item,parent,false);
+
+                ((ChatViewHolder)holder).chatItem = (LinearLayout)convertView.findViewById((R.id.left_panel_chat_list_hive_item_top_view));
+                ((ChatViewHolder)holder).chatName = (TextView)convertView.findViewById(R.id.left_panel_chat_list_hive_item_hive_name);
+                ((ChatViewHolder)holder).chatLastMessage = (TextView)convertView.findViewById(R.id.left_panel_chat_list_hive_item_last_message);
+                ((ChatViewHolder)holder).chatImage = (ImageView)convertView.findViewById(R.id.left_panel_chat_list_hive_item_img);
+                ((ChatViewHolder)holder).chatItem.setOnClickListener(clickListener);
+            } else if (type == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Mates)) {
+                //convertView = this.inflater.inflate(R.layout.main_panel_chat_hive_message_me,parent,false);
+                holder = new MateViewHolder();
             }
+
             if (convertView != null)
                 convertView.setTag(R.id.LeftPanel_ListViewHolder,holder);
         } else {
@@ -134,17 +128,25 @@ public class LeftPanelListAdapter extends BaseAdapter {
 
         Object item = this.getItem(position);
 
-        switch (type) {
-            case R.id.LeftPanel_ListKind_Hives:
-                ((HiveViewHolder)holder).hiveName.setText(((Hive)item).getName());
-                ((HiveViewHolder)holder).hiveItem.setTag(R.id.BO_Hive,item);
-                //((HiveViewHolder)holder).hiveImage = (ImageView)convertView.findViewById(R.id.left_panel_hives_list_item_img);
-                break;
-            case R.id.LeftPanel_ListKind_Chats:
-                break;
-            case R.id.LeftPanel_ListKind_Mates:
-                break;
-        }
+        if (type == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Hives)) {
+            ((HiveViewHolder)holder).hiveName.setText(((Hive)item).getName());
+            ((HiveViewHolder)holder).hiveItem.setTag(R.id.BO_Hive,item);
+        } else if (type == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Chats)) {
+            String GroupName = "";
+            if ((((Group)item).getGroupKind() == GroupKind.PRIVATE_SINGLE) || (((Group)item).getGroupKind() == GroupKind.PUBLIC_SINGLE)) {
+                for (User user : ((Group) item).getMembers())
+                    if (!user.isMe()) GroupName = user.getShowingName();
+            } else if (((Group)item).getGroupKind() == GroupKind.HIVE) {
+                GroupName = ((Group)item).getParentHive().getName();
+            } else {
+                GroupName = ((Group)item).getName();
+            }
+            ((ChatViewHolder)holder).chatName.setText(GroupName);
+            ((ChatViewHolder)holder).chatLastMessage.setText(((Group)item).getChat().getLastMessage().getMessageContent().getContent());
+            ((ChatViewHolder)holder).chatItem.setTag(R.id.BO_Chat,item);
+        } /*else if (type == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Mates)) {
+
+        }*/
 
         return convertView;
     }
@@ -158,7 +160,10 @@ public class LeftPanelListAdapter extends BaseAdapter {
     }
 
     private class ChatViewHolder extends ViewHolder {
-
+        public LinearLayout chatItem;
+        public TextView chatName;
+        public TextView chatLastMessage;
+        public ImageView chatImage;
     }
 
     private class MateViewHolder extends ViewHolder {

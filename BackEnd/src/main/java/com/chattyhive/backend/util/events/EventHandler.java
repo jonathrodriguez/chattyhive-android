@@ -13,6 +13,10 @@ public class EventHandler<T extends EventArgs> {
     private Method method;
     private Object subscriber;
 
+
+    //TODO: Find a better way to get the class of the Type Parameter T.
+    //TODO: Find a way to get compile time errors if method does not exist. Maybe with Annotations or LINT.
+
     /**
      * Public constructor.
      * @param Subscriber The object on which the method is to be invoked.
@@ -20,11 +24,21 @@ public class EventHandler<T extends EventArgs> {
      * @param eventArgsClass The class of the event arguments.
      * @throws NoSuchMethodException If the method is not found in the subscriber.
      */
-    //TODO: Find a better way to get the class of the Type Parameter T.
-    //TODO: Find a way to get compile time errors if method does not exist. Maybe with Annotations.
     public EventHandler (Object Subscriber,String methodName, Class<T> eventArgsClass) throws NoSuchMethodException {
             this.subscriber = Subscriber;
             this.method = Subscriber.getClass().getMethod(methodName,Object.class,eventArgsClass);
+    }
+
+    /**
+     * Public constructor.
+     * @param SubscriberClass The class which defines the static method to be invoked.
+     * @param methodName The name of the method to invoke. It HAS TO have the correct parameters and be public.
+     * @param eventArgsClass The class of the event arguments.
+     * @throws NoSuchMethodException If the method is not found in the subscriber.
+     */
+    public EventHandler (Class<?> SubscriberClass,String methodName, Class<T> eventArgsClass) throws NoSuchMethodException {
+        this.subscriber = null;
+        this.method = SubscriberClass.getMethod(methodName,Object.class,eventArgsClass);
     }
 
     /**

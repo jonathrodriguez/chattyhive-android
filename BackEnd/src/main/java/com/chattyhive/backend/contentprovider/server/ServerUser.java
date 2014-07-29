@@ -1,13 +1,10 @@
 package com.chattyhive.backend.contentprovider.server;
 
 import com.chattyhive.backend.contentprovider.OSStorageProvider.LoginLocalStorageInterface;
+import com.chattyhive.backend.contentprovider.formats.LOGIN;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 
-import java.net.HttpCookie;
 import java.util.AbstractMap;
-import java.util.HashMap;
-import java.util.Iterator;
 
 /**
  * Created by Jonathan on 11/12/13.
@@ -19,7 +16,7 @@ public class ServerUser {
     private String _login;
     private String _password;
 
-    private HashMap<String, HttpCookie> _cookies;
+//    private HashMap<String, HttpCookie> _cookies;
     private ServerStatus _status;
 
     public ServerUser(LoginLocalStorageInterface loginLocalStorage) {
@@ -27,7 +24,7 @@ public class ServerUser {
 
         this._login = userData.getKey();
         this._password = userData.getValue();
-        this._cookies = new HashMap<String, HttpCookie>();
+//        this._cookies = new HashMap<String, HttpCookie>();
     }
 
     /**
@@ -38,7 +35,8 @@ public class ServerUser {
     public ServerUser(String login, String password) {
         this._login = (login != null)?login:"";
         this._password = (password != null)?password:"";
-        this._cookies = new HashMap<String, HttpCookie>();
+//        this._cookies = new HashMap<String, HttpCookie>();
+        this._status = ServerStatus.DISCONNECTED;
     }
 
     /**
@@ -61,15 +59,15 @@ public class ServerUser {
      * Associates a cookie with this user.
      * @param cookie the HttpCookie to be associated.
      */
-    public void setCookie (HttpCookie cookie) {
+/*    public void setCookie (HttpCookie cookie) {
         this._cookies.put(cookie.getName(),cookie);
-    }
+    }*/
 
     /**
      * Returns a cookies string with all cookies as it will be sent in a cookies http header.
      * @return a string representation of the cookies.
      */
-    public String getCookies() {
+/*    public String getCookies() {
         String cookies = "";
 
         Iterator<HttpCookie> it = this._cookies.values().iterator();
@@ -81,21 +79,21 @@ public class ServerUser {
         }
 
         return cookies;
-    }
+    }*/
 
     /**
      * Returns a cookie from the cookies list of this user, selecting it by name.
      * @param name the name of the cookie to retrieve.
      * @return the cookie retrieved.
      */
-    public HttpCookie getCookie(String name) {
+/*    public HttpCookie getCookie(String name) {
         HttpCookie cookie = null;
 
         if (this._cookies.containsKey(name))
             cookie = this._cookies.get(name);
 
         return cookie;
-    }
+    }*/
 
     /**
      * Returns the server status of this user.
@@ -120,9 +118,9 @@ public class ServerUser {
      * @return
      */
     public JsonElement toJson() {
-        JsonObject jsonMessage = new JsonObject();
-        jsonMessage.addProperty("user",this._login);
-        jsonMessage.addProperty("pass",this._password);
-        return jsonMessage;
+        LOGIN loginFormat = new LOGIN();
+        loginFormat.USER = this._login;
+        loginFormat.PASS = this._password;
+        return loginFormat.toJSON();
     }
 }

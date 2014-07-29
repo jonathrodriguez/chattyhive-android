@@ -7,11 +7,13 @@ import android.util.Log;
 import com.chattyhive.backend.contentprovider.OSStorageProvider.MessageLocalStorageInterface;
 import com.chattyhive.chattyhive.Util.ApplicationContextProvider;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 /**
  * Created by Jonathan on 26/05/2014.
  */
 public class MessageLocalStorage implements MessageLocalStorageInterface {
-
     private MessageLocalStorage() {}
     static MessageLocalStorage instance = null;
 
@@ -21,46 +23,88 @@ public class MessageLocalStorage implements MessageLocalStorageInterface {
     }
 
     @Override
-    public void StoreMessage(String channel, String jsonMessage) {
+    public void StoreMessage(String PusherChannel,String messageId, String jsonMessage) {
         Context context = ApplicationContextProvider.getContext();
-        SharedPreferences sharedPreferences = context.getSharedPreferences(channel,context.MODE_PRIVATE);
-        int count = sharedPreferences.getAll().size();
+        SharedPreferences sharedPreferences = context.getSharedPreferences(PusherChannel,context.MODE_PRIVATE);
         SharedPreferences.Editor sharedPreferencesEditor = sharedPreferences.edit();
-        String key = "message".concat(String.valueOf(count));
-        while (sharedPreferences.contains(key)) {
-            count++;
-            key = "message".concat(String.valueOf(count));
-        }
-        sharedPreferencesEditor.putString(key,jsonMessage);
+        if (sharedPreferences.contains(messageId))
+            sharedPreferencesEditor.remove(messageId);
+        sharedPreferencesEditor.putString(messageId,jsonMessage);
         sharedPreferencesEditor.apply();
-
-        sharedPreferencesEditor = null;
-        sharedPreferences = null;
-        context = null;
     }
 
     @Override
-    public String[] RecoverMessage(String channel) {
+    public String RecoverMessage(String PusherChannel, String messageId) {
+        String message = null;
+
+        Context context = ApplicationContextProvider.getContext();
+        SharedPreferences sharedPreferences = context.getSharedPreferences(PusherChannel,context.MODE_PRIVATE);
+
+        if (sharedPreferences.contains(messageId))
+            message = sharedPreferences.getString(messageId,null);
+
+        return message;
+    }
+
+    @Override
+    public String[] RecoverMessages(String PusherChannel) {
         String[] messages = null;
 
         Context context = ApplicationContextProvider.getContext();
-        SharedPreferences sharedPreferences = context.getSharedPreferences(channel,context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = context.getSharedPreferences(PusherChannel,context.MODE_PRIVATE);
 
         if (sharedPreferences.getAll().size() > 0)
             messages = sharedPreferences.getAll().values().toArray(new String[0]);
-
-        sharedPreferences = null;
-        context = null;
 
         return messages;
     }
 
     @Override
-    public void ClearMessages(String channel) {
+    public void ClearMessages(String PusherChannel) {
         Context context = ApplicationContextProvider.getContext();
-        SharedPreferences sharedPreferences = context.getSharedPreferences(channel,context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = context.getSharedPreferences(PusherChannel,context.MODE_PRIVATE);
         sharedPreferences.edit().clear().apply();
-        sharedPreferences = null;
-        context = null;
+    }
+
+    @Override
+    public void RemoveMessage(String PusherChannel, String messageId) {
+        Context context = ApplicationContextProvider.getContext();
+        SharedPreferences sharedPreferences = context.getSharedPreferences(PusherChannel,context.MODE_PRIVATE);
+
+        if (sharedPreferences.getAll().size() > 0) {
+            ArrayList<String> messagesList = new ArrayList<String>((Collection<String>)sharedPreferences.getAll().values());
+
+            if (messagesList.contains(messageId)) {
+                SharedPreferences.Editor sharedPreferencesEditor = sharedPreferences.edit();
+                sharedPreferencesEditor.clear();
+                int i = 0;
+                for (String message : messagesList) {
+                    if (!message.equalsIgnoreCase(messageId)) {
+                        sharedPreferencesEditor.putString(String.format("message%d",i),message);
+                        i++;
+                    }
+                }
+                sharedPreferencesEditor.apply();
+            }
+        }
+    }
+
+    @Override
+    public void TrimStoredMessages(String PusherChannel,int numberOfMessages) {
+        Context context = ApplicationContextProvider.getContext();
+        SharedPreferences sharedPreferences = context.getSharedPreferences(PusherChannel,context.MODE_PRIVATE);
+
+        if (sharedPreferences.getAll().size() > numberOfMessages) {
+            ArrayList<String> messagesList = new ArrayList<String>((Collection<String>)sharedPreferences.getAll().values());
+
+            SharedPreferences.Editor sharedPreferencesEditor = sharedPreferences.edit();
+            sharedPreferencesEditor.clear();
+
+            for (int i = messagesList.size()-numberOfMessages, c = 0;i<messagesList.size();i++,c++) {
+                sharedPreferencesEditor.putString(String.format("message%d",c),messagesList.get(i));
+            }
+
+            sharedPreferencesEditor.apply();
+        }
     }
 }

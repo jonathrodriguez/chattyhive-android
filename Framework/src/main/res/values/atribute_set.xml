@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="floatingPanelStyle" format="reference" />
+
+    <declare-styleable name="FloatingPanel_Child">
+        <attr name="layout_position" format="enum">
+            <enum name="center" value="0" />
+            <enum name="left" value="1" />
+            <enum name="right" value="2" />
+        </attr>
+        <attr name="layout_type" format="enum">
+            <enum name="actionBar" value="0" />
+            <enum name="mainPanel" value="1" />
+        </attr>
+    </declare-styleable>
+
+    <declare-styleable name="FloatingPanel">
+        <attr name="centerMainPanelLeftVisibleWidth" format="dimension" />
+        <attr name="centerActionBarLeftVisibleWidth" format="dimension" />
+
+        <attr name="centerMainPanelRightVisibleWidth" format="dimension" />
+        <attr name="centerActionBarRightVisibleWidth" format="dimension" />
+
+        <attr name="maxAnimationDuration" format="integer" />
+        <attr name="buttonPressedAnimationDuration" format="integer" />
+
+        <attr name="touchActionMoveDistanceThreshold" format="dimension"/>
+
+        <attr name="flingSpeedThreshold" format="integer" />
+
+    </declare-styleable>
+</resources>

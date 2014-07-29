@@ -1,20 +1,55 @@
 package com.chattyhive.backend.contentprovider;
 
-import com.chattyhive.backend.businessobjects.Message;
+import com.chattyhive.backend.StaticParameters;
+import com.chattyhive.backend.businessobjects.Chats.Group;
+import com.chattyhive.backend.businessobjects.Chats.Hive;
+import com.chattyhive.backend.businessobjects.Chats.Messages.Message;
+import com.chattyhive.backend.contentprovider.OSStorageProvider.GroupLocalStorageInterface;
+import com.chattyhive.backend.contentprovider.OSStorageProvider.HiveLocalStorageInterface;
+import com.chattyhive.backend.contentprovider.OSStorageProvider.LoginLocalStorageInterface;
+import com.chattyhive.backend.contentprovider.OSStorageProvider.MessageLocalStorageInterface;
+import com.chattyhive.backend.contentprovider.OSStorageProvider.UserLocalStorageInterface;
+import com.chattyhive.backend.contentprovider.formats.CHAT;
+import com.chattyhive.backend.contentprovider.formats.CHAT_ID;
+import com.chattyhive.backend.contentprovider.formats.CHAT_SYNC;
+import com.chattyhive.backend.contentprovider.formats.COMMON;
+import com.chattyhive.backend.contentprovider.formats.Format;
+import com.chattyhive.backend.contentprovider.formats.HIVE;
+import com.chattyhive.backend.contentprovider.formats.HIVE_ID;
+import com.chattyhive.backend.contentprovider.formats.LOCAL_USER_PROFILE;
+import com.chattyhive.backend.contentprovider.formats.MESSAGE;
+import com.chattyhive.backend.contentprovider.formats.MESSAGE_ACK;
+import com.chattyhive.backend.contentprovider.formats.MESSAGE_LIST;
+import com.chattyhive.backend.contentprovider.formats.PRIVATE_PROFILE;
+import com.chattyhive.backend.contentprovider.formats.PUBLIC_PROFILE;
 import com.chattyhive.backend.contentprovider.pubsubservice.ConnectionState;
 import com.chattyhive.backend.contentprovider.pubsubservice.ConnectionStateChange;
 import com.chattyhive.backend.contentprovider.server.Server;
+import com.chattyhive.backend.contentprovider.server.ServerCommand;
 import com.chattyhive.backend.contentprovider.server.ServerUser;
 import com.chattyhive.backend.contentprovider.pubsubservice.PubSub;
 
+import com.chattyhive.backend.util.events.CancelableEventArgs;
+import com.chattyhive.backend.util.events.CommandCallbackEventArgs;
 import com.chattyhive.backend.util.events.ConnectionEventArgs;
 import com.chattyhive.backend.util.events.Event;
+import com.chattyhive.backend.util.events.EventArgs;
 import com.chattyhive.backend.util.events.EventHandler;
+import com.chattyhive.backend.util.events.FormatReceivedEventArgs;
 import com.chattyhive.backend.util.events.PubSubChannelEventArgs;
 import com.chattyhive.backend.util.events.PubSubConnectionEventArgs;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 
+import java.lang.reflect.Array;
+import java.net.CookieHandler;
+import java.net.CookieManager;
+import java.net.CookieStore;
+import java.rmi.MarshalException;
+import java.util.AbstractMap;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 
 /**
@@ -23,55 +58,277 @@ import java.util.Collections;
  * from where data comes from. Possible data origins are local, server and pusher.
  */
 public class DataProvider {
+    /************************************************************************/
+    /*                       STATIC MANAGEMENT                              */
+    /************************************************************************/
+    private static Boolean Initialized = false;
+    public static void Initialize() {
+        if (Initialized) return;
 
-    private ServerUser serverUser;
+        DisposingDataProvider = new Event<CancelableEventArgs>();
+        DataProviderDisposed = new Event<EventArgs>();
+        ConnectionAvailabilityChanged = new Event<EventArgs>();
+
+        connectionAvailable = true;
+
+        Initialized = true;
+    }
+    public static void Initialize(Object... LocalStorage) {
+        Initialize();
+        setLocalStorage(LocalStorage);
+    }
+
+    //COMMON STATIC
+    private static DataProvider dataProvider;
+    private static Boolean connectionAvailable;
+
+    public static Event<EventArgs> ConnectionAvailabilityChanged;
+    public static Event<CancelableEventArgs> DisposingDataProvider;
+    public static Event<EventArgs> DataProviderDisposed;
+
+    public static DataProvider GetDataProvider() {
+        return GetDataProvider(false);
+    }
+    public static DataProvider GetDataProvider(Boolean initialize) {
+        if ((dataProvider == null) && (initialize))
+            dataProvider = new DataProvider();
+
+        return dataProvider;
+    }
+    public static DataProvider GetDataProvider(Object... LocalStorage) {
+        setLocalStorage(LocalStorage);
+        return GetDataProvider(true);
+    }
+    public static void DisposeDataProvider() {
+        Boolean disposeCanceled = false;
+
+        if (DisposingDataProvider != null) {
+            CancelableEventArgs eventArgs = new CancelableEventArgs();
+            DisposingDataProvider.fire(dataProvider,eventArgs);
+            disposeCanceled = eventArgs.isCanceled();
+        }
+
+        if (disposeCanceled) return;
+
+        if (DataProviderDisposed != null)
+            DataProviderDisposed.fire(dataProvider,EventArgs.Empty());
+
+        dataProvider = null;
+    }
+
+    public static Boolean isConnectionAvailable() {
+        return DataProvider.connectionAvailable;
+    }
+    public static void setConnectionAvailable(Boolean value) {
+        if (DataProvider.connectionAvailable != value) {
+            DataProvider.connectionAvailable = value;
+            if (ConnectionAvailabilityChanged != null)
+                ConnectionAvailabilityChanged.fire(DataProvider.dataProvider, EventArgs.Empty());
+        }
+    }
+
+    //STORAGE STATIC
+    private static GroupLocalStorageInterface GroupLocalStorage;
+    private static HiveLocalStorageInterface HiveLocalStorage;
+    private static LoginLocalStorageInterface LoginLocalStorage;
+    private static MessageLocalStorageInterface MessageLocalStorage;
+    private static UserLocalStorageInterface UserLocalStorage;
+
+    public static void setLocalStorage(Object... LocalStorage) {
+        for (Object localStorage : LocalStorage) {
+            if ((localStorage instanceof GroupLocalStorageInterface) && (GroupLocalStorage == null)) {
+                GroupLocalStorage = (GroupLocalStorageInterface) localStorage;
+            } else if ((localStorage instanceof HiveLocalStorageInterface) && (HiveLocalStorage == null)) {
+                HiveLocalStorage = (HiveLocalStorageInterface) localStorage;
+            } else if ((localStorage instanceof LoginLocalStorageInterface) && (LoginLocalStorage == null)) {
+                LoginLocalStorage = (LoginLocalStorageInterface) localStorage;
+            } else if ((localStorage instanceof MessageLocalStorageInterface) && (MessageLocalStorage == null)) {
+                MessageLocalStorage = (MessageLocalStorageInterface) localStorage;
+            } else if ((localStorage instanceof UserLocalStorageInterface) && (UserLocalStorage == null)) {
+                UserLocalStorage = (UserLocalStorageInterface) localStorage;
+            }
+        }
+    }
+
+    /************************************************************************/
+    /************************************************************************/
+    /************************************************************************/
+
+    /************************************************************************/
+    /*                       DYNAMIC MANAGEMENT                              */
+    /************************************************************************/
+
     private Server server;
+
+    @Deprecated
+    public Server getServer() {
+        return this.server;
+    }
+
+    /************************************************************************/
+    //CONSTRUCTORS
+
+    public DataProvider () {
+        this(StaticParameters.DefaultServerAppName);
+    }
+
+    public DataProvider(String ServerAppName) {
+        if (LoginLocalStorage == null) throw new UnsupportedOperationException("DataProvider must be previously initialized with storage objects.");
+
+        DataProvider.dataProvider = this;
+
+        this.connectionState = false;
+
+        this.InitializeEvents();
+
+        AbstractMap.SimpleEntry<String,String> loginInfo = LoginLocalStorage.RecoverLoginPassword();
+        this.server = new Server(loginInfo, ServerAppName);
+
+        this.pubSub = new PubSub();
+
+        this.SubscribeEvents();
+    }
+
+    private void SubscribeEvents() {
+        //Subscribe to events
+        try {
+            this.server.responseEvent.add(new EventHandler<FormatReceivedEventArgs>(this, "onFormatReceived", FormatReceivedEventArgs.class));
+            this.server.onConnected.add(new EventHandler<ConnectionEventArgs>(this, "onServerConnectionStateChanged", ConnectionEventArgs.class));
+
+            this.server.CsrfTokenChanged.add(new EventHandler<EventArgs>(this,"onCsrfTokenChanged",EventArgs.class));
+
+            this.pubSub.SubscribeChannelEventHandler(new EventHandler<PubSubChannelEventArgs>(this,"onChannelEvent",PubSubChannelEventArgs.class));
+            this.pubSub.SubscribeConnectionEventHandler(new EventHandler<PubSubConnectionEventArgs>(this, "onConnectionEvent", PubSubConnectionEventArgs.class));
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void InitializeEvents() {
+        //Initialize events
+        this.ServerConnectionStateChanged = new Event<ConnectionEventArgs>();
+        this.PubSubConnectionStateChanged = new Event<PubSubConnectionEventArgs>();
+
+        this.CsrfTokenChanged = new Event<EventArgs>();
+
+        this.onMessageReceived = new Event<FormatReceivedEventArgs>();
+        this.onUserProfileReceived = new Event<FormatReceivedEventArgs>();
+        this.onChatProfileReceived = new Event<FormatReceivedEventArgs>();
+        this.onHiveProfileReceived = new Event<FormatReceivedEventArgs>();
+
+        this.onHiveJoined = new Event<CommandCallbackEventArgs>();
+    }
+
+    /************************************************************************/
+    //CONNECTION MANAGEMENT
+
+    private Boolean connectionState;
+    public Event<ConnectionEventArgs> ServerConnectionStateChanged;
+    public Event<PubSubConnectionEventArgs> PubSubConnectionStateChanged;
+    public Event<EventArgs> CsrfTokenChanged;
+
+    public Boolean isServerConnected() {
+        return this.connectionState;
+    }
+
+    public void Connect() {
+        if (connectionAvailable) {
+            this.server.Connect();
+            this.targetState = ConnectionState.CONNECTED;
+            this.pubSub.Connect();
+        }
+    }
+    public void Disconnect() {
+        this.server.Disconnect();
+        this.targetState = ConnectionState.DISCONNECTED;
+        this.pubSub.Disconnect();
+    }
+
+    public void clearSession() {
+        this.Disconnect();
+        this.setUser(null);
+        CookieManager cookieManager = (CookieManager) CookieHandler.getDefault();
+        CookieStore cookieStore = cookieManager.getCookieStore();
+        cookieStore.removeAll();
+
+        if (LoginLocalStorage != null)
+            LoginLocalStorage.ClearStoredLogin();
+
+
+    }
+
+    public void onServerConnectionStateChanged(Object sender, ConnectionEventArgs eventArgs) {
+        this.connectionState = eventArgs.getConnected();
+        if (this.ServerConnectionStateChanged != null)
+            this.ServerConnectionStateChanged.fire(sender,eventArgs);
+    }
+
+    public void onCsrfTokenChanged(Object sender, EventArgs eventArgs) {
+        if (this.CsrfTokenChanged != null)
+            this.CsrfTokenChanged.fire(sender,eventArgs);
+    }
+    /************************************************************************/
+    //EXPLORE
+
+
+    /************************************************************************/
+    //INCOMING FORMATS MANAGEMENT
+    public Event<FormatReceivedEventArgs> onMessageReceived;
+    public Event<FormatReceivedEventArgs> onUserProfileReceived;
+    public Event<FormatReceivedEventArgs> onHiveProfileReceived;
+    public Event<FormatReceivedEventArgs> onChatProfileReceived;
+
+    public void onFormatReceived(Object sender, FormatReceivedEventArgs eventArgs) {
+        this.ProcessReceivedFormats(eventArgs.getReceivedFormats());
+    }
+
+    private void ProcessReceivedFormats(Collection<Format> receivedFormats) {
+        ArrayList<Format> MessageFormats = new ArrayList<Format>();
+        ArrayList<Format> UserProfileFormats = new ArrayList<Format>();
+        ArrayList<Format> HiveProfileFormats = new ArrayList<Format>();
+        ArrayList<Format> ChatProfileFormats = new ArrayList<Format>();
+
+        for (Format format : receivedFormats) {
+            if ((format instanceof MESSAGE) || (format instanceof MESSAGE_ACK) || (format instanceof MESSAGE_LIST)) {
+                MessageFormats.add(format);
+            }
+            if ((format instanceof PUBLIC_PROFILE) || (format instanceof PRIVATE_PROFILE) || (format instanceof LOCAL_USER_PROFILE)) {
+                UserProfileFormats.add(format);
+            }
+            if ((format instanceof HIVE) || (format instanceof HIVE_ID)) {
+                HiveProfileFormats.add(format);
+            }
+            if ((format instanceof CHAT) || (format instanceof CHAT_ID) || (format instanceof CHAT_SYNC)) {
+                ChatProfileFormats.add(format);
+            }
+        }
+
+        if ((onMessageReceived != null) && (MessageFormats.size() > 0))
+            onMessageReceived.fire(this,new FormatReceivedEventArgs(MessageFormats));
+
+        if ((onUserProfileReceived != null) && (MessageFormats.size() > 0))
+            onUserProfileReceived.fire(this,new FormatReceivedEventArgs(UserProfileFormats));
+
+        if ((onHiveProfileReceived != null) && (MessageFormats.size() > 0))
+            onHiveProfileReceived.fire(this,new FormatReceivedEventArgs(HiveProfileFormats));
+
+        if ((onChatProfileReceived != null) && (MessageFormats.size() > 0))
+            onChatProfileReceived.fire(this,new FormatReceivedEventArgs(ChatProfileFormats));
+    }
+
+    /************************************************************************/
+    private ServerUser serverUser;
+
     private PubSub pubSub;
     private ConnectionState targetState;
     private Boolean networkAvailable = true;
 
-    /**
-     * Permits other classes to subscribe to pusher channel events.
-     * @param eventHandler an event handler that points to the method to be invoked.
-     */
-    public void SubscribeChannelEventHandler(EventHandler<PubSubChannelEventArgs> eventHandler) {
-        this.pubSub.SubscribeChannelEventHandler(eventHandler);
-    }
 
-    /**
-     * Permits other classes to subscribe to pusher connection events.
-     * @param eventHandler an event handler that points to the method to be invoked.
-     */
-    public void SubscribeConnectionEventHandler(EventHandler<PubSubConnectionEventArgs> eventHandler) {
-        this.pubSub.SubscribeConnectionEventHandler(eventHandler);
-    }
-
-    /**
-     * Permits other classes to subscribe to Server OnConnect event.
-     * @param eventHandler an event handler that points to the method to be invoked.
-     */
-    public void SubscribeToOnConnect(EventHandler<ConnectionEventArgs> eventHandler) {
-        if (this.server != null)
-            this.server.SubscribeToOnConnected(eventHandler);
-    }
-
-    /**
-     * Retrieves user login information.
-     * @return a string containing the user login-
-     */
-    public String getUser() { return this.serverUser.getLogin(); }
-
-    /**
-     * Retrieves the Server User.
-     * @return
-     */
-    public ServerUser getServerUser() { return this.serverUser; }
     /**
      * Changes the server user.
      * @param newUser the new server user.
      */
     public void setUser(ServerUser newUser) {
-        this.serverUser = newUser;
         this.server.setServerUser(this.serverUser);
     }
 
@@ -83,27 +340,53 @@ public class DataProvider {
         this.server.setAppName(serverApp);
     }
 
-    /**
-     * Public constructor.
-     * @param user the server user data to use in connections.
-     * @param serverApp the server application to be used.
-     */
-    public DataProvider(ServerUser user, String serverApp) {
-        this.serverUser = user;
-        this.server = new Server(this.serverUser,serverApp);
 
-        this.pubSub = new PubSub(this.serverUser.getLogin());
+
+    public void JoinHive(Hive hive) {
+
+        HiveLocalStorage.StoreHive(hive.getNameUrl(),hive.toJson(new HIVE()).toString());
+        Hive.getHive(hive.getNameUrl());
 
         try {
-            this.pubSub.SubscribeChannelEventHandler(new EventHandler<PubSubChannelEventArgs>(this,"onChannelEvent",PubSubChannelEventArgs.class));
-            this.pubSub.SubscribeConnectionEventHandler(new EventHandler<PubSubConnectionEventArgs>(this, "onConnectionEvent", PubSubConnectionEventArgs.class));
-        } catch (NoSuchMethodException e) { }
-
-        /*this.pubSub.Join("public_test");*/
+            this.server.RunCommand(ServerCommand.AvailableCommands.Join,new EventHandler<CommandCallbackEventArgs>(this,"onHiveJoinedCallback",CommandCallbackEventArgs.class),hive.toFormat(new HIVE_ID()));
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
     }
 
-    public Boolean JoinHive(String jsonParams) {
-        return this.server.JoinHive(jsonParams);
+    public Event<CommandCallbackEventArgs> onHiveJoined;
+
+    public void onHiveJoinedCallback(Object sender,CommandCallbackEventArgs eventArgs) {
+        ArrayList<Format> receivedFormats = eventArgs.getReceivedFormats();
+
+        HIVE_ID hive_id = null;
+
+        for(Format format : receivedFormats)
+            if (format instanceof COMMON) {
+                if (((COMMON) format).STATUS.equalsIgnoreCase("OK")) {
+                    ArrayList<Format> sentFormats = eventArgs.getSentFormats();
+                    for (Format sentFormat : sentFormats)
+                        if (sentFormat instanceof HIVE_ID)
+                            hive_id = (HIVE_ID)sentFormat;
+                }
+                break;
+            }
+
+        if (hive_id != null)
+            for (Format format : receivedFormats)
+                if (format instanceof CHAT) {
+                    Hive h = Hive.getHive(hive_id.NAME_URL);
+                    Group g = h.getPublicChat();
+                    if (g != null)
+                        g.fromFormat(format);
+                    else {
+                        g = Group.getGroup(format);
+                        h.setPublicChat(g);
+                    }
+                }
+
+        if (onHiveJoined != null)
+            onHiveJoined.fire(sender,eventArgs);
     }
 
     public void Join(String channel) {
@@ -121,41 +404,13 @@ public class DataProvider {
         this.pubSub.Leave(channel);
     }
 
-    /**
-     * Establishes the connection with server and pusher.
-     * @return true if connected to our server, else false
-     */
-    public Boolean Connect() {
-        Boolean result = false;
-        if (this.networkAvailable) {
-            result = this.server.Connect();
-            this.targetState = ConnectionState.CONNECTED;
-            this.pubSub.Connect();
-        }
-        return result;
+
+    public void InvokeServerCommand(ServerCommand.AvailableCommands command,Format... formats) {
+        this.server.RunCommand(command,formats);
     }
 
-    /**
-     * Closes the connection with pusher. (The server does not provide a logout method yet).
-     */
-    public void Disconnect() {
-        this.targetState = ConnectionState.DISCONNECTED;
-        this.pubSub.Disconnect();
-    }
-
-    /**
-     * Sends a message, which is correctly JSON formatted, to the server.
-     * @param message a JSONElement with the message.
-     */
-    public Boolean sendMessage(JsonElement message) {
-        //
-        // TODO: Save message.
-        //
-        Boolean result = false;
-        if (this.networkAvailable) {
-            result = this.server.SendMessage(message.toString());
-        }
-        return result;
+    public void InvokeServerCommand(ServerCommand.AvailableCommands command,EventHandler<CommandCallbackEventArgs> Callback,Format... formats) {
+        this.server.RunCommand(command, Callback, formats);
     }
 
     /**
@@ -165,9 +420,10 @@ public class DataProvider {
      * @param args the event arguments.
      */
     public void onChannelEvent(Object sender, PubSubChannelEventArgs args) {
-        if (args.getEventName().compareTo("msg") == 0) {
+        if (args.getEventName().equalsIgnoreCase("msg")) {
             // We have a message so lets play with it.
-            // Save the message.
+            Format[] formats = Format.getFormat(new JsonParser().parse(args.getMessage()));
+            this.ProcessReceivedFormats(Arrays.asList(formats));
         }
     }
 
@@ -184,45 +440,17 @@ public class DataProvider {
         } else if ((this.targetState == ConnectionState.DISCONNECTED) && (change.getCurrentState() == ConnectionState.CONNECTED)) {
             this.pubSub.Disconnect();
         }
+
+        if (this.PubSubConnectionStateChanged != null)
+            this.PubSubConnectionStateChanged.fire(sender,args);
     }
 
-    /**
-     * This method recovers the message list for a chat. It has to merge local data with remote data.
-     * @param chatID the identification of the chat.
-     * @return an ArrayList with the messages.
-     */
-    public ArrayList<Message> RecoverMessages(String chatID) {
-        ArrayList<Message> messageList = new ArrayList<Message>();
-
-        //
-        // TODO: Try to get messageList from local.
-        //
-
-        //
-        // TODO: Try to get newer messages from server.
-        //
-
-        Collections.sort(messageList);
-        return messageList;
+    public void ExploreHives(int offset,int length,EventHandler<CommandCallbackEventArgs> Callback) {
+        // TODO: This is for server 0.5.0 which does not support list indexing.
+        this.server.RunCommand(ServerCommand.AvailableCommands.Explore,Callback,null);
     }
 
-    public JsonElement ExploreHives(int offset,int length) {
-        return this.server.ExploreHives(null);
-    }
 
-    /**
-     * It si very important to know network availability before trying any network operation. There are some
-     * functions in android API which permit to retrieve network status, so it's necessary to provide
-     * this information to the data provider.
-     * @param value a Boolean value indicating whether the network is available.
-     */
-    public void setNetworkAvailable(Boolean value) { this.networkAvailable = value; }
-
-    /**
-     * Returns a value indicating what the data provider was last informed about the network state
-     * @return a Boolean value indicating network availability.
-     */
-    public Boolean getNetworkAvailable() { return this.networkAvailable; }
 
     /**
      * Returns a value indicating if the PubSub underlying service is connected or connecting.

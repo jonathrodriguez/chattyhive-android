@@ -1,5 +1,6 @@
 package com.chattyhive.chattyhive.backgroundservice;
 
+import android.app.AlarmManager;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -10,18 +11,29 @@ import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Binder;
+import android.os.Build;
 import android.os.IBinder;
+import android.util.Log;
 
 import com.chattyhive.backend.Controller;
-import com.chattyhive.backend.businessobjects.Message;
+import com.chattyhive.backend.StaticParameters;
+import com.chattyhive.backend.businessobjects.Chats.Messages.Message;
+import com.chattyhive.backend.contentprovider.DataProvider;
+import com.chattyhive.backend.contentprovider.formats.Format;
+import com.chattyhive.backend.contentprovider.formats.MESSAGE;
 import com.chattyhive.backend.contentprovider.pubsubservice.ConnectionState;
 import com.chattyhive.backend.util.events.ChannelEventArgs;
 import com.chattyhive.backend.util.events.EventArgs;
 import com.chattyhive.backend.util.events.EventHandler;
+import com.chattyhive.backend.util.events.FormatReceivedEventArgs;
 import com.chattyhive.backend.util.events.PubSubConnectionEventArgs;
 import com.chattyhive.chattyhive.Main;
+import com.chattyhive.chattyhive.OSStorageProvider.CookieStore;
+import com.chattyhive.chattyhive.OSStorageProvider.GroupLocalStorage;
+import com.chattyhive.chattyhive.OSStorageProvider.HiveLocalStorage;
 import com.chattyhive.chattyhive.OSStorageProvider.LoginLocalStorage;
 import com.chattyhive.chattyhive.OSStorageProvider.MessageLocalStorage;
+import com.chattyhive.chattyhive.OSStorageProvider.UserLocalStorage;
 import com.chattyhive.chattyhive.R;
 
 import java.io.FileDescriptor;
@@ -31,7 +43,7 @@ import java.util.ArrayList;
 public class CHService extends Service {
     private Controller controller;
     private NotificationManager notificationManager;
-    private int pendingMsgs;
+    private int pendingMessages;
     private Boolean appOpen = false;
     private final IBinder binder = new Binder();
 
@@ -48,10 +60,10 @@ public class CHService extends Service {
         pm.setComponentEnabledSetting(launcher, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
 
         notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        pendingMsgs = 0;
+        pendingMessages = 0;
         handleConnectivity();
         try {
-            Controller.SubscribeToAppBindingEvent(new EventHandler<EventArgs>(this,"onAppBinding",EventArgs.class));
+            Controller.AppBindingEvent.add(new EventHandler<EventArgs>(this,"onAppBinding",EventArgs.class));
         } catch (NoSuchMethodException e) {}
     }
 
@@ -66,15 +78,18 @@ public class CHService extends Service {
     }
 
     public void captureController() {
-        if ((this.controller == null) || (this.controller != Controller.getRunningController(LoginLocalStorage.getLoginLocalStorage()))) {
-            this.controller = Controller.getRunningController(LoginLocalStorage.getLoginLocalStorage());
-            this.controller.setMessageLocalStorage(MessageLocalStorage.getMessageLocalStorage());
+        Object[] LocalStorage = {LoginLocalStorage.getLoginLocalStorage(), GroupLocalStorage.getGroupLocalStorage(), HiveLocalStorage.getHiveLocalStorage(), MessageLocalStorage.getMessageLocalStorage(), UserLocalStorage.getUserLocalStorage()};
+        Controller.Initialize(new CookieStore(),LocalStorage);
+
+        if ((this.controller == null) || (this.controller != Controller.GetRunningController(true))) {
+            this.controller = Controller.GetRunningController();
             try {
-                this.controller.SubscribeChannelEventHandler(new EventHandler<ChannelEventArgs>(this,"onChannelEvent",ChannelEventArgs.class));
-                this.controller.SubscribeConnectionEventHandler(new EventHandler<PubSubConnectionEventArgs>(this, "onConnectionEvent", PubSubConnectionEventArgs.class));
+                if (DataProvider.GetDataProvider() == null)
+                    DataProvider.GetDataProvider(true);
 
+                DataProvider.GetDataProvider().onMessageReceived.add(new EventHandler<FormatReceivedEventArgs>(this,"onChannelEvent",FormatReceivedEventArgs.class));
+                DataProvider.GetDataProvider().PubSubConnectionStateChanged.add(new EventHandler<PubSubConnectionEventArgs>(this, "onConnectionEvent", PubSubConnectionEventArgs.class));
             } catch (NoSuchMethodException e) { }
-
         }
     }
 
@@ -83,7 +98,7 @@ public class CHService extends Service {
         if (this.appOpen) {
             this.notificationManager.cancelAll();
         } else {
-            this.pendingMsgs = 0;
+            this.pendingMessages = 0;
             checkConnected();
         }
     }
@@ -100,19 +115,37 @@ public class CHService extends Service {
 
     private void checkConnected () {
         handleConnectivity();
-        if (this.controller.getNetworkAvailable())
-            if ((this.controller.getServerUser() == null) || (this.controller.getServerUser().getLogin() == null) || (this.controller.getServerUser().getLogin().isEmpty())) {
-               /* PendingIntent i= PendingIntent.getActivity(this, 0, new Intent(this, Main.class), 0);
+
+        if (this.controller.getNetworkAvailable()) {
+            /*if ((this.controller.getServerUser() == null) || (this.controller.getServerUser().getLogin() == null) || (this.controller.getServerUser().getLogin().isEmpty())) {
+                PendingIntent i= PendingIntent.getActivity(this, 0, new Intent(this, Main.class), 0);
                 CHNotificationBuilder chNotificationBuilder = new CHNotificationBuilder(this.getApplicationContext());
                 chNotificationBuilder.setTickerText("No user login data!");
                 chNotificationBuilder.setTitleText("Welcome to chattyhive!");
                 chNotificationBuilder.setMainText("There's no user data. Please, touch here to loggin.");
                 chNotificationBuilder.setMainAction(i);
-                notificationManager.notify(0,chNotificationBuilder.Build());*/
+                notificationManager.notify(0,chNotificationBuilder.Build());
 
-            } else if (!this.controller.isConnected()) {
+            } else*/
+            if (!this.controller.isConnected()) {
                 this.controller.Connect();
             }
+            Log.w("CHService", "Alarm activated.");
+            Intent alarmIntent = new Intent(this,CHAlarmReceiver.class);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, alarmIntent, 0);
+            AlarmManager manager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                manager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + StaticParameters.IntervalToChatSync, StaticParameters.IntervalToChatSync, pendingIntent);
+            } else {
+                manager.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + StaticParameters.IntervalToChatSync, StaticParameters.IntervalToChatSync, pendingIntent);
+            }
+        } else {
+            Log.w("CHService","Alarm deactivated.");
+            Intent alarmIntent = new Intent(this, CHAlarmReceiver.class);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, alarmIntent, 0);
+            AlarmManager manager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+            manager.cancel(pendingIntent);
+        }
     }
 
     public void handleConnectivity() {
@@ -137,24 +170,36 @@ public class CHService extends Service {
      * Channel events handling
      */
 
-    public void onChannelEvent(Object sender, ChannelEventArgs args) {
+    public void onChannelEvent(Object sender, FormatReceivedEventArgs args) {
         // Do something with event
-        if ((!this.appOpen) && (args.getEventName().compareTo("msg")==0)) {
+        if (this.appOpen) return;
+
+        ArrayList<Format> formats = args.getReceivedFormats();
+
+        Boolean messageReceived = false;
+
+        for (Format format : formats) {
+            if (format instanceof MESSAGE) {
+                messageReceived = true;
+                this.pendingMessages++;
+            }
+        }
+
+        if (messageReceived) {
             this.notificationManager.cancelAll();
-            this.pendingMsgs++;
             PendingIntent i= PendingIntent.getActivity(this, 0, new Intent(this, Main.class), 0);
             CHNotificationBuilder chNotificationBuilder = new CHNotificationBuilder(this.getApplicationContext());
-            chNotificationBuilder.setTickerText(String.format(this.getString(R.string.buzz_in_hive_Ticker), "@".concat(args.getMessage().getUser().getPublicName()), ":".concat(args.getChannelName())));
-            chNotificationBuilder.setTitleText(String.format(this.getString(R.string.buzz_in_hive_TITLE), ":".concat(args.getChannelName())));
-            chNotificationBuilder.setMainText(String.format(this.getString(R.string.buzz_in_hive_mainText), this.pendingMsgs));
+            chNotificationBuilder.setTickerText(String.format(this.getString(R.string.buzz_in_hive_Ticker), "@".concat("Somebody"), ":".concat("ChattyHive")));
+            chNotificationBuilder.setTitleText(String.format(this.getString(R.string.buzz_in_hive_TITLE), ":".concat("ChattyHive")));
+            chNotificationBuilder.setMainText(String.format(this.getString(R.string.buzz_in_hive_mainText), this.pendingMessages));
 
-            Message[] messages = this.controller.getMessages(args.getChannelName()).toArray(new Message[0]);
+           /* Message[] messages = this.controller.getMessages(args.getChannelName()).toArray(new Message[0]);
             ArrayList<String> subText = new ArrayList<String>();
-            for (int idx = (messages.length-this.pendingMsgs); idx < messages.length; idx++) {
-                subText.add(String.format(this.getString(R.string.buzz_in_hive_subText),"@".concat(messages[idx].getUser().getPublicName()),messages[idx].getMessage().getContent()));
+            for (int idx = (messages.length-this.pendingMessages); idx < messages.length; idx++) {
+                subText.add(String.format(this.getString(R.string.buzz_in_hive_subText),"@".concat(messages[idx].getUser().getPublicName()),messages[idx].getMessageContent().getContent()));
             }
 
-            chNotificationBuilder.setSubText(subText);
+            chNotificationBuilder.setSubText(subText);*/
             chNotificationBuilder.setMainAction(i);
             notificationManager.notify(0, chNotificationBuilder.Build());
         }
@@ -172,7 +217,20 @@ public class CHService extends Service {
     @Override
     //Called by the system to notify a Service that it is no longer used and is being removed.
     public void onDestroy() {
-        Controller.disposeRunningController();
+        /*First remove alarm*/
+        Log.w("CHService","Alarm deactivated.");
+        Intent alarmIntent = new Intent(this, CHAlarmReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, alarmIntent, 0);
+        AlarmManager manager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+        manager.cancel(pendingIntent);
+
+        /*The remove controller*/
+
+        Controller.unbindSvc();
+
+        if (!Controller.isAppBounded())
+            Controller.DisposeRunningController();
+
         this.controller = null;
     }
 
