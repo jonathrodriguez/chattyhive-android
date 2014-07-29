@@ -1,5 +1,6 @@
 package com.chattyhive.chattyhive.backgroundservice;
 
+import android.app.AlarmManager;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -10,9 +11,12 @@ import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Binder;
+import android.os.Build;
 import android.os.IBinder;
+import android.util.Log;
 
 import com.chattyhive.backend.Controller;
+import com.chattyhive.backend.StaticParameters;
 import com.chattyhive.backend.businessobjects.Chats.Messages.Message;
 import com.chattyhive.backend.contentprovider.DataProvider;
 import com.chattyhive.backend.contentprovider.formats.Format;
@@ -111,7 +115,8 @@ public class CHService extends Service {
 
     private void checkConnected () {
         handleConnectivity();
-        if (this.controller.getNetworkAvailable())
+
+        if (this.controller.getNetworkAvailable()) {
             /*if ((this.controller.getServerUser() == null) || (this.controller.getServerUser().getLogin() == null) || (this.controller.getServerUser().getLogin().isEmpty())) {
                 PendingIntent i= PendingIntent.getActivity(this, 0, new Intent(this, Main.class), 0);
                 CHNotificationBuilder chNotificationBuilder = new CHNotificationBuilder(this.getApplicationContext());
@@ -121,9 +126,26 @@ public class CHService extends Service {
                 chNotificationBuilder.setMainAction(i);
                 notificationManager.notify(0,chNotificationBuilder.Build());
 
-            } else*/ if (!this.controller.isConnected()) {
+            } else*/
+            if (!this.controller.isConnected()) {
                 this.controller.Connect();
             }
+            Log.w("CHService", "Alarm activated.");
+            Intent alarmIntent = new Intent(this,CHAlarmReceiver.class);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, alarmIntent, 0);
+            AlarmManager manager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                manager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + StaticParameters.IntervalToChatSync, StaticParameters.IntervalToChatSync, pendingIntent);
+            } else {
+                manager.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + StaticParameters.IntervalToChatSync, StaticParameters.IntervalToChatSync, pendingIntent);
+            }
+        } else {
+            Log.w("CHService","Alarm deactivated.");
+            Intent alarmIntent = new Intent(this, CHAlarmReceiver.class);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, alarmIntent, 0);
+            AlarmManager manager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+            manager.cancel(pendingIntent);
+        }
     }
 
     public void handleConnectivity() {
@@ -195,6 +217,15 @@ public class CHService extends Service {
     @Override
     //Called by the system to notify a Service that it is no longer used and is being removed.
     public void onDestroy() {
+        /*First remove alarm*/
+        Log.w("CHService","Alarm deactivated.");
+        Intent alarmIntent = new Intent(this, CHAlarmReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, alarmIntent, 0);
+        AlarmManager manager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+        manager.cancel(pendingIntent);
+
+        /*The remove controller*/
+
         Controller.unbindSvc();
 
         if (!Controller.isAppBounded())
