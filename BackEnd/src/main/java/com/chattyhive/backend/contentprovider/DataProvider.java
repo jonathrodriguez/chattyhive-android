@@ -329,6 +329,7 @@ public class DataProvider {
      * @param newUser the new server user.
      */
     public void setUser(ServerUser newUser) {
+        this.serverUser = newUser;
         this.server.setServerUser(this.serverUser);
     }
 

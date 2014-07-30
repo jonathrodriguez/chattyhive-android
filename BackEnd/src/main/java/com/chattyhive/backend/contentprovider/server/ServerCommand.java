@@ -38,7 +38,7 @@ public class ServerCommand {
 
         // REGISTER
         inputFormats = new ArrayList<Class<?>>() {{add(LOCAL_USER_PROFILE.class);}};
-        serverCommand = new ServerCommand(Method.POST,"android.register", null, inputFormats);
+        serverCommand = new ServerCommand(Method.POST,"android.register/", null, inputFormats);
         ServerCommand.CommandDefinitions.put(AvailableCommands.Register,serverCommand);
 
         // EmailCheck
@@ -52,12 +52,12 @@ public class ServerCommand {
 
         // Join
         inputFormats = new ArrayList<Class<?>>() {{add(HIVE_ID.class);}};
-        serverCommand = new ServerCommand(Method.POST,"android.join", null, inputFormats);
+        serverCommand = new ServerCommand(Method.POST,"android.join/", null, inputFormats);
         ServerCommand.CommandDefinitions.put(AvailableCommands.Join,serverCommand);
 
         // SendMessage
         inputFormats = new ArrayList<Class<?>>() {{add(MESSAGE.class);}};
-        serverCommand = new ServerCommand(Method.POST,"android.chat", null, inputFormats);
+        serverCommand = new ServerCommand(Method.POST,"android.chat/", null, inputFormats);
         ServerCommand.CommandDefinitions.put(AvailableCommands.SendMessage,serverCommand);
 
         // GetMessages
@@ -80,7 +80,7 @@ public class ServerCommand {
 
         // UserProfile
         inputFormats = new ArrayList<Class<?>>() {{add(PROFILE_ID.class);}};
-        serverCommand = new ServerCommand(Method.POST,"android.???", null, inputFormats);
+        serverCommand = new ServerCommand(Method.POST,"android.???/", null, inputFormats);
         ServerCommand.CommandDefinitions.put(AvailableCommands.UserProfile,serverCommand);
     }
 

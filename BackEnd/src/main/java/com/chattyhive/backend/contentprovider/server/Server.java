@@ -11,14 +11,13 @@ import com.chattyhive.backend.util.events.Event;
 import com.chattyhive.backend.util.events.EventArgs;
 import com.chattyhive.backend.util.events.EventHandler;
 import com.chattyhive.backend.util.events.FormatReceivedEventArgs;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import java.io.BufferedReader;
-import java.io.DataOutputStream;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.net.CookieHandler;
 import java.net.CookieManager;
@@ -181,7 +180,7 @@ public class Server {
         if (StaticParameters.StandAlone) return;
 
         String function = "android.login";
-        final String Url = String.format("%s://%s.%s/%s",appProtocol,appName,host,function);
+        final String Url = String.format("%s://%s.%s/%s/",appProtocol,appName,host,function);
 
         Thread thread = new Thread() {
             @Override
@@ -190,6 +189,7 @@ public class Server {
                     URL url = new URL(Url);
                     if (serverUser == null) return;
                     String BodyData = serverUser.toJson().toString();
+
 
                     HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
                     httpURLConnection.setRequestMethod("POST");
@@ -225,8 +225,8 @@ public class Server {
 
                     if ((BodyData != null) && (!BodyData.isEmpty())) {
                         httpURLConnection.setDoOutput(true);
-                        DataOutputStream wr = new DataOutputStream(httpURLConnection.getOutputStream());
-                        wr.writeUTF(BodyData);
+                        BufferedWriter wr = new BufferedWriter(new OutputStreamWriter(httpURLConnection.getOutputStream(),"UTF-8"));
+                        wr.write(BodyData);
                         wr.flush();
                         wr.close();
                     }
@@ -378,8 +378,8 @@ public class Server {
 
             if ((Method.equalsIgnoreCase("POST")) && (BodyData != null) && (!BodyData.isEmpty())) {
                 httpURLConnection.setDoOutput(true);
-                DataOutputStream wr = new DataOutputStream(httpURLConnection.getOutputStream());
-                wr.writeUTF(BodyData);
+                BufferedWriter wr = new BufferedWriter(new OutputStreamWriter(httpURLConnection.getOutputStream(),"UTF-8"));
+                wr.write(BodyData);
                 wr.flush();
                 wr.close();
             }
