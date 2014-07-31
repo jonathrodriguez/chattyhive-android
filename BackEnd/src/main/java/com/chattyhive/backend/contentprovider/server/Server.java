@@ -139,6 +139,7 @@ public class Server {
                     inputReader.close();
 
                     String responseBody = response.toString();
+                    System.out.println(String.format("Request: %s\nCode: %d\n%s",url.toString(), responseCode, responseBody));
 
                     if (responseCode == 200) {
                         if (CsrfTokenChanged != null)
@@ -156,7 +157,6 @@ public class Server {
 
                     httpURLConnection.disconnect();
 
-                    System.out.println(String.format("Request: %s\nCode: %d\n%s",url.toString(), responseCode, responseBody));
 
                 } catch (SocketTimeoutException e) {
                     onNetworkUnavailable();
@@ -250,6 +250,8 @@ public class Server {
 
                     String responseBody = response.toString();
 
+                    System.out.println(String.format("Request: %s\nCode: %d\n%s",url.toString(), responseCode, responseBody));
+
                     if (responseCode == 200) {
                         /*List<String> setCookies = httpURLConnection.getHeaderFields().get("Set-Cookie");
                         if (setCookies != null) {
@@ -284,8 +286,6 @@ public class Server {
                     }
 
                     httpURLConnection.disconnect();
-
-                    System.out.println(String.format("Request: %s\nCode: %d\n%s",url.toString(), responseCode, responseBody));
 
                 } catch (SocketTimeoutException e) {
                     onNetworkUnavailable();
@@ -402,6 +402,7 @@ public class Server {
             inputReader.close();
 
             String responseBody = response.toString();
+            System.out.println(String.format("Request: %s\nCode: %d\n%s",url.toString(), responseCode, responseBody));
 
             Format[] receivedFormats = null;
 
@@ -442,7 +443,6 @@ public class Server {
 
             httpURLConnection.disconnect();
 
-            System.out.println(String.format("Request: %s\nCode: %d\n%s",url.toString(), responseCode, responseBody));
         } catch (SocketTimeoutException e) {
             result = false;
             onNetworkUnavailable();
