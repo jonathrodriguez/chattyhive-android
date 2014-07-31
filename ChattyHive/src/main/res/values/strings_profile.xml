@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="my_profile">My profile</string>
+
+    <string name="edit">Edit</string>
+
+    <string name="for_friends">For friends</string>
+    <string name="for_all">Public</string>
+
+    <String name="status">Status</String>
+
+    <String name="default_private_status">This is a private status message up to 100 characters which may include smileys.</String>
+    <String name="default_public_status">This is a public status message up to 100 characters which may include smileys.</String>
+
+    <String name="information">Information</String>
+    <String name="location">Actual location</String>
+    <String name="age">Age</String>
+    <String name="gender">Gender</String>
+    <String name="languages">Languages</String>
+
+    <string name="gender_male">Man</string>
+    <string name="gender_female">Woman</string>
+    <string name="years">years old</string>
+</resources>
