@@ -11,6 +11,7 @@ import com.chattyhive.backend.contentprovider.OSStorageProvider.MessageLocalStor
 import com.chattyhive.backend.contentprovider.OSStorageProvider.UserLocalStorageInterface;
 import com.chattyhive.backend.contentprovider.formats.CHAT;
 import com.chattyhive.backend.contentprovider.formats.CHAT_ID;
+import com.chattyhive.backend.contentprovider.formats.CHAT_LIST;
 import com.chattyhive.backend.contentprovider.formats.CHAT_SYNC;
 import com.chattyhive.backend.contentprovider.formats.COMMON;
 import com.chattyhive.backend.contentprovider.formats.Format;
@@ -45,12 +46,14 @@ import java.lang.reflect.Array;
 import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.CookieStore;
+import java.net.HttpCookie;
 import java.rmi.MarshalException;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * Created by Jonathan on 11/12/13.
@@ -174,10 +177,26 @@ public class DataProvider {
 
     public DataProvider(String ServerAppName) {
         if (LoginLocalStorage == null) throw new UnsupportedOperationException("DataProvider must be previously initialized with storage objects.");
-
         DataProvider.dataProvider = this;
 
-        this.connectionState = false;
+        HttpCookie csrfCookie = null;
+        HttpCookie sessionCookie = null;
+
+        CookieManager cookieManager = (CookieManager) CookieHandler.getDefault();
+        CookieStore cookieStore = cookieManager.getCookieStore();
+        List<HttpCookie> cookies = cookieStore.getCookies();
+
+        if (cookies != null) {
+            for (HttpCookie cookie : cookies)
+                if (cookie.getName().equalsIgnoreCase("csrftoken")) {
+                    csrfCookie = cookie;
+                } else if (cookie.getName().equalsIgnoreCase("sessionid")) {
+                    sessionCookie = cookie;
+                }
+        }
+
+        this.csrfTokenValid = ((csrfCookie != null) && (!csrfCookie.hasExpired()));
+        this.sessionValid = ((sessionCookie != null) && (!sessionCookie.hasExpired()));
 
         this.InitializeEvents();
 
@@ -222,13 +241,14 @@ public class DataProvider {
     /************************************************************************/
     //CONNECTION MANAGEMENT
 
-    private Boolean connectionState;
+    private Boolean csrfTokenValid = false;
+    private Boolean sessionValid = false;
     public Event<ConnectionEventArgs> ServerConnectionStateChanged;
     public Event<PubSubConnectionEventArgs> PubSubConnectionStateChanged;
     public Event<EventArgs> CsrfTokenChanged;
 
     public Boolean isServerConnected() {
-        return this.connectionState;
+        return (this.csrfTokenValid && sessionValid);
     }
 
     public void Connect() {
@@ -258,12 +278,42 @@ public class DataProvider {
     }
 
     public void onServerConnectionStateChanged(Object sender, ConnectionEventArgs eventArgs) {
-        this.connectionState = eventArgs.getConnected();
+
+        HttpCookie sessionCookie = null;
+
+        CookieManager cookieManager = (CookieManager) CookieHandler.getDefault();
+        CookieStore cookieStore = cookieManager.getCookieStore();
+        List<HttpCookie> cookies = cookieStore.getCookies();
+
+        if (cookies != null) {
+            for (HttpCookie cookie : cookies)
+                if (cookie.getName().equalsIgnoreCase("sessionid")) {
+                    sessionCookie = cookie;
+                }
+        }
+
+        this.sessionValid = ((sessionCookie != null) && (!sessionCookie.hasExpired()));
+
         if (this.ServerConnectionStateChanged != null)
             this.ServerConnectionStateChanged.fire(sender,eventArgs);
     }
 
     public void onCsrfTokenChanged(Object sender, EventArgs eventArgs) {
+        HttpCookie csrfCookie = null;
+
+        CookieManager cookieManager = (CookieManager) CookieHandler.getDefault();
+        CookieStore cookieStore = cookieManager.getCookieStore();
+        List<HttpCookie> cookies = cookieStore.getCookies();
+
+        if (cookies != null) {
+            for (HttpCookie cookie : cookies)
+                if (cookie.getName().equalsIgnoreCase("csrftoken")) {
+                    csrfCookie = cookie;
+                }
+        }
+
+        this.csrfTokenValid = ((csrfCookie != null) && (!csrfCookie.hasExpired()));
+
         if (this.CsrfTokenChanged != null)
             this.CsrfTokenChanged.fire(sender,eventArgs);
     }
@@ -298,7 +348,7 @@ public class DataProvider {
             if ((format instanceof HIVE) || (format instanceof HIVE_ID)) {
                 HiveProfileFormats.add(format);
             }
-            if ((format instanceof CHAT) || (format instanceof CHAT_ID) || (format instanceof CHAT_SYNC)) {
+            if ((format instanceof CHAT) || (format instanceof CHAT_ID) || (format instanceof CHAT_SYNC) || (format instanceof CHAT_LIST)) {
                 ChatProfileFormats.add(format);
             }
         }

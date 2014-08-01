@@ -8,6 +8,8 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.chattyhive.backend.businessobjects.Users.User;
+import com.chattyhive.backend.contentprovider.DataProvider;
+import com.chattyhive.backend.contentprovider.server.ServerCommand;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -27,8 +29,11 @@ public class Profile {
         @Override
         public void onClick(View v) {
             /*if (((Main)context).ActiveLayoutID == R.layout.main_panel_chat_layout) {
-                ((Main)context)._controller.Leave((String)((Activity)context).findViewById(R.id.main_panel_chat_name).getTag());
+                ((Main)context).controller.Leave((String)((Activity)context).findViewById(R.id.main_panel_chat_name).getTag());
             }*/
+
+            DataProvider dataProvider = DataProvider.GetDataProvider();
+            dataProvider.InvokeServerCommand(ServerCommand.AvailableCommands.LocalProfile,null);
 
             User me = User.getMe();
 

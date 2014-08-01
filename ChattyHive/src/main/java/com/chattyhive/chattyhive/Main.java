@@ -12,7 +12,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 
@@ -40,10 +39,11 @@ public class Main extends Activity {
 
     FloatingPanel floatingPanel;
 
-    Controller _controller;
+    Controller controller;
 
     int ActiveLayoutID;
 
+    //TODO: Add main panel view stack
 
     protected View ShowLayout (int layoutID, int actionBarID) {
         FrameLayout mainPanel = ((FrameLayout)findViewById(R.id.mainCenter));
@@ -61,13 +61,11 @@ public class Main extends Activity {
         ActiveLayoutID = R.layout.home;
         setContentView(R.layout.main);
 
-
         findViewById(R.id.temp_explore_button).setOnClickListener(this.explore_button_click);
         findViewById(R.id.temp_profile_button).setOnClickListener((new Profile(this)).open_profile);
         findViewById(R.id.temp_chat_sync_button).setOnClickListener(this.chat_sync_button_click);
         findViewById(R.id.temp_logout_button).setOnClickListener(this.logout_button_click);
         findViewById(R.id.temp_clear_chats_button).setOnClickListener(this.clear_chats_button_click);
-
 
         setPanelBehaviour();
 
@@ -75,7 +73,7 @@ public class Main extends Activity {
         Object[] LocalStorage = {LoginLocalStorage.getLoginLocalStorage(), GroupLocalStorage.getGroupLocalStorage(), HiveLocalStorage.getHiveLocalStorage(), MessageLocalStorage.getMessageLocalStorage(), UserLocalStorage.getUserLocalStorage()};
         Controller.Initialize(new CookieStore(),LocalStorage);
 
-        this._controller = Controller.GetRunningController(true);
+        this.controller = Controller.GetRunningController(true);
         Controller.bindApp();
 
         LeftPanel lp = new LeftPanel(this);
@@ -87,7 +85,7 @@ public class Main extends Activity {
     }
 
     private void checkLogin() {
-        if ((this._controller == null) || (LoginLocalStorage.getLoginLocalStorage().RecoverLoginPassword() == null)) {
+        if ((this.controller == null) || (LoginLocalStorage.getLoginLocalStorage().RecoverLoginPassword() == null)) {
             this.hasToLogin();
         } else {
             this.Logged();
@@ -101,12 +99,12 @@ public class Main extends Activity {
 
     private void Logged () {
 /*        try {
-            this._controller.SubscribeChannelEventHandler(new EventHandler<ChannelEventArgs>(this,"onChannelEvent",ChannelEventArgs.class));
-            this._controller.SubscribeConnectionEventHandler(new EventHandler<PubSubConnectionEventArgs>(this, "onConnectionStateChange",PubSubConnectionEventArgs.class));
+            this.controller.SubscribeChannelEventHandler(new EventHandler<ChannelEventArgs>(this,"onChannelEvent",ChannelEventArgs.class));
+            this.controller.SubscribeConnectionEventHandler(new EventHandler<PubSubConnectionEventArgs>(this, "onConnectionStateChange",PubSubConnectionEventArgs.class));
         } catch (NoSuchMethodException e) { }*/
 
-        if (!this._controller.isServerConnected()) {
-            this._controller.Connect();
+        if (!this.controller.isServerConnected()) {
+            this.controller.Connect();
         }
     }
 
@@ -205,7 +203,7 @@ public class Main extends Activity {
     protected View.OnClickListener logout_button_click = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            _controller.clearUserData();
+            controller.clearUserData();
             checkLogin();
         }
     };
@@ -213,7 +211,7 @@ public class Main extends Activity {
     protected View.OnClickListener clear_chats_button_click = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            _controller.clearAllChats();
+            controller.clearAllChats();
         }
     };
 
@@ -221,7 +219,7 @@ public class Main extends Activity {
         @Override
         public void onClick(View v) {
             DataProvider dataProvider = DataProvider.GetDataProvider();
-            dataProvider.InvokeServerCommand(ServerCommand.AvailableCommands.ChatList,null);
+            dataProvider.InvokeServerCommand(ServerCommand.AvailableCommands.ChatList, null);
         }
     };
 
@@ -238,7 +236,7 @@ public class Main extends Activity {
                 findViewById(R.id.mainCenter).getKeyDispatcherState().handleUpEvent(event);
                 if (event.isTracking() && !event.isCanceled()) {
                     if (ActiveLayoutID == R.layout.main_panel_chat_layout) {
-                        this._controller.Leave((String)findViewById(R.id.main_panel_chat_name).getTag());
+                        this.controller.Leave((String) findViewById(R.id.main_panel_chat_name).getTag());
                     }
                     if (ActiveLayoutID != R.layout.home) {
                         ShowLayout(R.layout.home,R.layout.action_bar_layout);

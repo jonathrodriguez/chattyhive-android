@@ -284,6 +284,14 @@ public class Controller {
         this.dataProvider.Disconnect();
     }
     public void onServerConnectionStateChanged(Object sender, ConnectionEventArgs eventArgs) {
+        if (this.dataProvider.isServerConnected()) {
+            //TODO: get home, chat list and user profile
+            if (Controller.isAppBounded()) {
+
+            } else if (Controller.svcBounded) {
+
+            }
+        }
         if (this.ServerConnectionStateChanged != null)
             this.ServerConnectionStateChanged.fire(sender,eventArgs);
     }

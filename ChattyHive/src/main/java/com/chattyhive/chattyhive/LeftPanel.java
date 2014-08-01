@@ -158,7 +158,7 @@ public class LeftPanel {
             MainChat mainChat;
             if (leftPanelListAdapter.GetVisibleList() == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Hives)) {
                 /*if (((Main)context).ActiveLayoutID == R.layout.main_panel_chat_layout) {
-                        ((Main)context)._controller.Leave((String)((Activity)context).findViewById(R.id.main_panel_chat_name).getTag());
+                        ((Main)context).controller.Leave((String)((Activity)context).findViewById(R.id.main_panel_chat_name).getTag());
                     }*/
 
                 Hive h = ((Hive)v.getTag(R.id.BO_Hive));
