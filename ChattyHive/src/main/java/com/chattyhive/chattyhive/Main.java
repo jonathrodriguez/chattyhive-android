@@ -19,6 +19,8 @@ import android.widget.ImageButton;
 import com.chattyhive.backend.Controller;
 import com.chattyhive.backend.StaticParameters;
 
+import com.chattyhive.backend.contentprovider.DataProvider;
+import com.chattyhive.backend.contentprovider.server.ServerCommand;
 import com.chattyhive.chattyhive.OSStorageProvider.CookieStore;
 import com.chattyhive.chattyhive.OSStorageProvider.GroupLocalStorage;
 import com.chattyhive.chattyhive.OSStorageProvider.HiveLocalStorage;
@@ -62,8 +64,10 @@ public class Main extends Activity {
 
         findViewById(R.id.temp_explore_button).setOnClickListener(this.explore_button_click);
         findViewById(R.id.temp_profile_button).setOnClickListener((new Profile(this)).open_profile);
+        findViewById(R.id.temp_chat_sync_button).setOnClickListener(this.chat_sync_button_click);
         findViewById(R.id.temp_logout_button).setOnClickListener(this.logout_button_click);
         findViewById(R.id.temp_clear_chats_button).setOnClickListener(this.clear_chats_button_click);
+
 
         setPanelBehaviour();
 
@@ -210,6 +214,14 @@ public class Main extends Activity {
         @Override
         public void onClick(View v) {
             _controller.clearAllChats();
+        }
+    };
+
+    protected View.OnClickListener chat_sync_button_click = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            DataProvider dataProvider = DataProvider.GetDataProvider();
+            dataProvider.InvokeServerCommand(ServerCommand.AvailableCommands.ChatList,null);
         }
     };
 
