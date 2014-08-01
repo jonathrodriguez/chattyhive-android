@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- MY PROFILE:  Action Bar dimensions -->
+    <dimen name="my_profile_action_bar_height">48dp</dimen>
+
+    <dimen name="my_profile_action_bar_thumbnail_width">54dp</dimen>
+    <dimen name="my_profile_action_bar_thumbnail_padding_left">8dp</dimen>
+    <dimen name="my_profile_action_bar_thumbnail_padding_right">8dp</dimen>
+    <dimen name="my_profile_action_bar_thumbnail_padding_top">5dp</dimen>
+    <dimen name="my_profile_action_bar_thumbnail_padding_bottom">5dp</dimen>
+
+    <dimen name="my_profile_action_bar_title_padding_left">8dp</dimen>
+    <dimen name="my_profile_action_bar_title_padding_right">4dp</dimen>
+    <dimen name="my_profile_action_bar_title_text_height">19dp</dimen>
+
+    <dimen name="my_profile_action_bar_menu_button_width">48dp</dimen>
+    <dimen name="my_profile_action_bar_menu_button_padding_left">8dp</dimen>
+    <dimen name="my_profile_action_bar_menu_button_padding_right">8dp</dimen>
+    <dimen name="my_profile_action_bar_menu_button_padding_top">4dp</dimen>
+    <dimen name="my_profile_action_bar_menu_button_padding_bottom">4dp</dimen>
+
+    <dimen name="my_profile_action_bar_border_left">1px</dimen>
+    <dimen name="my_profile_action_bar_border_top">1px</dimen>
+    <dimen name="my_profile_action_bar_border_right">1px</dimen>
+    <dimen name="my_profile_action_bar_border_bottom">4px</dimen>
+    <!-- _____________________________________________________________________ -->
+    <!-- MY PROFILE:  Main panel dimensions -->
+    <dimen name="my_profile_edit_button_border">1px</dimen>
+    <dimen name="my_profile_edit_button_margin_top">7dp</dimen>
+    <dimen name="my_profile_edit_button_margin_right">9.5dp</dimen>
+    <dimen name="my_profile_edit_button_text_size">15sp</dimen>
+    <dimen name="my_profile_edit_button_text_padding_left">5dp</dimen>
+    <dimen name="my_profile_edit_button_text_padding_top">5dp</dimen>
+    <dimen name="my_profile_edit_button_text_padding_right">5dp</dimen>
+    <dimen name="my_profile_edit_button_text_padding_bottom">5dp</dimen>
+    <dimen name="my_profile_edit_button_image_padding_left">3dp</dimen>
+    <dimen name="my_profile_edit_button_image_padding_top">3dp</dimen>
+    <dimen name="my_profile_edit_button_image_padding_right">5dp</dimen>
+    <dimen name="my_profile_edit_button_image_padding_bottom">3dp</dimen>
+
+    <dimen name="my_profile_photo_private_size">124dp</dimen>
+    <dimen name="my_profile_photo_public_size">74dp</dimen>
+    <dimen name="my_profile_photo_separation">11dp</dimen>
+    <dimen name="my_profile_photo_top_margin">26.5dp</dimen>
+
+    <dimen name="my_profile_full_name_margin_top">19dp</dimen>
+    <dimen name="my_profile_full_name_text_size">16sp</dimen>
+    <dimen name="my_profile_nickname_margin_top">3dp</dimen>
+    <dimen name="my_profile_nickname_text_size">13sp</dimen>
+    <dimen name="my_profile_nickname_margin_bottom">25dp</dimen>
+    <!-- _____________________________________________________________________ -->
+    <!-- _____________________________________________________________________ -->
+    <!-- _____________________________________________________________________ -->
+
+    <!-- EDIT PROFILE:  Action Bar dimensions -->
+
+    <!-- _____________________________________________________________________ -->
+    <!-- EDIT PROFILE:  Main panel dimensions -->
+
+    <!-- _____________________________________________________________________ -->
+    <!-- _____________________________________________________________________ -->
+    <!-- _____________________________________________________________________ -->
+
+    <!-- USER PROFILE:  Action Bar dimensions -->
+
+    <!-- _____________________________________________________________________ -->
+    <!-- USER PROFILE:  Main panel dimensions -->
+</resources>

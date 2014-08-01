@@ -1,24 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="my_profile">My profile</string>
+    <string name="my_profile_title">My profile</string>
 
-    <string name="edit">Edit</string>
+    <string name="my_profile_edit_button">Edit</string>
 
-    <string name="for_friends">For friends</string>
-    <string name="for_all">Public</string>
+    <string name="my_profile_default_full_name">Full Name</string>
+    <string name="my_profile_default_nickname">\@nickname</string>
 
-    <String name="status">Status</String>
+    <string name="my_profile_status">Status</string>
+    <string name="my_profile_status_for_friends">For friends</string>
+    <string name="my_profile_status_for_all">Public</string>
+    <string name="my_profile_default_private_status_message">This is a private status message up to 100 characters and may include smileys.</string>
+    <string name="my_profile_default_public_status_message">This is a public status message up to 100 characters and may include smileys.</string>
 
-    <String name="default_private_status">This is a private status message up to 100 characters which may include smileys.</String>
-    <String name="default_public_status">This is a public status message up to 100 characters which may include smileys.</String>
+    <string name="my_profile_information">Information</string>
+    <string name="my_profile_information_location">Actual location</string>
+    <string name="my_profile_information_age">Age</string>
+    <string name="my_profile_information_gender">Gender</string>
+    <string name="my_profile_information_languages">Languages</string>
 
-    <String name="information">Information</String>
-    <String name="location">Actual location</String>
-    <String name="age">Age</String>
-    <String name="gender">Gender</String>
-    <String name="languages">Languages</String>
-
-    <string name="gender_male">Man</string>
-    <string name="gender_female">Woman</string>
-    <string name="years">years old</string>
+    <string name="my_profile_information_gender_male_value">Man</string>
+    <string name="my_profile_information_gender_female_value">Woman</string>
+    <string name="my_profile_information_age_append_value_after">years old</string>
 </resources>
