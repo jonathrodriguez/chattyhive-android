@@ -109,13 +109,55 @@
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:background="@drawable/my_profile_status">
 
                 <LinearLayout
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"></LinearLayout>
+                    android:layout_height="wrap_content"
+                    android:weightSum="3">
 
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/my_profile_status"
+                        android:id="@+id/textView5"
+                        android:paddingLeft="@dimen/my_profile_status_title_text_padding_left"
+                        android:paddingTop="@dimen/my_profile_status_title_text_padding_top"
+                        android:paddingRight="@dimen/my_profile_status_title_text_padding_right"
+                        android:paddingBottom="@dimen/my_profile_status_title_text_padding_bottom"
+                        android:textColor="@color/my_profile_status_text"
+                        android:textSize="@dimen/my_profile_status_title_text_size"
+                        android:layout_weight="1" />
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/imageView3" />
+
+                        <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/my_profile_status_for_friends"
+                        android:id="@+id/textView6"
+                        android:textColor="@color/my_profile_status_active_text"
+                        android:textSize="@dimen/my_profile_status_for_friends_text_size"
+                        android:gravity="center_vertical" />
+                    </LinearLayout>
+                </LinearLayout>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/my_profile_status_horizontal_divider_thick"
+                    android:background="@color/my_profile_status_message_line"
+                    android:layout_marginLeft="@dimen/my_profile_status_horizontal_divider_margin_left"
+                    android:layout_marginRight="@dimen/my_profile_status_horizontal_divider_margin_right"
+                    android:visibility="visible" />
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
