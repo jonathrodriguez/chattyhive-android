@@ -66,10 +66,10 @@ public class Group {
             }
         }
 
-        //Remote recovering of groups
-        if (DataProvider.isConnectionAvailable()) {
+        //Remote recovering of groups -> Recovered when binding app or service.
+/*        if (DataProvider.isConnectionAvailable()) {
             DataProvider.GetDataProvider().InvokeServerCommand(ServerCommand.AvailableCommands.ChatList,null);
-        }
+        }*/
     }
 
     /***********************************/

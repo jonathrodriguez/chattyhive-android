@@ -65,6 +65,7 @@ public class CHService extends Service {
         try {
             Controller.AppBindingEvent.add(new EventHandler<EventArgs>(this,"onAppBinding",EventArgs.class));
         } catch (NoSuchMethodException e) {}
+        Controller.bindSvc();
     }
 
     @Override
@@ -117,18 +118,13 @@ public class CHService extends Service {
         handleConnectivity();
 
         if (this.controller.getNetworkAvailable()) {
-            /*if ((this.controller.getServerUser() == null) || (this.controller.getServerUser().getLogin() == null) || (this.controller.getServerUser().getLogin().isEmpty())) {
-                PendingIntent i= PendingIntent.getActivity(this, 0, new Intent(this, Main.class), 0);
-                CHNotificationBuilder chNotificationBuilder = new CHNotificationBuilder(this.getApplicationContext());
-                chNotificationBuilder.setTickerText("No user login data!");
-                chNotificationBuilder.setTitleText("Welcome to chattyhive!");
-                chNotificationBuilder.setMainText("There's no user data. Please, touch here to loggin.");
-                chNotificationBuilder.setMainAction(i);
-                notificationManager.notify(0,chNotificationBuilder.Build());
-
-            } else*/
             if (!this.controller.isConnected()) {
-                this.controller.Connect();
+                if ((!Controller.isAppBounded()) && (Controller.LoginLocalStorage.RecoverLoginPassword() == null)) { //If I can't login then exit service.
+                    Context context = this.getApplicationContext();
+                    context.stopService(new Intent(context,this.getClass()));
+                } else if (Controller.LoginLocalStorage.RecoverLoginPassword() != null) {
+                    this.controller.Connect();
+                }
             }
             Log.w("CHService", "Alarm activated.");
             Intent alarmIntent = new Intent(this,CHAlarmReceiver.class);
@@ -140,7 +136,7 @@ public class CHService extends Service {
                 manager.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + StaticParameters.IntervalToChatSync, StaticParameters.IntervalToChatSync, pendingIntent);
             }
         } else {
-            Log.w("CHService","Alarm deactivated.");
+            Log.w("CHService","Alarm deactivated. (Network unavailable)");
             Intent alarmIntent = new Intent(this, CHAlarmReceiver.class);
             PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, alarmIntent, 0);
             AlarmManager manager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
@@ -163,6 +159,7 @@ public class CHService extends Service {
             pm.setComponentEnabledSetting(networkListener, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
         } else {
             pm.setComponentEnabledSetting(networkListener, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+            context.stopService(new Intent(context,this.getClass()));
         }
     }
 
@@ -218,7 +215,7 @@ public class CHService extends Service {
     //Called by the system to notify a Service that it is no longer used and is being removed.
     public void onDestroy() {
         /*First remove alarm*/
-        Log.w("CHService","Alarm deactivated.");
+        Log.w("CHService","Alarm deactivated. (Service closing)");
         Intent alarmIntent = new Intent(this, CHAlarmReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, alarmIntent, 0);
         AlarmManager manager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);

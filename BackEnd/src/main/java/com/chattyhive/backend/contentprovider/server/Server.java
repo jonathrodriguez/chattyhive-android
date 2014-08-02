@@ -144,15 +144,6 @@ public class Server {
                     if (responseCode == 200) {
                         if (CsrfTokenChanged != null)
                             CsrfTokenChanged.fire(this,EventArgs.Empty());
-                        /*List<String> setCookies = httpURLConnection.getHeaderFields().get("Set-Cookie");
-                        if (setCookies != null) {
-                            for (String setCookie : setCookies) {
-                                List<HttpCookie> cookies = HttpCookie.parse(setCookie);
-                                for (HttpCookie cookie : cookies) {
-                                    serverUser.setCookie(cookie);
-                                }
-                            }
-                        }*/
                     }
 
                     httpURLConnection.disconnect();
@@ -175,7 +166,6 @@ public class Server {
             e.printStackTrace();
         }
     }
-
     public void Login() {
         if (StaticParameters.StandAlone) return;
 
@@ -198,9 +188,6 @@ public class Server {
                     if ((BodyData != null) && (!BodyData.isEmpty()))
                         httpURLConnection.addRequestProperty("Content-Type", "application/json");
 
-                    /*String Cookies = serverUser.getCookies();
-                    httpURLConnection.setRequestProperty("Cookie", Cookies);*/
-
                     HttpCookie csrfCookie = null;
 
                     while (csrfCookie == null) {
@@ -216,7 +203,7 @@ public class Server {
                                 }
                         }
 
-                        if (csrfCookie == null) StartSession();
+                        if ((csrfCookie == null) || (csrfCookie.hasExpired())) StartSession();
                     }
 
                     if (csrfCookie != null) {
@@ -253,15 +240,6 @@ public class Server {
                     System.out.println(String.format("Request: %s\nCode: %d\n%s",url.toString(), responseCode, responseBody));
 
                     if (responseCode == 200) {
-                        /*List<String> setCookies = httpURLConnection.getHeaderFields().get("Set-Cookie");
-                        if (setCookies != null) {
-                            for (String setCookie : setCookies) {
-                                List<HttpCookie> cookies = HttpCookie.parse(setCookie);
-                                for (HttpCookie cookie : cookies) {
-                                    serverUser.setCookie(cookie);
-                                }
-                            }
-                        }*/
 
                         Format[] receivedFormats = Format.getFormat(new JsonParser().parse(responseBody));
 
@@ -352,10 +330,8 @@ public class Server {
             if ((BodyData != null) && (!BodyData.isEmpty()))
                 httpURLConnection.addRequestProperty("Content-Type", "application/json");
 
-            /*String Cookies = serverUser.getCookies();
-            httpURLConnection.setRequestProperty("Cookie", Cookies);*/
-
             HttpCookie csrfCookie = null;
+            HttpCookie sessionCookie = null;
 
             while (csrfCookie == null) {
                 CookieManager cookieManager = (CookieManager) CookieHandler.getDefault();
@@ -366,10 +342,12 @@ public class Server {
                     for (HttpCookie cookie : cookies)
                         if (cookie.getName().equalsIgnoreCase("csrftoken")) {
                             csrfCookie = cookie;
-                            break;
+                        } else if (cookie.getName().equalsIgnoreCase("sessionid")) {
+                            sessionCookie = cookie;
                         }
                 }
-                if (csrfCookie == null) StartSession();
+                if ((csrfCookie == null) || (csrfCookie.hasExpired())) StartSession();
+                if ((sessionCookie == null) || (sessionCookie.hasExpired())) Login();
             }
 
             if (csrfCookie != null) {
@@ -407,21 +385,12 @@ public class Server {
             Format[] receivedFormats = null;
 
             if (responseCode == 200) {
-                /*List<String> setCookies = httpURLConnection.getHeaderFields().get("Set-Cookie");
-                if (setCookies != null) {
-                    for (String setCookie : setCookies) {
-                        List<HttpCookie> cookies = HttpCookie.parse(setCookie);
-                        for (HttpCookie cookie : cookies) {
-                            serverUser.setCookie(cookie);
-                        }
-                    }
-                }*/
-
                 receivedFormats = Format.getFormat(new JsonParser().parse(responseBody));
 
                 for (Format format : receivedFormats)
                     if (format instanceof COMMON) {
                         if (((COMMON) format).STATUS.equalsIgnoreCase("OK")) {
+                            result = true;
                             if (Callback != null)
                                 Callback.Invoke(httpURLConnection, new CommandCallbackEventArgs(Arrays.asList(receivedFormats), Arrays.asList(formats)));
                             else if (responseEvent != null)

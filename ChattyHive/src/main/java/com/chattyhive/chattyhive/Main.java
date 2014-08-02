@@ -31,6 +31,8 @@ import com.chattyhive.chattyhive.backgroundservice.CHService;
 
 import com.chattyhive.chattyhive.framework.FloatingPanel;
 
+import java.lang.reflect.Method;
+
 
 public class Main extends Activity {
     static final int OP_CODE_LOGIN = 1;
@@ -45,7 +47,7 @@ public class Main extends Activity {
 
     //TODO: Add main panel view stack
 
-    protected View ShowLayout (int layoutID, int actionBarID) {
+    protected View ShowLayout (int layoutID, int actionBarID) { //TODO: Populate/manage main panel view stack.
         FrameLayout mainPanel = ((FrameLayout)findViewById(R.id.mainCenter));
         FrameLayout mainActionBar = ((FrameLayout)findViewById(R.id.actionCenter));
         mainPanel.removeAllViews();
@@ -74,47 +76,28 @@ public class Main extends Activity {
         Controller.Initialize(new CookieStore(),LocalStorage);
 
         this.controller = Controller.GetRunningController(true);
-        Controller.bindApp();
 
         LeftPanel lp = new LeftPanel(this);
 
-        this.ConnectService();
-
-        this.checkLogin();
-
-    }
-
-    private void checkLogin() {
-        if ((this.controller == null) || (LoginLocalStorage.getLoginLocalStorage().RecoverLoginPassword() == null)) {
-            this.hasToLogin();
-        } else {
-            this.Logged();
+        try {
+            Controller.bindApp(this.getClass().getMethod("hasToLogin"),this);
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
         }
+
+        this.ConnectService();
     }
 
-    private void hasToLogin() {
+    public void hasToLogin() {
         Intent intent = new Intent(this, LoginActivity.class);
         startActivityForResult(intent, OP_CODE_LOGIN);
-    }
-
-    private void Logged () {
-/*        try {
-            this.controller.SubscribeChannelEventHandler(new EventHandler<ChannelEventArgs>(this,"onChannelEvent",ChannelEventArgs.class));
-            this.controller.SubscribeConnectionEventHandler(new EventHandler<PubSubConnectionEventArgs>(this, "onConnectionStateChange",PubSubConnectionEventArgs.class));
-        } catch (NoSuchMethodException e) { }*/
-
-        if (!this.controller.isServerConnected()) {
-            this.controller.Connect();
-        }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             case OP_CODE_LOGIN:
-                    if (resultCode == RESULT_OK) {
-                        this.Logged();
-                    } else {
+                    if (resultCode != RESULT_OK) {
                         Controller.DisposeRunningController();
                         this.finish();
                     }
@@ -204,7 +187,7 @@ public class Main extends Activity {
         @Override
         public void onClick(View v) {
             controller.clearUserData();
-            checkLogin();
+            hasToLogin();
         }
     };
 
@@ -234,7 +217,7 @@ public class Main extends Activity {
                 }
             } else if (event.getAction() == KeyEvent.ACTION_UP) {
                 findViewById(R.id.mainCenter).getKeyDispatcherState().handleUpEvent(event);
-                if (event.isTracking() && !event.isCanceled()) {
+                if (event.isTracking() && !event.isCanceled()) { //TODO: Use main panel view stack.
                     if (ActiveLayoutID == R.layout.main_panel_chat_layout) {
                         this.controller.Leave((String) findViewById(R.id.main_panel_chat_name).getTag());
                     }

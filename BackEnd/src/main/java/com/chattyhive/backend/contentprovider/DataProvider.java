@@ -253,7 +253,9 @@ public class DataProvider {
 
     public void Connect() {
         if (connectionAvailable) {
-            this.server.Connect();
+            if (!this.csrfTokenValid) this.server.StartSession();
+            if (!this.sessionValid) this.server.Login();
+
             this.targetState = ConnectionState.CONNECTED;
             this.pubSub.Connect();
         }
