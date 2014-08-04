@@ -350,21 +350,24 @@ public class DataProvider {
             if ((format instanceof HIVE) || (format instanceof HIVE_ID)) {
                 HiveProfileFormats.add(format);
             }
-            if ((format instanceof CHAT) || (format instanceof CHAT_ID) || (format instanceof CHAT_SYNC) || (format instanceof CHAT_LIST)) {
+            if ((format instanceof CHAT) || (format instanceof CHAT_ID) || (format instanceof CHAT_SYNC)) {
                 ChatProfileFormats.add(format);
+            }
+            if (format instanceof CHAT_LIST) {
+                ChatProfileFormats.addAll(((CHAT_LIST) format).CHAT_SYNCS);
             }
         }
 
         if ((onMessageReceived != null) && (MessageFormats.size() > 0))
             onMessageReceived.fire(this,new FormatReceivedEventArgs(MessageFormats));
 
-        if ((onUserProfileReceived != null) && (MessageFormats.size() > 0))
+        if ((onUserProfileReceived != null) && (UserProfileFormats.size() > 0))
             onUserProfileReceived.fire(this,new FormatReceivedEventArgs(UserProfileFormats));
 
-        if ((onHiveProfileReceived != null) && (MessageFormats.size() > 0))
+        if ((onHiveProfileReceived != null) && (HiveProfileFormats.size() > 0))
             onHiveProfileReceived.fire(this,new FormatReceivedEventArgs(HiveProfileFormats));
 
-        if ((onChatProfileReceived != null) && (MessageFormats.size() > 0))
+        if ((onChatProfileReceived != null) && (ChatProfileFormats.size() > 0))
             onChatProfileReceived.fire(this,new FormatReceivedEventArgs(ChatProfileFormats));
     }
 

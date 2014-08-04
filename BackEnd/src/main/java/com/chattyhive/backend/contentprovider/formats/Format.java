@@ -78,6 +78,8 @@ public abstract class Format {
                     f = new MESSAGE_LIST(data);
                 } else if (entry.getKey().equalsIgnoreCase("CHAT_SYNC")) {
                     f = new CHAT_SYNC(data);
+                } else if (entry.getKey().equalsIgnoreCase("CHAT_LIST")) {
+                    f = new CHAT_LIST(data);
                 }
 
 

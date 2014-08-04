@@ -97,27 +97,29 @@ public class Group {
 
     protected Group(String channelUnicode) {
         this.members = new TreeMap<String, User>();
-
-        Format[] formats = Format.getFormat((new JsonParser()).parse(Group.localStorage.RecoverGroup(channelUnicode)));
-        for(Format format : formats)
-            if (format instanceof CHAT) {
-                CHAT data = (CHAT)format;
-                if (data.CHANNEL_UNICODE.equals(channelUnicode)) {
-                    this.channelUnicode = data.CHANNEL_UNICODE;
-                    this.creationDate = data.CREATION_DATE;
-                    this.description = ""; //TODO: There is no description.
-                    this.name = ""; //TODO: There is no name;
-                    if ((data.PARENT_HIVE != null) && (data.PARENT_HIVE.NAME_URL != null) && (!data.PARENT_HIVE.NAME_URL.isEmpty()))
-                        this.parentHive = Hive.getHive(data.PARENT_HIVE.NAME_URL);
-                    else
-                        this.parentHive = null;
-                    this.pusherChannel = data.PUSHER_CHANNEL;
-                    break;
+        String localGroup = Group.localStorage.RecoverGroup(channelUnicode);
+        if (localGroup != null) {
+            Format[] formats = Format.getFormat((new JsonParser()).parse(localGroup));
+            for (Format format : formats)
+                if (format instanceof CHAT) {
+                    CHAT data = (CHAT) format;
+                    if (data.CHANNEL_UNICODE.equals(channelUnicode)) {
+                        this.channelUnicode = data.CHANNEL_UNICODE;
+                        this.creationDate = data.CREATION_DATE;
+                        this.description = ""; //TODO: There is no description.
+                        this.name = ""; //TODO: There is no name;
+                        if ((data.PARENT_HIVE != null) && (data.PARENT_HIVE.NAME_URL != null) && (!data.PARENT_HIVE.NAME_URL.isEmpty()))
+                            this.parentHive = Hive.getHive(data.PARENT_HIVE.NAME_URL);
+                        else
+                            this.parentHive = null;
+                        this.pusherChannel = data.PUSHER_CHANNEL;
+                        break;
+                    }
                 }
-            }
-
+        }
         if ((this.channelUnicode == null) || (!this.channelUnicode.equals(channelUnicode))) {
-            //TODO: Implement server information recovering
+            this.channelUnicode = channelUnicode;
+            DataProvider.GetDataProvider().InvokeServerCommand(ServerCommand.AvailableCommands.ChatContext,this.toFormat(new CHAT_ID()));
         }
 
         this.CalculateGroupKind();
@@ -209,7 +211,8 @@ public class Group {
         if (Group.Groups == null) throw new IllegalStateException("Groups must be initialized.");
 
         for (Group group : Group.Groups.values())
-            group.chat.clearAllMessages();
+            if (group.chat != null)
+                group.chat.clearAllMessages();
 
         Group.Groups.clear();
         Group.localStorage.ClearGroups();
@@ -350,6 +353,7 @@ public class Group {
             for (PROFILE_ID profile_id : ((CHAT) format).MEMBERS)
                 this.addMember(User.getUser(profile_id));
 
+            this.CalculateGroupKind();
             return true;
         } else if (format instanceof CHAT_ID) {
             this.channelUnicode = ((CHAT_ID) format).CHANNEL_UNICODE;

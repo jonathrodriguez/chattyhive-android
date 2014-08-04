@@ -145,7 +145,7 @@ public class ServerCommand {
 
         for (Format f : formats)
             if (this.paramFormats.contains(f.getClass()))
-                if (f.getClass().getName().equalsIgnoreCase(formatName)) {
+                if (f.getClass().getName().endsWith(formatName)) {
                     parameterFormat = f;
                     break;
                 }
@@ -174,7 +174,7 @@ public class ServerCommand {
         return field.get(parameterFormat).toString();
     }
     public String getBodyData(Format... formats) {
-        if ((formats == null) || (formats.length == 0)) return null;
+        if ((formats == null) || (formats.length == 0) || (this.inputFormats == null)) return null;
 
         JsonObject bodyData = new JsonObject();
 
