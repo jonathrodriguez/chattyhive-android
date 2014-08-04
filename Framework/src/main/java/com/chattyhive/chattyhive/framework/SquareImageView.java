@@ -23,6 +23,8 @@ public class SquareImageView extends ImageView {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec){
+        ViewGroup.LayoutParams layoutParams = this.getLayoutParams();
+
         super.onMeasure(widthMeasureSpec,heightMeasureSpec);
         int measuredExpectedHeight = super.getMeasuredHeight();
         int measuredExpectedWidth = super.getMeasuredWidth();
@@ -37,7 +39,7 @@ public class SquareImageView extends ImageView {
 
         if (imageHeight == imageWidth) return;
 
-        ViewGroup.LayoutParams layoutParams = this.getLayoutParams();
+       // ViewGroup.LayoutParams layoutParams = this.getLayoutParams();
 
         int performOperation = 0; //0 -> set width equal to height. 1 -> set height equal to width.
 
@@ -53,18 +55,18 @@ public class SquareImageView extends ImageView {
             else performOperation = 1;
         }
 
-        int newHeightMeasureSpec = heightMeasureSpec;
-        int newWidthMeasureSpec = widthMeasureSpec;
+        int newHeight = MeasureSpec.getSize(heightMeasureSpec);
+        int newWidth = MeasureSpec.getSize(widthMeasureSpec);
 
         switch (performOperation) {
             case 0:
-                newWidthMeasureSpec = MeasureSpec.makeMeasureSpec(imageHeight+paddingLeft+paddingRight,MeasureSpec.EXACTLY);
+                newWidth = imageHeight+paddingLeft+paddingRight;
                 break;
             case 1:
-                newHeightMeasureSpec = MeasureSpec.makeMeasureSpec(imageWidth+paddingBottom+paddingTop,MeasureSpec.EXACTLY);
+                newHeight = imageWidth+paddingBottom+paddingTop;
                 break;
         }
-
-        super.onMeasure(newWidthMeasureSpec,newHeightMeasureSpec);
+        super.setMeasuredDimension(resolveSize(newWidth,widthMeasureSpec),resolveSize(newHeight,heightMeasureSpec));
+        //super.measure(newWidthMeasureSpec,newHeightMeasureSpec);
     }
 }

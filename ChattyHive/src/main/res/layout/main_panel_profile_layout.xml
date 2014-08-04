@@ -1,10 +1,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/my_profile_general_background"
-    style="@style/AppTheme.WithNoActionBar">
-
-
+    android:background="@color/my_profile_general_background">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -16,7 +13,8 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:layout_gravity="right|center_vertical"
-            android:background="@color/my_profile_general_background">
+            android:background="@color/my_profile_general_background"
+            android:layout_marginTop="@dimen/my_profile_photo_top_margin">
 
             <LinearLayout
                 android:orientation="horizontal"
@@ -24,7 +22,6 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="@dimen/my_profile_photo_top_margin"
                 android:background="@color/my_profile_general_background">
 
                 <ImageView
