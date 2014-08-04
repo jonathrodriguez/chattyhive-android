@@ -22,4 +22,9 @@
     <string name="my_profile_information_gender_male_value">Man</string>
     <string name="my_profile_information_gender_female_value">Woman</string>
     <string name="my_profile_information_age_append_value_after">years old</string>
+
+    <string name="my_profile_information_default_location">Vigo, Galicia, Spain</string>
+    <string name="my_profile_information_default_age">0 years old</string>
+    <string name="my_profile_information_default_gender">Man</string>
+    <string name="my_profile_information_default_languages">Spanish</string>
 </resources>

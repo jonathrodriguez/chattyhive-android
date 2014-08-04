@@ -10,7 +10,7 @@ public final class StaticParameters {
 
     public static final int IntervalToChatSync = 300000; //Milliseconds between chat_sync commands.
 
-    public static final Boolean StandAlone = false; //Used for debug purposes. When set to TRUE application will not connect to server.
+    public static final Boolean StandAlone = true; //Used for debug purposes. When set to TRUE application will not connect to server.
 
     public static final Boolean BackgroundService = true; //When set to false there will not be a background service, so no notifications available.
 

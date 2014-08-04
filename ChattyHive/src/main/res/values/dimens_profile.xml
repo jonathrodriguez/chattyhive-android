@@ -47,12 +47,18 @@
     <dimen name="my_profile_full_name_text_size">16sp</dimen>
     <dimen name="my_profile_nickname_margin_top">3dp</dimen>
     <dimen name="my_profile_nickname_text_size">13sp</dimen>
-    <dimen name="my_profile_nickname_margin_bottom">25dp</dimen>
+    <dimen name="my_profile_nickname_margin_bottom">12.5dp</dimen>
 
     <dimen name="my_profile_status_title_text_size">15sp</dimen>
+    <dimen name="my_profile_status_margin_top">12.5dp</dimen>
+    <dimen name="my_profile_status_margin_bottom">9dp</dimen>
     <dimen name="my_profile_status_for_friends_text_size">15sp</dimen>
     <dimen name="my_profile_status_for_all_text_size">15sp</dimen>
     <dimen name="my_profile_status_message_text_size">13.5sp</dimen>
+    <dimen name="my_profile_status_message_text_padding_left">18dp</dimen>
+    <dimen name="my_profile_status_message_text_padding_top">8.5dp</dimen>
+    <dimen name="my_profile_status_message_text_padding_right">18dp</dimen>
+    <dimen name="my_profile_status_message_text_padding_bottom">12.5dp</dimen>
     <dimen name="my_profile_status_title_text_padding_left">18dp</dimen>
     <dimen name="my_profile_status_title_text_padding_top">12.5dp</dimen>
     <dimen name="my_profile_status_title_text_padding_right">22dp</dimen>
@@ -80,6 +86,40 @@
     <dimen name="my_profile_status_vertical_divider_margin_bottom">12.5dp</dimen>
     <dimen name="my_profile_status_vertical_divider_thick">1px</dimen>
     <dimen name="my_profile_status_border_thick">1px</dimen>
+
+    <dimen name="my_profile_information_border_thick">1px</dimen>
+    <dimen name="my_profile_information_corner_radius">5dp</dimen>
+    <dimen name="my_profile_information_padding_left">2.5dp</dimen>
+    <dimen name="my_profile_information_padding_top">2.5dp</dimen>
+    <dimen name="my_profile_information_padding_right">2.5dp</dimen>
+    <dimen name="my_profile_information_padding_bottom">2.5dp</dimen>
+    <dimen name="my_profile_information_margin_left">9dp</dimen>
+    <dimen name="my_profile_information_margin_top">9dp</dimen>
+    <dimen name="my_profile_information_margin_right">9dp</dimen>
+    <dimen name="my_profile_information_margin_bottom">9dp</dimen>
+    <dimen name="my_profile_information_horizontal_divider_thick">1px</dimen>
+    <dimen name="my_profile_information_horizontal_divider_margin_left">10dp</dimen>
+    <dimen name="my_profile_information_horizontal_divider_margin_right">10dp</dimen>
+    <dimen name="my_profile_information_title_text_size">15sp</dimen>
+    <dimen name="my_profile_information_title_text_padding_left">13dp</dimen>
+    <dimen name="my_profile_information_title_text_padding_top">12.5dp</dimen>
+    <dimen name="my_profile_information_title_text_padding_right">13dp</dimen>
+    <dimen name="my_profile_information_title_text_padding_bottom">12.5dp</dimen>
+
+    <dimen name="my_profile_information_element_name_text_size">15sp</dimen>
+    <dimen name="my_profile_information_element_name_padding_left">13dp</dimen>
+    <dimen name="my_profile_information_element_name_padding_top">12.5dp</dimen>
+    <dimen name="my_profile_information_element_name_padding_right">7.5dp</dimen>
+    <dimen name="my_profile_information_element_name_padding_bottom">12.5dp</dimen>
+    <dimen name="my_profile_information_element_value_text_size">15sp</dimen>
+    <dimen name="my_profile_information_element_value_padding_left">7.5dp</dimen>
+    <dimen name="my_profile_information_element_value_padding_top">12.5dp</dimen>
+    <dimen name="my_profile_information_element_value_padding_right">6.5dp</dimen>
+    <dimen name="my_profile_information_element_value_padding_bottom">12.5dp</dimen>
+    <dimen name="my_profile_information_element_image_padding_left">6.5dp</dimen>
+    <dimen name="my_profile_information_element_image_padding_top">7.5dp</dimen>
+    <dimen name="my_profile_information_element_image_padding_right">13dp</dimen>
+    <dimen name="my_profile_information_element_image_padding_bottom">7.5dp</dimen>
     <!-- _____________________________________________________________________ -->
     <!-- _____________________________________________________________________ -->
     <!-- _____________________________________________________________________ -->

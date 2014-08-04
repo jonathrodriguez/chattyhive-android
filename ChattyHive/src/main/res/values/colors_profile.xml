@@ -30,8 +30,8 @@
     <color name="my_profile_status_message_line">#EFEFEF</color>
     <color name="my_profile_status_private_public_line">#C0C0C0</color>
     <color name="my_profile_status_border">#C0C0C0</color>
-    <float name="my_profile_status_inactive_alpha">0.5</float>
-    <float name="my_profile_status_active_alpha">0</float>
+    <item name="my_profile_status_inactive_alpha" format="float" type="color">0.5</item>
+    <item name="my_profile_status_active_alpha" format="float" type="color">0</item>
 
     <color name="my_profile_information_text">#000000</color>
     <color name="my_profile_information_param_name_text">#808080</color>

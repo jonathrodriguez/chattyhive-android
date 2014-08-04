@@ -66,5 +66,9 @@ public final class DateFormatter {
             return date.toString();
         }
     }
+
+    public static final String getUserAge(Date birthday) {
+        return (new SimpleDateFormat("y")).format(new Date((new Date()).getTime() - birthday.getTime()));
+    }
 }
 
