@@ -145,7 +145,7 @@ public class ServerCommand {
 
         for (Format f : formats)
             if (this.paramFormats.contains(f.getClass()))
-                if (f.getClass().getName().endsWith(formatName)) {
+                if (f.getClass().getSimpleName().equalsIgnoreCase(formatName)) {
                     parameterFormat = f;
                     break;
                 }
@@ -180,7 +180,7 @@ public class ServerCommand {
 
         for (Format f : formats) {
             if (this.inputFormats.contains(f.getClass())) {
-                bodyData.add(f.getClass().getName(), f.toJSON());
+                bodyData.add(f.getClass().getSimpleName(), f.toJSON());
             }
         }
 
