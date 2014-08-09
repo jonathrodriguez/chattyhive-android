@@ -1,28 +1,26 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/my_profile_general_background">
+    android:layout_height="match_parent">
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/my_profile_general_background">
-
+        android:background="@color/my_profile_general_background"
+        android:measureAllChildren="false"
+        android:layout_gravity="top"
+        android:visibility="visible">
         <LinearLayout
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_gravity="right|center_vertical"
-            android:background="@color/my_profile_general_background"
-            android:layout_marginTop="@dimen/my_profile_photo_top_margin">
-
+            android:background="@color/my_profile_general_background">
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                android:background="@color/my_profile_general_background"
                 android:gravity="center_horizontal"
-                android:layout_gravity="center_horizontal"
-                android:background="@color/my_profile_general_background">
+                android:layout_marginTop="@dimen/my_profile_photo_top_margin">
 
                 <ImageView
                     android:layout_width="@dimen/my_profile_photo_private_size"
@@ -79,7 +77,8 @@
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/my_profile_status_background">
+                    android:background="@color/my_profile_status_background"
+                    android:gravity="center_vertical">
 
                     <TextView
                         android:layout_width="match_parent"
@@ -100,17 +99,18 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="0"
                         android:id="@+id/my_profile_status_private_button"
-                        android:background="@color/my_profile_status_background">
+                        android:background="@color/my_profile_status_background"
+                        android:gravity="center_vertical">
 
-                        <com.chattyhive.chattyhive.framework.SquareImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
+                        <ImageView
+                            android:layout_width="@dimen/my_profile_status_for_friends_image_size"
+                            android:layout_height="@dimen/my_profile_status_for_friends_image_size"
                             android:id="@+id/imageView3"
                             android:src="@drawable/my_profile_private_profile_simple"
-                            android:paddingLeft="@dimen/my_profile_status_for_friends_image_padding_left"
-                            android:paddingTop="@dimen/my_profile_status_for_friends_image_padding_top"
-                            android:paddingRight="@dimen/my_profile_status_for_friends_image_padding_right"
-                            android:paddingBottom="@dimen/my_profile_status_for_friends_image_padding_bottom"
+                            android:layout_marginLeft="@dimen/my_profile_status_for_friends_image_margin_left"
+                            android:layout_marginTop="@dimen/my_profile_status_for_friends_image_margin_top"
+                            android:layout_marginRight="@dimen/my_profile_status_for_friends_image_margin_right"
+                            android:layout_marginBottom="@dimen/my_profile_status_for_friends_image_margin_bottom"
                             android:scaleType="fitCenter"
                             android:background="@color/my_profile_status_background" />
 
@@ -126,7 +126,8 @@
                             android:paddingTop="@dimen/my_profile_status_for_friends_text_padding_top"
                             android:paddingRight="@dimen/my_profile_status_for_friends_text_padding_right"
                             android:paddingBottom="@dimen/my_profile_status_for_friends_text_padding_bottom"
-                            android:background="@color/my_profile_status_background" />
+                            android:background="@color/my_profile_status_background"
+                            android:visibility="@string/my_profile_status_for_friends_text_visibility"/>
                     </LinearLayout>
                     <View
                         android:layout_width="@dimen/my_profile_status_vertical_divider_thick"
@@ -142,17 +143,18 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="0"
                         android:id="@+id/my_profile_status_public_button"
-                        android:background="@color/my_profile_status_background">
+                        android:background="@color/my_profile_status_background"
+                        android:gravity="center_vertical">
 
-                        <com.chattyhive.chattyhive.framework.SquareImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
+                        <ImageView
+                            android:layout_width="@dimen/my_profile_status_for_all_image_size"
+                            android:layout_height="@dimen/my_profile_status_for_all_image_size"
                             android:id="@+id/imageView4"
                             android:src="@drawable/my_profile_public_profile_simple"
-                            android:paddingLeft="@dimen/my_profile_status_for_all_image_padding_left"
-                            android:paddingTop="@dimen/my_profile_status_for_all_image_padding_top"
-                            android:paddingRight="@dimen/my_profile_status_for_all_image_padding_right"
-                            android:paddingBottom="@dimen/my_profile_status_for_all_image_padding_bottom"
+                            android:layout_marginLeft="@dimen/my_profile_status_for_all_image_margin_left"
+                            android:layout_marginTop="@dimen/my_profile_status_for_all_image_margin_top"
+                            android:layout_marginRight="@dimen/my_profile_status_for_all_image_margin_right"
+                            android:layout_marginBottom="@dimen/my_profile_status_for_all_image_margin_bottom"
                             android:scaleType="fitCenter"
                             android:background="@color/my_profile_status_background" />
 
@@ -168,7 +170,8 @@
                             android:paddingTop="@dimen/my_profile_status_for_all_text_padding_top"
                             android:paddingRight="@dimen/my_profile_status_for_all_text_padding_right"
                             android:paddingBottom="@dimen/my_profile_status_for_all_text_padding_bottom"
-                            android:background="@color/my_profile_status_background" />
+                            android:background="@color/my_profile_status_background"
+                            android:visibility="@string/my_profile_status_for_all_text_visibility"/>
                     </LinearLayout>
                 </LinearLayout>
                 <View
@@ -196,7 +199,7 @@
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
+                android:layout_height="wrap_content"
                 android:background="@drawable/my_profile_information"
                 android:layout_marginLeft="@dimen/my_profile_information_margin_left"
                 android:layout_marginTop="@dimen/my_profile_information_margin_top"
@@ -233,7 +236,8 @@
                         android:orientation="horizontal"
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
-                        android:background="@color/my_profile_information_background">
+                        android:background="@color/my_profile_information_background"
+                        android:gravity="center_vertical">
 
                         <TextView
                             android:layout_width="0dp"
@@ -262,15 +266,15 @@
                             android:textSize="@dimen/my_profile_information_element_value_text_size"
                             android:background="@color/my_profile_information_background" />
 
-                        <com.chattyhive.chattyhive.framework.SquareImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
+                        <ImageView
+                            android:layout_width="@dimen/my_profile_information_element_image_size"
+                            android:layout_height="@dimen/my_profile_information_element_image_size"
                             android:id="@+id/my_profile_information_location_show"
                             android:scaleType="fitCenter"
-                            android:paddingLeft="@dimen/my_profile_information_element_image_padding_left"
-                            android:paddingTop="@dimen/my_profile_information_element_image_padding_top"
-                            android:paddingRight="@dimen/my_profile_information_element_image_padding_right"
-                            android:paddingBottom="@dimen/my_profile_information_element_image_padding_bottom"
+                            android:layout_marginLeft="@dimen/my_profile_information_element_image_margin_left"
+                            android:layout_marginTop="@dimen/my_profile_information_element_image_margin_top"
+                            android:layout_marginRight="@dimen/my_profile_information_element_image_margin_right"
+                            android:layout_marginBottom="@dimen/my_profile_information_element_image_margin_bottom"
                             android:src="@drawable/user_profile_show_profile_element_both"
                             android:background="@color/my_profile_information_background" />
                     </LinearLayout>
@@ -293,7 +297,8 @@
                         android:orientation="horizontal"
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
-                        android:background="@color/my_profile_information_background">
+                        android:background="@color/my_profile_information_background"
+                        android:gravity="center_vertical">
 
                         <TextView
                             android:layout_width="0dp"
@@ -322,15 +327,15 @@
                             android:textSize="@dimen/my_profile_information_element_value_text_size"
                             android:background="@color/my_profile_information_background" />
 
-                        <com.chattyhive.chattyhive.framework.SquareImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
+                        <ImageView
+                            android:layout_width="@dimen/my_profile_information_element_image_size"
+                            android:layout_height="@dimen/my_profile_information_element_image_size"
                             android:id="@+id/my_profile_information_age_show"
                             android:scaleType="fitCenter"
-                            android:paddingLeft="@dimen/my_profile_information_element_image_padding_left"
-                            android:paddingTop="@dimen/my_profile_information_element_image_padding_top"
-                            android:paddingRight="@dimen/my_profile_information_element_image_padding_right"
-                            android:paddingBottom="@dimen/my_profile_information_element_image_padding_bottom"
+                            android:layout_marginLeft="@dimen/my_profile_information_element_image_margin_left"
+                            android:layout_marginTop="@dimen/my_profile_information_element_image_margin_top"
+                            android:layout_marginRight="@dimen/my_profile_information_element_image_margin_right"
+                            android:layout_marginBottom="@dimen/my_profile_information_element_image_margin_bottom"
                             android:src="@drawable/user_profile_show_profile_element_both_off"
                             android:background="@color/my_profile_information_background" />
                     </LinearLayout>
@@ -353,7 +358,8 @@
                         android:orientation="horizontal"
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
-                        android:background="@color/my_profile_information_background">
+                        android:background="@color/my_profile_information_background"
+                        android:gravity="center_vertical">
 
                         <TextView
                             android:layout_width="0dp"
@@ -382,15 +388,15 @@
                             android:textSize="@dimen/my_profile_information_element_value_text_size"
                             android:background="@color/my_profile_information_background" />
 
-                        <com.chattyhive.chattyhive.framework.SquareImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
+                        <ImageView
+                            android:layout_width="@dimen/my_profile_information_element_image_size"
+                            android:layout_height="@dimen/my_profile_information_element_image_size"
                             android:id="@+id/my_profile_information_gender_show"
                             android:scaleType="fitCenter"
-                            android:paddingLeft="@dimen/my_profile_information_element_image_padding_left"
-                            android:paddingTop="@dimen/my_profile_information_element_image_padding_top"
-                            android:paddingRight="@dimen/my_profile_information_element_image_padding_right"
-                            android:paddingBottom="@dimen/my_profile_information_element_image_padding_bottom"
+                            android:layout_marginLeft="@dimen/my_profile_information_element_image_margin_left"
+                            android:layout_marginTop="@dimen/my_profile_information_element_image_margin_top"
+                            android:layout_marginRight="@dimen/my_profile_information_element_image_margin_right"
+                            android:layout_marginBottom="@dimen/my_profile_information_element_image_margin_bottom"
                             android:src="@drawable/user_profile_show_profile_element_only_private"
                             android:background="@color/my_profile_information_background" />
                     </LinearLayout>
@@ -413,7 +419,8 @@
                         android:orientation="horizontal"
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
-                        android:background="@color/my_profile_information_background">
+                        android:background="@color/my_profile_information_background"
+                        android:gravity="center_vertical">
 
                         <TextView
                             android:layout_width="0dp"
@@ -442,15 +449,15 @@
                             android:textSize="@dimen/my_profile_information_element_value_text_size"
                             android:background="@color/my_profile_information_background" />
 
-                        <com.chattyhive.chattyhive.framework.SquareImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
+                        <ImageView
+                            android:layout_width="@dimen/my_profile_information_element_image_size"
+                            android:layout_height="@dimen/my_profile_information_element_image_size"
                             android:id="@+id/my_profile_information_languages_show"
                             android:scaleType="fitCenter"
-                            android:paddingLeft="@dimen/my_profile_information_element_image_padding_left"
-                            android:paddingTop="@dimen/my_profile_information_element_image_padding_top"
-                            android:paddingRight="@dimen/my_profile_information_element_image_padding_right"
-                            android:paddingBottom="@dimen/my_profile_information_element_image_padding_bottom"
+                            android:layout_marginLeft="@dimen/my_profile_information_element_image_margin_left"
+                            android:layout_marginTop="@dimen/my_profile_information_element_image_margin_top"
+                            android:layout_marginRight="@dimen/my_profile_information_element_image_margin_right"
+                            android:layout_marginBottom="@dimen/my_profile_information_element_image_margin_bottom"
                             android:src="@drawable/user_profile_show_profile_element_only_public"
                             android:background="@color/my_profile_information_background" />
                     </LinearLayout>
@@ -465,7 +472,9 @@
         android:background="@drawable/my_profile_edit_button"
         android:layout_gravity="right"
         android:layout_marginTop="@dimen/my_profile_edit_button_margin_top"
-        android:layout_marginRight="@dimen/my_profile_edit_button_margin_right">
+        android:layout_marginRight="@dimen/my_profile_edit_button_margin_right"
+        android:visibility="visible"
+        android:gravity="center_vertical">
 
         <TextView
             android:layout_width="wrap_content"
@@ -483,15 +492,15 @@
             android:fontFamily="Roboto"
             android:background="@color/my_profile_edit_button" />
 
-        <com.chattyhive.chattyhive.framework.SquareImageView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+        <ImageView
+            android:layout_width="@dimen/my_profile_edit_button_image_size"
+            android:layout_height="@dimen/my_profile_edit_button_image_size"
             android:id="@+id/my_profile_edit_button_image"
             android:src="@drawable/edit"
-            android:paddingLeft="@dimen/my_profile_edit_button_image_padding_left"
-            android:paddingTop="@dimen/my_profile_edit_button_image_padding_top"
-            android:paddingRight="@dimen/my_profile_edit_button_image_padding_right"
-            android:paddingBottom="@dimen/my_profile_edit_button_image_padding_bottom"
+            android:layout_marginLeft="@dimen/my_profile_edit_button_image_margin_left"
+            android:layout_marginTop="@dimen/my_profile_edit_button_image_margin_top"
+            android:layout_marginRight="@dimen/my_profile_edit_button_image_margin_right"
+            android:layout_marginBottom="@dimen/my_profile_edit_button_image_margin_bottom"
             android:adjustViewBounds="false"
             android:cropToPadding="false"
             android:baselineAlignBottom="false"
@@ -502,4 +511,5 @@
             android:background="@color/my_profile_edit_button" />
 
     </LinearLayout>
+
 </FrameLayout>

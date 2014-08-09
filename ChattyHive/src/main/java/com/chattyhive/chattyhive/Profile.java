@@ -126,12 +126,12 @@ public class Profile {
         switch (profileType) {
             case Private:
                 ((TextView)profileView.findViewById(R.id.my_profile_status_message)).setText(R.string.my_profile_default_private_status_message);
-                StaticMethods.SetAlpha(profileView.findViewById(R.id.my_profile_status_private_button),0f);
+                StaticMethods.SetAlpha(profileView.findViewById(R.id.my_profile_status_private_button),1f);
                 StaticMethods.SetAlpha(profileView.findViewById(R.id.my_profile_status_public_button),0.5f);
                 break;
             case Public:
                 ((TextView)profileView.findViewById(R.id.my_profile_status_message)).setText(R.string.my_profile_default_public_status_message);
-                StaticMethods.SetAlpha(profileView.findViewById(R.id.my_profile_status_public_button),0f);
+                StaticMethods.SetAlpha(profileView.findViewById(R.id.my_profile_status_public_button),1f);
                 StaticMethods.SetAlpha(profileView.findViewById(R.id.my_profile_status_private_button),0.5f);
                 break;
         }

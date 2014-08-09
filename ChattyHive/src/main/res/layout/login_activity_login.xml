@@ -27,7 +27,8 @@
             android:paddingRight="1dp"
             android:hint="@string/login_activity_login_tab_email_field_hint"
             android:layout_marginBottom="15dp"
-            android:layout_marginTop="5dp" />
+            android:layout_marginTop="5dp"
+            android:textColor="@android:color/black" />
 
         <EditText
             android:layout_width="fill_parent"
@@ -37,7 +38,8 @@
             android:id="@+id/login_activity_login_password"
             android:background="#fffff7"
             android:layout_marginBottom="15dp"
-            android:hint="@string/login_activity_login_tab_password_field_hint" />
+            android:hint="@string/login_activity_login_tab_password_field_hint"
+            android:textColor="@android:color/black" />
 
         <Button
             android:layout_width="wrap_content"
@@ -51,7 +53,8 @@
             android:paddingTop="3dp"
             android:paddingRight="5dp"
             android:paddingBottom="6dp"
-            android:layout_marginBottom="15dp" />
+            android:layout_marginBottom="15dp"
+            android:textColor="@android:color/black" />
 
         <TextView
             android:layout_width="wrap_content"

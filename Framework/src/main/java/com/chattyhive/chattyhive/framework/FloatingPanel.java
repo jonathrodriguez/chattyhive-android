@@ -679,10 +679,10 @@ public class FloatingPanel extends ViewGroup {
             child.layout(childLeft,childTop,childRight,childBottom);
         }
 
-        this.mainPanels.get("left").bringToFront();
         this.actionBars.get("left").bringToFront();
-        this.mainPanels.get("center").bringToFront();
+        this.mainPanels.get("left").bringToFront();
         this.actionBars.get("center").bringToFront();
+        this.mainPanels.get("center").bringToFront();
 
     }
 

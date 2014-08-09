@@ -14,7 +14,7 @@ public class StaticMethods {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             v.setAlpha(alpha);
         } else {
-            if (alpha != 0f) {
+            if (alpha != 1f) {
                 AlphaAnimation alphaAnimation = new AlphaAnimation(alpha,alpha);
                 alphaAnimation.setDuration(0);
                 alphaAnimation.setFillAfter(true);

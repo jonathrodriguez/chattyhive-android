@@ -60,7 +60,8 @@
                     android:layout_marginRight="10dp"
                     android:paddingLeft="5dp"
                     android:paddingRight="1dp"
-                    android:hint="@string/login_activity_sign_up_tab_email_field_hint" />
+                    android:hint="@string/login_activity_sign_up_tab_email_field_hint"
+                    android:textColor="@android:color/black" />
 
                 <Button
                     android:layout_width="wrap_content"
@@ -73,7 +74,8 @@
                     android:paddingLeft="5dp"
                     android:paddingTop="3dp"
                     android:paddingRight="5dp"
-                    android:paddingBottom="5dp" />
+                    android:paddingBottom="5dp"
+                    android:textColor="@android:color/black" />
             </LinearLayout>
         </LinearLayout>
 

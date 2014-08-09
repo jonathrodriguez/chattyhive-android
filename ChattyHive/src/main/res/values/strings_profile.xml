@@ -14,17 +14,17 @@
     <string name="my_profile_default_public_status_message">This is a public status message up to 100 characters and may include smileys.</string>
 
     <string name="my_profile_information">Information</string>
-    <string name="my_profile_information_location">Actual location</string>
+    <string name="my_profile_information_location">Actual Location</string>
     <string name="my_profile_information_age">Age</string>
     <string name="my_profile_information_gender">Gender</string>
     <string name="my_profile_information_languages">Languages</string>
 
     <string name="my_profile_information_gender_male_value">Man</string>
     <string name="my_profile_information_gender_female_value">Woman</string>
-    <string name="my_profile_information_age_append_value_after">years old</string>
+    <string name="my_profile_information_age_append_value_after"></string>
 
     <string name="my_profile_information_default_location">Vigo, Galicia, Spain</string>
-    <string name="my_profile_information_default_age">0 years old</string>
+    <string name="my_profile_information_default_age">0</string>
     <string name="my_profile_information_default_gender">Man</string>
     <string name="my_profile_information_default_languages">Spanish</string>
 </resources>
