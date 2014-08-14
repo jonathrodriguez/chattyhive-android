@@ -3,16 +3,16 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item >
         <shape android:shape="rectangle">
-            <stroke android:width="@dimen/login_tab_panel_social_networks_buttons_shadow_border_width" android:color="#AA010101" />
+            <stroke android:width="@dimen/login_tab_panel_social_networks_buttons_shadow_border_width" android:color="@color/login_tab_panel_social_networks_buttons_facebook_shadow_border_color" />
             <corners android:radius="@dimen/login_tab_panel_social_networks_buttons_corner_radius" />
-            <solid android:color="#FF010101" />
+            <solid android:color="@color/login_tab_panel_social_networks_buttons_facebook_shadow_color" />
         </shape>
     </item>
     <item android:bottom="@dimen/login_tab_panel_social_networks_buttons_shadow_bottom" android:left="@dimen/login_tab_panel_social_networks_buttons_shadow_left">
         <shape android:shape="rectangle">
-            <stroke android:width="@dimen/login_tab_panel_social_networks_buttons_border_width" android:color="#6682C4" />
+            <stroke android:width="@dimen/login_tab_panel_social_networks_buttons_border_width" android:color="@color/login_tab_panel_social_networks_buttons_facebook_border_color" />
             <corners android:radius="@dimen/login_tab_panel_social_networks_buttons_corner_radius" />
-            <solid android:color="#3B5898" />
+            <solid android:color="@color/login_tab_panel_social_networks_buttons_facebook_background_color" />
         </shape>
     </item>
 </layer-list>

@@ -11,18 +11,28 @@
     <dimen name="login_tab_panel_max_width">309dp</dimen>
     <dimen name="login_tab_panel_padding_left">26.5dp</dimen>
     <dimen name="login_tab_panel_padding_right">26.5dp</dimen>
+
     <dimen name="login_tab_panel_corner_radius_bottom">5.5dp</dimen>
-    <dimen name="login_tab_panel_corner_radius_top_out">7dp</dimen>
-    <dimen name="login_tab_panel_corner_radius_top_in">7dp</dimen>
+    <dimen name="login_tab_panel_corner_radius_top">7dp</dimen>
+    <dimen name="login_tab_panel_shadow_left">3px</dimen>
+    <dimen name="login_tab_panel_shadow_bottom">5px</dimen>
+    <dimen name="login_tab_panel_shadow_border_width">1px</dimen>
+    <dimen name="login_tab_panel_border_width">1px</dimen>
+
+    <dimen name="login_tab_panel_social_networks_buttons_corner_radius">8dp</dimen>
+    <dimen name="login_tab_panel_social_networks_buttons_shadow_left">3px</dimen>
+    <dimen name="login_tab_panel_social_networks_buttons_shadow_bottom">5px</dimen>
+    <dimen name="login_tab_panel_social_networks_buttons_shadow_border_width">1px</dimen>
+    <dimen name="login_tab_panel_social_networks_buttons_border_width">1px</dimen>
 
     <dimen name="login_bottom_text_margin_bottom">6.25dp</dimen>
     <dimen name="login_bottom_text_size">13.5sp</dimen>
 
     <!-- Login tab -->
-    <dimen name="login_tab_panel_login_username_margin_top">24.5dp</dimen>
-    <dimen name="login_tab_panel_login_password_margin_top">23.5dp</dimen>
-    <dimen name="login_tab_panel_login_login_button_margin_top">23.5dp</dimen>
-    <dimen name="login_tab_panel_login_social_networks_text_margin_top">30dp</dimen>
+    <dimen name="login_tab_panel_login_username_margin_top">24dp</dimen>
+    <dimen name="login_tab_panel_login_password_margin_top">16dp</dimen>
+    <dimen name="login_tab_panel_login_login_button_margin_top">16dp</dimen>
+    <dimen name="login_tab_panel_login_social_networks_text_margin_top">20.5dp</dimen>
     <dimen name="login_tab_panel_login_social_networks_buttons_margin_top">12.5dp</dimen>
     <dimen name="login_tab_panel_login_social_networks_buttons_margin_bottom">13.5dp</dimen>
 
@@ -42,8 +52,13 @@
     <dimen name="login_tab_panel_login_login_button_padding_top">14dp</dimen>
     <dimen name="login_tab_panel_login_login_button_padding_right">7.5dp</dimen>
     <dimen name="login_tab_panel_login_login_button_padding_bottom">14dp</dimen>
-    <dimen name="login_tab_panel_login_login_button_corner_radius">8dp</dimen>
     <dimen name="login_tab_panel_login_login_button_text_size">16sp</dimen>
+
+    <dimen name="login_tab_panel_login_login_button_corner_radius">8dp</dimen>
+    <dimen name="login_tab_panel_login_login_button_shadow_left">3px</dimen>
+    <dimen name="login_tab_panel_login_login_button_shadow_bottom">5px</dimen>
+    <dimen name="login_tab_panel_login_login_button_shadow_border_width">1px</dimen>
+    <dimen name="login_tab_panel_login_login_button_border_width">1px</dimen>
 
     <dimen name="login_tab_panel_login_social_networks_text_size">16sp</dimen>
 
@@ -54,12 +69,46 @@
     <dimen name="login_tab_panel_login_social_networks_buttons_padding_right">4dp</dimen>
     <dimen name="login_tab_panel_login_social_networks_buttons_padding_bottom">4dp</dimen>
 
-    <dimen name="login_tab_panel_social_networks_buttons_corner_radius">8dp</dimen>
-    <dimen name="login_tab_panel_social_networks_buttons_shadow_left">3px</dimen>
-    <dimen name="login_tab_panel_social_networks_buttons_shadow_bottom">5px</dimen>
-    <dimen name="login_tab_panel_social_networks_buttons_shadow_border_width">1px</dimen>
-    <dimen name="login_tab_panel_social_networks_buttons_border_width">1px</dimen>
     <!-- Register tab -->
+
+    <dimen name="login_tab_panel_sign_up_social_networks_buttons_image_width">45.5dp</dimen>
+    <dimen name="login_tab_panel_sign_up_social_networks_buttons_image_padding_top">7.75dp</dimen>
+    <dimen name="login_tab_panel_sign_up_social_networks_buttons_image_padding_bottom">7.75dp</dimen>
+    <dimen name="login_tab_panel_sign_up_social_networks_buttons_image_separator_width">1px</dimen>
+    <dimen name="login_tab_panel_sign_up_social_networks_buttons_facebook_padding_left">5dp</dimen>
+    <dimen name="login_tab_panel_sign_up_social_networks_buttons_facebook_margin_top">18dp</dimen>
+    <dimen name="login_tab_panel_sign_up_social_networks_buttons_twitter_padding_left">0dp</dimen>
+    <dimen name="login_tab_panel_sign_up_social_networks_buttons_twitter_margin_top">12dp</dimen>
+    <dimen name="login_tab_panel_sign_up_social_networks_buttons_google_plus_padding_left">7dp</dimen>
+    <dimen name="login_tab_panel_sign_up_social_networks_buttons_google_plus_margin_top">13dp</dimen>
+    <dimen name="login_tab_panel_sign_up_social_networks_buttons_text_size">16sp</dimen>
+    <dimen name="login_tab_panel_sign_up_social_networks_buttons_text_padding_left">20dp</dimen>
+    <dimen name="login_tab_panel_sign_up_social_networks_buttons_text_padding_top">11.5dp</dimen>
+    <dimen name="login_tab_panel_sign_up_social_networks_buttons_text_padding_right">10dp</dimen>
+    <dimen name="login_tab_panel_sign_up_social_networks_buttons_text_padding_bottom">11.5dp</dimen>
+
+    <dimen name="login_tab_panel_sign_up_sign_with_email_text_margin_top">20dp</dimen>
+    <dimen name="login_tab_panel_sign_up_sign_with_email_text_size">16sp</dimen>
+
+    <dimen name="login_tab_panel_sign_up_sign_with_email_email_field_text_size">15sp</dimen>
+    <dimen name="login_tab_panel_sign_up_sign_with_email_email_field_padding_left">7.5dp</dimen>
+    <dimen name="login_tab_panel_sign_up_sign_with_email_email_field_padding_top">8.5dp</dimen>
+    <dimen name="login_tab_panel_sign_up_sign_with_email_email_field_padding_right">7.5dp</dimen>
+    <dimen name="login_tab_panel_sign_up_sign_with_email_email_field_padding_bottom">8.5dp</dimen>
+    <dimen name="login_tab_panel_sign_up_sign_with_email_email_field_margin_top">12dp</dimen>
+    <dimen name="login_tab_panel_sign_up_sign_with_email_email_field_margin_bottom">12dp</dimen>
+    <dimen name="login_tab_panel_sign_up_sign_with_email_margin_bottom">10.5dp</dimen>
+
+    <dimen name="login_tab_panel_sign_up_go_button_margin_right">6dp</dimen>
+    <dimen name="login_tab_panel_sign_up_go_button_width">51dp</dimen>
+    <dimen name="login_tab_panel_sign_up_go_button_height">40dp</dimen>
+    <dimen name="login_tab_panel_sign_up_go_button_text_size">19sp</dimen>
+
+    <dimen name="login_tab_panel_sign_up_go_button_corner_radius">8dp</dimen>
+    <dimen name="login_tab_panel_sign_up_go_button_shadow_left">3px</dimen>
+    <dimen name="login_tab_panel_sign_up_go_button_shadow_bottom">5px</dimen>
+    <dimen name="login_tab_panel_sign_up_go_button_shadow_border_width">1px</dimen>
+    <dimen name="login_tab_panel_sign_up_go_button_border_width">1px</dimen>
 
     <!-- REGISTER DIMENSIONS -->
     <!-- ___________________________________________________________________________ -->

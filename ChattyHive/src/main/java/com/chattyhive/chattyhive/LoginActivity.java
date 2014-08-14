@@ -1,6 +1,7 @@
 package com.chattyhive.chattyhive;
 
 import android.app.Activity;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -51,11 +52,12 @@ public class LoginActivity extends Activity {
     }
 
     protected void setTabButtonsBehaviour() {
-        final Button signin = (Button)findViewById(R.id.login_activity_signup_tab_button);
+        final Button signup = (Button)findViewById(R.id.login_activity_signup_tab_button);
         final Button loggin = (Button)findViewById(R.id.login_activity_login_tab_button);
         //final LinearLayout master_frame = (LinearLayout)findViewById(R.id.login_activity_master_frame);
         final ViewSwitcher viewSwitcher = (ViewSwitcher)findViewById(R.id.viewSwitcher);
-        signin.setSelected(true);
+        signup.setSelected(true);
+        signup.setTextColor(getResources().getColor(R.color.login_tab_panel_selected_button_text_color));
 
         LayoutInflater inflater = getLayoutInflater();
         viewSwitcher.addView(inflater.inflate(R.layout.login_activity_sign_up,null));
@@ -66,20 +68,25 @@ public class LoginActivity extends Activity {
         View.OnClickListener tab_button_listener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (signin.isSelected()) {
+                //if (signup.isSelected()) {
+                if ((v.getId() == R.id.login_activity_login_tab_button) && (signup.isSelected())) {
                     loggin.setSelected(true);
-                    signin.setSelected(false);
+                    signup.setSelected(false);
+                    loggin.setTextColor(getResources().getColor(R.color.login_tab_panel_selected_button_text_color));
+                    signup.setTextColor(getResources().getColor(R.color.login_tab_panel_not_selected_button_text_color));
                     viewSwitcher.showNext();
 
-                } else {
-                    signin.setSelected(true);
+                } else if ((v.getId() == R.id.login_activity_signup_tab_button) && (loggin.isSelected())) {
+                    signup.setSelected(true);
                     loggin.setSelected(false);
+                    signup.setTextColor(getResources().getColor(R.color.login_tab_panel_selected_button_text_color));
+                    loggin.setTextColor(getResources().getColor(R.color.login_tab_panel_not_selected_button_text_color));
                     viewSwitcher.showPrevious();
                 }
             }
         };
 
-        signin.setOnClickListener(tab_button_listener);
+        signup.setOnClickListener(tab_button_listener);
         loggin.setOnClickListener(tab_button_listener);
     }
 

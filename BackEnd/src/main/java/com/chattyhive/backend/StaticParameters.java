@@ -12,7 +12,7 @@ public final class StaticParameters {
 
     public static final Boolean StandAlone = true; //Used for debug purposes. When set to TRUE application will not connect to server.
 
-    public static final Boolean BackgroundService = true; //When set to false there will not be a background service, so no notifications available.
+    public static final Boolean BackgroundService = false; //When set to false there will not be a background service, so no notifications available.
 
     public static final String ProjectName = "chattyhive"; //The name of the project.
     public static final String ApplicationBase = "android"; //The name of the application.

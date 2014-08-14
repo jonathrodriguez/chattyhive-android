@@ -3,13 +3,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    tools:context="com.chattyhive.chattyhive.LoginActivity$PlaceholderFragment">
+    tools:context="com.chattyhive.chattyhive.LoginActivity$PlaceholderFragment"
+    android:background="@color/login_background_color">
 <LinearLayout
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:id="@+id/login_activity_master_frame"
-    android:baselineAligned="false">
+    android:baselineAligned="false"
+    android:background="#00000000">
 
     <ImageView
         android:layout_width="wrap_content"
@@ -28,22 +30,24 @@
             android:layout_width="309dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:baselineAligned="false">
+            android:baselineAligned="false"
+            android:background="#00000000">
 
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center">
+                android:layout_gravity="center"
+                android:background="#00000000">
 
                 <Button
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/login_activity_sign_up"
+                    android:text="@string/login_tab_panel_sign_up_tab_button"
                     android:id="@+id/login_activity_signup_tab_button"
                     android:background="@drawable/login_activity_tab_button_background_selector"
                     android:layout_marginRight="-1dp"
-                    android:textColor="#eeeeee"
+                    android:textColor="@color/login_tab_panel_not_selected_button_text_color"
                     android:paddingLeft="26dp"
                     android:paddingRight="26dp"
                     android:paddingTop="18dp"
@@ -53,11 +57,11 @@
                 <Button
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/login_activity_login"
+                    android:text="@string/login_tab_panel_login_tab_button"
                     android:id="@+id/login_activity_login_tab_button"
                     android:background="@drawable/login_activity_tab_button_background_selector"
                     android:layout_marginLeft="-1dp"
-                    android:textColor="#eeeeee"
+                    android:textColor="@color/login_tab_panel_not_selected_button_text_color"
                     android:paddingBottom="18dp"
                     android:paddingRight="26dp"
                     android:paddingTop="18dp"
@@ -69,7 +73,8 @@
             <ViewSwitcher
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/viewSwitcher" />
+                android:id="@+id/viewSwitcher"
+                android:background="#00000000" />
 
         </LinearLayout>
 
