@@ -3,9 +3,9 @@
     <!-- LOGIN DIMENSIONS -->
     <!-- ___________________________________________________________________________ -->
 
-    <dimen name="login_logo_margin_top">15dp</dimen>
-    <dimen name="login_logo_margin_bottom">15dp</dimen>
-    <dimen name="login_logo_height">50dp</dimen>
+    <dimen name="login_logo_margin_top">52.5dp</dimen>
+    <dimen name="login_logo_margin_bottom">17.5dp</dimen>
+    <dimen name="login_logo_height">65dp</dimen>
 
     <dimen name="login_tab_panel_margin_bottom">10dp</dimen>
     <dimen name="login_tab_panel_max_width">309dp</dimen>
@@ -13,9 +13,9 @@
     <dimen name="login_tab_panel_padding_right">26.5dp</dimen>
 
     <dimen name="login_tab_panel_buttons_padding_left">5dp</dimen>
-    <dimen name="login_tab_panel_buttons_padding_top">10dp</dimen>
+    <dimen name="login_tab_panel_buttons_padding_top">18dp</dimen>
     <dimen name="login_tab_panel_buttons_padding_right">5dp</dimen>
-    <dimen name="login_tab_panel_buttons_padding_bottom">10dp</dimen>
+    <dimen name="login_tab_panel_buttons_padding_bottom">18dp</dimen>
     <dimen name="login_tab_panel_buttons_text_size">16sp</dimen>
 
     <dimen name="login_tab_panel_corner_radius_bottom">5.5dp</dimen>
@@ -66,7 +66,7 @@
     <dimen name="login_tab_panel_login_login_button_shadow_border_width">1px</dimen>
     <dimen name="login_tab_panel_login_login_button_border_width">1px</dimen>
 
-    <dimen name="login_tab_panel_login_social_networks_text_size">14sp</dimen>
+    <dimen name="login_tab_panel_login_social_networks_text_size">16sp</dimen>
 
     <dimen name="login_tab_panel_login_social_networks_buttons_width">68dp</dimen>
     <dimen name="login_tab_panel_login_social_networks_buttons_height">44dp</dimen>
@@ -93,8 +93,8 @@
     <dimen name="login_tab_panel_sign_up_social_networks_buttons_text_padding_right">10dp</dimen>
     <dimen name="login_tab_panel_sign_up_social_networks_buttons_text_padding_bottom">11.5dp</dimen>
 
-    <dimen name="login_tab_panel_sign_up_sign_with_email_text_margin_top">21dp</dimen>
-    <dimen name="login_tab_panel_sign_up_sign_with_email_text_size">14sp</dimen>
+    <dimen name="login_tab_panel_sign_up_sign_with_email_text_margin_top">22dp</dimen>
+    <dimen name="login_tab_panel_sign_up_sign_with_email_text_size">16sp</dimen>
 
     <dimen name="login_tab_panel_sign_up_sign_with_email_email_field_text_size">15sp</dimen>
     <dimen name="login_tab_panel_sign_up_sign_with_email_email_field_padding_left">7.5dp</dimen>

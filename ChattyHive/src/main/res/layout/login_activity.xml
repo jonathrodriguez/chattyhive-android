@@ -46,12 +46,12 @@
                     android:text="@string/login_tab_panel_sign_up_tab_button"
                     android:id="@+id/login_activity_signup_tab_button"
                     android:background="@drawable/login_activity_tab_button_background_selector"
-                    android:layout_marginRight="-1dp"
                     android:textColor="@color/login_tab_panel_not_selected_button_text_color"
-                    android:paddingLeft="26dp"
-                    android:paddingRight="26dp"
-                    android:paddingTop="18dp"
-                    android:paddingBottom="18dp"
+                    android:paddingLeft="@dimen/login_tab_panel_buttons_padding_left"
+                    android:paddingRight="@dimen/login_tab_panel_buttons_padding_right"
+                    android:paddingTop="@dimen/login_tab_panel_buttons_padding_top"
+                    android:paddingBottom="@dimen/login_tab_panel_buttons_padding_bottom"
+                    android:textSize="@dimen/login_tab_panel_buttons_text_size"
                     android:layout_weight="1" />
 
                 <Button
@@ -60,13 +60,12 @@
                     android:text="@string/login_tab_panel_login_tab_button"
                     android:id="@+id/login_activity_login_tab_button"
                     android:background="@drawable/login_activity_tab_button_background_selector"
-                    android:layout_marginLeft="-1dp"
                     android:textColor="@color/login_tab_panel_not_selected_button_text_color"
-                    android:paddingBottom="18dp"
-                    android:paddingRight="26dp"
-                    android:paddingTop="18dp"
-                    android:paddingLeft="26dp"
-                    android:typeface="normal"
+                    android:paddingLeft="@dimen/login_tab_panel_buttons_padding_left"
+                    android:paddingRight="@dimen/login_tab_panel_buttons_padding_right"
+                    android:paddingTop="@dimen/login_tab_panel_buttons_padding_top"
+                    android:paddingBottom="@dimen/login_tab_panel_buttons_padding_bottom"
+                    android:textSize="@dimen/login_tab_panel_buttons_text_size"
                     android:layout_weight="1" />
             </LinearLayout>
 
