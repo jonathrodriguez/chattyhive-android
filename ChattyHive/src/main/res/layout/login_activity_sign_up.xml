@@ -33,7 +33,8 @@
                     android:layout_marginTop="@dimen/login_tab_panel_sign_up_social_networks_buttons_image_padding_top"
                     android:layout_marginBottom="@dimen/login_tab_panel_sign_up_social_networks_buttons_image_padding_bottom"
                     android:paddingLeft="@dimen/login_tab_panel_sign_up_social_networks_buttons_facebook_padding_left"
-                    android:background="#00000000" />
+                    android:background="#00000000"
+                    android:contentDescription="@string/login_tab_panel_sign_up_sign_with_facebook"/>
 
                 <View
                     android:layout_width="@dimen/login_tab_panel_sign_up_social_networks_buttons_image_separator_width"
@@ -74,7 +75,8 @@
                     android:layout_marginTop="@dimen/login_tab_panel_sign_up_social_networks_buttons_image_padding_top"
                     android:layout_marginBottom="@dimen/login_tab_panel_sign_up_social_networks_buttons_image_padding_bottom"
                     android:paddingLeft="@dimen/login_tab_panel_sign_up_social_networks_buttons_twitter_padding_left"
-                    android:background="#00000000" />
+                    android:background="#00000000"
+                    android:contentDescription="@string/login_tab_panel_sign_up_sign_with_twitter"/>
 
                 <View
                     android:layout_width="@dimen/login_tab_panel_sign_up_social_networks_buttons_image_separator_width"
@@ -115,7 +117,8 @@
                     android:layout_marginTop="@dimen/login_tab_panel_sign_up_social_networks_buttons_image_padding_top"
                     android:layout_marginBottom="@dimen/login_tab_panel_sign_up_social_networks_buttons_image_padding_bottom"
                     android:paddingLeft="@dimen/login_tab_panel_sign_up_social_networks_buttons_google_plus_padding_left"
-                    android:background="#00000000" />
+                    android:background="#00000000"
+                    android:contentDescription="@string/login_tab_panel_sign_up_sign_with_google_plus"/>
 
                 <View
                     android:layout_width="@dimen/login_tab_panel_sign_up_social_networks_buttons_image_separator_width"
