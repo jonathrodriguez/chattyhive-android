@@ -108,10 +108,10 @@ public class LeftPanelListAdapter extends BaseAdapter {
                 holder = new ChatViewHolder();
                 convertView = this.inflater.inflate(R.layout.left_panel_chat_list_item,parent,false);
 
-                ((ChatViewHolder)holder).chatItem = (LinearLayout)convertView.findViewById((R.id.left_panel_chat_list_hive_item_top_view));
-                ((ChatViewHolder)holder).chatName = (TextView)convertView.findViewById(R.id.left_panel_chat_list_hive_item_hive_name);
-                ((ChatViewHolder)holder).chatLastMessage = (TextView)convertView.findViewById(R.id.left_panel_chat_list_hive_item_last_message);
-                ((ChatViewHolder)holder).chatImage = (ImageView)convertView.findViewById(R.id.left_panel_chat_list_hive_item_img);
+                ((ChatViewHolder)holder).chatItem = (LinearLayout)convertView.findViewById((R.id.left_panel_chat_list_item_top_view));
+                ((ChatViewHolder)holder).chatName = (TextView)convertView.findViewById(R.id.left_panel_chat_list_item_chat_name);
+                ((ChatViewHolder)holder).chatLastMessage = (TextView)convertView.findViewById(R.id.left_panel_chat_list_item_last_message);
+                ((ChatViewHolder)holder).chatImage = (ImageView)convertView.findViewById(R.id.left_panel_chat_list_item_big_img);
                 ((ChatViewHolder)holder).chatItem.setOnClickListener(clickListener);
             } else if (type == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Mates)) {
                 //convertView = this.inflater.inflate(R.layout.main_panel_chat_hive_message_me,parent,false);
