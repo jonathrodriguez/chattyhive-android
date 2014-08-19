@@ -15,16 +15,16 @@ import com.google.gson.JsonPrimitive;
   *
   * ChattyHive API Manager Code Generator was created by Jonathan on 25/06/2014.
  */
-public class COMMON extends Format {
-	public String STATUS;
-    public Integer ERROR;
+public class INTERVAL extends Format {
+	public String START_INDEX;
+    public Integer COUNT;
     
 
-    public COMMON() {
+    public INTERVAL() {
         super();
     }
 
-    public COMMON(JsonElement data) {
+    public INTERVAL(JsonElement data) {
         this();
         this.fromJSON(data);
     }
@@ -33,11 +33,11 @@ public class COMMON extends Format {
     public JsonElement toJSON() {
         JsonObject jsonObject = new JsonObject();
 
-	    if ((this.STATUS != null) && (!this.STATUS.isEmpty()))
-            jsonObject.addProperty("STATUS",this.STATUS);
+	    if ((this.START_INDEX != null) && (!this.START_INDEX.isEmpty()))
+            jsonObject.addProperty("START_INDEX",this.START_INDEX);
             
-        if (this.ERROR != null)
-            jsonObject.addProperty("ERROR",this.ERROR);
+        if (this.COUNT != null)
+            jsonObject.addProperty("COUNT",this.COUNT);
             
       
 
@@ -45,30 +45,30 @@ public class COMMON extends Format {
             return JsonNull.INSTANCE;
 
         JsonObject result = new JsonObject();
-        result.add("COMMON",jsonObject);
+        result.add("INTERVAL",jsonObject);
 
         return result;
     }
 
     @Override
     public void fromJSON(JsonElement data) {
-        JsonObject object = data.getAsJsonObject().getAsJsonObject("COMMON");
+        JsonObject object = data.getAsJsonObject().getAsJsonObject("INTERVAL");
         if ((object == null) || (!object.isJsonObject())) {
             object = data.getAsJsonObject();
         }
         if ((object == null) || (!object.isJsonObject())) {
-            throw new IllegalArgumentException("Data is not an COMMON object.");
+            throw new IllegalArgumentException("Data is not an INTERVAL object.");
         }
 
         JsonElement property;
 
-	    property = object.get("STATUS");
+	    property = object.get("START_INDEX");
         if ((property != null) && (property.isJsonPrimitive()) && (property.getAsString() != null) && (!property.getAsString().isEmpty()))
-            this.STATUS = property.getAsString();
+            this.START_INDEX = property.getAsString();
             
-        property = object.get("ERROR");
+        property = object.get("COUNT");
         if ((property != null) && (property.isJsonPrimitive()) && (((JsonPrimitive)property).isNumber()))
-            this.ERROR = property.getAsInt();
+            this.COUNT = property.getAsInt();
             
       
     }

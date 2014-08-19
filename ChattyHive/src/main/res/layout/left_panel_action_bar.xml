@@ -4,15 +4,15 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="48dp"
-    android:background="#292929">
+    android:background="@color/left_panel_action_bar_background">
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="48dp"
             android:text="@string/left_panel_chats_button"
             android:id="@+id/left_panel_chats_button"
-            android:textColor="#a1a1a1"
-            android:background="#292929"
+            android:textColor="@color/left_panel_action_bar_unselected_button_text"
+            android:background="@drawable/left_panel_action_bar_button_background_selector"
             android:gravity="center|center_vertical|center_horizontal"
             android:layout_gravity="center" />
 
@@ -21,8 +21,8 @@
             android:layout_height="48dp"
             android:text="@string/left_panel_hives_button"
             android:id="@+id/left_panel_hives_button"
-            android:textColor="#a1a1a1"
-            android:background="#292929"
+            android:textColor="@color/left_panel_action_bar_unselected_button_text"
+            android:background="@drawable/left_panel_action_bar_button_background_selector"
             android:layout_gravity="center"
             android:gravity="center|center_vertical|center_horizontal" />
 
@@ -31,22 +31,23 @@
             android:layout_height="48dp"
             android:text="@string/left_panel_mates_button"
             android:id="@+id/left_panel_mates_button"
-            android:textColor="#a1a1a1"
-            android:background="#292929"
+            android:textColor="@color/left_panel_action_bar_unselected_button_text"
+            android:background="@drawable/left_panel_action_bar_button_background_selector"
             android:gravity="center|center_vertical|center_horizontal"
             android:layout_gravity="center" />
 
         <FrameLayout
             android:layout_width="0dp"
             android:layout_height="fill_parent"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:background="@color/left_panel_action_bar_background" />
 
         <ImageButton
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:id="@+id/left_panel_search_button"
             android:src="@drawable/pestanhas_panel_izquierdo_search_blanco"
-            android:background="#292929"
+            android:background="@color/left_panel_action_bar_search_button_background"
             android:paddingTop="12dp"
             android:paddingBottom="12dp"
             android:scaleType="fitCenter"

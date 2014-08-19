@@ -30,6 +30,7 @@ import com.chattyhive.chattyhive.OSStorageProvider.UserLocalStorage;
 import com.chattyhive.chattyhive.backgroundservice.CHService;
 
 import com.chattyhive.chattyhive.framework.FloatingPanel;
+import com.chattyhive.chattyhive.framework.ViewPair;
 
 import java.lang.reflect.Method;
 
@@ -47,14 +48,19 @@ public class Main extends Activity {
 
     //TODO: Add main panel view stack
 
-    protected View ShowLayout (int layoutID, int actionBarID) { //TODO: Populate/manage main panel view stack.
+    protected ViewPair ShowLayout (int layoutID, int actionBarID) {
         FrameLayout mainPanel = ((FrameLayout)findViewById(R.id.mainCenter));
         FrameLayout mainActionBar = ((FrameLayout)findViewById(R.id.actionCenter));
         mainPanel.removeAllViews();
         mainActionBar.removeAllViews();
         ActiveLayoutID = layoutID;
-        LayoutInflater.from(this).inflate(actionBarID,mainActionBar,true);
-        return LayoutInflater.from(this).inflate(layoutID, mainPanel, true);
+        View actionBar = LayoutInflater.from(this).inflate(actionBarID,mainActionBar,true);
+        View mainView = LayoutInflater.from(this).inflate(layoutID, mainPanel, true);
+        ViewPair actualView = new ViewPair(mainView,actionBar);
+
+        //TODO: Populate/manage main panel view stack.
+
+        return actualView;
     }
 
     @Override

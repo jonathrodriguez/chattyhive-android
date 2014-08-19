@@ -17,8 +17,6 @@ import com.chattyhive.backend.businessobjects.Chats.Hive;
 import com.chattyhive.backend.businessobjects.Users.User;
 import com.chattyhive.backend.util.events.EventArgs;
 
-import java.util.ArrayList;
-
 /**
  * Created by Jonathan on 13/03/14.
  */
@@ -31,7 +29,7 @@ public class LeftPanelListAdapter extends BaseAdapter {
 
     private View.OnClickListener clickListener;
 
-    public void SetVisibleList(int LeftPanel_ListKind) { this.visibleList = LeftPanel_ListKind; }
+    public void SetVisibleList(int LeftPanel_ListKind) { this.visibleList = LeftPanel_ListKind; this.OnAddItem(this,EventArgs.Empty()); }
     public  int GetVisibleList()                         { return this.visibleList; }
 
     public void SetOnClickListener (View.OnClickListener listener) { this.clickListener = listener; notifyDataSetChanged(); }
@@ -108,7 +106,7 @@ public class LeftPanelListAdapter extends BaseAdapter {
                 ((HiveViewHolder)holder).hiveItem.setOnClickListener(clickListener);
             } else if (type == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Chats)) {
                 holder = new ChatViewHolder();
-                convertView = this.inflater.inflate(R.layout.left_panel_chat_list_hive_item,parent,false);
+                convertView = this.inflater.inflate(R.layout.left_panel_chat_list_item,parent,false);
 
                 ((ChatViewHolder)holder).chatItem = (LinearLayout)convertView.findViewById((R.id.left_panel_chat_list_hive_item_top_view));
                 ((ChatViewHolder)holder).chatName = (TextView)convertView.findViewById(R.id.left_panel_chat_list_hive_item_hive_name);
@@ -136,7 +134,7 @@ public class LeftPanelListAdapter extends BaseAdapter {
             if ((((Group)item).getGroupKind() == GroupKind.PRIVATE_SINGLE) || (((Group)item).getGroupKind() == GroupKind.PUBLIC_SINGLE)) {
                 for (User user : ((Group) item).getMembers())
                     if (!user.isMe()) GroupName = user.getShowingName();
-            } else if (((Group)item).getGroupKind() == GroupKind.HIVE) {
+            } else if ((((Group)item).getGroupKind() == GroupKind.HIVE) && (((Group)item).getParentHive() != null)) {
                 GroupName = ((Group)item).getParentHive().getName();
             } else {
                 GroupName = ((Group)item).getName();

@@ -7,12 +7,18 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
 import java.util.ArrayList;
+    
 
-/**
- * Created by Jonathan on 01/08/2014.
+ /*
+  * Automatically generated code by ChattyHive API Manager Code Generator on 18/08/2014.
+  * Be careful to not modify this file since your changes will not be included in future
+  * versions of this file.
+  *
+  * ChattyHive API Manager Code Generator was created by Jonathan on 25/06/2014.
  */
 public class CHAT_LIST extends Format {
-    public ArrayList<CHAT_SYNC> CHAT_SYNCS;
+	public ArrayList<CHAT_SYNC> LIST;
+    
 
     public CHAT_LIST() {
         super();
@@ -27,18 +33,20 @@ public class CHAT_LIST extends Format {
     public JsonElement toJSON() {
         JsonObject jsonObject = new JsonObject();
 
-        if (this.CHAT_SYNCS != null) {
+	    if (this.LIST != null) {
             JsonArray jsonArray = new JsonArray();
-            for (CHAT_SYNC element : this.CHAT_SYNCS) {
+            for (CHAT_SYNC element : this.LIST) {
                 JsonElement jsonElement =   element.toJSON()
-                        ;
+  ;
                 if (!jsonElement.isJsonNull())
                     jsonArray.add(jsonElement);
             }
 
             if (jsonArray.size() > 0)
-                jsonObject.add("CHAT_SYNC",jsonArray);
+                jsonObject.add("LIST",jsonArray);
         }
+        
+      
 
         if (jsonObject.entrySet().isEmpty())
             return JsonNull.INSTANCE;
@@ -51,19 +59,25 @@ public class CHAT_LIST extends Format {
 
     @Override
     public void fromJSON(JsonElement data) {
-        JsonArray array = data.getAsJsonObject().getAsJsonArray("CHAT_LIST");
-/*        if ((array == null) || (!array.isJsonArray())) {
-            //array = data.getAsJsonObject();
-            return;
-        }*/
-        if ((array == null) || (!array.isJsonArray())) {
+        JsonObject object = data.getAsJsonObject().getAsJsonObject("CHAT_LIST");
+        if ((object == null) || (!object.isJsonObject())) {
+            object = data.getAsJsonObject();
+        }
+        if ((object == null) || (!object.isJsonObject())) {
             throw new IllegalArgumentException("Data is not an CHAT_LIST object.");
         }
 
         JsonElement property;
 
-        this.CHAT_SYNCS = new ArrayList<CHAT_SYNC>();
-        for (JsonElement jsonElement : array)
-            this.CHAT_SYNCS.add(new CHAT_SYNC(jsonElement));
+	    property = object.get("LIST");
+        if ((property != null) && (property.isJsonArray())) {
+            this.LIST = new ArrayList<CHAT_SYNC>();
+            JsonArray array = property.getAsJsonArray();
+            for (JsonElement jsonElement : array)
+                this.LIST.add(  new CHAT_SYNC(jsonElement)
+      );
+        }
+        
+      
     }
 }

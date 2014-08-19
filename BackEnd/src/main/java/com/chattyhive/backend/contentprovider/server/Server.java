@@ -385,7 +385,10 @@ public class Server {
             Format[] receivedFormats = null;
 
             if (responseCode == 200) {
-                receivedFormats = Format.getFormat(new JsonParser().parse(responseBody));
+
+                //TODO: receivedFormats = Format.getFormat(new JsonParser().parse(responseBody));
+                String preparedResponseBody = responseBody.replace("\\\"","\"").replace("\"{","{").replace("}\"","}").replaceAll("\"PROFILE\": \"(.*?)\"","\"PROFILE\": {\"PUBLIC_NAME\": \"$1\"}");
+                receivedFormats = Format.getFormat(new JsonParser().parse(preparedResponseBody));
 
                 for (Format format : receivedFormats)
                     if (format instanceof COMMON) {

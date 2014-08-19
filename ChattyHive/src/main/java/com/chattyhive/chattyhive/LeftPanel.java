@@ -17,6 +17,7 @@ import com.chattyhive.backend.businessobjects.Chats.Hive;
 import com.chattyhive.backend.util.events.ChannelEventArgs;
 import com.chattyhive.backend.util.events.EventArgs;
 import com.chattyhive.backend.util.events.EventHandler;
+import com.chattyhive.chattyhive.framework.ViewPair;
 
 import java.util.ArrayList;
 
@@ -155,32 +156,39 @@ public class LeftPanel {
         @Override
         public void onClick(View v) {
             View chatView;
+            View actionBarView;
             MainChat mainChat;
+
+            ViewPair viewPair = ((Main)context).ShowLayout(R.layout.main_panel_chat_layout,R.layout.chat_action_bar);
+
+            actionBarView = viewPair.getActionBarView();
+            chatView = viewPair.getMainView();
             if (leftPanelListAdapter.GetVisibleList() == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Hives)) {
                 /*if (((Main)context).ActiveLayoutID == R.layout.main_panel_chat_layout) {
                         ((Main)context).controller.Leave((String)((Activity)context).findViewById(R.id.main_panel_chat_name).getTag());
                     }*/
 
                 Hive h = ((Hive)v.getTag(R.id.BO_Hive));
-                chatView = ((Main)context).ShowLayout(R.layout.main_panel_chat_layout,R.layout.chat_action_bar);
-                ((TextView)chatView.findViewById(R.id.main_panel_chat_name)).setText(h.getName());
-                chatView.findViewById(R.id.main_panel_chat_name).setTag(h.getPublicChat().getChannelUnicode());
 
-                chatView.findViewById(R.id.main_panel_chat_menu_icon).setOnClickListener(((Main)context).menuIcon_ClickListener);
-                chatView.findViewById(R.id.main_panel_chat_icon).setOnClickListener(((Main)context).appIcon_ClickListener);
-                ((Main)context).appIcon_ClickListener.onClick(chatView.findViewById(R.id.main_panel_chat_icon));
+
+                ((TextView)actionBarView.findViewById(R.id.main_panel_chat_name)).setText(h.getName());
+                actionBarView.findViewById(R.id.main_panel_chat_name).setTag(h.getPublicChat().getChannelUnicode());
+
+                actionBarView.findViewById(R.id.main_panel_chat_menu_icon).setOnClickListener(((Main)context).menuIcon_ClickListener);
+                actionBarView.findViewById(R.id.main_panel_chat_icon).setOnClickListener(((Main)context).appIcon_ClickListener);
+                ((Main)context).appIcon_ClickListener.onClick(actionBarView.findViewById(R.id.main_panel_chat_icon));
 
                 mainChat = new MainChat(context,h.getPublicChat().getChannelUnicode());
                 chatView.findViewById(R.id.main_panel_chat_send_icon).setOnClickListener(mainChat.send_button_click);
             } else if (leftPanelListAdapter.GetVisibleList() == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Chats)) {
                 Group g = ((Group)v.getTag(R.id.BO_Chat));
-                chatView = ((Main)context).ShowLayout(R.layout.main_panel_chat_layout,R.layout.chat_action_bar);
-                ((TextView)chatView.findViewById(R.id.main_panel_chat_name)).setText(g.getName());
-                chatView.findViewById(R.id.main_panel_chat_name).setTag(g.getChannelUnicode());
 
-                chatView.findViewById(R.id.main_panel_chat_menu_icon).setOnClickListener(((Main)context).menuIcon_ClickListener);
-                chatView.findViewById(R.id.main_panel_chat_icon).setOnClickListener(((Main)context).appIcon_ClickListener);
-                ((Main)context).appIcon_ClickListener.onClick(chatView.findViewById(R.id.main_panel_chat_icon));
+                ((TextView)actionBarView.findViewById(R.id.main_panel_chat_name)).setText(g.getName());
+                actionBarView.findViewById(R.id.main_panel_chat_name).setTag(g.getChannelUnicode());
+
+                actionBarView.findViewById(R.id.main_panel_chat_menu_icon).setOnClickListener(((Main)context).menuIcon_ClickListener);
+                actionBarView.findViewById(R.id.main_panel_chat_icon).setOnClickListener(((Main)context).appIcon_ClickListener);
+                ((Main)context).appIcon_ClickListener.onClick(actionBarView.findViewById(R.id.main_panel_chat_icon));
 
                 mainChat = new MainChat(context,g.getChannelUnicode());
                 chatView.findViewById(R.id.main_panel_chat_send_icon).setOnClickListener(mainChat.send_button_click);

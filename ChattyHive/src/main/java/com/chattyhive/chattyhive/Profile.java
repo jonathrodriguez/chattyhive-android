@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.chattyhive.backend.businessobjects.Users.User;
 import com.chattyhive.backend.contentprovider.DataProvider;
 import com.chattyhive.backend.contentprovider.server.ServerCommand;
+import com.chattyhive.chattyhive.framework.ViewPair;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -37,7 +38,8 @@ public class Profile {
 
             User me = User.getMe();
 
-            View profileView = ((Main)context).ShowLayout(R.layout.main_panel_profile_layout,R.layout.profile_action_bar);
+            ViewPair viewPair = ((Main)context).ShowLayout(R.layout.main_panel_profile_layout,R.layout.profile_action_bar);
+            View profileView = viewPair.getMainView();
 
             if (me != null) {
                 ((TextView) profileView.findViewById(R.id.profile_first_name)).setText(me.getUserPrivateProfile().getFirstName());
@@ -52,11 +54,13 @@ public class Profile {
                 ((TextView) profileView.findViewById(R.id.profile_location)).setText(me.getUserPrivateProfile().getLocation());
                 String Language = "";
                 ArrayList<String> Languages = me.getUserPrivateProfile().getLanguages();
-                Iterator<String> iterator = Languages.iterator();
-                if (iterator.hasNext())
-                    Language = iterator.next();
-                while (iterator.hasNext())
-                    Language = Language.concat("; ").concat(iterator.next());
+                if ((Languages != null) && (!Languages.isEmpty())) {
+                    Iterator<String> iterator = Languages.iterator();
+                    if (iterator.hasNext())
+                        Language = iterator.next();
+                    while (iterator.hasNext())
+                        Language = Language.concat("; ").concat(iterator.next());
+                }
                 ((TextView) profileView.findViewById(R.id.profile_language)).setText(Language);
 
                 ((CheckBox) profileView.findViewById(R.id.profile_private_show_age)).setChecked(me.getUserPrivateProfile().getShowAge());

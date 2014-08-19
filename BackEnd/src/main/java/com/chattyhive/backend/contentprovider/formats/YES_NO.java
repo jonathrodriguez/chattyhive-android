@@ -6,7 +6,7 @@ import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
-  
+ 
 
  /*
   * Automatically generated code by ChattyHive API Manager Code Generator on 18/08/2014.
@@ -15,16 +15,15 @@ import com.google.gson.JsonPrimitive;
   *
   * ChattyHive API Manager Code Generator was created by Jonathan on 25/06/2014.
  */
-public class COMMON extends Format {
-	public String STATUS;
-    public Integer ERROR;
+public class YES_NO extends Format {
+	public String RESPONSE;
     
 
-    public COMMON() {
+    public YES_NO() {
         super();
     }
 
-    public COMMON(JsonElement data) {
+    public YES_NO(JsonElement data) {
         this();
         this.fromJSON(data);
     }
@@ -33,11 +32,8 @@ public class COMMON extends Format {
     public JsonElement toJSON() {
         JsonObject jsonObject = new JsonObject();
 
-	    if ((this.STATUS != null) && (!this.STATUS.isEmpty()))
-            jsonObject.addProperty("STATUS",this.STATUS);
-            
-        if (this.ERROR != null)
-            jsonObject.addProperty("ERROR",this.ERROR);
+	    if ((this.RESPONSE != null) && (!this.RESPONSE.isEmpty()))
+            jsonObject.addProperty("RESPONSE",this.RESPONSE);
             
       
 
@@ -45,30 +41,26 @@ public class COMMON extends Format {
             return JsonNull.INSTANCE;
 
         JsonObject result = new JsonObject();
-        result.add("COMMON",jsonObject);
+        result.add("YES_NO",jsonObject);
 
         return result;
     }
 
     @Override
     public void fromJSON(JsonElement data) {
-        JsonObject object = data.getAsJsonObject().getAsJsonObject("COMMON");
+        JsonObject object = data.getAsJsonObject().getAsJsonObject("YES_NO");
         if ((object == null) || (!object.isJsonObject())) {
             object = data.getAsJsonObject();
         }
         if ((object == null) || (!object.isJsonObject())) {
-            throw new IllegalArgumentException("Data is not an COMMON object.");
+            throw new IllegalArgumentException("Data is not an YES_NO object.");
         }
 
         JsonElement property;
 
-	    property = object.get("STATUS");
+	    property = object.get("RESPONSE");
         if ((property != null) && (property.isJsonPrimitive()) && (property.getAsString() != null) && (!property.getAsString().isEmpty()))
-            this.STATUS = property.getAsString();
-            
-        property = object.get("ERROR");
-        if ((property != null) && (property.isJsonPrimitive()) && (((JsonPrimitive)property).isNumber()))
-            this.ERROR = property.getAsInt();
+            this.RESPONSE = property.getAsString();
             
       
     }

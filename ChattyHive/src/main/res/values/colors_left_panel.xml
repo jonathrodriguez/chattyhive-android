@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- ACTION BAR COLORS -->
+    <!-- _________________ -->
+    <color name="left_panel_action_bar_background">#292929</color>
+
+    <color name="left_panel_action_bar_unselected_button_background">#292929</color>
+    <color name="left_panel_action_bar_unselected_button_border_bottom">#292929</color>
+    <item name="left_panel_action_bar_unselected_button_alpha" format="float" type="color">0.63137254901960784313725490196078</item>
+    <color name="left_panel_action_bar_unselected_button_text">#3a3a3a</color>
+
+    <color name="left_panel_action_bar_selected_button_background">#f8f8f8</color>
+    <color name="left_panel_action_bar_selected_button_border_bottom">#c0c0c0</color>
+    <item name="left_panel_action_bar_selected_button_alpha" format="float" type="color">0.75686274509803921568627450980392</item>
+    <color name="left_panel_action_bar_selected_button_text">#3a3a3a</color>
+
+    <color name="left_panel_action_bar_search_button_background">#292929</color>
+    <item name="left_panel_action_bar_search_button_alpha" format="float" type="color">0.83137254901960784313725490196078</item>
+    <!--    LIST COLORS    -->
+    <!-- _________________ -->
+    <color name="left_panel_list_filter_background_top">#fff9ea</color>
+    <color name="left_panel_list_filter_background_center">#fffcf2</color>
+    <color name="left_panel_list_filter_background_bottom">#fff9ea</color>
+    <color name="left_panel_list_filter_border_right">#c0c0c0</color>
+    <color name="left_panel_list_filter_border_bottom">#c1a56a</color>
+    <color name="left_panel_list_filter_selected_text">#ff8000</color>
+    <color name="left_panel_list_filter_unselected_text">#333333</color>
+    <item name="left_panel_list_filter_image_alpha" format="float" type="color">0.66666666666666666666666666666667</item>
+
+    <color name="left_panel_list_border_right">#c0c0c0</color>
+    <color name="left_panel_list_background">#d8d8d8</color>
+    <!--    ITEM COLORS    -->
+    <!-- _________________ -->
+    <color name="left_panel_list_item_background">#ffffff</color>
+    <color name="left_panel_list_item_last_message_text">#404040</color>
+    <color name="left_panel_list_item_chat_name_text">#000000</color>
+    <color name="left_panel_list_item_last_message_time_text">#404040</color>
+    <color name="left_panel_list_item_hive_number_text">#ff8c00</color>
+    <item name="left_panel_list_item_chat_kind_image_alpha" format="float" type="color">0.67843137254901960784313725490196</item>
+</resources>

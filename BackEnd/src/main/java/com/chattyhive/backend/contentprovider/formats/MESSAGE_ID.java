@@ -15,16 +15,16 @@ import com.google.gson.JsonPrimitive;
   *
   * ChattyHive API Manager Code Generator was created by Jonathan on 25/06/2014.
  */
-public class COMMON extends Format {
-	public String STATUS;
-    public Integer ERROR;
+public class MESSAGE_ID extends Format {
+	public String ID;
+    public String CHANNEL_UNICODE;
     
 
-    public COMMON() {
+    public MESSAGE_ID() {
         super();
     }
 
-    public COMMON(JsonElement data) {
+    public MESSAGE_ID(JsonElement data) {
         this();
         this.fromJSON(data);
     }
@@ -33,11 +33,11 @@ public class COMMON extends Format {
     public JsonElement toJSON() {
         JsonObject jsonObject = new JsonObject();
 
-	    if ((this.STATUS != null) && (!this.STATUS.isEmpty()))
-            jsonObject.addProperty("STATUS",this.STATUS);
+	    if ((this.ID != null) && (!this.ID.isEmpty()))
+            jsonObject.addProperty("ID",this.ID);
             
-        if (this.ERROR != null)
-            jsonObject.addProperty("ERROR",this.ERROR);
+        if ((this.CHANNEL_UNICODE != null) && (!this.CHANNEL_UNICODE.isEmpty()))
+            jsonObject.addProperty("CHANNEL_UNICODE",this.CHANNEL_UNICODE);
             
       
 
@@ -45,30 +45,30 @@ public class COMMON extends Format {
             return JsonNull.INSTANCE;
 
         JsonObject result = new JsonObject();
-        result.add("COMMON",jsonObject);
+        result.add("MESSAGE_ID",jsonObject);
 
         return result;
     }
 
     @Override
     public void fromJSON(JsonElement data) {
-        JsonObject object = data.getAsJsonObject().getAsJsonObject("COMMON");
+        JsonObject object = data.getAsJsonObject().getAsJsonObject("MESSAGE_ID");
         if ((object == null) || (!object.isJsonObject())) {
             object = data.getAsJsonObject();
         }
         if ((object == null) || (!object.isJsonObject())) {
-            throw new IllegalArgumentException("Data is not an COMMON object.");
+            throw new IllegalArgumentException("Data is not an MESSAGE_ID object.");
         }
 
         JsonElement property;
 
-	    property = object.get("STATUS");
+	    property = object.get("ID");
         if ((property != null) && (property.isJsonPrimitive()) && (property.getAsString() != null) && (!property.getAsString().isEmpty()))
-            this.STATUS = property.getAsString();
+            this.ID = property.getAsString();
             
-        property = object.get("ERROR");
-        if ((property != null) && (property.isJsonPrimitive()) && (((JsonPrimitive)property).isNumber()))
-            this.ERROR = property.getAsInt();
+        property = object.get("CHANNEL_UNICODE");
+        if ((property != null) && (property.isJsonPrimitive()) && (property.getAsString() != null) && (!property.getAsString().isEmpty()))
+            this.CHANNEL_UNICODE = property.getAsString();
             
       
     }

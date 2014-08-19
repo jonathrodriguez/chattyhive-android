@@ -4,13 +4,13 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#292929">
+    android:background="@drawable/left_panel_action_bar_button_background_selector">
 
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="fill_parent"
         android:layout_height="39dp"
-        android:background="#FFF9EA">
+        android:background="@drawable/left_panel_list_filter_background">
 
     </LinearLayout>
 
@@ -20,21 +20,22 @@
         android:id="@+id/left_panel_empty_list_view_switcher"
         android:layout_gravity="center"
         android:animateFirstView="false"
-        android:background="#D8D8D8">
+        android:background="@drawable/left_panel_list_background">
         <ListView
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:id="@+id/left_panel_element_list" />
+            android:id="@+id/left_panel_element_list"
+            android:background="@drawable/left_panel_list_background" />
         <FrameLayout
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:foregroundGravity="center_vertical|center_horizontal"
-            android:background="#D8D8D8">
+            android:background="@drawable/left_panel_list_background">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="#D8D8D8"
+                android:background="#00000000"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="@string/left_panel_chats_empty_list"
                 android:id="@+id/left_panel_empty_list_message"

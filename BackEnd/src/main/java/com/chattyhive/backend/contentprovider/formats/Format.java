@@ -4,7 +4,11 @@ import com.google.gson.JsonElement;
 import com.chattyhive.backend.contentprovider.formats.USER_EMAIL;
 import com.chattyhive.backend.contentprovider.formats.LOGIN;
 import com.chattyhive.backend.contentprovider.formats.CHAT_ID;
+import com.chattyhive.backend.contentprovider.formats.MESSAGE_ID;
 import com.chattyhive.backend.contentprovider.formats.MESSAGE_INTERVAL;
+import com.chattyhive.backend.contentprovider.formats.INTERVAL;
+import com.chattyhive.backend.contentprovider.formats.YES_NO;
+import com.chattyhive.backend.contentprovider.formats.CSRF_TOKEN;
 import com.chattyhive.backend.contentprovider.formats.COMMON;
 import com.chattyhive.backend.contentprovider.formats.LOCAL_USER_PROFILE;
 import com.chattyhive.backend.contentprovider.formats.PUBLIC_PROFILE;
@@ -18,6 +22,7 @@ import com.chattyhive.backend.contentprovider.formats.MESSAGE_CONTENT;
 import com.chattyhive.backend.contentprovider.formats.MESSAGE_ACK;
 import com.chattyhive.backend.contentprovider.formats.MESSAGE_LIST;
 import com.chattyhive.backend.contentprovider.formats.CHAT_SYNC;
+import com.chattyhive.backend.contentprovider.formats.CHAT_LIST;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -25,7 +30,7 @@ import java.util.Set;
 
 
 /*
- * Automatically generated code by ChattyHive API Manager Code Generator on 13/07/2014.
+ * Automatically generated code by ChattyHive API Manager Code Generator on 18/08/2014.
  * Be careful to not modify this file since your changes will not be included in future
  * versions of this file.
  *
@@ -36,11 +41,11 @@ public abstract class Format {
     public abstract void fromJSON(JsonElement data);
 
     public static Format[] getFormat(JsonElement data) {
-        ArrayList<Format> result = new ArrayList<Format>();
+		 ArrayList<Format> result = new ArrayList<Format>();
 
         if (data.isJsonObject()) {
-            Set<Map.Entry<String, JsonElement>> entries = data.getAsJsonObject().entrySet();
-            for (Map.Entry<String, JsonElement> entry : entries) {
+            Set<Map.Entry<String,JsonElement>> entries = data.getAsJsonObject().entrySet();
+            for (Map.Entry<String,JsonElement> entry : entries) {
                 Format f = null;
                 if ((entry.getKey() == null) || (entry.getKey().isEmpty())) {
                     continue;
@@ -50,8 +55,16 @@ public abstract class Format {
                     f = new LOGIN(data);
                 } else if (entry.getKey().equalsIgnoreCase("CHAT_ID")) {
                     f = new CHAT_ID(data);
-                } else if (entry.getKey().equalsIgnoreCase("MESSAGE_INTERVAL (URL)")) {
+                } else if (entry.getKey().equalsIgnoreCase("MESSAGE_ID")) {
+                    f = new MESSAGE_ID(data);
+                } else if (entry.getKey().equalsIgnoreCase("MESSAGE_INTERVAL")) {
                     f = new MESSAGE_INTERVAL(data);
+                } else if (entry.getKey().equalsIgnoreCase("INTERVAL")) {
+                    f = new INTERVAL(data);
+                } else if (entry.getKey().equalsIgnoreCase("YES_NO")) {
+                    f = new YES_NO(data);
+                } else if (entry.getKey().equalsIgnoreCase("CSRF_TOKEN")) {
+                    f = new CSRF_TOKEN(data);
                 } else if (entry.getKey().equalsIgnoreCase("COMMON")) {
                     f = new COMMON(data);
                 } else if (entry.getKey().equalsIgnoreCase("LOCAL_USER_PROFILE")) {
@@ -80,8 +93,8 @@ public abstract class Format {
                     f = new CHAT_SYNC(data);
                 } else if (entry.getKey().equalsIgnoreCase("CHAT_LIST")) {
                     f = new CHAT_LIST(data);
-                }
-
+                } 
+      
 
                 if (f != null) result.add(f);
             }
@@ -89,7 +102,7 @@ public abstract class Format {
 
         if (result.size() == 0) { return null; }
 
-        return result.toArray(new Format[result.size()]);
+        return result.toArray(new Format[0]);
     }
 
     protected Format() {}

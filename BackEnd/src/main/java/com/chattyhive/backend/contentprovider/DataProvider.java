@@ -354,7 +354,7 @@ public class DataProvider {
                 ChatProfileFormats.add(format);
             }
             if (format instanceof CHAT_LIST) {
-                ChatProfileFormats.addAll(((CHAT_LIST) format).CHAT_SYNCS);
+                ChatProfileFormats.addAll(((CHAT_LIST) format).LIST);
             }
         }
 

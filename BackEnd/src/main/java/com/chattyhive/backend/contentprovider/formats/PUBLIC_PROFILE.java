@@ -12,7 +12,7 @@ import com.chattyhive.backend.util.formatters.TimestampFormatter;
          
 
  /*
-  * Automatically generated code by ChattyHive API Manager Code Generator on 13/07/2014.
+  * Automatically generated code by ChattyHive API Manager Code Generator on 18/08/2014.
   * Be careful to not modify this file since your changes will not be included in future
   * versions of this file.
   *
@@ -59,7 +59,8 @@ public class PUBLIC_PROFILE extends Format {
         if (this.LANGUAGE != null) {
             JsonArray jsonArray = new JsonArray();
             for (String element : this.LANGUAGE) {
-                JsonElement jsonElement =   new JsonPrimitive(element);
+                JsonElement jsonElement =   new JsonPrimitive(element)
+  ;
                 if (!jsonElement.isJsonNull())
                     jsonArray.add(jsonElement);
             }
@@ -127,7 +128,8 @@ public class PUBLIC_PROFILE extends Format {
             this.LANGUAGE = new ArrayList<String>();
             JsonArray array = property.getAsJsonArray();
             for (JsonElement jsonElement : array)
-                this.LANGUAGE.add(jsonElement.getAsString());
+                this.LANGUAGE.add(  jsonElement.getAsString()
+      );
         }
         
         property = object.get("PUBLIC_SHOW_SEX");

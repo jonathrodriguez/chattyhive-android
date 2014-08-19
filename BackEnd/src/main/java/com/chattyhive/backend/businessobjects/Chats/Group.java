@@ -113,6 +113,7 @@ public class Group {
                         else
                             this.parentHive = null;
                         this.pusherChannel = data.PUSHER_CHANNEL;
+                        this.chat = new Chat(this);
                         break;
                     }
                 }
@@ -353,14 +354,17 @@ public class Group {
             for (PROFILE_ID profile_id : ((CHAT) format).MEMBERS)
                 this.addMember(User.getUser(profile_id));
 
+            this.chat = new Chat(this);
             this.CalculateGroupKind();
             return true;
         } else if (format instanceof CHAT_ID) {
             this.channelUnicode = ((CHAT_ID) format).CHANNEL_UNICODE;
+            this.chat = new Chat(this);
 
             return true;
         } else if (format instanceof CHAT_SYNC) {
             this.channelUnicode = ((CHAT_SYNC) format).CHANNEL_UNICODE;
+            this.chat = new Chat(this);
             this.chat.addMessage(new Message(((CHAT_SYNC) format).LAST_MESSAGE));
 
             return true;
