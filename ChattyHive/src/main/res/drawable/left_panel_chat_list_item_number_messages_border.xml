@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <corners android:radius="@dimen/left_panel_chat_list_item_number_messages_corner_radius"/>
+    <padding android:left="@dimen/left_panel_chat_list_item_number_messages_padding_left" android:top="@dimen/left_panel_chat_list_item_number_messages_padding_top" android:right="@dimen/left_panel_chat_list_item_number_messages_padding_right" android:bottom="@dimen/left_panel_chat_list_item_number_messages_padding_bottom"/>
+    <solid android:color="@color/left_panel_chat_list_item_number_messages_background"/>
+    <stroke android:color="@color/left_panel_chat_list_item_number_messages_border" android:width="@dimen/left_panel_chat_list_item_number_messages_border_thick"/>
+</shape>

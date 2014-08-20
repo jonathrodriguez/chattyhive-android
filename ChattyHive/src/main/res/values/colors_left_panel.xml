@@ -31,10 +31,13 @@
     <color name="left_panel_list_background">#d8d8d8</color>
     <!--    ITEM COLORS    -->
     <!-- _________________ -->
-    <color name="left_panel_list_item_background">#ffffff</color>
-    <color name="left_panel_list_item_last_message_text">#404040</color>
-    <color name="left_panel_list_item_chat_name_text">#000000</color>
-    <color name="left_panel_list_item_last_message_time_text">#404040</color>
-    <color name="left_panel_list_item_hive_number_text">#ff8c00</color>
-    <item name="left_panel_list_item_chat_kind_image_alpha" format="float" type="color">0.67843137254901960784313725490196</item>
+    <color name="left_panel_chat_list_item_background">#ffffff</color>
+    <color name="left_panel_chat_list_item_last_message_text">#404040</color>
+    <color name="left_panel_chat_list_item_chat_name_text">#000000</color>
+    <color name="left_panel_chat_list_item_timestamp_text">#404040</color>
+    <color name="left_panel_chat_list_item_hive_messages_number_text">#ff8c00</color>
+    <color name="left_panel_chat_list_item_number_messages_text">#333333</color>
+    <color name="left_panel_chat_list_item_number_messages_background">#edc97a</color>
+    <color name="left_panel_chat_list_item_number_messages_border">#ff8000</color>
+    <item name="left_panel_chat_list_item_item_type_img_alpha" format="float" type="color">0.67843137254901960784313725490196</item>
 </resources>
