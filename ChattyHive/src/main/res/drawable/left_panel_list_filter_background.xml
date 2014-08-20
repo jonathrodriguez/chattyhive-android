@@ -7,18 +7,18 @@
             <solid android:color="@color/left_panel_list_filter_border_right" />
         </shape>
     </item>
-    <item android:right="2px">
+    <item android:right="@dimen/left_panel_list_filter_border_right_thick">
         <shape android:shape="rectangle">
             <solid android:color="@color/left_panel_list_filter_border_bottom"/>
         </shape>
     </item>
-    <item android:bottom="4px" android:right="2px">
+    <item android:bottom="@dimen/left_panel_list_filter_border_bottom_thick" android:right="@dimen/left_panel_list_filter_border_right_thick">
         <shape android:shape="rectangle">
             <gradient
-                android:startColor="@color/left_panel_list_filter_background_top"
+                android:startColor="@color/left_panel_list_filter_background_start"
                 android:centerColor="@color/left_panel_list_filter_background_center"
-                android:endColor="@color/left_panel_list_filter_background_bottom"
-                android:angle="270" />
+                android:endColor="@color/left_panel_list_filter_background_end"
+                android:angle="@integer/left_panel_list_filter_background_angle" />
         </shape>
     </item>
 </layer-list>

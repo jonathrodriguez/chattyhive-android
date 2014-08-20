@@ -14,12 +14,9 @@ import android.widget.ViewSwitcher;
 
 import com.chattyhive.backend.businessobjects.Chats.Group;
 import com.chattyhive.backend.businessobjects.Chats.Hive;
-import com.chattyhive.backend.util.events.ChannelEventArgs;
 import com.chattyhive.backend.util.events.EventArgs;
 import com.chattyhive.backend.util.events.EventHandler;
 import com.chattyhive.chattyhive.framework.ViewPair;
-
-import java.util.ArrayList;
 
 /**
  * Created by Jonathan on 7/03/14.
@@ -57,7 +54,7 @@ public class LeftPanel {
 
         SetButtonSelected(chats, true, this.context.getResources().getString(R.string.left_panel_chats_button), R.drawable.pestanhas_panel_izquierdo_chats);
         SetButtonSelected(hives,false,this.context.getResources().getString(R.string.left_panel_hives_button),R.drawable.pestanhas_panel_izquierdo_hives_blanco);
-        SetButtonSelected(mates,false,this.context.getResources().getString(R.string.left_panel_mates_button),R.drawable.pestanhas_panel_izquierdo_users_blanco);
+        SetButtonSelected(mates,false,this.context.getResources().getString(R.string.left_panel_friends_button),R.drawable.pestanhas_panel_izquierdo_users_blanco);
 
         chats.setOnClickListener(left_panel_tab_button_click);
         hives.setOnClickListener(left_panel_tab_button_click);
@@ -91,7 +88,7 @@ public class LeftPanel {
                 case R.id.left_panel_chats_button:
                     SetButtonSelected(chats, true, v.getContext().getResources().getString(R.string.left_panel_chats_button), R.drawable.pestanhas_panel_izquierdo_chats);
                     SetButtonSelected(hives,false,v.getContext().getResources().getString(R.string.left_panel_hives_button),R.drawable.pestanhas_panel_izquierdo_hives_blanco);
-                    SetButtonSelected(mates,false,v.getContext().getResources().getString(R.string.left_panel_mates_button),R.drawable.pestanhas_panel_izquierdo_users_blanco);
+                    SetButtonSelected(mates,false,v.getContext().getResources().getString(R.string.left_panel_friends_button),R.drawable.pestanhas_panel_izquierdo_users_blanco);
                     leftPanelListAdapter.SetVisibleList(context.getResources().getInteger(R.integer.LeftPanel_ListKind_Chats));
                     emptyMessage.setText(R.string.left_panel_chats_empty_list);
                     if ((showingEmpty) && (leftPanelListAdapter.getCount() > 0)) {
@@ -105,7 +102,7 @@ public class LeftPanel {
                 case R.id.left_panel_hives_button:
                     SetButtonSelected(chats,false, v.getContext().getResources().getString(R.string.left_panel_chats_button), R.drawable.pestanhas_panel_izquierdo_chats_blanco);
                     SetButtonSelected(hives, true,v.getContext().getResources().getString(R.string.left_panel_hives_button),R.drawable.pestanhas_panel_izquierdo_hives);
-                    SetButtonSelected(mates,false,v.getContext().getResources().getString(R.string.left_panel_mates_button),R.drawable.pestanhas_panel_izquierdo_users_blanco);
+                    SetButtonSelected(mates,false,v.getContext().getResources().getString(R.string.left_panel_friends_button),R.drawable.pestanhas_panel_izquierdo_users_blanco);
                     leftPanelListAdapter.SetVisibleList(context.getResources().getInteger(R.integer.LeftPanel_ListKind_Hives));
                     emptyMessage.setText(R.string.left_panel_hives_empty_list);
                     if ((showingEmpty) && (leftPanelListAdapter.getCount() > 0)) {
@@ -119,7 +116,7 @@ public class LeftPanel {
                 case R.id.left_panel_mates_button:
                     SetButtonSelected(chats,false, v.getContext().getResources().getString(R.string.left_panel_chats_button), R.drawable.pestanhas_panel_izquierdo_chats_blanco);
                     SetButtonSelected(hives,false,v.getContext().getResources().getString(R.string.left_panel_hives_button),R.drawable.pestanhas_panel_izquierdo_hives_blanco);
-                    SetButtonSelected(mates, true,v.getContext().getResources().getString(R.string.left_panel_mates_button),R.drawable.pestanhas_panel_izquierdo_users);
+                    SetButtonSelected(mates, true,v.getContext().getResources().getString(R.string.left_panel_friends_button),R.drawable.pestanhas_panel_izquierdo_users);
                     leftPanelListAdapter.SetVisibleList(context.getResources().getInteger(R.integer.LeftPanel_ListKind_Mates));
                     emptyMessage.setText(R.string.left_panel_mates_empty_list);
                     if ((showingEmpty) && (leftPanelListAdapter.getCount() > 0)) {

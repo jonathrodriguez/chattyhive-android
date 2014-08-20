@@ -2,9 +2,41 @@
 <resources>
     <!--   ACTION BAR DIMENSIONS   -->
     <!-- _________________________ -->
+    <dimen name="left_panel_action_bar_height">48dp</dimen>
+
+    <dimen name="left_panel_action_bar_tab_icon_margin_left">8dp</dimen>
+    <dimen name="left_panel_action_bar_tab_icon_margin_top">8dp</dimen>
+    <dimen name="left_panel_action_bar_tab_icon_margin_right">8dp</dimen>
+    <dimen name="left_panel_action_bar_tab_icon_margin_bottom">8dp</dimen>
+
+    <dimen name="left_panel_action_bar_tab_text_size">28dp</dimen>
+    <dimen name="left_panel_action_bar_tab_text_margin_right">8dp</dimen>
+
+    <dimen name="left_panel_action_bar_search_img_padding_left"></dimen>
+    <dimen name="left_panel_action_bar_search_img_padding_top"></dimen>
+    <dimen name="left_panel_action_bar_search_img_padding_right"></dimen>
+    <dimen name="left_panel_action_bar_search_img_padding_bottom"></dimen>
 
     <!--      LIST DIMENSIONS      -->
     <!-- _________________________ -->
+    <dimen name="left_panel_list_border_right_thick">1dp</dimen>
+
+    <dimen name="left_panel_list_filter_height">39dp</dimen>
+    <dimen name="left_panel_list_filter_border_bottom_thick">2dp</dimen>
+    <dimen name="left_panel_list_filter_border_right_thick">1dp</dimen>
+    <dimen name="left_panel_list_filter_text_size">18sp</dimen>
+    <dimen name="left_panel_list_filter_text_margin_left">10dp</dimen>
+    <dimen name="left_panel_list_filter_text_margin_top">10dp</dimen>
+    <dimen name="left_panel_list_filter_text_margin_right">10dp</dimen>
+    <dimen name="left_panel_list_filter_text_margin_bottom">10dp</dimen>
+    <dimen name="left_panel_list_filter_img_width">39dp</dimen>
+    <dimen name="left_panel_list_filter_img_height">39dp</dimen>
+    <dimen name="left_panel_list_filter_img_padding_left">10dp</dimen>
+    <dimen name="left_panel_list_filter_img_padding_top">10dp</dimen>
+    <dimen name="left_panel_list_filter_img_padding_right">10dp</dimen>
+    <dimen name="left_panel_list_filter_img_padding_bottom">10dp</dimen>
+
+    <dimen name="left_panel_list_item_margin_bottom">1dp</dimen>
 
     <!-- CHAT LIST ITEM DIMENSIONS -->
     <!-- _________________________ -->
@@ -51,4 +83,42 @@
     <dimen name="left_panel_chat_list_item_item_type_img_margin_right">7dp</dimen>
     <dimen name="left_panel_chat_list_item_item_type_img_margin_bottom">4dp</dimen>
 
+    <!-- HIVE LIST ITEM DIMENSIONS -->
+    <!-- _________________________ -->
+    <dimen name="left_panel_hive_list_item_hive_img_width">58dp</dimen>
+    <dimen name="left_panel_hive_list_item_hive_img_height">58dp</dimen>
+    <dimen name="left_panel_hive_list_item_hive_img_margin_left">8dp</dimen>
+    <dimen name="left_panel_hive_list_item_hive_img_margin_top">8dp</dimen>
+    <dimen name="left_panel_hive_list_item_hive_img_margin_right">12dp</dimen>
+    <dimen name="left_panel_hive_list_item_hive_img_margin_bottom">8dp</dimen>
+
+    <dimen name="left_panel_hive_list_item_hive_name_text_size">16sp</dimen>
+    <dimen name="left_panel_hive_list_item_hive_name_margin_top">14dp</dimen>
+    <dimen name="left_panel_hive_list_item_hive_name_margin_right">8dp</dimen>
+
+    <dimen name="left_panel_hive_list_item_hive_description_text_size">12sp</dimen>
+    <dimen name="left_panel_hive_list_item_hive_description_margin_top">6dp</dimen>
+    <dimen name="left_panel_hive_list_item_hive_description_margin_right">8dp</dimen>
+
+    <dimen name="left_panel_hive_list_item_hive_category_img_width">10sp</dimen>
+    <dimen name="left_panel_hive_list_item_hive_category_img_height">10sp</dimen>
+    <dimen name="left_panel_hive_list_item_hive_category_img_margin_top">6dp</dimen>
+    <dimen name="left_panel_hive_list_item_hive_category_img_margin_right">2sp</dimen>
+    <dimen name="left_panel_hive_list_item_hive_category_img_margin_bottom">8dp</dimen>
+
+    <dimen name="left_panel_hive_list_item_hive_category_text_size">10sp</dimen>
+    <dimen name="left_panel_hive_list_item_hive_category_margin_top">6dp</dimen>
+    <dimen name="left_panel_hive_list_item_hive_category_margin_right">14sp</dimen>
+    <dimen name="left_panel_hive_list_item_hive_category_margin_bottom">8dp</dimen>
+
+    <dimen name="left_panel_hive_list_item_hive_subscribed_users_img_width">10sp</dimen>
+    <dimen name="left_panel_hive_list_item_hive_subscribed_users_img_height">10sp</dimen>
+    <dimen name="left_panel_hive_list_item_hive_subscribed_users_img_margin_top">6dp</dimen>
+    <dimen name="left_panel_hive_list_item_hive_subscribed_users_img_margin_right">2sp</dimen>
+    <dimen name="left_panel_hive_list_item_hive_subscribed_users_img_margin_bottom">8dp</dimen>
+
+    <dimen name="left_panel_hive_list_item_hive_subscribed_users_text_size">10sp</dimen>
+    <dimen name="left_panel_hive_list_item_hive_subscribed_users_margin_top">6dp</dimen>
+    <dimen name="left_panel_hive_list_item_hive_subscribed_users_margin_right">8dp</dimen>
+    <dimen name="left_panel_hive_list_item_hive_subscribed_users_margin_bottom">8dp</dimen>
 </resources>
