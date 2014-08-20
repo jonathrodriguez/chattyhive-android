@@ -12,10 +12,10 @@
     <dimen name="left_panel_action_bar_tab_text_size">28dp</dimen>
     <dimen name="left_panel_action_bar_tab_text_margin_right">8dp</dimen>
 
-    <dimen name="left_panel_action_bar_search_img_padding_left"></dimen>
-    <dimen name="left_panel_action_bar_search_img_padding_top"></dimen>
-    <dimen name="left_panel_action_bar_search_img_padding_right"></dimen>
-    <dimen name="left_panel_action_bar_search_img_padding_bottom"></dimen>
+    <dimen name="left_panel_action_bar_search_img_padding_left">12dp</dimen>
+    <dimen name="left_panel_action_bar_search_img_padding_top">12dp</dimen>
+    <dimen name="left_panel_action_bar_search_img_padding_right">12dp</dimen>
+    <dimen name="left_panel_action_bar_search_img_padding_bottom">12dp</dimen>
 
     <!--      LIST DIMENSIONS      -->
     <!-- _________________________ -->

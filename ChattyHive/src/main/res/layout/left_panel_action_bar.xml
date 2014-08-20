@@ -39,7 +39,8 @@
             android:lines="1"
             android:maxLines="1"
             android:minLines="1"
-            android:background="#00000000" />
+            android:background="#00000000"
+            android:visibility="gone" />
     </LinearLayout>
 
     <LinearLayout
@@ -75,7 +76,8 @@
             android:lines="1"
             android:maxLines="1"
             android:minLines="1"
-            android:background="#00000000" />
+            android:background="#00000000"
+            android:visibility="gone" />
     </LinearLayout>
 
     <LinearLayout
@@ -111,7 +113,8 @@
             android:lines="1"
             android:maxLines="1"
             android:minLines="1"
-            android:background="#00000000" />
+            android:background="#00000000"
+            android:visibility="gone" />
     </LinearLayout>
 
     <FrameLayout
@@ -121,17 +124,17 @@
             android:background="@color/left_panel_action_bar_background" />
 
         <ImageButton
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
             android:id="@+id/left_panel_search_button"
             android:src="@drawable/pestanhas_panel_izquierdo_search_blanco"
             android:background="@color/left_panel_action_bar_search_button_background"
-            android:paddingTop="12dp"
-            android:paddingBottom="12dp"
-            android:scaleType="fitCenter"
+            android:paddingTop="@dimen/left_panel_action_bar_search_img_padding_top"
+            android:paddingBottom="@dimen/left_panel_action_bar_search_img_padding_bottom"
+            android:scaleType="centerInside"
             android:contentDescription="@string/left_panel_search_button"
-            android:layout_gravity="right"
-            android:paddingRight="12dp"
-            android:paddingLeft="12dp" />
+            android:paddingRight="@dimen/left_panel_action_bar_search_img_padding_right"
+            android:paddingLeft="@dimen/left_panel_action_bar_search_img_padding_left"
+            android:adjustViewBounds="true" />
 
 </LinearLayout>
