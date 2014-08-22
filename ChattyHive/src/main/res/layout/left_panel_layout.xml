@@ -9,7 +9,8 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="@dimen/left_panel_list_filter_height"
-        android:background="@drawable/left_panel_list_filter_background">
+        android:background="@drawable/left_panel_list_filter_background"
+        android:id="@+id/left_panel_list_filter">
 
         <TextView
             android:layout_width="wrap_content"

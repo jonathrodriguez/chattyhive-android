@@ -127,7 +127,7 @@ public class Group {
     }
 
     private void CalculateGroupKind() {
-        Boolean isSingle = this.members.size() < 2;
+/*        Boolean isSingle = this.members.size() < 2;
         Boolean isPrivate = false;
         for (User user : this.members.values())
             isPrivate = isPrivate || user.isPrivate();
@@ -139,7 +139,8 @@ public class Group {
         else if (!isPrivate && !isSingle)
             this.groupKind = GroupKind.PUBLIC_GROUP;
         else if (!isPrivate && isSingle)
-            this.groupKind = (this.members.size() == 0)?GroupKind.HIVE:GroupKind.PUBLIC_SINGLE;
+            this.groupKind = (this.members.size() == 0)?GroupKind.HIVE:GroupKind.PUBLIC_SINGLE;*/
+        this.groupKind = GroupKind.PUBLIC_SINGLE;
     }
 
     public static Group getGroup(String channelUnicode) {
@@ -247,7 +248,8 @@ public class Group {
     protected TreeMap<String,User> members;
 
     public ArrayList<User> getMembers() {
-        if ((this.members == null) || (this.members.isEmpty())) throw new NullPointerException("There are no members for this group.");
+        if ((this.members == null) || (this.members.isEmpty())) //throw new NullPointerException("There are no members for this group.");
+            return new ArrayList<User>();
 
         return new ArrayList<User>(this.members.values());
     }

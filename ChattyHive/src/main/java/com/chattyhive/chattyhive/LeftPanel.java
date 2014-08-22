@@ -84,9 +84,14 @@ public class LeftPanel {
         if ((showingEmpty) && (leftPanelListAdapter.getCount() > 0)) {
             showingEmpty = false;
             view_switcher.showPrevious();
+            if (leftPanelListAdapter.GetVisibleList() == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Chats))
+                ((Activity)this.context).findViewById(R.id.left_panel_list_filter).setVisibility(View.VISIBLE);
+            else
+                ((Activity)this.context).findViewById(R.id.left_panel_list_filter).setVisibility(View.GONE);
         } else if ((!showingEmpty) && (leftPanelListAdapter.getCount() == 0)) {
             showingEmpty = true;
             view_switcher.showNext();
+            ((Activity)this.context).findViewById(R.id.left_panel_list_filter).setVisibility(View.GONE);
         }
     }
 
@@ -105,9 +110,14 @@ public class LeftPanel {
                     if ((showingEmpty) && (leftPanelListAdapter.getCount() > 0)) {
                         showingEmpty = false;
                         view_switcher.showPrevious();
+                        if (leftPanelListAdapter.GetVisibleList() == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Chats))
+                            ((Activity)context).findViewById(R.id.left_panel_list_filter).setVisibility(View.VISIBLE);
+                        else
+                            ((Activity)context).findViewById(R.id.left_panel_list_filter).setVisibility(View.GONE);
                     } else if ((!showingEmpty) && (leftPanelListAdapter.getCount() == 0)) {
                         showingEmpty = true;
                         view_switcher.showNext();
+                        ((Activity)context).findViewById(R.id.left_panel_list_filter).setVisibility(View.GONE);
                     }
                     break;
                 case R.id.left_panel_action_bar_tab_hives:
@@ -123,6 +133,7 @@ public class LeftPanel {
                         showingEmpty = true;
                         view_switcher.showNext();
                     }
+                    ((Activity)context).findViewById(R.id.left_panel_list_filter).setVisibility(View.GONE);
                     break;
                 case R.id.left_panel_action_bar_tab_friends:
                     SetButtonSelected(chats,false, (TextView)chats.findViewById(R.id.left_panel_action_bar_tab_text_chats), (ImageView)chats.findViewById(R.id.left_panel_action_bar_tab_img_chats),R.drawable.pestanhas_panel_izquierdo_chats_blanco);
@@ -137,6 +148,7 @@ public class LeftPanel {
                         showingEmpty = true;
                         view_switcher.showNext();
                     }
+                    ((Activity)context).findViewById(R.id.left_panel_list_filter).setVisibility(View.GONE);
                     break;
             }
         }

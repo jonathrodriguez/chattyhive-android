@@ -2,7 +2,10 @@ package com.chattyhive.chattyhive;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.text.Spannable;
 import android.text.SpannableString;
+import android.text.style.ImageSpan;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -197,12 +200,16 @@ public class LeftPanelListAdapter extends BaseAdapter {
                     for (User user : ((Group) item).getMembers())
                         if (!user.isMe()) GroupName = "@" + user.getUserPublicProfile().getShowingName();
                     if (lastMessage != null) {
+                        LastMessage = new SpannableString(" ".concat(lastMessage.getMessageContent().getContent()));
+                        Drawable img = null;
                         if (lastMessage.getUser().isMe()) {
-                            //LastMessage.setSpan(); <- The ">"
+                            img = this.context.getResources().getDrawable(R.drawable.ic_action_next_item);
+
                         } else {
-                            //LastMessage.setSpan(); <- The "<"
+                            img = this.context.getResources().getDrawable(R.drawable.ic_action_previous_item);
                         }
-                        LastMessage.setSpan(lastMessage.getMessageContent().getContent(),0,0,SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        img.setBounds(0,0,((ChatViewHolder) holder).chatLastMessage.getLineHeight(),((ChatViewHolder) holder).chatLastMessage.getLineHeight());
+                        LastMessage.setSpan(new ImageSpan(img,ImageSpan.ALIGN_BOTTOM), 0, 1, Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
                     }
                     ((ChatViewHolder)holder).chatLastMessageTimestamp.setVisibility(View.VISIBLE);
                     ((ChatViewHolder)holder).chatPendingMessagesNumber.setVisibility(View.INVISIBLE);
@@ -218,12 +225,16 @@ public class LeftPanelListAdapter extends BaseAdapter {
                             if (!user.isMe()) GroupName += ((GroupName.isEmpty())?"":", ") + "@" + user.getShowingName();
 
                     if (lastMessage != null) {
+                        LastMessage = new SpannableString(" ".concat(lastMessage.getMessageContent().getContent()));
+                        Drawable img = null;
                         if (lastMessage.getUser().isMe()) {
-                            //LastMessage.setSpan(); <- The ">"
+                            img = this.context.getResources().getDrawable(R.drawable.ic_action_next_item);
+
                         } else {
-                            //LastMessage.setSpan(); <- The "<"
+                            img = this.context.getResources().getDrawable(R.drawable.ic_action_previous_item);
                         }
-                        LastMessage.setSpan(lastMessage.getMessageContent().getContent(),0,0,SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        img.setBounds(0,0,((ChatViewHolder) holder).chatLastMessage.getLineHeight(),((ChatViewHolder) holder).chatLastMessage.getLineHeight());
+                        LastMessage.setSpan(new ImageSpan(img,ImageSpan.ALIGN_BOTTOM), 0, 1, Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
                     }
                     ((ChatViewHolder)holder).chatLastMessageTimestamp.setVisibility(View.VISIBLE);
                     ((ChatViewHolder)holder).chatPendingMessagesNumber.setVisibility(View.INVISIBLE);
@@ -232,13 +243,16 @@ public class LeftPanelListAdapter extends BaseAdapter {
                 case HIVE:
                     ((ChatViewHolder)holder).chatHiveImage.setVisibility(View.GONE);
                     ((ChatViewHolder)holder).chatTypeImage.setImageResource(R.drawable.pestanha_chats_public_chat);
-                    GroupName = ((Group) item).getParentHive().getName();
+                    if (((Group) item).getParentHive() != null)
+                        GroupName = ((Group) item).getParentHive().getName();
                     if (lastMessage != null) {
-                        LastMessage.setSpan("@" + lastMessage.getUser().getUserPublicProfile().getShowingName() + ": " + lastMessage.getMessageContent().getContent(),0,0,SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        LastMessage = new SpannableString("@" + lastMessage.getUser().getShowingName() + ": " + lastMessage.getMessageContent().getContent());
                     }
                     ((ChatViewHolder)holder).chatLastMessageTimestamp.setVisibility(View.INVISIBLE);
                     ((ChatViewHolder)holder).chatPendingMessagesNumber.setVisibility(View.INVISIBLE);
                     ((ChatViewHolder)holder).chatImage.setImageResource(R.drawable.pestanha_chats_public_chat);
+                    ((ChatViewHolder)holder).chatImage.setAdjustViewBounds(true);
+                    ((ChatViewHolder)holder).chatImage.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
                     break;
                 case PRIVATE_SINGLE:
                     ((ChatViewHolder)holder).chatHiveImage.setVisibility(View.GONE);
@@ -246,12 +260,16 @@ public class LeftPanelListAdapter extends BaseAdapter {
                     for (User user : ((Group) item).getMembers())
                         if (!user.isMe()) GroupName = user.getUserPrivateProfile().getShowingName();
                     if (lastMessage != null) {
+                        LastMessage = new SpannableString(" ".concat(lastMessage.getMessageContent().getContent()));
+                        Drawable img = null;
                         if (lastMessage.getUser().isMe()) {
-                            //LastMessage.setSpan(); <- The ">"
+                            img = this.context.getResources().getDrawable(R.drawable.ic_action_next_item);
+
                         } else {
-                            //LastMessage.setSpan(); <- The "<"
+                            img = this.context.getResources().getDrawable(R.drawable.ic_action_previous_item);
                         }
-                        LastMessage.setSpan(lastMessage.getMessageContent().getContent(),0,0,SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        img.setBounds(0,0,((ChatViewHolder) holder).chatLastMessage.getLineHeight(),((ChatViewHolder) holder).chatLastMessage.getLineHeight());
+                        LastMessage.setSpan(new ImageSpan(img,ImageSpan.ALIGN_BOTTOM), 0, 1, Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
                     }
                     ((ChatViewHolder)holder).chatLastMessageTimestamp.setVisibility(View.VISIBLE);
                     ((ChatViewHolder)holder).chatPendingMessagesNumber.setVisibility(View.INVISIBLE);
@@ -262,12 +280,16 @@ public class LeftPanelListAdapter extends BaseAdapter {
                     ((ChatViewHolder)holder).chatTypeImage.setImageResource(R.drawable.pestanha_chats_group);
                     GroupName = ((Group)item).getName();
                     if (lastMessage != null) {
+                        LastMessage = new SpannableString(" ".concat(lastMessage.getMessageContent().getContent()));
+                        Drawable img = null;
                         if (lastMessage.getUser().isMe()) {
-                            //LastMessage.setSpan(); <- The ">"
+                            img = this.context.getResources().getDrawable(R.drawable.ic_action_next_item);
+
                         } else {
-                            //LastMessage.setSpan(); <- The "<"
+                            img = this.context.getResources().getDrawable(R.drawable.ic_action_previous_item);
                         }
-                        LastMessage.setSpan(lastMessage.getMessageContent().getContent(),0,0,SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        img.setBounds(0,0,((ChatViewHolder) holder).chatLastMessage.getLineHeight(),((ChatViewHolder) holder).chatLastMessage.getLineHeight());
+                        LastMessage.setSpan(new ImageSpan(img,ImageSpan.ALIGN_BOTTOM), 0, 1, Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
                     }
                     ((ChatViewHolder)holder).chatLastMessageTimestamp.setVisibility(View.VISIBLE);
                     ((ChatViewHolder)holder).chatPendingMessagesNumber.setVisibility(View.INVISIBLE);

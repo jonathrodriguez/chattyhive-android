@@ -305,7 +305,7 @@ public class User {
                 DataProvider dataProvider = DataProvider.GetDataProvider();
                 dataProvider.InvokeServerCommand(ServerCommand.AvailableCommands.UserProfile,profile_id);*/
 
-                this.showingName = String.format("@%s",this.userID);
+                this.showingName = String.format("%s",this.userID);
                 this.color = "#808080";
                 this.isMe = false;
                 this.isPrivate = false;

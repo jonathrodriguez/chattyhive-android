@@ -251,6 +251,8 @@ public class Hive {
                 }
             } else {
                 this.publicChat = Group.getGroup(String.format("presence-%s",this.nameUrl));
+                this.publicChat.parentHive = this;
+                this.publicChat.groupKind = GroupKind.HIVE;
             }
             return true;
         } else if (format instanceof HIVE_ID) {
