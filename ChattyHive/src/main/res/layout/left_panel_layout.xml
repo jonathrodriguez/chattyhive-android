@@ -3,8 +3,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/left_panel_action_bar_button_background_selector">
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:orientation="horizontal"
@@ -12,56 +11,49 @@
         android:layout_height="@dimen/left_panel_list_filter_height"
         android:background="@drawable/left_panel_list_filter_background">
 
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="@dimen/left_panel_list_filter_text_margin_left"
-            android:layout_marginTop="@dimen/left_panel_list_filter_text_margin_top"
-            android:layout_marginRight="@dimen/left_panel_list_filter_text_margin_right"
-            android:layout_marginBottom="@dimen/left_panel_list_filter_text_margin_bottom"
-            android:layout_weight="1">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:text="@string/left_panel_filter_all"
+            android:id="@+id/left_panel_list_filter_all"
+            android:gravity="center_vertical|center_horizontal"
+            android:layout_weight="1"
+            android:textSize="@dimen/left_panel_list_filter_text_size"
+            android:textColor="@color/left_panel_list_filter_selected_text"
+            android:background="#00000000" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="fill_parent"
-                android:text="@string/left_panel_filter_all"
-                android:id="@+id/left_panel_list_filter_all"
-                android:gravity="center_vertical|center_horizontal"
-                android:layout_weight="1"
-                android:textSize="@dimen/left_panel_list_filter_text_size"
-                android:textColor="@color/left_panel_list_filter_selected_text" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:text="@string/left_panel_filter_friends"
+            android:id="@+id/left_panel_list_filter_friends"
+            android:layout_weight="1"
+            android:gravity="center_vertical|center_horizontal"
+            android:textSize="@dimen/left_panel_list_filter_text_size"
+            android:textColor="@color/left_panel_list_filter_unselected_text"
+            android:background="#00000000" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="fill_parent"
-                android:text="@string/left_panel_filter_friends"
-                android:id="@+id/left_panel_list_filter_friends"
-                android:layout_weight="1"
-                android:gravity="center_vertical|center_horizontal"
-                android:textSize="@dimen/left_panel_list_filter_text_size"
-                android:textColor="@color/left_panel_list_filter_unselected_text" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:text="@string/left_panel_filter_hivemates"
+            android:id="@+id/left_panel_list_filter_hivemates"
+            android:layout_weight="1"
+            android:gravity="center_vertical|center_horizontal"
+            android:textSize="@dimen/left_panel_list_filter_text_size"
+            android:textColor="@color/left_panel_list_filter_unselected_text"
+            android:background="#00000000" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="fill_parent"
-                android:text="@string/left_panel_filter_hivemates"
-                android:id="@+id/left_panel_list_filter_hivemates"
-                android:layout_weight="1"
-                android:gravity="center_vertical|center_horizontal"
-                android:textSize="@dimen/left_panel_list_filter_text_size"
-                android:textColor="@color/left_panel_list_filter_unselected_text" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="fill_parent"
-                android:text="@string/left_panel_filter_hive_chats"
-                android:id="@+id/left_panel_list_filter_hive_chats"
-                android:layout_weight="1"
-                android:gravity="center_vertical|center_horizontal"
-                android:textSize="@dimen/left_panel_list_filter_text_size"
-                android:textColor="@color/left_panel_list_filter_unselected_text" />
-        </LinearLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:text="@string/left_panel_filter_hive_chats"
+            android:id="@+id/left_panel_list_filter_hive_chats"
+            android:layout_weight="1"
+            android:gravity="center_vertical|center_horizontal"
+            android:textSize="@dimen/left_panel_list_filter_text_size"
+            android:textColor="@color/left_panel_list_filter_unselected_text"
+            android:background="#00000000" />
 
         <ImageView
             android:layout_width="@dimen/left_panel_list_filter_img_width"
@@ -73,24 +65,24 @@
             android:paddingTop="@dimen/left_panel_list_filter_img_padding_top"
             android:paddingRight="@dimen/left_panel_list_filter_img_padding_right"
             android:paddingBottom="@dimen/left_panel_list_filter_img_padding_bottom"
-            android:contentDescription="@string/left_panel_filter_help_button_description" />
+            android:contentDescription="@string/left_panel_filter_help_button_description"
+            android:background="#00000000" />
     </LinearLayout>
 
     <ViewSwitcher
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:id="@+id/left_panel_empty_list_view_switcher"
-        android:layout_gravity="center"
         android:animateFirstView="false"
         android:background="@drawable/left_panel_list_background">
         <ListView
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:id="@+id/left_panel_element_list"
             android:background="@drawable/left_panel_list_background" />
         <FrameLayout
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:foregroundGravity="center_vertical|center_horizontal"
             android:background="@drawable/left_panel_list_background">
 

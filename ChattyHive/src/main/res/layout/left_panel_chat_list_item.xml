@@ -35,7 +35,6 @@
             android:background="@drawable/left_panel_chat_list_item_little_img_border"
             android:scaleType="centerInside"
             android:adjustViewBounds="true"
-            android:tint="#ffffd92f"
             android:visibility="visible"
             android:layout_marginLeft="@dimen/left_panel_chat_list_item_little_img_margin_left"
             android:layout_marginTop="@dimen/left_panel_chat_list_item_little_img_margin_top" />
@@ -88,7 +87,8 @@
             android:textColor="@color/left_panel_chat_list_item_timestamp_text"
             android:layout_marginRight="@dimen/left_panel_chat_list_item_timestamp_margin_right"
             android:layout_marginTop="@dimen/left_panel_chat_list_item_timestamp_margin_top"
-            android:textSize="@dimen/left_panel_chat_list_item_timestamp_text_size" />
+            android:textSize="@dimen/left_panel_chat_list_item_timestamp_text_size"
+            android:background="#00000000" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -111,7 +111,8 @@
             android:layout_marginRight="7dp"
             android:layout_marginBottom="4dp"
             android:scaleType="centerInside"
-            android:src="@drawable/pestanha_chats_arroba" />
+            android:src="@drawable/pestanha_chats_arroba"
+            android:background="#00000000" />
     </FrameLayout>
 
 </LinearLayout>

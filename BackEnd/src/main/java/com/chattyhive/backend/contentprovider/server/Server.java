@@ -307,8 +307,10 @@ public class Server {
                     //TODO: Test connection availability.
                     if (!DataProvider.isConnectionAvailable()) {
                         //There is no network. What to do with pending command?
+                        System.out.println("No network available.");
                     } else {
                         //Some strange error happened. What to do with this error?
+                        System.out.println("Server error.");
                     }
                 }
             }
@@ -317,6 +319,8 @@ public class Server {
 
     private Boolean RunCommand (ServerCommand serverCommand, EventHandler<CommandCallbackEventArgs> Callback,int retryCount, Format... formats) {
         Boolean result = false;
+
+        if (retryCount >= 3) return false;
 
         try {
             URL url = new URL(String.format("%s://%s.%s/%s", appProtocol, appName, host, serverCommand.getUrl(formats)));
@@ -333,6 +337,9 @@ public class Server {
             HttpCookie csrfCookie = null;
             HttpCookie sessionCookie = null;
 
+            int startSessionTries = 0;
+            int loginTries = 0;
+
             while (csrfCookie == null) {
                 CookieManager cookieManager = (CookieManager) CookieHandler.getDefault();
                 CookieStore cookieStore = cookieManager.getCookieStore();
@@ -346,8 +353,22 @@ public class Server {
                             sessionCookie = cookie;
                         }
                 }
-                if ((csrfCookie == null) || (csrfCookie.hasExpired())) StartSession();
-                if ((sessionCookie == null) || (sessionCookie.hasExpired())) Login();
+                if ((csrfCookie == null) || (csrfCookie.hasExpired())) {
+                    if (startSessionTries < 3) {
+                        StartSession();
+                        startSessionTries++;
+                    } else {
+                        return false;
+                    }
+                }
+                if ((sessionCookie == null) || (sessionCookie.hasExpired())) {
+                    if (loginTries < 3) {
+                        Login();
+                        loginTries++;
+                    } else {
+                        return false;
+                    }
+                }
             }
 
             if (csrfCookie != null) {
@@ -395,7 +416,7 @@ public class Server {
                         if (((COMMON) format).STATUS.equalsIgnoreCase("OK")) {
                             result = true;
                             if (Callback != null)
-                                Callback.Invoke(httpURLConnection, new CommandCallbackEventArgs(Arrays.asList(receivedFormats), Arrays.asList(formats)));
+                                Callback.Invoke(httpURLConnection, new CommandCallbackEventArgs((receivedFormats!=null)?Arrays.asList(receivedFormats):null, (formats!=null)?Arrays.asList(formats):null));
                             else if (responseEvent != null)
                                 responseEvent.fire(httpURLConnection, new FormatReceivedEventArgs(Arrays.asList(receivedFormats)));
                         } else if (((COMMON) format).STATUS.equalsIgnoreCase("SESSION EXPIRED")) {

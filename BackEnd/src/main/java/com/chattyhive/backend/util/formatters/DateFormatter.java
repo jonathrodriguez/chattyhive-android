@@ -17,6 +17,7 @@ public final class DateFormatter {
      */
     private static final String format = "yyyy-MM-dd";
     private static final String humanReadableFormat = "EEEE, dd 'de' MMMM 'de' yyyy";
+    private static final String shortHumanReadableFormat = "dd/MM/yyyy";
 
     private static final String timeZoneID = "Europe/Madrid";
     /**
@@ -61,6 +62,22 @@ public final class DateFormatter {
         SimpleDateFormat simpleDateFormat;
         if ((humanReadableFormat != null) && (!humanReadableFormat.isEmpty())) {
             simpleDateFormat = new SimpleDateFormat(humanReadableFormat);
+            return simpleDateFormat.format(date);
+        } else {
+            return date.toString();
+        }
+    }
+
+    /**
+     * Converts a Date object to it's string representation, referred to Locale, according to the
+     * format: "dd/MM/yyyy"
+     * @param date Date object representing the date to be converted.
+     * @return A string containing the representation of the date.
+     */
+    public static final String toShortHumanReadableString(Date date) {
+        SimpleDateFormat simpleDateFormat;
+        if ((shortHumanReadableFormat != null) && (!shortHumanReadableFormat.isEmpty())) {
+            simpleDateFormat = new SimpleDateFormat(shortHumanReadableFormat);
             return simpleDateFormat.format(date);
         } else {
             return date.toString();

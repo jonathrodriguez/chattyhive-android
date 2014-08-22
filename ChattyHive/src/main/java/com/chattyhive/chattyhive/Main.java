@@ -183,7 +183,6 @@ public class Main extends Activity {
     protected View.OnClickListener explore_button_click = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-
             Intent intent = new Intent(getApplicationContext(),Explore.class);
             startActivityForResult(intent, OP_CODE_EXPLORE);
         }
@@ -217,13 +216,13 @@ public class Main extends Activity {
         if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
             if (event.getAction() == KeyEvent.ACTION_DOWN
                     && event.getRepeatCount() == 0) {
-                if ((ActiveLayoutID != R.layout.home)) { // Tell the framework to start tracking this event.
+                if ((ActiveLayoutID != R.layout.home) && (!floatingPanel.isOpen())) { // Tell the framework to start tracking this event.
                     findViewById(R.id.mainCenter).getKeyDispatcherState().startTracking(event, this);
                     return true;
                 }
             } else if (event.getAction() == KeyEvent.ACTION_UP) {
                 findViewById(R.id.mainCenter).getKeyDispatcherState().handleUpEvent(event);
-                if (event.isTracking() && !event.isCanceled()) { //TODO: Use main panel view stack.
+                if (event.isTracking() && !event.isCanceled() && (!floatingPanel.isOpen())) { //TODO: Use main panel view stack.
                     if (ActiveLayoutID == R.layout.main_panel_chat_layout) {
                         this.controller.Leave((String) findViewById(R.id.main_panel_chat_name).getTag());
                     }
