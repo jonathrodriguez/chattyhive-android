@@ -2,46 +2,46 @@
 <pre-dex-items>
 
     <item
-        dex="/home/diego/AndroidStudioProjects/chattyhive-android/ChattyHive/build/intermediates/pre-dexed/debug/gson-2.2.2-cba64a14aa26104fb7b722c6bfe661cfb80b79b5.jar"
-        jar="/home/diego/.gradle/caches/modules-2/files-2.1/com.google.code.gson/gson/2.2.2/1f96456ca233dec780aa224bff076d8e8bca3908/gson-2.2.2.jar"
-        jumboMode="false"
-        revision="19.1.0"
-        sha1="1f96456ca233dec780aa224bff076d8e8bca3908"/>
-    <item
-        dex="/home/diego/AndroidStudioProjects/chattyhive-android/ChattyHive/build/intermediates/pre-dexed/debug/slf4j-api-1.7.5-d42051b40485c386a3018f68dd358b2af432ee42.jar"
-        jar="/home/diego/.gradle/caches/modules-2/files-2.1/org.slf4j/slf4j-api/1.7.5/6b262da268f8ad9eff941b25503a9198f0a0ac93/slf4j-api-1.7.5.jar"
+        dex="C:\Android\ChattyHive\chattyhive-android\ChattyHive\build\intermediates\pre-dexed\debug\slf4j-api-1.7.5-909f9f507274976aacf84690b79c9067272a92fc.jar"
+        jar="C:\Users\Jonathan\.gradle\caches\modules-2\files-2.1\org.slf4j\slf4j-api\1.7.5\6b262da268f8ad9eff941b25503a9198f0a0ac93\slf4j-api-1.7.5.jar"
         jumboMode="false"
         revision="19.1.0"
         sha1="6b262da268f8ad9eff941b25503a9198f0a0ac93"/>
     <item
-        dex="/home/diego/AndroidStudioProjects/chattyhive-android/ChattyHive/build/intermediates/pre-dexed/debug/support-v4-19.1.0-ad35a69875988f99d7f08bf8be0ef81237933ff4.jar"
-        jar="/home/diego/Descargas/android-studio/sdk/extras/android/m2repository/com/android/support/support-v4/19.1.0/support-v4-19.1.0.jar"
+        dex="C:\Android\ChattyHive\chattyhive-android\ChattyHive\build\intermediates\pre-dexed\debug\gson-2.2.2-09e0129cc7f55a275e7e731e1cc13233758cd9fc.jar"
+        jar="C:\Users\Jonathan\.gradle\caches\modules-2\files-2.1\com.google.code.gson\gson\2.2.2\1f96456ca233dec780aa224bff076d8e8bca3908\gson-2.2.2.jar"
+        jumboMode="false"
+        revision="19.1.0"
+        sha1="1f96456ca233dec780aa224bff076d8e8bca3908"/>
+    <item
+        dex="C:\Android\ChattyHive\chattyhive-android\ChattyHive\build\intermediates\pre-dexed\debug\support-v4-19.1.0-cd41ef807caadb29c9df0131dee869d3723185ad.jar"
+        jar="C:\Program Files\Android\android-studio\sdk\extras\android\m2repository\com\android\support\support-v4\19.1.0\support-v4-19.1.0.jar"
         jumboMode="false"
         revision="19.1.0"
         sha1="85f201b380937e61a9dce6ca90ccf6872abbfb67"/>
     <item
-        dex="/home/diego/AndroidStudioProjects/chattyhive-android/ChattyHive/build/intermediates/pre-dexed/debug/BackEnd-ca719c2c661fae9d18e185d8a9e93d5223dccc32.jar"
-        jar="/home/diego/AndroidStudioProjects/chattyhive-android/BackEnd/build/libs/BackEnd.jar"
+        dex="C:\Android\ChattyHive\chattyhive-android\ChattyHive\build\intermediates\pre-dexed\debug\classes-a0592b0190d2e38e1de4d8d5c41b5e78b2e65ed5.jar"
+        jar="C:\Android\ChattyHive\chattyhive-android\ChattyHive\build\intermediates\exploded-aar\chattyhive-android\Framework\unspecified\classes.jar"
         jumboMode="false"
         revision="19.1.0"
-        sha1="6755e20aef3ae64345284c1d48468aa6e2dd189a"/>
+        sha1="1bc852851a73976dc0a798577b3991f2704f7373"/>
     <item
-        dex="/home/diego/AndroidStudioProjects/chattyhive-android/ChattyHive/build/intermediates/pre-dexed/debug/pusher-java-client-0.2.0-5fb84f4b450fbcdd11dc072682b0945f65e0df9b.jar"
-        jar="/home/diego/.gradle/caches/modules-2/files-2.1/com.pusher/pusher-java-client/0.2.0/afbc7c8ffd5d613c7dca7e3c38ff449386078b8/pusher-java-client-0.2.0.jar"
+        dex="C:\Android\ChattyHive\chattyhive-android\ChattyHive\build\intermediates\pre-dexed\debug\classes-cf0fe497633b5f7610f6cae9f463d9faed135b61.jar"
+        jar="C:\Android\ChattyHive\chattyhive-android\ChattyHive\build\intermediates\exploded-aar\com.android.support\appcompat-v7\19.1.0\classes.jar"
+        jumboMode="false"
+        revision="19.1.0"
+        sha1="3499ceba05ca1f6037c6a2fad73df8f636224a28"/>
+    <item
+        dex="C:\Android\ChattyHive\chattyhive-android\ChattyHive\build\intermediates\pre-dexed\debug\pusher-java-client-0.2.0-c3b9217119e74036cbb051c45f02f313242360e6.jar"
+        jar="C:\Users\Jonathan\.gradle\caches\modules-2\files-2.1\com.pusher\pusher-java-client\0.2.0\afbc7c8ffd5d613c7dca7e3c38ff449386078b8\pusher-java-client-0.2.0.jar"
         jumboMode="false"
         revision="19.1.0"
         sha1="0afbc7c8ffd5d613c7dca7e3c38ff449386078b8"/>
     <item
-        dex="/home/diego/AndroidStudioProjects/chattyhive-android/ChattyHive/build/intermediates/pre-dexed/debug/classes-18b4459b2075d429384ecaf1be57ecc439e530b6.jar"
-        jar="/home/diego/AndroidStudioProjects/chattyhive-android/ChattyHive/build/intermediates/exploded-aar/chattyhive-android/Framework/unspecified/classes.jar"
+        dex="C:\Android\ChattyHive\chattyhive-android\ChattyHive\build\intermediates\pre-dexed\debug\BackEnd-337b6e89a8751c0c22bfa498650e4b7d3a990140.jar"
+        jar="C:\Android\ChattyHive\chattyhive-android\BackEnd\build\libs\BackEnd.jar"
         jumboMode="false"
         revision="19.1.0"
-        sha1="ca05d114d68b8c9614210d5d9cfec67558bff62f"/>
-    <item
-        dex="/home/diego/AndroidStudioProjects/chattyhive-android/ChattyHive/build/intermediates/pre-dexed/debug/classes-8d58f6daaffc79f3a8a8af5a75ac979918fa252a.jar"
-        jar="/home/diego/AndroidStudioProjects/chattyhive-android/ChattyHive/build/intermediates/exploded-aar/com.android.support/appcompat-v7/19.1.0/classes.jar"
-        jumboMode="false"
-        revision="19.1.0"
-        sha1="3499ceba05ca1f6037c6a2fad73df8f636224a28"/>
+        sha1="24b16f891c88df86b5935fd3b6f99f1ab76a7300"/>
 
 </pre-dex-items>
