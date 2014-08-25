@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- ________________________________ -->
+    <!--            ACTION BAR            -->
+    <!-- ________________________________ -->
+
+
+    <!-- ________________________________ -->
+    <!--             GENERAL              -->
+    <!-- ________________________________ -->
+
+
+
+    <!-- ________________________________ -->
+    <!--            FIRST STEP            -->
+    <!-- ________________________________ -->
+
+    <string name="register_first_step_buttons_back">Back to start</string>
+    <string name="register_first_step_buttons_next">Go to step 2</string>
+
+
+
+    <!-- ________________________________ -->
+    <!--           SECOND STEP            -->
+    <!-- ________________________________ -->
+
+    <string name="register_second_step_buttons_back">Back to step 1</string>
+    <string name="register_second_step_buttons_next">Go to step 3</string>
+
+
+    <!-- ________________________________ -->
+    <!--            THIRD STEP            -->
+    <!-- ________________________________ -->
+
+    <string name="register_third_step_buttons_back">Back to step 2</string>
+    <string name="register_third_step_buttons_next">Enter</string>
+
+</resources>

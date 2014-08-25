@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- ________________________________ -->
+    <!--            ACTION BAR            -->
+    <!-- ________________________________ -->
+
+
+    <!-- ________________________________ -->
+    <!--             GENERAL              -->
+    <!-- ________________________________ -->
+    <color name="register_general_background_start">#000</color>
+    <color name="register_general_background_end">#111</color>
+    <item name="register_general_background_gradient_angle" type="color" format="integer">270</item>
+
+    <color name="register_general_main_block_background">#242424</color>
+    <color name="register_general_main_block_border">#404040</color>
+
+    <color name="register_general_buttons_next_background">#ffb615</color>
+    <color name="register_general_buttons_next_border">#ffc94a</color>
+    <color name="register_general_buttons_next_shadow">#FF010101</color>
+    <color name="register_general_buttons_next_shadow_border">#AA010101</color>
+    <color name="register_general_buttons_next_text">#111</color>
+    <item name="register_general_buttons_next_img_alpha" format="float" type="color">0.9</item>
+
+    <color name="register_general_buttons_back_background">#242424</color>
+    <color name="register_general_buttons_back_border">#404040</color>
+    <color name="register_general_buttons_back_shadow">#FF010101</color>
+    <color name="register_general_buttons_back_shadow_border">#AA010101</color>
+    <color name="register_general_buttons_back_text">#eee</color>
+
+
+    <!-- ________________________________ -->
+    <!--            FIRST STEP            -->
+    <!-- ________________________________ -->
+
+
+
+
+    <!-- ________________________________ -->
+    <!--           SECOND STEP            -->
+    <!-- ________________________________ -->
+
+
+
+
+    <!-- ________________________________ -->
+    <!--            THIRD STEP            -->
+    <!-- ________________________________ -->
+
+
+
+</resources>

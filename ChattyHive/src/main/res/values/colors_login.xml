@@ -63,7 +63,4 @@
     <color name="login_tab_panel_sign_up_go_button_shadow_color">#FF010101</color>
     <color name="login_tab_panel_sign_up_go_button_shadow_border_color">#AA010101</color>
     <color name="login_tab_panel_sign_up_go_button_text_color">#111111</color>
-
-    <!-- REGISTER COLORS -->
-    <!-- ___________________________________________________________________________ -->
 </resources>

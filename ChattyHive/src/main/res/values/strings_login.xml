@@ -38,7 +38,4 @@
     <string name="login_tab_panel_sign_up_email_field_hint">Enter your email&#8230;</string>
     <string name="login_tab_panel_sign_up_go_button">GO</string>
     <string name="login_tab_panel_sign_up_bottom_text">What is chattyhive and how it works?</string>
-
-    <!-- REGISTER STRINGS -->
-    <!-- ___________________________________________________________________________ -->
 </resources>
