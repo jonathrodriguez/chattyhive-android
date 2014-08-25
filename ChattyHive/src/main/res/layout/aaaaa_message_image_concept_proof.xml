@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="left"
+    android:layout_marginLeft="5dp"
+    android:layout_marginTop="20dp"
+    android:layout_marginRight="80dp"
+    android:layout_marginBottom="20dp">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageView"
+        android:src="@drawable/aaaaaa_image_concept_proof"
+        android:background="@drawable/chat_globe_other"
+        android:layout_row="0"
+        android:layout_alignParentLeft="false"
+        android:layout_alignParentTop="false"
+        android:scaleType="centerCrop"
+        android:maxHeight="200dp"
+        android:maxWidth="300dp"
+        android:adjustViewBounds="true"
+        android:cropToPadding="false"
+        android:baselineAlignBottom="false" />
+
+</RelativeLayout>

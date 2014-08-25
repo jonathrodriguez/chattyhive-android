@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/chat_globe_other"
+    android:gravity="left"
+    android:layout_gravity="left"
+    android:layout_marginLeft="5dp"
+    android:layout_marginTop="20dp"
+    android:layout_marginRight="80dp"
+    android:layout_marginBottom="20dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text='hi,bla bla bla bla bla bla bla bla bla bla bla bla bla bls bla bla bla bla'
+        android:id="@+id/main_panel_chat_single_message_messageText"
+        android:textColor="#ff333333"
+        android:background="#00000000" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginLeft="10dp"
+        android:layout_weight="1"
+        android:layout_gravity="right"
+        android:text="A while ago."
+        android:id="@+id/main_panel_chat_single_message_timeStamp"
+        android:minLines="1"
+        android:maxLines="1"
+        android:lines="1"
+        android:singleLine="true"
+        android:textColor="#ff808080"
+        android:background="#00000000"
+        android:ellipsize="none" />
+
+</LinearLayout>
