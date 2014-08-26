@@ -29,25 +29,39 @@
                 android:layout_height="wrap_content"
                 android:text="@string/register_second_step_username_label"
                 android:id="@+id/textView"
-                android:layout_marginLeft="@dimen/register_second_step_main_block_additional_padding_left" />
+                android:layout_marginLeft="@dimen/register_second_step_main_block_additional_padding_left"
+                android:layout_marginTop="@dimen/register_second_step_username_text_margin_top"
+                android:layout_marginBottom="@dimen/register_second_step_username_text_margin_bottom"
+                android:textSize="@dimen/register_second_step_username_text" />
 
             <LinearLayout
                 android:orientation="horizontal"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/register_second_step_main_block_additional_padding_left">
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/register_second_step_username_field_height"
+                android:layout_marginLeft="@dimen/register_second_step_main_block_additional_padding_left"
+                android:layout_marginRight="@dimen/register_second_step_username_field_margin_right"
+                android:layout_marginBottom="@dimen/register_second_step_username_field_margin_bottom">
 
                 <ImageView
-                    android:layout_width="wrap_content"
+                    android:layout_width="@dimen/register_second_step_username_image_size"
                     android:layout_height="wrap_content"
                     android:id="@+id/imageView"
-                    android:src="@drawable/registro_arroba" />
+                    android:src="@drawable/registro_arroba"
+                    android:adjustViewBounds="true"
+                    android:scaleType="centerInside"
+                    android:layout_gravity="center_vertical"
+                    android:clickable="false"
+                    android:layout_marginRight="@dimen/register_second_step_username_image_separation" />
 
                 <EditText
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     android:id="@+id/editText"
-                    android:hint="@string/register_second_step_username_hint" />
+                    android:hint="@string/register_second_step_username_hint"
+                    android:layout_gravity="center_vertical"
+                    android:paddingLeft="@dimen/register_second_step_username_field_padding_left"
+                    android:paddingRight="@dimen/register_second_step_username_field_padding_right"
+                    android:textSize="@dimen/register_second_step_username_field_text" />
             </LinearLayout>
 
             <TextView
@@ -55,42 +69,101 @@
                 android:layout_height="wrap_content"
                 android:text="@string/register_second_step_avatar_label"
                 android:id="@+id/textView2"
-                android:layout_marginLeft="@dimen/register_second_step_main_block_additional_padding_left" />
+                android:layout_marginLeft="@dimen/register_second_step_main_block_additional_padding_left"
+                android:textSize="@dimen/register_second_step_avatar_section_text" />
 
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/register_second_step_main_block_additional_padding_left">
+                android:layout_marginLeft="@dimen/register_second_step_main_block_additional_padding_left"
+                android:layout_marginTop="@dimen/register_second_step_avatar_img_margin_top">
 
                 <ImageView
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
+                    android:layout_width="@dimen/register_second_step_avatar_img_size"
+                    android:layout_height="@dimen/register_second_step_avatar_img_size"
                     android:id="@+id/imageView2"
-                    android:src="@drawable/registro_load_picture" />
+                    android:src="@drawable/registro_load_picture"
+                    android:adjustViewBounds="true"
+                    android:layout_marginRight="@dimen/register_second_step_avatar_img_margin_right" />
 
                 <LinearLayout
                     android:orientation="vertical"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content">
 
-                    <TextView
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/register_second_step_avatar_random"
-                        android:id="@+id/textView3" />
+                        android:layout_marginTop="@dimen/register_second_step_avatar_options_margin_top">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/register_second_step_avatar_gallery"
-                        android:id="@+id/textView4" />
+                        <ImageView
+                            android:layout_width="@dimen/register_second_step_avatar_options_img_size"
+                            android:layout_height="@dimen/register_second_step_avatar_options_img_size"
+                            android:id="@+id/imageView8"
+                            android:layout_marginRight="@dimen/register_second_step_avatar_options_img_separation"
+                            android:background="#00000000"
+                            android:adjustViewBounds="true"
+                            android:scaleType="centerInside"
+                            android:src="@drawable/contextos_enviar_por_email_blanco" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/register_second_step_avatar_choose_from_local"
-                        android:id="@+id/textView5" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/register_second_step_avatar_random"
+                            android:id="@+id/textView3"
+                            android:textSize="@dimen/register_second_step_avatar_options_text" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:layout_marginTop="@dimen/register_second_step_avatar_options_vertical_separation">
+
+                        <ImageView
+                            android:layout_width="@dimen/register_second_step_avatar_options_img_size"
+                            android:layout_height="@dimen/register_second_step_avatar_options_img_size"
+                            android:id="@+id/imageView7"
+                            android:layout_marginRight="@dimen/register_second_step_avatar_options_img_separation"
+                            android:background="#00000000"
+                            android:adjustViewBounds="true"
+                            android:scaleType="centerInside"
+                            android:src="@drawable/registro_galeria_imagenes" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/register_second_step_avatar_gallery"
+                            android:id="@+id/textView4"
+                            android:textSize="@dimen/register_second_step_avatar_options_text" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:layout_marginTop="@dimen/register_second_step_avatar_options_vertical_separation">
+
+                        <ImageView
+                            android:layout_width="@dimen/register_second_step_avatar_options_img_size"
+                            android:layout_height="@dimen/register_second_step_avatar_options_img_size"
+                            android:id="@+id/imageView6"
+                            android:layout_marginRight="@dimen/register_second_step_avatar_options_img_separation"
+                            android:background="#00000000"
+                            android:adjustViewBounds="true"
+                            android:scaleType="centerInside"
+                            android:src="@drawable/registro_load_picture" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/register_second_step_avatar_choose_from_local"
+                            android:id="@+id/textView5"
+                            android:textSize="@dimen/register_second_step_avatar_options_text" />
+                    </LinearLayout>
+
                 </LinearLayout>
 
             </LinearLayout>
@@ -98,7 +171,8 @@
             <TableLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/register_second_step_main_block_additional_padding_left">
+                android:layout_marginLeft="@dimen/register_second_step_main_block_additional_padding_left"
+                android:layout_marginTop="@dimen/register_second_step_show_table_margin_top">
 
                 <TableRow
                     android:layout_width="fill_parent"
@@ -109,21 +183,24 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content">
 
-                        <CheckBox
-                            android:layout_width="22dp"
-                            android:layout_height="22dp"
-                            android:id="@+id/checkBox"
-                            android:checked="false"
-                            android:background="@drawable/register_checkbox_button"
-                            android:enabled="false"
-                            android:button="#00000000" />
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/register_second_step_checkbox_img_size"
+                            android:id="@+id/imageView4"
+                            android:src="@drawable/register_checkbox_button"
+                            android:scaleType="centerInside"
+                            android:adjustViewBounds="true"
+                            android:background="#00000000"
+                            android:layout_marginRight="@dimen/register_second_step_checkbox_img_separation" />
 
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/register_second_step_show_age"
                             android:id="@+id/textView7"
-                            android:singleLine="false" />
+                            android:singleLine="false"
+                            android:textSize="@dimen/register_second_step_checkbox_text"
+                            android:layout_gravity="center_vertical" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -131,57 +208,87 @@
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent">
 
-                        <CheckBox
-                            android:layout_width="22dp"
-                            android:layout_height="22dp"
-                            android:id="@+id/checkBox2"
-                            android:checked="true"
-                            android:background="@drawable/register_checkbox_button"
-                            android:enabled="false"
-                            android:button="#00000000" />
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/register_second_step_checkbox_img_size"
+                            android:id="@+id/imageView3"
+                            android:src="@drawable/register_checkbox_button"
+                            android:scaleType="centerInside"
+                            android:adjustViewBounds="true"
+                            android:background="#00000000"
+                            android:layout_marginRight="@dimen/register_second_step_checkbox_img_separation" />
 
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/register_second_step_show_gender"
                             android:id="@+id/textView8"
-                            android:labelFor="@id/checkBox2"/>
+                            android:labelFor="@id/checkBox2"
+                            android:textSize="@dimen/register_second_step_checkbox_text"
+                            android:layout_gravity="center_vertical" />
                     </LinearLayout>
 
                 </TableRow>
 
                 <TableRow
                     android:layout_width="fill_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/register_second_step_show_table_row_separation">
 
                     <LinearLayout
                         android:orientation="horizontal"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
-                        <CheckBox
-                            android:layout_width="22dp"
-                            android:layout_height="22dp"
-                            android:id="@+id/checkBox3"
-                            android:button="#00000000"
-                            android:background="@drawable/register_checkbox_button" />
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/register_second_step_checkbox_img_size"
+                            android:id="@+id/imageView5"
+                            android:src="@drawable/register_checkbox_button"
+                            android:scaleType="centerInside"
+                            android:adjustViewBounds="true"
+                            android:background="#00000000"
+                            android:layout_marginRight="@dimen/register_second_step_checkbox_img_separation" />
 
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/register_second_step_show_location"
-                            android:id="@+id/textView9" />
+                            android:id="@+id/textView9"
+                            android:textSize="@dimen/register_second_step_checkbox_text"
+                            android:layout_gravity="center_vertical" />
                     </LinearLayout>
                 </TableRow>
             </TableLayout>
 
-            <TextView
-                android:layout_width="wrap_content"
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"></FrameLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/register_second_step_public_note"
-                android:id="@+id/textView6"
-                android:layout_gravity="center_horizontal|bottom"
-                android:gravity="bottom" />
+                android:gravity="center_horizontal"
+                android:layout_marginBottom="@dimen/register_second_step_public_note_margin_bottom">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/register_second_step_public_note_img_size"
+                    android:id="@+id/imageView9"
+                    android:layout_marginRight="@dimen/register_second_step_public_note_img_separation"
+                    android:adjustViewBounds="true"
+                    android:src="@drawable/registro_public" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/register_second_step_public_note"
+                    android:id="@+id/textView6"
+                    android:gravity="bottom"
+                    android:textSize="@dimen/register_second_step_public_note_text" />
+            </LinearLayout>
         </LinearLayout>
 
         <RelativeLayout

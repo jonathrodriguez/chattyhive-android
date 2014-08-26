@@ -49,6 +49,39 @@
 
     <dimen name="register_second_step_main_block_additional_padding_left">28dp</dimen>
 
+    <dimen name="register_second_step_username_text">15sp</dimen>
+    <dimen name="register_second_step_username_text_margin_top">15.5dp</dimen>
+    <dimen name="register_second_step_username_text_margin_bottom">11.5dp</dimen>
+
+    <dimen name="register_second_step_username_field_height">40dp</dimen>
+    <dimen name="register_second_step_username_field_text">17.5sp</dimen>
+    <dimen name="register_second_step_username_field_margin_right">45dp</dimen>
+    <dimen name="register_second_step_username_field_margin_bottom">20dp</dimen>
+    <dimen name="register_second_step_username_field_padding_left">10dp</dimen>
+    <dimen name="register_second_step_username_field_padding_right">10dp</dimen>
+    <dimen name="register_second_step_username_image_separation">6dp</dimen>
+    <dimen name="register_second_step_username_image_size">19dp</dimen>
+
+    <dimen name="register_second_step_avatar_section_text">15sp</dimen>
+    <dimen name="register_second_step_avatar_options_text">15sp</dimen>
+    <dimen name="register_second_step_avatar_options_margin_top">5dp</dimen>
+    <dimen name="register_second_step_avatar_options_vertical_separation">14.5dp</dimen>
+    <dimen name="register_second_step_avatar_options_img_separation">8.5dp</dimen>
+    <dimen name="register_second_step_avatar_options_img_size">20dp</dimen>
+    <dimen name="register_second_step_avatar_img_size">100dp</dimen>
+    <dimen name="register_second_step_avatar_img_margin_top">11.5dp</dimen>
+    <dimen name="register_second_step_avatar_img_margin_right">21dp</dimen>
+
+    <dimen name="register_second_step_show_table_margin_top">25dp</dimen>
+    <dimen name="register_second_step_show_table_row_separation">15dp</dimen>
+    <dimen name="register_second_step_checkbox_text">15sp</dimen>
+    <dimen name="register_second_step_checkbox_img_separation">9dp</dimen>
+    <dimen name="register_second_step_checkbox_img_size">22dp</dimen>
+
+    <dimen name="register_second_step_public_note_text">13.5sp</dimen>
+    <dimen name="register_second_step_public_note_img_separation">5dp</dimen>
+    <dimen name="register_second_step_public_note_img_size">16dp</dimen>
+    <dimen name="register_second_step_public_note_margin_bottom">14.5dp</dimen>
 
     <!-- ________________________________ -->
     <!--            THIRD STEP            -->
