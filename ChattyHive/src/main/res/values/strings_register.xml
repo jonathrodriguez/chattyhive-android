@@ -15,6 +15,9 @@
     <!--            FIRST STEP            -->
     <!-- ________________________________ -->
 
+    <string name="register_first_step_title">Step 1</string>
+    <string name="register_first_step_subtitle">Private profile</string>
+
     <string name="register_first_step_buttons_back">Back to start</string>
     <string name="register_first_step_buttons_next">Go to step 2</string>
 
@@ -24,13 +27,32 @@
     <!--           SECOND STEP            -->
     <!-- ________________________________ -->
 
+    <string name="register_second_step_title">Step 2</string>
+    <string name="register_second_step_subtitle">Public profile</string>
+
     <string name="register_second_step_buttons_back">Back to step 1</string>
     <string name="register_second_step_buttons_next">Go to step 3</string>
 
+    <string name="register_second_step_username_label">Your username:</string>
+    <string name="register_second_step_username_hint">username</string>
+
+    <string name="register_second_step_avatar_label">Your avatar:</string>
+    <string name="register_second_step_avatar_random">Random avatar</string>
+    <string name="register_second_step_avatar_gallery">View avatar gallery</string>
+    <string name="register_second_step_avatar_choose_from_local">Upload from your phone</string>
+
+    <string name="register_second_step_show_age">Show your age</string>
+    <string name="register_second_step_show_location">Show your location</string>
+    <string name="register_second_step_show_gender">Show gender</string>
+
+    <string name="register_second_step_public_note">This information will be seen by all users</string>
 
     <!-- ________________________________ -->
     <!--            THIRD STEP            -->
     <!-- ________________________________ -->
+
+    <string name="register_third_step_title">Step 3</string>
+    <string name="register_third_step_subtitle">Account info</string>
 
     <string name="register_third_step_buttons_back">Back to step 2</string>
     <string name="register_third_step_buttons_next">Enter</string>

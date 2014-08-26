@@ -40,20 +40,21 @@
     <!--            FIRST STEP            -->
     <!-- ________________________________ -->
 
-
+    <dimen name="register_first_step_main_block_additional_padding_left">23.5dp</dimen>
 
 
     <!-- ________________________________ -->
     <!--           SECOND STEP            -->
     <!-- ________________________________ -->
 
-
+    <dimen name="register_second_step_main_block_additional_padding_left">28dp</dimen>
 
 
     <!-- ________________________________ -->
     <!--            THIRD STEP            -->
     <!-- ________________________________ -->
 
+    <dimen name="register_third_step_main_block_additional_padding_left">28dp</dimen>
 
 
 </resources>
