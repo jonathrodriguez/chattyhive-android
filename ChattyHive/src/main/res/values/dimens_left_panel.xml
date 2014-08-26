@@ -8,7 +8,7 @@
 
     <dimen name="left_panel_action_bar_tab_icon_margin_left">11dp</dimen>
     <dimen name="left_panel_action_bar_tab_icon_margin_top">10dp</dimen>
-    <dimen name="left_panel_action_bar_tab_icon_margin_right">11dp</dimen>
+    <dimen name="left_panel_action_bar_tab_icon_margin_right">8dp</dimen>
     <dimen name="left_panel_action_bar_tab_icon_margin_bottom">9.5dp</dimen>
 
     <dimen name="left_panel_action_bar_tab_text_size">14sp</dimen>
@@ -42,36 +42,36 @@
     <!-- CHAT LIST ITEM DIMENSIONS -->
     <!-- _________________________ -->
     <dimen name="left_panel_chat_list_item_big_img_width">52dp</dimen>
-    <dimen name="left_panel_chat_list_item_big_img_height">52dp</dimen>
     <dimen name="left_panel_chat_list_item_big_img_margin_left">12dp</dimen>
     <dimen name="left_panel_chat_list_item_big_img_margin_top">9dp</dimen>
-    <dimen name="left_panel_chat_list_item_big_img_margin_right">11.5dp</dimen>
-    <dimen name="left_panel_chat_list_item_big_img_margin_bottom">9dp</dimen>
+    <dimen name="left_panel_chat_list_item_big_img_margin_right">11dp</dimen>
+    <dimen name="left_panel_chat_list_item_big_img_padding_bottom">9dp</dimen>
 
     <dimen name="left_panel_chat_list_item_little_img_width">24dp</dimen>
     <dimen name="left_panel_chat_list_item_little_img_height">24dp</dimen>
-    <dimen name="left_panel_chat_list_item_little_img_margin_left">6dp</dimen>
-    <dimen name="left_panel_chat_list_item_little_img_margin_top">6dp</dimen>
+    <dimen name="left_panel_chat_list_item_little_img_margin_left">-8dp</dimen>
+    <dimen name="left_panel_chat_list_item_little_img_margin_top">-5dp</dimen>
     <dimen name="left_panel_chat_list_item_little_img_padding_bottom">2dp</dimen>
     <dimen name="left_panel_chat_list_item_little_img_padding_right">2dp</dimen>
     <dimen name="left_panel_chat_list_item_little_img_corner_radius">12dp</dimen>
 
-    <dimen name="left_panel_chat_list_item_chat_name_text_size">17.5sp</dimen>
-    <dimen name="left_panel_chat_list_item_chat_name_margin_top">15dp</dimen>
-    <dimen name="left_panel_chat_list_item_chat_name_margin_bottom">9dp</dimen>
+    <dimen name="left_panel_chat_list_item_chat_name_text_size">17.3333sp</dimen>
+    <dimen name="left_panel_chat_list_item_chat_name_margin_top">13dp</dimen>
+    <dimen name="left_panel_chat_list_item_chat_name_margin_bottom">7dp</dimen>
+    <dimen name="left_panel_chat_list_item_chat_name_margin_right">3dp</dimen>
 
-    <dimen name="left_panel_chat_list_item_last_message_text_size">15sp</dimen>
-    <dimen name="left_panel_chat_list_item_last_message_margin_bottom">13dp</dimen>
-    <dimen name="left_panel_chat_list_item_last_message_margin_right">35dp</dimen>
+    <dimen name="left_panel_chat_list_item_last_message_text_size">14.6667sp</dimen>
+    <dimen name="left_panel_chat_list_item_last_message_padding_bottom">13dp</dimen>
+    <dimen name="left_panel_chat_list_item_last_message_margin_right">3dp</dimen>
     <dimen name="left_panel_chat_list_item_last_message_inner_img_separation">8dp</dimen>
 
     <dimen name="left_panel_chat_list_item_timestamp_text_size">12sp</dimen>
-    <dimen name="left_panel_chat_list_item_timestamp_margin_top">6dp</dimen>
+    <dimen name="left_panel_chat_list_item_timestamp_margin_top">8.25dp</dimen>
     <dimen name="left_panel_chat_list_item_timestamp_margin_right">10.5dp</dimen>
 
     <dimen name="left_panel_chat_list_item_number_messages_text_size">12sp</dimen>
     <dimen name="left_panel_chat_list_item_number_messages_margin_right">10.5dp</dimen>
-    <dimen name="left_panel_chat_list_item_number_messages_margin_bottom">3dp</dimen>
+    <dimen name="left_panel_chat_list_item_number_messages_margin_top">2.75dp</dimen>
     <dimen name="left_panel_chat_list_item_number_messages_padding_left">5dp</dimen>
     <dimen name="left_panel_chat_list_item_number_messages_padding_top">2dp</dimen>
     <dimen name="left_panel_chat_list_item_number_messages_padding_right">5dp</dimen>
