@@ -5,13 +5,15 @@
     android:layout_height="match_parent"
     android:paddingTop="@dimen/register_general_padding_top"
     android:paddingBottom="@dimen/register_general_padding_bottom"
-    android:background="@drawable/register_general_background">
+    android:background="@drawable/register_general_background"
+    android:id="@+id/">
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="@dimen/register_general_main_block_with"
         android:layout_height="match_parent"
-        android:layout_gravity="center_horizontal">
+        android:layout_gravity="center_horizontal"
+        android:background="#00000000">
 
         <LinearLayout
             android:orientation="vertical"
@@ -29,40 +31,49 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/register_first_step_main_block_additional_padding_left"
-                android:layout_marginRight="@dimen/register_first_step_main_block_additional_padding_right">
+                android:layout_marginRight="@dimen/register_first_step_main_block_additional_padding_right"
+                android:background="#00000000">
 
                 <LinearLayout
                     android:orientation="vertical"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="@dimen/register_first_step_columns_separation">
+                    android:layout_marginRight="@dimen/register_first_step_columns_separation"
+                    android:background="#00000000">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/register_first_step_surname_label"
+                        android:text="@string/register_first_step_name_label"
                         android:id="@+id/textView2"
-                        android:layout_marginTop="@dimen/register_first_step_surname_text_margin_top"
-                        android:layout_marginBottom="@dimen/register_first_step_surname_text_margin_bottom"
-                        android:textSize="@dimen/register_first_step_surname_text" />
+                        android:layout_marginTop="@dimen/register_first_step_name_text_margin_top"
+                        android:layout_marginBottom="@dimen/register_first_step_name_text_margin_bottom"
+                        android:textSize="@dimen/register_first_step_name_text"
+                        android:textColor="@color/register_first_step_name_label_text"
+                        android:background="#00000000" />
 
                     <EditText
                         android:layout_width="match_parent"
-                        android:layout_height="@dimen/register_first_step_surname_field_height"
+                        android:layout_height="@dimen/register_first_step_name_field_height"
                         android:id="@+id/editText"
-                        android:textSize="@dimen/register_first_step_surname_field_text"
+                        android:textSize="@dimen/register_first_step_name_field_text"
                         android:gravity="center_vertical"
-                        android:paddingLeft="@dimen/register_first_step_surname_field_padding_left"
-                        android:paddingRight="@dimen/register_first_step_surname_field_padding_right"
-                        android:layout_marginBottom="@dimen/register_first_step_surname_field_margin_bottom"
-                        android:hint="@string/register_first_step_surname_hint" />
+                        android:paddingLeft="@dimen/register_first_step_name_field_padding_left"
+                        android:paddingRight="@dimen/register_first_step_name_field_padding_right"
+                        android:layout_marginBottom="@dimen/register_first_step_name_field_margin_bottom"
+                        android:hint="@string/register_first_step_name_hint"
+                        android:textColor="@color/register_first_step_name_field_text"
+                        android:textColorHint="@color/register_first_step_name_field_hint"
+                        android:background="@drawable/register_first_step_name_field_background" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/register_first_step_photo_label"
                         android:id="@+id/textView4"
-                        android:textSize="@dimen/register_first_step_photo_text" />
+                        android:textSize="@dimen/register_first_step_photo_text"
+                        android:textColor="@color/register_first_step_photo_label_text"
+                        android:background="#00000000" />
 
                     <ImageView
                         android:layout_width="@dimen/register_first_step_photo_img_size"
@@ -70,34 +81,41 @@
                         android:id="@+id/imageView2"
                         android:src="@drawable/registro_load_picture"
                         android:layout_marginTop="@dimen/register_first_step_photo_img_margin_top"
-                        android:layout_marginBottom="@dimen/register_first_step_photo_img_margin_bottom" />
+                        android:layout_marginBottom="@dimen/register_first_step_photo_img_margin_bottom"
+                        android:background="@drawable/register_first_step_photo_background" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:orientation="vertical"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1">
+                    android:layout_weight="1"
+                    android:background="#00000000">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/register_first_step_name_label"
+                        android:text="@string/register_first_step_surname_label"
                         android:id="@+id/textView3"
-                        android:layout_marginBottom="@dimen/register_first_step_name_text_margin_bottom"
-                        android:layout_marginTop="@dimen/register_first_step_name_text_margin_top"
-                        android:textSize="@dimen/register_first_step_name_text" />
+                        android:layout_marginBottom="@dimen/register_first_step_surname_text_margin_bottom"
+                        android:layout_marginTop="@dimen/register_first_step_surname_text_margin_top"
+                        android:textSize="@dimen/register_first_step_surname_text"
+                        android:textColor="@color/register_first_step_surname_label_text"
+                        android:background="#00000000" />
 
                     <EditText
                         android:layout_width="match_parent"
-                        android:layout_height="@dimen/register_first_step_name_field_height"
+                        android:layout_height="@dimen/register_first_step_surname_field_height"
                         android:id="@+id/editText2"
                         android:gravity="center_vertical"
-                        android:textSize="@dimen/register_first_step_name_field_text"
-                        android:paddingLeft="@dimen/register_first_step_name_field_padding_left"
-                        android:paddingRight="@dimen/register_first_step_name_field_padding_right"
-                        android:layout_marginBottom="@dimen/register_first_step_name_field_margin_bottom"
-                        android:hint="@string/register_first_step_name_hint" />
+                        android:textSize="@dimen/register_first_step_surname_field_text"
+                        android:paddingLeft="@dimen/register_first_step_surname_field_padding_left"
+                        android:paddingRight="@dimen/register_first_step_surname_field_padding_right"
+                        android:layout_marginBottom="@dimen/register_first_step_surname_field_margin_bottom"
+                        android:hint="@string/register_first_step_surname_hint"
+                        android:background="@drawable/register_first_step_surname_field_background"
+                        android:textColor="@color/register_first_step_surname_field_text"
+                        android:textColorHint="@color/register_first_step_surname_field_hint" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -105,10 +123,12 @@
                         android:text="@string/register_first_step_birthday_label"
                         android:id="@+id/textView5"
                         android:textSize="@dimen/register_first_step_birthday_text"
-                        android:layout_marginBottom="@dimen/register_first_step_birthday_text_margin_bottom" />
+                        android:layout_marginBottom="@dimen/register_first_step_birthday_text_margin_bottom"
+                        android:textColor="@color/register_first_step_birthday_label_text"
+                        android:background="#00000000" />
 
                     <EditText
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="@dimen/register_first_step_birthday_field_height"
                         android:inputType="date"
                         android:ems="10"
@@ -118,13 +138,15 @@
                         android:paddingRight="@dimen/register_first_step_birthday_field_padding_right"
                         android:textSize="@dimen/register_first_step_birthday_field_text"
                         android:gravity="top"
-                        android:hint="@string/register_first_step_birthday_hint" />
+                        android:hint="@string/register_first_step_birthday_hint"
+                        android:background="@drawable/abc_textfield_search_default_holo_dark" />
 
                     <LinearLayout
                         android:orientation="horizontal"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="@dimen/register_first_step_checkbox_margin_bottom">
+                        android:layout_marginBottom="@dimen/register_first_step_checkbox_margin_bottom"
+                        android:background="#00000000">
 
                         <ImageView
                             android:layout_width="@dimen/register_first_step_checkbox_img_size"
@@ -133,7 +155,8 @@
                             android:src="@drawable/register_checkbox_button"
                             android:scaleType="centerInside"
                             android:adjustViewBounds="true"
-                            android:layout_marginRight="@dimen/register_first_step_checkbox_img_separation" />
+                            android:layout_marginRight="@dimen/register_first_step_checkbox_img_separation"
+                            android:background="#00000000" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -141,7 +164,9 @@
                             android:text="@string/register_first_step_checkbox_label"
                             android:id="@+id/textView6"
                             android:layout_gravity="center_vertical"
-                            android:textSize="@dimen/register_first_step_checkbox_text" />
+                            android:textSize="@dimen/register_first_step_checkbox_text"
+                            android:textColor="@color/register_first_step_checkbox_text"
+                            android:background="#00000000" />
                     </LinearLayout>
 
                     <TextView
@@ -150,13 +175,16 @@
                         android:text="@string/register_first_step_gender_label"
                         android:id="@+id/textView7"
                         android:textSize="@dimen/register_first_step_gender_text"
-                        android:layout_marginBottom="@dimen/register_first_step_gender_text_margin_bottom" />
+                        android:layout_marginBottom="@dimen/register_first_step_gender_text_margin_bottom"
+                        android:textColor="@color/register_first_step_gender_label_text"
+                        android:background="#00000000" />
 
                     <LinearLayout
                         android:orientation="horizontal"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="@dimen/register_first_step_radio_button_margin_bottom">
+                        android:layout_marginBottom="@dimen/register_first_step_radio_button_margin_bottom"
+                        android:background="#00000000">
 
                         <ImageView
                             android:layout_width="@dimen/register_first_step_radio_button_img_size"
@@ -165,7 +193,8 @@
                             android:src="@drawable/register_radio_button"
                             android:scaleType="centerInside"
                             android:adjustViewBounds="true"
-                            android:layout_marginRight="@dimen/register_first_step_radio_button_img_separation" />
+                            android:layout_marginRight="@dimen/register_first_step_radio_button_img_separation"
+                            android:background="#00000000" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -174,7 +203,9 @@
                             android:id="@+id/textView8"
                             android:layout_marginRight="@dimen/register_first_step_radio_button_separation"
                             android:textSize="@dimen/register_first_step_radio_button_text"
-                            android:layout_gravity="center_vertical" />
+                            android:layout_gravity="center_vertical"
+                            android:textColor="@color/register_first_step_gender_radio_button_text"
+                            android:background="#00000000" />
 
                         <ImageView
                             android:layout_width="@dimen/register_first_step_radio_button_img_size"
@@ -183,7 +214,8 @@
                             android:src="@drawable/register_radio_button"
                             android:scaleType="centerInside"
                             android:adjustViewBounds="true"
-                            android:layout_marginRight="@dimen/register_first_step_radio_button_img_separation" />
+                            android:layout_marginRight="@dimen/register_first_step_radio_button_img_separation"
+                            android:background="#00000000" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -194,7 +226,9 @@
                             android:maxLines="1"
                             android:lines="1"
                             android:textSize="@dimen/register_first_step_radio_button_text"
-                            android:layout_gravity="center_vertical" />
+                            android:layout_gravity="center_vertical"
+                            android:textColor="@color/register_first_step_gender_radio_button_text"
+                            android:background="#00000000" />
                     </LinearLayout>
 
                 </LinearLayout>
@@ -206,7 +240,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginRight="@dimen/register_first_step_main_block_additional_padding_right"
                 android:layout_gravity="center_vertical"
-                android:layout_marginBottom="@dimen/register_first_step_location_margin_bottom">
+                android:layout_marginBottom="@dimen/register_first_step_location_margin_bottom"
+                android:background="#00000000">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -214,7 +249,9 @@
                     android:text="@string/register_first_step_location_label"
                     android:id="@+id/textView10"
                     android:textSize="@dimen/register_first_step_location_text"
-                    android:layout_marginLeft="@dimen/register_first_step_main_block_additional_padding_left" />
+                    android:layout_marginLeft="@dimen/register_first_step_main_block_additional_padding_left"
+                    android:textColor="@color/register_first_step_location_label_text"
+                    android:background="#00000000" />
 
                 <ImageView
                     android:layout_width="@dimen/register_first_step_location_img_size"
@@ -224,14 +261,17 @@
                     android:adjustViewBounds="true"
                     android:scaleType="centerInside"
                     android:layout_marginLeft="@dimen/register_first_step_location_img_separation_left"
-                    android:layout_marginRight="@dimen/register_first_step_location_img_separation_right" />
+                    android:layout_marginRight="@dimen/register_first_step_location_img_separation_right"
+                    android:background="#00000000" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/register_first_step_location_hint"
                     android:id="@+id/textView11"
-                    android:textSize="@dimen/register_first_step_location_field_text" />
+                    android:textSize="@dimen/register_first_step_location_field_text"
+                    android:textColor="@color/register_first_step_location_field_text"
+                    android:background="#00000000" />
             </LinearLayout>
 
             <LinearLayout
@@ -239,7 +279,8 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="@dimen/register_first_step_main_block_additional_padding_right"
-                android:layout_gravity="center_vertical">
+                android:layout_gravity="center_vertical"
+                android:background="#00000000">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -248,20 +289,25 @@
                     android:id="@+id/textView12"
                     android:textSize="@dimen/register_first_step_languages_text"
                     android:layout_marginRight="@dimen/register_first_step_languages_separation"
-                    android:layout_marginLeft="@dimen/register_first_step_main_block_additional_padding_left" />
+                    android:layout_marginLeft="@dimen/register_first_step_main_block_additional_padding_left"
+                    android:textColor="@color/register_first_step_languages_label_text"
+                    android:background="#00000000" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/register_first_step_languages_hint"
                     android:id="@+id/textView13"
-                    android:textSize="@dimen/register_first_step_languages_field_text" />
+                    android:textSize="@dimen/register_first_step_languages_field_text"
+                    android:textColor="@color/register_first_step_languages_field_text"
+                    android:background="#00000000" />
             </LinearLayout>
 
             <FrameLayout
                 android:layout_width="fill_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1"></FrameLayout>
+                android:layout_weight="1"
+                android:background="#00000000"></FrameLayout>
 
             <LinearLayout
                 android:orientation="horizontal"
@@ -270,7 +316,8 @@
                 android:gravity="center_horizontal"
                 android:layout_marginBottom="@dimen/register_first_step_private_note_margin_bottom"
                 android:layout_marginLeft="@dimen/register_first_step_private_note_margin_left"
-                android:layout_marginRight="@dimen/register_first_step_private_note_margin_right">
+                android:layout_marginRight="@dimen/register_first_step_private_note_margin_right"
+                android:background="#00000000">
 
                 <ImageView
                     android:layout_width="@dimen/register_first_step_private_note_img_size"
@@ -282,14 +329,17 @@
                     android:clickable="false"
                     android:cropToPadding="false"
                     android:scaleType="centerInside"
-                    android:layout_marginRight="@dimen/register_first_step_private_note_img_separation" />
+                    android:layout_marginRight="@dimen/register_first_step_private_note_img_separation"
+                    android:background="#00000000" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/register_first_step_private_note"
                     android:id="@+id/textView"
-                    android:textSize="@dimen/register_first_step_private_note_text" />
+                    android:textSize="@dimen/register_first_step_private_note_text"
+                    android:textColor="@color/register_first_step_private_note_text"
+                    android:background="#00000000" />
             </LinearLayout>
         </LinearLayout>
 
@@ -297,7 +347,8 @@
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/register_general_buttons_margin_top">
+            android:layout_marginTop="@dimen/register_general_buttons_margin_top"
+            android:background="#00000000">
 
             <Button
                 android:layout_width="wrap_content"

@@ -11,7 +11,8 @@
         android:orientation="vertical"
         android:layout_width="@dimen/register_general_main_block_with"
         android:layout_height="match_parent"
-        android:layout_gravity="center_horizontal">
+        android:layout_gravity="center_horizontal"
+        android:background="#00000000">
 
         <LinearLayout
             android:orientation="vertical"
@@ -32,7 +33,9 @@
                 android:layout_marginLeft="@dimen/register_third_step_main_block_additional_padding_left"
                 android:textSize="@dimen/register_third_step_email_text"
                 android:layout_marginTop="@dimen/register_third_step_email_text_margin_top"
-                android:layout_marginBottom="@dimen/register_third_step_email_text_margin_bottom" />
+                android:layout_marginBottom="@dimen/register_third_step_email_text_margin_bottom"
+                android:background="#00000000"
+                android:textColor="@color/register_third_step_email_label_text" />
 
             <EditText
                 android:layout_width="match_parent"
@@ -47,7 +50,10 @@
                 android:paddingRight="@dimen/register_third_step_email_field_padding_right"
                 android:textSize="@dimen/register_third_step_email_field_text"
                 android:gravity="center_vertical"
-                android:hint="@string/register_third_step_email_hint" />
+                android:hint="@string/register_third_step_email_hint"
+                android:textColor="@color/register_third_step_email_field_text"
+                android:textColorHint="@color/register_third_step_email_field_hint"
+                android:background="@drawable/register_third_step_email_field_background" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -56,7 +62,9 @@
                 android:id="@+id/textView2"
                 android:layout_marginLeft="@dimen/register_third_step_main_block_additional_padding_left"
                 android:layout_marginBottom="@dimen/register_third_step_password_text_margin_bottom"
-                android:textSize="@dimen/register_third_step_password_text" />
+                android:textSize="@dimen/register_third_step_password_text"
+                android:background="#00000000"
+                android:textColor="@color/register_third_step_password_label_text" />
 
             <EditText
                 android:layout_width="match_parent"
@@ -71,7 +79,10 @@
                 android:paddingLeft="@dimen/register_third_step_password_field_padding_left"
                 android:paddingRight="@dimen/register_third_step_password_field_padding_right"
                 android:textSize="@dimen/register_third_step_password_field_text"
-                android:hint="@string/register_third_step_password_hint" />
+                android:hint="@string/register_third_step_password_hint"
+                android:textColorHint="@color/register_third_step_password_field_hint"
+                android:textColor="@color/register_third_step_password_field_text"
+                android:background="@drawable/register_third_step_password_field_background" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -80,7 +91,9 @@
                 android:id="@+id/textView3"
                 android:layout_marginLeft="@dimen/register_third_step_main_block_additional_padding_left"
                 android:textSize="@dimen/register_third_step_repeat_password_text"
-                android:layout_marginBottom="@dimen/register_third_step_repeat_password_text_margin_bottom" />
+                android:layout_marginBottom="@dimen/register_third_step_repeat_password_text_margin_bottom"
+                android:background="#00000000"
+                android:textColor="@color/register_third_step_repeat_password_label_text" />
 
             <EditText
                 android:layout_width="match_parent"
@@ -95,12 +108,16 @@
                 android:textSize="@dimen/register_third_step_repeat_password_field_text"
                 android:layout_marginBottom="@dimen/register_third_step_repeat_password_field_margin_bottom"
                 android:layout_marginRight="@dimen/register_third_step_repeat_password_field_margin_right"
-                android:hint="@string/register_third_step_repeat_password_hint" />
+                android:hint="@string/register_third_step_repeat_password_hint"
+                android:textColor="@color/register_third_step_repeat_password_field_text"
+                android:textColorHint="@color/register_third_step_repeat_password_field_hint"
+                android:background="@drawable/register_third_step_repeat_password_field_background" />
 
             <FrameLayout
                 android:layout_width="fill_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1"></FrameLayout>
+                android:layout_weight="1"
+                android:background="#00000000"></FrameLayout>
 
             <LinearLayout
                 android:orientation="horizontal"
@@ -110,7 +127,8 @@
                 android:layout_gravity="center_horizontal"
                 android:gravity="center_horizontal"
                 android:layout_marginLeft="@dimen/register_third_step_email_confirmation_note_margin_left"
-                android:layout_marginRight="@dimen/register_third_step_email_confirmation_note_margin_right">
+                android:layout_marginRight="@dimen/register_third_step_email_confirmation_note_margin_right"
+                android:background="#00000000">
 
                 <ImageView
                     android:layout_width="@dimen/register_third_step_email_confirmation_note_img_size"
@@ -119,7 +137,8 @@
                     android:src="@drawable/registro_important_note_orange"
                     android:scaleType="centerInside"
                     android:adjustViewBounds="true"
-                    android:layout_marginRight="@dimen/register_third_step_email_confirmation_note_img_separation" />
+                    android:layout_marginRight="@dimen/register_third_step_email_confirmation_note_img_separation"
+                    android:background="#00000000" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -127,7 +146,9 @@
                     android:text="@string/register_third_step_email_confirmation_note"
                     android:id="@+id/textView4"
                     android:textSize="@dimen/register_third_step_email_confirmation_note_text"
-                    android:layout_gravity="center_vertical" />
+                    android:layout_gravity="center_vertical"
+                    android:background="#00000000"
+                    android:textColor="@color/register_third_step_email_confirmation_note_text" />
 
             </LinearLayout>
 
@@ -140,7 +161,9 @@
                 android:textSize="@dimen/register_third_step_tos_note_text"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginLeft="@dimen/register_third_step_tos_note_margin_left"
-                android:layout_marginRight="@dimen/register_third_step_tos_note_margin_right" />
+                android:layout_marginRight="@dimen/register_third_step_tos_note_margin_right"
+                android:background="#00000000"
+                android:textColor="@color/register_third_step_tos_note_text" />
 
         </LinearLayout>
 
@@ -148,7 +171,8 @@
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/register_general_buttons_margin_top">
+            android:layout_marginTop="@dimen/register_general_buttons_margin_top"
+            android:background="#00000000">
 
             <Button
                 android:layout_width="wrap_content"

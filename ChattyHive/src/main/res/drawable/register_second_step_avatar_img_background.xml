@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <stroke android:color="@color/register_second_step_avatar_border" android:width="@dimen/register_second_step_avatar_img_border_thick"/>
+    <solid android:color="#00000000"/>
+</shape>
