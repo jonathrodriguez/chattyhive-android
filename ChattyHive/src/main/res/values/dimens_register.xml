@@ -3,7 +3,12 @@
     <!-- ________________________________ -->
     <!--            ACTION BAR            -->
     <!-- ________________________________ -->
-
+    <dimen name="register_action_bar_height">48dp</dimen>
+    <dimen name="register_action_bar_step_title_text">16sp</dimen>
+    <dimen name="register_action_bar_step_subtitle_text">13.5sp</dimen>
+    <dimen name="register_action_bar_step_title_margin_bottom">4dp</dimen>
+    <dimen name="register_action_bar_shadow_thick">2px</dimen>
+    <dimen name="register_action_bar_shadow_border_thick">1px</dimen>
 
     <!-- ________________________________ -->
     <!--             GENERAL              -->
