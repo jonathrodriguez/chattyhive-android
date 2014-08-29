@@ -24,6 +24,124 @@
             android:paddingRight="@dimen/register_general_main_block_padding_right"
             android:paddingBottom="@dimen/register_general_main_block_padding_bottom">
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/register_third_step_email_label"
+                android:id="@+id/textView"
+                android:layout_marginLeft="@dimen/register_third_step_main_block_additional_padding_left"
+                android:textSize="@dimen/register_third_step_email_text"
+                android:layout_marginTop="@dimen/register_third_step_email_text_margin_top"
+                android:layout_marginBottom="@dimen/register_third_step_email_text_margin_bottom" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/register_third_step_email_field_height"
+                android:inputType="textEmailAddress"
+                android:ems="10"
+                android:id="@+id/editText"
+                android:layout_marginLeft="@dimen/register_third_step_main_block_additional_padding_left"
+                android:layout_marginRight="@dimen/register_third_step_email_field_margin_right"
+                android:layout_marginBottom="@dimen/register_third_step_email_field_margin_bottom"
+                android:paddingLeft="@dimen/register_third_step_email_field_padding_left"
+                android:paddingRight="@dimen/register_third_step_email_field_padding_right"
+                android:textSize="@dimen/register_third_step_email_field_text"
+                android:gravity="center_vertical"
+                android:hint="@string/register_third_step_email_hint" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/register_third_step_password_label"
+                android:id="@+id/textView2"
+                android:layout_marginLeft="@dimen/register_third_step_main_block_additional_padding_left"
+                android:layout_marginBottom="@dimen/register_third_step_password_text_margin_bottom"
+                android:textSize="@dimen/register_third_step_password_text" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/register_third_step_password_field_height"
+                android:inputType="textPassword"
+                android:ems="10"
+                android:id="@+id/editText2"
+                android:layout_marginLeft="@dimen/register_third_step_main_block_additional_padding_left"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="@dimen/register_third_step_password_field_margin_bottom"
+                android:layout_marginRight="@dimen/register_third_step_password_field_margin_right"
+                android:paddingLeft="@dimen/register_third_step_password_field_padding_left"
+                android:paddingRight="@dimen/register_third_step_password_field_padding_right"
+                android:textSize="@dimen/register_third_step_password_field_text"
+                android:hint="@string/register_third_step_password_hint" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/register_third_step_repeat_password_label"
+                android:id="@+id/textView3"
+                android:layout_marginLeft="@dimen/register_third_step_main_block_additional_padding_left"
+                android:textSize="@dimen/register_third_step_repeat_password_text"
+                android:layout_marginBottom="@dimen/register_third_step_repeat_password_text_margin_bottom" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/register_third_step_repeat_password_field_height"
+                android:inputType="textPassword"
+                android:ems="10"
+                android:id="@+id/editText3"
+                android:layout_marginLeft="@dimen/register_third_step_main_block_additional_padding_left"
+                android:gravity="center_vertical"
+                android:paddingLeft="@dimen/register_third_step_repeat_password_field_padding_left"
+                android:paddingRight="@dimen/register_third_step_repeat_password_field_padding_right"
+                android:textSize="@dimen/register_third_step_repeat_password_field_text"
+                android:layout_marginBottom="@dimen/register_third_step_repeat_password_field_margin_bottom"
+                android:layout_marginRight="@dimen/register_third_step_repeat_password_field_margin_right"
+                android:hint="@string/register_third_step_repeat_password_hint" />
+
+            <FrameLayout
+                android:layout_width="fill_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"></FrameLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/register_third_step_email_confirmation_note_margin_bottom"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center_horizontal"
+                android:layout_marginLeft="@dimen/register_third_step_email_confirmation_note_margin_left"
+                android:layout_marginRight="@dimen/register_third_step_email_confirmation_note_margin_right">
+
+                <ImageView
+                    android:layout_width="@dimen/register_third_step_email_confirmation_note_img_size"
+                    android:layout_height="@dimen/register_third_step_email_confirmation_note_img_size"
+                    android:id="@+id/imageView2"
+                    android:src="@drawable/registro_important_note_orange"
+                    android:scaleType="centerInside"
+                    android:adjustViewBounds="true"
+                    android:layout_marginRight="@dimen/register_third_step_email_confirmation_note_img_separation" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/register_third_step_email_confirmation_note"
+                    android:id="@+id/textView4"
+                    android:textSize="@dimen/register_third_step_email_confirmation_note_text"
+                    android:layout_gravity="center_vertical" />
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/register_third_step_tos_note"
+                android:id="@+id/textView5"
+                android:layout_marginBottom="@dimen/register_third_step_tos_note_margin_bottom"
+                android:textSize="@dimen/register_third_step_tos_note_text"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginLeft="@dimen/register_third_step_tos_note_margin_left"
+                android:layout_marginRight="@dimen/register_third_step_tos_note_margin_right" />
+
         </LinearLayout>
 
         <RelativeLayout
