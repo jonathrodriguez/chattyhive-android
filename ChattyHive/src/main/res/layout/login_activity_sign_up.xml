@@ -164,7 +164,7 @@
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/editText"
+                    android:id="@+id/login_activity_signup_email"
                     android:layout_weight="1"
                     android:background="@color/login_tab_panel_sign_up_email_field_background_color"
                     android:paddingLeft="@dimen/login_tab_panel_sign_up_sign_with_email_email_field_padding_left"
@@ -182,7 +182,7 @@
                     android:layout_width="@dimen/login_tab_panel_sign_up_go_button_width"
                     android:layout_height="@dimen/login_tab_panel_sign_up_go_button_height"
                     android:text="@string/login_tab_panel_sign_up_go_button"
-                    android:id="@+id/go_button"
+                    android:id="@+id/login_activity_signup_go_button"
                     android:background="@drawable/login_activity_go_button"
                     android:layout_weight="0"
                     android:gravity="center|center_vertical|center_horizontal"

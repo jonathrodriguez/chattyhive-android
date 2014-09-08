@@ -1,8 +1,7 @@
 package com.chattyhive.chattyhive;
 
 import android.app.Activity;
-import android.graphics.Color;
-import android.os.AsyncTask;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -11,19 +10,18 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
-import com.chattyhive.backend.Controller;
 import com.chattyhive.backend.StaticParameters;
 import com.chattyhive.backend.contentprovider.DataProvider;
+import com.chattyhive.backend.contentprovider.formats.COMMON;
+import com.chattyhive.backend.contentprovider.formats.Format;
 import com.chattyhive.backend.contentprovider.server.ServerUser;
+import com.chattyhive.backend.util.events.CommandCallbackEventArgs;
 import com.chattyhive.backend.util.events.ConnectionEventArgs;
 import com.chattyhive.backend.util.events.EventHandler;
-import com.chattyhive.chattyhive.OSStorageProvider.LoginLocalStorage;
-import com.chattyhive.chattyhive.OSStorageProvider.MessageLocalStorage;
 
 public class LoginActivity extends Activity {
+    static final int OP_CODE_REGISTER = 3;
 
-    private String username;
-    private String password;
     private Boolean connecting;
     private DataProvider dataProvider;
 
@@ -38,6 +36,13 @@ public class LoginActivity extends Activity {
             @Override
             public void onClick(View view) {
                 attemptLogin();
+            }
+        });
+
+        findViewById(R.id.login_activity_signup_go_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                checkEmail();
             }
         });
 
@@ -60,8 +65,8 @@ public class LoginActivity extends Activity {
         signup.setTextColor(getResources().getColor(R.color.login_tab_panel_selected_button_text_color));
 
         LayoutInflater inflater = getLayoutInflater();
-        viewSwitcher.addView(inflater.inflate(R.layout.login_activity_sign_up,null));
-        viewSwitcher.addView(inflater.inflate(R.layout.login_activity_login,null));
+        inflater.inflate(R.layout.login_activity_sign_up, viewSwitcher);
+        inflater.inflate(R.layout.login_activity_login, viewSwitcher);
 
 
         // TODO: Try this changing background instead of using selection.
@@ -90,7 +95,52 @@ public class LoginActivity extends Activity {
         loggin.setOnClickListener(tab_button_listener);
     }
 
+    public void checkEmail() {
+        if (connecting) return;
 
+        //Get the view
+        TextView emailView = ((TextView)findViewById(R.id.login_activity_signup_email));
+
+        //Store the value
+        String email = emailView.getText().toString();
+
+        if (TextUtils.isEmpty(email)) {
+            emailView.setError("This field can not be blank.");
+            emailView.requestFocus();
+        } else {
+            if (StaticParameters.StandAlone) {
+                simulateWait(false);
+            } else {
+                //TODO: Check the email
+            }
+        }
+    }
+
+    private void simulateWait(boolean fromLogin) {
+        Thread t = new Thread() {
+            @Override
+            public void run(){
+                try {
+                    sleep(1500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        t.start();
+        try {
+            t.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } finally {
+            if (fromLogin) {
+                setResult(RESULT_OK);
+                finish();
+            } else {
+                openRegister();
+            }
+        }
+    }
 
     public void attemptLogin() {
         if (connecting) return;
@@ -100,8 +150,8 @@ public class LoginActivity extends Activity {
         TextView passwordView = ((TextView)findViewById(R.id.login_activity_login_password));
 
         // Store values at the time of the login attempt.
-        username = usernameView.getText().toString();
-        password = passwordView.getText().toString();
+        String username = usernameView.getText().toString();
+        String password = passwordView.getText().toString();
 
         //mServer = servers.get(mServerView.getSelectedItemPosition());
 
@@ -128,28 +178,11 @@ public class LoginActivity extends Activity {
         } else {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
-            dataProvider.setUser(new ServerUser(username,password));
+            dataProvider.setUser(new ServerUser(username, password));
             dataProvider.Connect();
 
             if (StaticParameters.StandAlone) {
-                Thread t = new Thread() {
-                    @Override
-                    public void run(){
-                        try {
-                            sleep(1500);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                };
-                t.start();
-                try {
-                    t.join();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } finally {
-                    this.onServerConnectionStateChanged(this,new ConnectionEventArgs(true));
-                }
+                simulateWait(true);
             }
         }
     }
@@ -165,6 +198,39 @@ public class LoginActivity extends Activity {
             TextView usernameView = ((TextView)findViewById(R.id.login_activity_login_username));
             usernameView.setError("Unknown error while connecting to server.");
             usernameView.requestFocus();
+        }
+    }
+
+    public void onEmailCheckedCallback(Object sender,CommandCallbackEventArgs eventArgs) {
+        for(Format receivedFormat : eventArgs.getReceivedFormats())
+            if ((receivedFormat instanceof COMMON) && (((COMMON) receivedFormat).STATUS.equalsIgnoreCase("OK")))
+                openRegister();
+            else if ((receivedFormat instanceof COMMON) && (!((COMMON) receivedFormat).STATUS.equalsIgnoreCase("OK"))) {
+                TextView emailView = (TextView) findViewById(R.id.login_activity_signup_email);
+                emailView.setError("Email is already registered");
+                emailView.requestFocus();
+            }
+    }
+
+    private void openRegister() { //TODO: Add parameter. Proposed username
+        Intent intent = new Intent(this, Register.class);
+        String email = ((TextView) findViewById(R.id.login_activity_signup_email)).getText().toString();
+        intent.putExtra("email",email);
+        try {
+            intent.putExtra("username", email.split("@")[0]);
+        } catch (Exception e) {}
+        startActivityForResult(intent, OP_CODE_REGISTER);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case OP_CODE_REGISTER:
+                if (resultCode == RESULT_OK) {
+                    setResult(RESULT_OK);
+                    finish();
+                }
+                break;
         }
     }
 }

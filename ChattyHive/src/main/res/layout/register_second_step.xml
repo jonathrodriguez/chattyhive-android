@@ -5,7 +5,8 @@
     android:layout_height="match_parent"
     android:paddingTop="@dimen/register_general_padding_top"
     android:paddingBottom="@dimen/register_general_padding_bottom"
-    android:background="@drawable/register_general_background">
+    android:background="@drawable/register_general_background"
+    android:id="@+id/register_second_step_layout">
 
     <LinearLayout
         android:orientation="vertical"
@@ -61,7 +62,7 @@
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:id="@+id/editText"
+                    android:id="@+id/register_second_step_username"
                     android:hint="@string/register_second_step_username_hint"
                     android:layout_gravity="center_vertical"
                     android:paddingLeft="@dimen/register_second_step_username_field_padding_left"
@@ -92,7 +93,7 @@
                 <ImageView
                     android:layout_width="@dimen/register_second_step_avatar_img_size"
                     android:layout_height="@dimen/register_second_step_avatar_img_size"
-                    android:id="@+id/imageView2"
+                    android:id="@+id/register_second_step_avatar_image"
                     android:src="@drawable/registro_load_picture"
                     android:adjustViewBounds="true"
                     android:layout_marginRight="@dimen/register_second_step_avatar_img_margin_right"
@@ -109,7 +110,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/register_second_step_avatar_options_margin_top"
-                        android:background="#00000000">
+                        android:background="#00000000"
+                        android:id="@+id/register_second_step_random_avatar_button">
 
                         <ImageView
                             android:layout_width="@dimen/register_second_step_avatar_options_img_size"
@@ -136,7 +138,8 @@
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
                         android:layout_marginTop="@dimen/register_second_step_avatar_options_vertical_separation"
-                        android:background="#00000000">
+                        android:background="#00000000"
+                        android:id="@+id/register_second_step_avatar_gallery_button">
 
                         <ImageView
                             android:layout_width="@dimen/register_second_step_avatar_options_img_size"
@@ -163,7 +166,8 @@
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
                         android:layout_marginTop="@dimen/register_second_step_avatar_options_vertical_separation"
-                        android:background="#00000000">
+                        android:background="#00000000"
+                        android:id="@+id/register_second_step_upload_avatar_button">
 
                         <ImageView
                             android:layout_width="@dimen/register_second_step_avatar_options_img_size"
@@ -205,12 +209,13 @@
                         android:orientation="horizontal"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="#00000000">
+                        android:background="#00000000"
+                        android:id="@+id/register_second_step_show_age_public_button">
 
                         <ImageView
                             android:layout_width="wrap_content"
                             android:layout_height="@dimen/register_second_step_checkbox_img_size"
-                            android:id="@+id/imageView4"
+                            android:id="@+id/register_second_step_show_age_public_checkbox_image"
                             android:src="@drawable/register_checkbox_button"
                             android:scaleType="centerInside"
                             android:adjustViewBounds="true"
@@ -233,12 +238,13 @@
                         android:orientation="horizontal"
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
-                        android:background="#00000000">
+                        android:background="#00000000"
+                        android:id="@+id/register_second_step_show_gender_public_button">
 
                         <ImageView
                             android:layout_width="wrap_content"
                             android:layout_height="@dimen/register_second_step_checkbox_img_size"
-                            android:id="@+id/imageView3"
+                            android:id="@+id/register_second_step_show_gender_public_checkbox_image"
                             android:src="@drawable/register_checkbox_button"
                             android:scaleType="centerInside"
                             android:adjustViewBounds="true"
@@ -268,12 +274,13 @@
                         android:orientation="horizontal"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="#00000000">
+                        android:background="#00000000"
+                        android:id="@+id/register_second_step_show_location_public_button">
 
                         <ImageView
                             android:layout_width="wrap_content"
                             android:layout_height="@dimen/register_second_step_checkbox_img_size"
-                            android:id="@+id/imageView5"
+                            android:id="@+id/register_second_step_show_location_public_checkbox_image"
                             android:src="@drawable/register_checkbox_button"
                             android:scaleType="centerInside"
                             android:adjustViewBounds="true"
@@ -339,7 +346,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/register_second_step_buttons_back"
-                android:id="@+id/button"
+                android:id="@+id/register_second_step_back_button"
                 android:background="@drawable/register_buttons_back_background"
                 android:maxWidth="@dimen/register_general_buttons_max_with"
                 android:layout_gravity="left"
@@ -357,7 +364,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/register_second_step_buttons_next"
-                android:id="@+id/button2"
+                android:id="@+id/register_second_step_next_button"
                 android:background="@drawable/register_buttons_next_background"
                 android:maxWidth="@dimen/register_general_buttons_max_with"
                 android:width="@dimen/register_general_buttons_max_with"

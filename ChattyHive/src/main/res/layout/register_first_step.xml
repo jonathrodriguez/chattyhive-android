@@ -6,7 +6,7 @@
     android:paddingTop="@dimen/register_general_padding_top"
     android:paddingBottom="@dimen/register_general_padding_bottom"
     android:background="@drawable/register_general_background"
-    android:id="@+id/">
+    android:id="@+id/register_first_step_layout">
 
     <LinearLayout
         android:orientation="vertical"
@@ -55,7 +55,7 @@
                     <EditText
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/register_first_step_name_field_height"
-                        android:id="@+id/editText"
+                        android:id="@+id/register_first_step_name"
                         android:textSize="@dimen/register_first_step_name_field_text"
                         android:gravity="center_vertical"
                         android:paddingLeft="@dimen/register_first_step_name_field_padding_left"
@@ -78,7 +78,7 @@
                     <ImageView
                         android:layout_width="@dimen/register_first_step_photo_img_size"
                         android:layout_height="@dimen/register_first_step_photo_img_size"
-                        android:id="@+id/imageView2"
+                        android:id="@+id/register_first_step_profile_photo"
                         android:src="@drawable/registro_load_picture"
                         android:layout_marginTop="@dimen/register_first_step_photo_img_margin_top"
                         android:layout_marginBottom="@dimen/register_first_step_photo_img_margin_bottom"
@@ -106,7 +106,7 @@
                     <EditText
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/register_first_step_surname_field_height"
-                        android:id="@+id/editText2"
+                        android:id="@+id/register_first_step_surname"
                         android:gravity="center_vertical"
                         android:textSize="@dimen/register_first_step_surname_field_text"
                         android:paddingLeft="@dimen/register_first_step_surname_field_padding_left"
@@ -132,7 +132,7 @@
                         android:layout_height="@dimen/register_first_step_birthday_field_height"
                         android:inputType="date"
                         android:ems="10"
-                        android:id="@+id/editText3"
+                        android:id="@+id/register_first_step_date"
                         android:layout_marginBottom="@dimen/register_first_step_birthday_field_margin_bottom"
                         android:paddingLeft="@dimen/register_first_step_birthday_field_padding_left"
                         android:paddingRight="@dimen/register_first_step_birthday_field_padding_right"
@@ -146,12 +146,13 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="@dimen/register_first_step_checkbox_margin_bottom"
-                        android:background="#00000000">
+                        android:background="#00000000"
+                        android:id="@+id/register_first_step_show_age_private">
 
                         <ImageView
                             android:layout_width="@dimen/register_first_step_checkbox_img_size"
                             android:layout_height="@dimen/register_first_step_checkbox_img_size"
-                            android:id="@+id/imageView3"
+                            android:id="@+id/register_first_step_show_age_private_checkbox_image"
                             android:src="@drawable/register_checkbox_button"
                             android:scaleType="centerInside"
                             android:adjustViewBounds="true"
@@ -184,12 +185,13 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="@dimen/register_first_step_radio_button_margin_bottom"
-                        android:background="#00000000">
+                        android:background="#00000000"
+                        android:id="@+id/register_first_step_gender_button">
 
                         <ImageView
                             android:layout_width="@dimen/register_first_step_radio_button_img_size"
                             android:layout_height="@dimen/register_first_step_radio_button_img_size"
-                            android:id="@+id/imageView4"
+                            android:id="@+id/register_first_step_male_radio_image"
                             android:src="@drawable/register_radio_button"
                             android:scaleType="centerInside"
                             android:adjustViewBounds="true"
@@ -210,7 +212,7 @@
                         <ImageView
                             android:layout_width="@dimen/register_first_step_radio_button_img_size"
                             android:layout_height="@dimen/register_first_step_radio_button_img_size"
-                            android:id="@+id/imageView5"
+                            android:id="@+id/register_first_step_female_radio_image"
                             android:src="@drawable/register_radio_button"
                             android:scaleType="centerInside"
                             android:adjustViewBounds="true"
@@ -241,7 +243,8 @@
                 android:layout_marginRight="@dimen/register_first_step_main_block_additional_padding_right"
                 android:layout_gravity="center_vertical"
                 android:layout_marginBottom="@dimen/register_first_step_location_margin_bottom"
-                android:background="#00000000">
+                android:background="#00000000"
+                android:id="@+id/register_first_step_location_button">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -268,7 +271,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/register_first_step_location_hint"
-                    android:id="@+id/textView11"
+                    android:id="@+id/register_first_step_location_textView"
                     android:textSize="@dimen/register_first_step_location_field_text"
                     android:textColor="@color/register_first_step_location_field_text"
                     android:background="#00000000" />
@@ -280,7 +283,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginRight="@dimen/register_first_step_main_block_additional_padding_right"
                 android:layout_gravity="center_vertical"
-                android:background="#00000000">
+                android:background="#00000000"
+                android:id="@+id/register_first_step_languages_button">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -297,7 +301,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/register_first_step_languages_hint"
-                    android:id="@+id/textView13"
+                    android:id="@+id/register_first_step_languages_textView"
                     android:textSize="@dimen/register_first_step_languages_field_text"
                     android:textColor="@color/register_first_step_languages_field_text"
                     android:background="#00000000" />
@@ -354,7 +358,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/register_first_step_buttons_back"
-                android:id="@+id/button"
+                android:id="@+id/register_first_step_back_button"
                 android:background="@drawable/register_buttons_back_background"
                 android:maxWidth="@dimen/register_general_buttons_max_with"
                 android:layout_gravity="left"
@@ -366,13 +370,13 @@
                 android:paddingTop="@dimen/register_general_buttons_padding_top"
                 android:paddingRight="@dimen/register_general_buttons_padding_right"
                 android:paddingBottom="@dimen/register_general_buttons_padding_bottom"
-                android:textSize="@dimen/register_general_buttons_text_size" />
+                android:textSize="@dimen/register_general_buttons_text_size"/>
 
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/register_first_step_buttons_next"
-                android:id="@+id/button2"
+                android:id="@+id/register_first_step_next_button"
                 android:background="@drawable/register_buttons_next_background"
                 android:maxWidth="@dimen/register_general_buttons_max_with"
                 android:width="@dimen/register_general_buttons_max_with"

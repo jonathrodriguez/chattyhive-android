@@ -5,7 +5,8 @@
     android:layout_height="match_parent"
     android:paddingTop="@dimen/register_general_padding_top"
     android:paddingBottom="@dimen/register_general_padding_bottom"
-    android:background="@drawable/register_general_background">
+    android:background="@drawable/register_general_background"
+    android:id="@+id/register_third_step_layout">
 
     <LinearLayout
         android:orientation="vertical"
@@ -42,7 +43,7 @@
                 android:layout_height="@dimen/register_third_step_email_field_height"
                 android:inputType="textEmailAddress"
                 android:ems="10"
-                android:id="@+id/editText"
+                android:id="@+id/register_third_step_email"
                 android:layout_marginLeft="@dimen/register_third_step_main_block_additional_padding_left"
                 android:layout_marginRight="@dimen/register_third_step_email_field_margin_right"
                 android:layout_marginBottom="@dimen/register_third_step_email_field_margin_bottom"
@@ -71,7 +72,7 @@
                 android:layout_height="@dimen/register_third_step_password_field_height"
                 android:inputType="textPassword"
                 android:ems="10"
-                android:id="@+id/editText2"
+                android:id="@+id/register_third_step_password"
                 android:layout_marginLeft="@dimen/register_third_step_main_block_additional_padding_left"
                 android:gravity="center_vertical"
                 android:layout_marginBottom="@dimen/register_third_step_password_field_margin_bottom"
@@ -100,7 +101,7 @@
                 android:layout_height="@dimen/register_third_step_repeat_password_field_height"
                 android:inputType="textPassword"
                 android:ems="10"
-                android:id="@+id/editText3"
+                android:id="@+id/register_third_step_repeat_password"
                 android:layout_marginLeft="@dimen/register_third_step_main_block_additional_padding_left"
                 android:gravity="center_vertical"
                 android:paddingLeft="@dimen/register_third_step_repeat_password_field_padding_left"
@@ -156,7 +157,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/register_third_step_tos_note"
-                android:id="@+id/textView5"
+                android:id="@+id/register_third_step_tos_note"
                 android:layout_marginBottom="@dimen/register_third_step_tos_note_margin_bottom"
                 android:textSize="@dimen/register_third_step_tos_note_text"
                 android:layout_gravity="center_horizontal"
@@ -178,7 +179,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/register_third_step_buttons_back"
-                android:id="@+id/button"
+                android:id="@+id/register_third_step_back_button"
                 android:background="@drawable/register_buttons_back_background"
                 android:maxWidth="@dimen/register_general_buttons_max_with"
                 android:layout_gravity="left"
@@ -195,7 +196,7 @@
             <LinearLayout
                 android:layout_width="@dimen/register_general_buttons_max_with"
                 android:layout_height="wrap_content"
-                android:id="@+id/button2"
+                android:id="@+id/register_third_step_next_button"
                 android:background="@drawable/register_buttons_next_background"
                 android:maxWidth="@dimen/register_general_buttons_max_with"
                 android:width="@dimen/register_general_buttons_max_with"
@@ -205,8 +206,8 @@
                 android:layout_alignParentRight="true"
                 android:paddingLeft="@dimen/register_general_buttons_padding_left"
                 android:paddingRight="@dimen/register_general_buttons_padding_right"
-                android:layout_alignTop="@+id/button"
-                android:layout_alignBottom="@+id/button">
+                android:layout_alignTop="@+id/register_third_step_back_button"
+                android:layout_alignBottom="@+id/register_third_step_back_button">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

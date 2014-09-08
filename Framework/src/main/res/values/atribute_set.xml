@@ -29,4 +29,38 @@
         <attr name="flingSpeedThreshold" format="integer" />
 
     </declare-styleable>
+
+    <attr name="slidingStepsLayoutStyle" format="reference" />
+
+    <declare-styleable name="SlidingStepsLayout_Child">
+        <attr name="layout" format="reference"/>
+        <attr name="stepOrder" format="integer"/>
+        <attr name="previousStepButton" format="reference"/>
+        <attr name="nextStepButton" format="reference"/>
+        <attr name="stepTitle" format="string"/>
+        <attr name="stepSubtitle" format="string"/>
+    </declare-styleable>
+
+    <declare-styleable name="SlidingStepsLayout">
+        <attr name="showActionBar" format="boolean" />
+        <attr name="actionBarHeight" format="dimension"/>
+        <attr name="actionBarArrowPointWidth" format="dimension" />
+        <attr name="actionBarUnselectedTitleColor" format="color"/>
+        <attr name="actionBarSelectedTitleColor" format="color"/>
+        <attr name="actionBarUnselectedSubtitleColor" format="color"/>
+        <attr name="actionBarSelectedSubtitleColor" format="color"/>
+        <attr name="actionBarBackground" format="color|reference"/>
+        <attr name="actionBarMarkerBackgroundColor" format="color"/>
+        <attr name="actionBarTitleTextSize" format="dimension"/>
+        <attr name="actionBarSubTitleTextSize" format="dimension"/>
+        <attr name="actionBarTitleMarginBottom" format="dimension"/>
+        <attr name="actionBarLabelMarginLeft" format="dimension"/>
+        <attr name="actionBarLabelMarginRight" format="dimension"/>
+
+        <attr name="allowSwipeToChangeStep" format="boolean"/>
+
+        <attr name="maxTransitionAnimationDuration" format="integer" />
+        <attr name="buttonPressedTransitionAnimationDuration" format="integer" />
+        <attr name="flingSpeedDetectionThreshold" format="integer" />
+    </declare-styleable>
 </resources>

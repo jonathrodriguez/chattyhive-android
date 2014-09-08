@@ -10,7 +10,7 @@
     <color name="register_action_bar_unselected_text">#808080</color>
     <color name="register_action_bar_unselected_background">#111111</color>
 
-    <color name="register_action_bar_shadow">#FF010101</color>
+    <color name="register_action_bar_shadow">#FF000000</color>
     <color name="register_action_bar_shadow_border">#AA010101</color>
 
     <!-- ________________________________ -->
