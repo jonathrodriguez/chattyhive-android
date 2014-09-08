@@ -12,7 +12,7 @@ gen/
 local.properties
 
 #Gradle configuration files
-.gradle
+.gradle/*
 
 # Eclipse project files
 .classpath
