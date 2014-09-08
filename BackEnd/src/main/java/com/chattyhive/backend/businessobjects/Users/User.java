@@ -321,6 +321,13 @@ public class User {
         this.isMe = false;
     }
 
+    public User(String email) {
+        this.email = email;
+        this.isMe = true;
+        this.userPrivateProfile = new PrivateProfile();
+        this.userPublicProfile = new PublicProfile();
+    }
+
     public User (Format format) {
         if (!this.fromFormat(format))
             throw new IllegalArgumentException("LOCAL_USER_PROFILE, PUBLIC_PROFILE or PRIVATE_PROFILE expected.");

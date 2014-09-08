@@ -49,6 +49,7 @@ public class PrivateProfile extends Profile {
             throw new IllegalArgumentException("Format not valid.");
         }
     }
+    public PrivateProfile() {}
 
     @Override
     public String getID() {

@@ -12,6 +12,7 @@ import com.chattyhive.backend.businessobjects.Users.User;
 import com.chattyhive.backend.util.formatters.DateFormatter;
 import com.chattyhive.chattyhive.framework.SquareImageView;
 import com.chattyhive.chattyhive.framework.StaticMethods;
+import com.chattyhive.chattyhive.framework.ViewPair;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -24,6 +25,7 @@ import java.util.StringTokenizer;
 public class Profile {
     Context context;
     View profileView;
+    View actionBar;
 
     private enum ProfileType {Private, Public};
     private enum ShowInProfile { None, Private, Public, Both};
@@ -39,9 +41,10 @@ public class Profile {
                 ((Main)context)._controller.Leave((String)((Activity)context).findViewById(R.id.main_panel_chat_name).getTag());
             }*/
 
+            ViewPair profileViewPair = ((Main)context).ShowLayout(R.layout.main_panel_profile_layout,R.layout.profile_action_bar);
 
-
-            profileView = ((Main)context).ShowLayout(R.layout.main_panel_profile_layout,R.layout.profile_action_bar);
+            profileView = profileViewPair.getMainView();
+            actionBar = profileViewPair.getActionBarView();
 
 /*            ImageView editImage = (ImageView)profileView.findViewById(R.id.my_profile_edit_button_image);
             editImage.setMaxWidth(editImage.getHeight());
@@ -52,9 +55,9 @@ public class Profile {
 
             showStatusMessage(ProfileType.Private);
 
-            ((Main) context).findViewById(R.id.profile_action_bar_menu_clickable).setOnClickListener(((Main)context).menuIcon_ClickListener);
-            ((Main) context).findViewById(R.id.profile_action_bar_myPhoto_button).setOnClickListener(((Main)context).appIcon_ClickListener);
-            ((Main)context).menuIcon_ClickListener.onClick(((Main) context).findViewById(R.id.profile_action_bar_menu_clickable));
+            actionBar.findViewById(R.id.profile_action_bar_menu_clickable).setOnClickListener(((Main)context).menuIcon_ClickListener);
+            actionBar.findViewById(R.id.profile_action_bar_myPhoto_button).setOnClickListener(((Main)context).appIcon_ClickListener);
+            ((Main)context).menuIcon_ClickListener.onClick(actionBar.findViewById(R.id.profile_action_bar_menu_clickable));
 
             profileView.findViewById(R.id.my_profile_status_public_button).setOnClickListener(change_shown_message);
             profileView.findViewById(R.id.my_profile_status_private_button).setOnClickListener(change_shown_message);
@@ -75,13 +78,13 @@ public class Profile {
             else
                 ((TextView) profileView.findViewById(R.id.my_profile_information_gender)).setText(R.string.my_profile_information_gender_female_value);
 
-            ((SquareImageView)profileView.findViewById(R.id.my_profile_information_gender_show)).setImageResource(getImageResourceToShowInProfile(ShowInProfile.Both));
+            ((ImageView)profileView.findViewById(R.id.my_profile_information_gender_show)).setImageResource(getImageResourceToShowInProfile(ShowInProfile.Both));
 
             ((TextView) profileView.findViewById(R.id.my_profile_information_location)).setText(me.getUserPrivateProfile().getLocation());
             ShowInProfile showInProfile = ShowInProfile.Both;
             if (!me.getUserPublicProfile().getShowLocation())
                 showInProfile = ShowInProfile.Private;
-            ((SquareImageView)profileView.findViewById(R.id.my_profile_information_location_show)).setImageResource(getImageResourceToShowInProfile(showInProfile));
+            ((ImageView)profileView.findViewById(R.id.my_profile_information_location_show)).setImageResource(getImageResourceToShowInProfile(showInProfile));
 
             String Language = "";
             ArrayList<String> Languages = me.getUserPrivateProfile().getLanguages();
@@ -91,7 +94,7 @@ public class Profile {
             while (iterator.hasNext())
                 Language = Language.concat("; ").concat(iterator.next());
             ((TextView) profileView.findViewById(R.id.my_profile_information_languages)).setText(Language);
-            ((SquareImageView)profileView.findViewById(R.id.my_profile_information_languages_show)).setImageResource(getImageResourceToShowInProfile(ShowInProfile.Both));
+            ((ImageView)profileView.findViewById(R.id.my_profile_information_languages_show)).setImageResource(getImageResourceToShowInProfile(ShowInProfile.Both));
 
 
             String age = String.format("%s %s",DateFormatter.getUserAge(me.getUserPrivateProfile().getBirthdate()),context.getString(R.string.my_profile_information_age_append_value_after));
@@ -105,7 +108,7 @@ public class Profile {
                 if (showInProfile == ShowInProfile.Private) showInProfile = ShowInProfile.Both;
                 else showInProfile = ShowInProfile.Public;
             }
-            ((SquareImageView)profileView.findViewById(R.id.my_profile_information_age_show)).setImageResource(getImageResourceToShowInProfile(showInProfile));
+            ((ImageView)profileView.findViewById(R.id.my_profile_information_age_show)).setImageResource(getImageResourceToShowInProfile(showInProfile));
         }
     }
 

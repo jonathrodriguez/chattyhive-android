@@ -67,8 +67,11 @@ public abstract class Profile {
         return ((this.language != null) && (this.language.contains(value)));
     }
     public void removeLanguage (String value) {
-        if (this.language != null)
+        if (this.language != null) {
             this.language.remove(value);
+            if (this.language.isEmpty())
+                this.language = null;
+        }
     }
     public void addLanguage(String value) {
         if (this.language == null)

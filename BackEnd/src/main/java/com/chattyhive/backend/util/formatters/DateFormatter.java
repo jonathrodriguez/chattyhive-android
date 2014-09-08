@@ -84,6 +84,16 @@ public final class DateFormatter {
         }
     }
 
+    public static final Date fromShortHumanReadableString(String date) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(shortHumanReadableFormat);
+        //simpleDateFormat.setTimeZone(TimeZone.getTimeZone(timeZoneID));
+        try {
+            return simpleDateFormat.parse(date);
+        } catch (ParseException e) { }
+
+        return (new Date());
+    }
+
     public static final String getUserAge(Date birthday) {
         return (new SimpleDateFormat("y")).format(new Date((new Date()).getTime() - birthday.getTime()));
     }

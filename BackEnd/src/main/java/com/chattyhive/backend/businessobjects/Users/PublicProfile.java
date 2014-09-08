@@ -48,6 +48,8 @@ public class PublicProfile extends Profile {
         }
     }
 
+    public PublicProfile(){}
+
     @Override
     public String getID() {
         return this.publicName;

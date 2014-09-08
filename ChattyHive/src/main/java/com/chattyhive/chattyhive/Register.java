@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.chattyhive.backend.StaticParameters;
@@ -12,6 +14,7 @@ import com.chattyhive.backend.businessobjects.Users.User;
 import com.chattyhive.backend.contentprovider.formats.COMMON;
 import com.chattyhive.backend.contentprovider.formats.Format;
 import com.chattyhive.backend.util.events.CommandCallbackEventArgs;
+import com.chattyhive.backend.util.formatters.DateFormatter;
 import com.chattyhive.chattyhive.framework.OnInflateLayoutListener;
 import com.chattyhive.chattyhive.framework.OnRemoveLayoutListener;
 import com.chattyhive.chattyhive.framework.OnTransitionListener;
@@ -27,12 +30,7 @@ import java.util.Locale;
 public class Register extends Activity {
 
     private SlidingStepsLayout layout;
-
     private User newUser;
-
-    //TEMP
-    String email = "";
-    String proposedUsername = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,10 +44,12 @@ public class Register extends Activity {
 
         Intent intent = this.getIntent();
 
-        email = intent.getStringExtra("email");
-        proposedUsername = intent.getStringExtra("username");
+        String email = intent.getStringExtra("email");
+        String proposedUsername = intent.getStringExtra("username");
 
-        //this.newUser = new User(); //TODO: Add empty constructor or at least passing only email.
+        this.newUser = new User(email);
+        this.newUser.getUserPublicProfile().setPublicName(proposedUsername);
+        this.newUser.getUserPrivateProfile().setSex("female"); //Load default value.
     }
 
     public View.OnClickListener onEnterButtonClick = new View.OnClickListener() {
@@ -59,10 +59,38 @@ public class Register extends Activity {
                 setResult(RESULT_OK);
                 finish();
             } else {
-                //TODO: Validate data and send to server.
+                TextView emailView = (TextView)findViewById(R.id.register_third_step_email);
+                TextView passwordView = (TextView)findViewById(R.id.register_third_step_password);
+                TextView repeatPasswordView = (TextView)findViewById(R.id.register_third_step_repeat_password);
+
+                if (!emailView.getText().toString().equalsIgnoreCase(newUser.getEmail())) {
+                    //TODO: Validate new email.
+                }
+
+                if (passwordIsValid(passwordView)) {
+                    if (passwordView.getText().toString().equals(repeatPasswordView.getText().toString())) {
+                        //TODO: Register.
+                    } else {
+                        repeatPasswordView.setError("Passwords must match.");
+                        repeatPasswordView.requestFocus();
+                    }
+                }
             }
         }
     };
+
+    private boolean passwordIsValid(TextView passwordView) {
+        boolean isValid = false;
+
+        if (passwordView.getText().length() < 8) {
+            passwordView.setError("Password must be at least 8 characters long.");
+            passwordView.requestFocus();
+        } else {
+            isValid = true;
+        }
+
+        return isValid;
+    }
 
     public View.OnClickListener onCancelButtonClick = new View.OnClickListener() {
         @Override
@@ -79,16 +107,66 @@ public class Register extends Activity {
             switch (view.getId()) {
                 case R.id.register_first_step_layout:
                     view.findViewById(R.id.register_first_step_back_button).setOnClickListener(onCancelButtonClick);
+                    view.findViewById(R.id.register_first_step_show_age_private).setOnClickListener(onCheckBoxClickListener);
+                    ((ImageView)view.findViewById(R.id.register_first_step_show_age_private_checkbox_image)).setImageResource((newUser.getUserPrivateProfile().getShowAge())?R.drawable.registro_white_tick_activated_grey:R.drawable.registro_white_tick_deactivated_grey);
+                    ((TextView)view.findViewById(R.id.register_first_step_name)).setText(newUser.getUserPrivateProfile().getFirstName());
+                    ((TextView)view.findViewById(R.id.register_first_step_surname)).setText(newUser.getUserPrivateProfile().getLastName());
+                    ((TextView)view.findViewById(R.id.register_first_step_surname)).setText(DateFormatter.toShortHumanReadableString(newUser.getUserPrivateProfile().getBirthdate()));
+                    String sex = newUser.getUserPrivateProfile().getSex();
+                    if (sex.equalsIgnoreCase("male")) {
+                        ((ImageView)findViewById(R.id.register_first_step_male_radio_image)).setImageResource(R.drawable.registro_selector);
+                        ((ImageView)findViewById(R.id.register_first_step_female_radio_image)).setImageResource(R.drawable.registro_selector_deactivated);
+                    } else {
+                        ((ImageView)findViewById(R.id.register_first_step_male_radio_image)).setImageResource(R.drawable.registro_selector_deactivated);
+                        ((ImageView)findViewById(R.id.register_first_step_female_radio_image)).setImageResource(R.drawable.registro_selector);
+                    }
                     break;
                 case R.id.register_second_step_layout:
-                    if ((proposedUsername != null) && (!proposedUsername.isEmpty()))
-                        ((TextView)view.findViewById(R.id.register_second_step_username)).setText(proposedUsername);
+                    if ((newUser.getUserPublicProfile().getPublicName() != null) && (!newUser.getUserPublicProfile().getPublicName().isEmpty()))
+                        ((TextView)view.findViewById(R.id.register_second_step_username)).setText(newUser.getUserPublicProfile().getPublicName());
                     break;
                 case R.id.register_third_step_layout:
                     view.findViewById(R.id.register_third_step_next_button).setOnClickListener(onEnterButtonClick);
-                    if ((email != null) && (!email.isEmpty()))
-                        ((TextView)view.findViewById(R.id.register_third_step_email)).setText(email);
+                    if ((newUser.getEmail() != null) && (!newUser.getEmail().isEmpty()))
+                        ((TextView)view.findViewById(R.id.register_third_step_email)).setText(newUser.getEmail());
                     break;
+            }
+        }
+    };
+
+    public View.OnClickListener onGenderRadioButtonClick = new View.OnClickListener(){
+        @Override
+        public void onClick(View v) {
+            String sex = newUser.getUserPrivateProfile().getSex();
+            if ((v.getId() == R.id.register_first_step_male_redio_button) && (sex.equalsIgnoreCase("female"))) {
+                newUser.getUserPrivateProfile().setSex("MALE");
+                ((ImageView)findViewById(R.id.register_first_step_male_radio_image)).setImageResource(R.drawable.registro_selector);
+                ((ImageView)findViewById(R.id.register_first_step_female_radio_image)).setImageResource(R.drawable.registro_selector_deactivated);
+            } else if ((v.getId() == R.id.register_first_step_female_radio_button) && (sex.equalsIgnoreCase("male"))) {
+                newUser.getUserPrivateProfile().setSex("FEMALE");
+                ((ImageView)findViewById(R.id.register_first_step_male_radio_image)).setImageResource(R.drawable.registro_selector_deactivated);
+                ((ImageView)findViewById(R.id.register_first_step_female_radio_image)).setImageResource(R.drawable.registro_selector);
+            }
+        }
+    };
+
+    public View.OnClickListener onCheckBoxClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            int childCount = ((ViewGroup)v).getChildCount();
+            Boolean state = true;
+            if (v.getTag() != null)
+                state = !((Boolean)v.getTag());
+            v.setTag(state);
+
+            for (int i=0; i<childCount;i++) {
+                View child = ((ViewGroup)v).getChildAt(i);
+                if (child instanceof ImageView) {
+                    if (state)
+                        ((ImageView)child).setImageResource(R.drawable.registro_white_tick_activated_grey);
+                    else
+                        ((ImageView)child).setImageResource(R.drawable.registro_white_tick_deactivated_grey);
+                }
             }
         }
     };
@@ -140,6 +218,20 @@ public class Register extends Activity {
         @Override
         public void OnEndTransition(int actualStep, int previousStep) {
             //TODO: Save values.
+            switch (previousStep) {
+                case 0:
+                    newUser.getUserPrivateProfile().setFirstName(((TextView)findViewById(R.id.register_first_step_name)).getText().toString());
+                    newUser.getUserPrivateProfile().setLastName(((TextView)findViewById(R.id.register_first_step_surname)).getText().toString());
+                    newUser.getUserPrivateProfile().setShowAge((Boolean)findViewById(R.id.register_first_step_show_age_private).getTag());
+                    newUser.getUserPrivateProfile().setBirthdate(DateFormatter.fromShortHumanReadableString(((TextView)findViewById(R.id.register_first_step_date)).getText().toString()));
+                    break;
+                case 1:
+
+                    break;
+                case 2:
+
+                    break;
+            }
         }
     };
 
