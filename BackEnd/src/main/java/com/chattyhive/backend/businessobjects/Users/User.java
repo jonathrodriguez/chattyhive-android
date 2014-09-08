@@ -285,10 +285,15 @@ public class User {
 
         String userID = ((profile_id.PUBLIC_NAME == null) || profile_id.PUBLIC_NAME.isEmpty())?profile_id.USER_ID:profile_id.PUBLIC_NAME;
 
-        this.fromJson((new JsonParser()).parse(User.userLocalStorage.RecoverCompleteUserProfile(userID)));
+        String localUser = User.userLocalStorage.RecoverCompleteUserProfile(userID);
+        if ((localUser != null) && (!localUser.isEmpty()))
+            this.fromJson((new JsonParser()).parse(localUser));
 
-        if ((this.userID == null) || (!this.userID.equals(userID)))
-            this.fromJson((new JsonParser()).parse(User.userLocalStorage.RecoverLocalUserProfile()));
+        if ((this.userID == null) || (!this.userID.equals(userID))) {
+            localUser = User.userLocalStorage.RecoverLocalUserProfile();
+            if ((localUser != null) && (!localUser.isEmpty()))
+                this.fromJson((new JsonParser()).parse(localUser));
+        }
 
         if ((this.userID == null) || (!this.userID.equals(userID))) {
             this.userID = userID;
@@ -296,8 +301,18 @@ public class User {
             if (DataProvider.isConnectionAvailable()) {
                 this.loading = true;
 
+                /*TODO: Do this when implemented.
                 DataProvider dataProvider = DataProvider.GetDataProvider();
-                dataProvider.InvokeServerCommand(ServerCommand.AvailableCommands.UserProfile,profile_id);
+                dataProvider.InvokeServerCommand(ServerCommand.AvailableCommands.UserProfile,profile_id);*/
+
+                this.showingName = String.format("%s",this.userID);
+                this.color = "#808080";
+                this.isMe = false;
+                this.isPrivate = false;
+                PUBLIC_PROFILE public_profile = new PUBLIC_PROFILE();
+                public_profile.PUBLIC_NAME = this.userID;
+                public_profile.USER_COLOR = "#808080";
+                this.userPublicProfile = new PublicProfile(public_profile);
             }
         }
     }

@@ -66,10 +66,10 @@ public class Group {
             }
         }
 
-        //Remote recovering of groups
-        if (DataProvider.isConnectionAvailable()) {
+        //Remote recovering of groups -> Recovered when binding app or service.
+/*        if (DataProvider.isConnectionAvailable()) {
             DataProvider.GetDataProvider().InvokeServerCommand(ServerCommand.AvailableCommands.ChatList,null);
-        }
+        }*/
     }
 
     /***********************************/
@@ -97,34 +97,37 @@ public class Group {
 
     protected Group(String channelUnicode) {
         this.members = new TreeMap<String, User>();
-
-        Format[] formats = Format.getFormat((new JsonParser()).parse(Group.localStorage.RecoverGroup(channelUnicode)));
-        for(Format format : formats)
-            if (format instanceof CHAT) {
-                CHAT data = (CHAT)format;
-                if (data.CHANNEL_UNICODE.equals(channelUnicode)) {
-                    this.channelUnicode = data.CHANNEL_UNICODE;
-                    this.creationDate = data.CREATION_DATE;
-                    this.description = ""; //TODO: There is no description.
-                    this.name = ""; //TODO: There is no name;
-                    if ((data.PARENT_HIVE != null) && (data.PARENT_HIVE.NAME_URL != null) && (!data.PARENT_HIVE.NAME_URL.isEmpty()))
-                        this.parentHive = Hive.getHive(data.PARENT_HIVE.NAME_URL);
-                    else
-                        this.parentHive = null;
-                    this.pusherChannel = data.PUSHER_CHANNEL;
-                    break;
+        String localGroup = Group.localStorage.RecoverGroup(channelUnicode);
+        if (localGroup != null) {
+            Format[] formats = Format.getFormat((new JsonParser()).parse(localGroup));
+            for (Format format : formats)
+                if (format instanceof CHAT) {
+                    CHAT data = (CHAT) format;
+                    if (data.CHANNEL_UNICODE.equals(channelUnicode)) {
+                        this.channelUnicode = data.CHANNEL_UNICODE;
+                        this.creationDate = data.CREATION_DATE;
+                        this.description = ""; //TODO: There is no description.
+                        this.name = ""; //TODO: There is no name;
+                        if ((data.PARENT_HIVE != null) && (data.PARENT_HIVE.NAME_URL != null) && (!data.PARENT_HIVE.NAME_URL.isEmpty()))
+                            this.parentHive = Hive.getHive(data.PARENT_HIVE.NAME_URL);
+                        else
+                            this.parentHive = null;
+                        this.pusherChannel = data.PUSHER_CHANNEL;
+                        this.chat = new Chat(this);
+                        break;
+                    }
                 }
-            }
-
+        }
         if ((this.channelUnicode == null) || (!this.channelUnicode.equals(channelUnicode))) {
-            //TODO: Implement server information recovering
+            this.channelUnicode = channelUnicode;
+            DataProvider.GetDataProvider().InvokeServerCommand(ServerCommand.AvailableCommands.ChatContext,this.toFormat(new CHAT_ID()));
         }
 
         this.CalculateGroupKind();
     }
 
     private void CalculateGroupKind() {
-        Boolean isSingle = this.members.size() < 2;
+/*        Boolean isSingle = this.members.size() < 2;
         Boolean isPrivate = false;
         for (User user : this.members.values())
             isPrivate = isPrivate || user.isPrivate();
@@ -136,7 +139,8 @@ public class Group {
         else if (!isPrivate && !isSingle)
             this.groupKind = GroupKind.PUBLIC_GROUP;
         else if (!isPrivate && isSingle)
-            this.groupKind = (this.members.size() == 0)?GroupKind.HIVE:GroupKind.PUBLIC_SINGLE;
+            this.groupKind = (this.members.size() == 0)?GroupKind.HIVE:GroupKind.PUBLIC_SINGLE;*/
+        this.groupKind = GroupKind.PUBLIC_SINGLE;
     }
 
     public static Group getGroup(String channelUnicode) {
@@ -209,7 +213,8 @@ public class Group {
         if (Group.Groups == null) throw new IllegalStateException("Groups must be initialized.");
 
         for (Group group : Group.Groups.values())
-            group.chat.clearAllMessages();
+            if (group.chat != null)
+                group.chat.clearAllMessages();
 
         Group.Groups.clear();
         Group.localStorage.ClearGroups();
@@ -243,7 +248,8 @@ public class Group {
     protected TreeMap<String,User> members;
 
     public ArrayList<User> getMembers() {
-        if ((this.members == null) || (this.members.isEmpty())) throw new NullPointerException("There are no members for this group.");
+        if ((this.members == null) || (this.members.isEmpty())) //throw new NullPointerException("There are no members for this group.");
+            return new ArrayList<User>();
 
         return new ArrayList<User>(this.members.values());
     }
@@ -350,13 +356,17 @@ public class Group {
             for (PROFILE_ID profile_id : ((CHAT) format).MEMBERS)
                 this.addMember(User.getUser(profile_id));
 
+            this.chat = new Chat(this);
+            this.CalculateGroupKind();
             return true;
         } else if (format instanceof CHAT_ID) {
             this.channelUnicode = ((CHAT_ID) format).CHANNEL_UNICODE;
+            this.chat = new Chat(this);
 
             return true;
         } else if (format instanceof CHAT_SYNC) {
             this.channelUnicode = ((CHAT_SYNC) format).CHANNEL_UNICODE;
+            this.chat = new Chat(this);
             this.chat.addMessage(new Message(((CHAT_SYNC) format).LAST_MESSAGE));
 
             return true;

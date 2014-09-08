@@ -11,14 +11,13 @@ import com.chattyhive.backend.util.events.Event;
 import com.chattyhive.backend.util.events.EventArgs;
 import com.chattyhive.backend.util.events.EventHandler;
 import com.chattyhive.backend.util.events.FormatReceivedEventArgs;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import java.io.BufferedReader;
-import java.io.DataOutputStream;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.net.CookieHandler;
 import java.net.CookieManager;
@@ -140,24 +139,15 @@ public class Server {
                     inputReader.close();
 
                     String responseBody = response.toString();
+                    System.out.println(String.format("Request: %s\nCode: %d\n%s",url.toString(), responseCode, responseBody));
 
                     if (responseCode == 200) {
                         if (CsrfTokenChanged != null)
                             CsrfTokenChanged.fire(this,EventArgs.Empty());
-                        /*List<String> setCookies = httpURLConnection.getHeaderFields().get("Set-Cookie");
-                        if (setCookies != null) {
-                            for (String setCookie : setCookies) {
-                                List<HttpCookie> cookies = HttpCookie.parse(setCookie);
-                                for (HttpCookie cookie : cookies) {
-                                    serverUser.setCookie(cookie);
-                                }
-                            }
-                        }*/
                     }
 
                     httpURLConnection.disconnect();
 
-                    System.out.println(String.format("Request: %s\nCode: %d\n%s",url.toString(), responseCode, responseBody));
 
                 } catch (SocketTimeoutException e) {
                     onNetworkUnavailable();
@@ -176,12 +166,11 @@ public class Server {
             e.printStackTrace();
         }
     }
-
     public void Login() {
         if (StaticParameters.StandAlone) return;
 
         String function = "android.login";
-        final String Url = String.format("%s://%s.%s/%s",appProtocol,appName,host,function);
+        final String Url = String.format("%s://%s.%s/%s/",appProtocol,appName,host,function);
 
         Thread thread = new Thread() {
             @Override
@@ -191,15 +180,13 @@ public class Server {
                     if (serverUser == null) return;
                     String BodyData = serverUser.toJson().toString();
 
+
                     HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
                     httpURLConnection.setRequestMethod("POST");
                     httpURLConnection.setRequestProperty("User-Agent", StaticParameters.UserAgent());
 
                     if ((BodyData != null) && (!BodyData.isEmpty()))
                         httpURLConnection.addRequestProperty("Content-Type", "application/json");
-
-                    /*String Cookies = serverUser.getCookies();
-                    httpURLConnection.setRequestProperty("Cookie", Cookies);*/
 
                     HttpCookie csrfCookie = null;
 
@@ -216,7 +203,7 @@ public class Server {
                                 }
                         }
 
-                        if (csrfCookie == null) StartSession();
+                        if ((csrfCookie == null) || (csrfCookie.hasExpired())) StartSession();
                     }
 
                     if (csrfCookie != null) {
@@ -225,8 +212,8 @@ public class Server {
 
                     if ((BodyData != null) && (!BodyData.isEmpty())) {
                         httpURLConnection.setDoOutput(true);
-                        DataOutputStream wr = new DataOutputStream(httpURLConnection.getOutputStream());
-                        wr.writeUTF(BodyData);
+                        BufferedWriter wr = new BufferedWriter(new OutputStreamWriter(httpURLConnection.getOutputStream(),"UTF-8"));
+                        wr.write(BodyData);
                         wr.flush();
                         wr.close();
                     }
@@ -250,16 +237,9 @@ public class Server {
 
                     String responseBody = response.toString();
 
+                    System.out.println(String.format("Request: %s\nCode: %d\n%s",url.toString(), responseCode, responseBody));
+
                     if (responseCode == 200) {
-                        /*List<String> setCookies = httpURLConnection.getHeaderFields().get("Set-Cookie");
-                        if (setCookies != null) {
-                            for (String setCookie : setCookies) {
-                                List<HttpCookie> cookies = HttpCookie.parse(setCookie);
-                                for (HttpCookie cookie : cookies) {
-                                    serverUser.setCookie(cookie);
-                                }
-                            }
-                        }*/
 
                         Format[] receivedFormats = Format.getFormat(new JsonParser().parse(responseBody));
 
@@ -284,8 +264,6 @@ public class Server {
                     }
 
                     httpURLConnection.disconnect();
-
-                    System.out.println(String.format("Request: %s\nCode: %d\n%s",url.toString(), responseCode, responseBody));
 
                 } catch (SocketTimeoutException e) {
                     onNetworkUnavailable();
@@ -329,8 +307,10 @@ public class Server {
                     //TODO: Test connection availability.
                     if (!DataProvider.isConnectionAvailable()) {
                         //There is no network. What to do with pending command?
+                        System.out.println("No network available.");
                     } else {
                         //Some strange error happened. What to do with this error?
+                        System.out.println("Server error.");
                     }
                 }
             }
@@ -339,6 +319,8 @@ public class Server {
 
     private Boolean RunCommand (ServerCommand serverCommand, EventHandler<CommandCallbackEventArgs> Callback,int retryCount, Format... formats) {
         Boolean result = false;
+
+        if (retryCount >= 3) return false;
 
         try {
             URL url = new URL(String.format("%s://%s.%s/%s", appProtocol, appName, host, serverCommand.getUrl(formats)));
@@ -352,10 +334,11 @@ public class Server {
             if ((BodyData != null) && (!BodyData.isEmpty()))
                 httpURLConnection.addRequestProperty("Content-Type", "application/json");
 
-            /*String Cookies = serverUser.getCookies();
-            httpURLConnection.setRequestProperty("Cookie", Cookies);*/
-
             HttpCookie csrfCookie = null;
+            HttpCookie sessionCookie = null;
+
+            int startSessionTries = 0;
+            int loginTries = 0;
 
             while (csrfCookie == null) {
                 CookieManager cookieManager = (CookieManager) CookieHandler.getDefault();
@@ -366,10 +349,26 @@ public class Server {
                     for (HttpCookie cookie : cookies)
                         if (cookie.getName().equalsIgnoreCase("csrftoken")) {
                             csrfCookie = cookie;
-                            break;
+                        } else if (cookie.getName().equalsIgnoreCase("sessionid")) {
+                            sessionCookie = cookie;
                         }
                 }
-                if (csrfCookie == null) StartSession();
+                if ((csrfCookie == null) || (csrfCookie.hasExpired())) {
+                    if (startSessionTries < 3) {
+                        StartSession();
+                        startSessionTries++;
+                    } else {
+                        return false;
+                    }
+                }
+                if ((sessionCookie == null) || (sessionCookie.hasExpired())) {
+                    if (loginTries < 3) {
+                        Login();
+                        loginTries++;
+                    } else {
+                        return false;
+                    }
+                }
             }
 
             if (csrfCookie != null) {
@@ -378,8 +377,8 @@ public class Server {
 
             if ((Method.equalsIgnoreCase("POST")) && (BodyData != null) && (!BodyData.isEmpty())) {
                 httpURLConnection.setDoOutput(true);
-                DataOutputStream wr = new DataOutputStream(httpURLConnection.getOutputStream());
-                wr.writeUTF(BodyData);
+                BufferedWriter wr = new BufferedWriter(new OutputStreamWriter(httpURLConnection.getOutputStream(),"UTF-8"));
+                wr.write(BodyData);
                 wr.flush();
                 wr.close();
             }
@@ -402,27 +401,22 @@ public class Server {
             inputReader.close();
 
             String responseBody = response.toString();
+            System.out.println(String.format("Request: %s\nCode: %d\n%s",url.toString(), responseCode, responseBody));
 
             Format[] receivedFormats = null;
 
             if (responseCode == 200) {
-                /*List<String> setCookies = httpURLConnection.getHeaderFields().get("Set-Cookie");
-                if (setCookies != null) {
-                    for (String setCookie : setCookies) {
-                        List<HttpCookie> cookies = HttpCookie.parse(setCookie);
-                        for (HttpCookie cookie : cookies) {
-                            serverUser.setCookie(cookie);
-                        }
-                    }
-                }*/
 
-                receivedFormats = Format.getFormat(new JsonParser().parse(responseBody));
+                //TODO: receivedFormats = Format.getFormat(new JsonParser().parse(responseBody));
+                String preparedResponseBody = responseBody.replace("\\\"","\"").replace("\"{","{").replace("}\"","}").replaceAll("\"PROFILE\": \"(.*?)\"","\"PROFILE\": {\"PUBLIC_NAME\": \"$1\"}");
+                receivedFormats = Format.getFormat(new JsonParser().parse(preparedResponseBody));
 
                 for (Format format : receivedFormats)
                     if (format instanceof COMMON) {
                         if (((COMMON) format).STATUS.equalsIgnoreCase("OK")) {
+                            result = true;
                             if (Callback != null)
-                                Callback.Invoke(httpURLConnection, new CommandCallbackEventArgs(Arrays.asList(receivedFormats), Arrays.asList(formats)));
+                                Callback.Invoke(httpURLConnection, new CommandCallbackEventArgs((receivedFormats!=null)?Arrays.asList(receivedFormats):null, (formats!=null)?Arrays.asList(formats):null));
                             else if (responseEvent != null)
                                 responseEvent.fire(httpURLConnection, new FormatReceivedEventArgs(Arrays.asList(receivedFormats)));
                         } else if (((COMMON) format).STATUS.equalsIgnoreCase("SESSION EXPIRED")) {
@@ -442,7 +436,6 @@ public class Server {
 
             httpURLConnection.disconnect();
 
-            System.out.println(String.format("Request: %s\nCode: %d\n%s",url.toString(), responseCode, responseBody));
         } catch (SocketTimeoutException e) {
             result = false;
             onNetworkUnavailable();

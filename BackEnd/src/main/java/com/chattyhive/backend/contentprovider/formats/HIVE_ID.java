@@ -9,7 +9,7 @@ import com.google.gson.JsonPrimitive;
  
 
  /*
-  * Automatically generated code by ChattyHive API Manager Code Generator on 13/07/2014.
+  * Automatically generated code by ChattyHive API Manager Code Generator on 18/08/2014.
   * Be careful to not modify this file since your changes will not be included in future
   * versions of this file.
   *
@@ -53,7 +53,7 @@ public class HIVE_ID extends Format {
             object = data.getAsJsonObject();
         }
         if ((object == null) || (!object.isJsonObject())) {
-            throw new IllegalArgumentException("Data is not a HIVE_ID object.");
+            throw new IllegalArgumentException("Data is not an HIVE_ID object.");
         }
 
         JsonElement property;

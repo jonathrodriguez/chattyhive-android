@@ -17,8 +17,10 @@ public class CommandCallbackEventArgs extends EventArgs {
 
     public CommandCallbackEventArgs(Collection<Format> receivedFormats, Collection<Format> sentFormats) {
         super();
-        this.receivedFormats = new ArrayList<Format>(receivedFormats);
-        this.sentFormats = new ArrayList<Format>(sentFormats);
+        if (receivedFormats != null)
+            this.receivedFormats = new ArrayList<Format>(receivedFormats);
+        if (sentFormats != null)
+            this.sentFormats = new ArrayList<Format>(sentFormats);
     }
 
     public ArrayList<Format> getSentFormats() {
@@ -31,7 +33,7 @@ public class CommandCallbackEventArgs extends EventArgs {
 
     public int countReceivedFormats() {
         if (this.receivedFormats != null) return this.receivedFormats.size();
-        else return -1;
+        else return 0;
     }
 
     public int countSentFormats() {

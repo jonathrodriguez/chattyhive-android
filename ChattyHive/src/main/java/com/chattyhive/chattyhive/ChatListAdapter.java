@@ -23,6 +23,8 @@ import com.chattyhive.backend.util.events.EventArgs;
 import com.chattyhive.backend.util.formatters.DateFormatter;
 import com.chattyhive.backend.util.formatters.TimestampFormatter;
 
+import java.util.Date;
+
 
 /**
  * Created by Jonathan on 25/03/14.
@@ -123,8 +125,32 @@ public class ChatListAdapter extends BaseAdapter {
                         holder.timeStamp = (TextView) convertView.findViewById(R.id.main_panel_chat_timeStamp);
                     }
                     break;
+                case PUBLIC_SINGLE:
+                case PRIVATE_SINGLE:
+                    if (type == context.getResources().getInteger(R.integer.MainPanelChat_ListKind_Me)) {
+                        convertView = this.inflater.inflate(R.layout.main_panel_chat_single_message_me, parent, false);
+                        isMessage = true;
+                    } else if (type == context.getResources().getInteger(R.integer.MainPanelChat_ListKind_Other)) {
+                        convertView = this.inflater.inflate(R.layout.main_panel_chat_single_message_other, parent, false);
+                        isMessage = true;
+                    } else if (type == context.getResources().getInteger(R.integer.MainPanelChat_ListKind_DateSeparator)) {
+                        convertView = this.inflater.inflate(R.layout.main_panel_chat_day_marker, parent, false);
+                        holder.timeStamp = (TextView) convertView.findViewById(R.id.main_panel_chat_timeStamp);
+                    } else if (type == context.getResources().getInteger(R.integer.MainPanelChat_ListKind_HoleSeparator)) {
+                        convertView = this.inflater.inflate(R.layout.main_panel_chat_message_hole, parent, false);
+                        holder.messageText = (TextView) convertView.findViewById(R.id.main_panel_chat_messageText);
+                        isHoleMarker = true;
+                    } else {
+                        Log.e("ChatListAdapter.getView()","Incompatible type!");
+                        return null;
+                    }
+                    if (isMessage) {
+                        holder.messageText = (TextView) convertView.findViewById(R.id.main_panel_chat_single_message_messageText);
+                        holder.timeStamp = (TextView) convertView.findViewById(R.id.main_panel_chat_single_message_timeStamp);
+                    }
+                    break;
                 default:
-                    Log.e("ChatListAdapter.getView()","Incompatible type!");
+                    Log.e("ChatListAdapter.getView()","Unknown chat type!");
                     return null;
             }
 
@@ -138,24 +164,32 @@ public class ChatListAdapter extends BaseAdapter {
         convertView.setTag(R.id.BO_Message,message);
 
         if (isMessage) {
-            if (message.getUser() != null) {
+            if ((message.getUser() != null) && (holder.username != null)) {
                 holder.username.setText(message.getUser().getShowingName());
                 holder.username.setTextColor(Color.parseColor(message.getUser().getColor()));
             }
 
             holder.messageText.setText(message.getMessageContent().getContent());
-            holder.timeStamp.setText(TimestampFormatter.toLocaleString(message.getServerTimeStamp()));
+            /*if (message.getServerTimeStamp() != null)
+                holder.timeStamp.setText(TimestampFormatter.toLocaleString(message.getServerTimeStamp()));
+            else if (message.getTimeStamp() != null)
+                holder.timeStamp.setText(TimestampFormatter.toLocaleString(message.getTimeStamp()));
+            else*/
+                holder.timeStamp.setText(TimestampFormatter.toLocaleString(new Date()));
             if (message.getUser().isMe()) {
                 if (((this.chatKind == GroupKind.PRIVATE_SINGLE) || (this.chatKind == GroupKind.PUBLIC_SINGLE)) && (message.getConfirmed())) {
-                    holder.timeStamp.setCompoundDrawablesWithIntrinsicBounds(0,0,R.drawable.pestanha_hives_show_more_users,0);
+                    holder.timeStamp.setCompoundDrawablesWithIntrinsicBounds(0,0,R.drawable.abc_ic_cab_done_holo_light,0);
                 } else if (message.getId() != null) {
-                    holder.timeStamp.setCompoundDrawablesWithIntrinsicBounds(0,0,R.drawable.pestanha_chats_arroba,0);
+                    //holder.timeStamp.setCompoundDrawablesWithIntrinsicBounds(0,0,0,0);
                 } else {
                     holder.timeStamp.setCompoundDrawablesWithIntrinsicBounds(0,0,R.drawable.pestanha_hives_historial,0);
                 }
             }
         } else if (!isHoleMarker) {
-            holder.timeStamp.setText(DateFormatter.toHumanReadableString(message.getTimeStamp()));
+            if (message.getTimeStamp() != null)
+                holder.timeStamp.setText(DateFormatter.toHumanReadableString(message.getTimeStamp()));
+            else
+                holder.timeStamp.setText(DateFormatter.toHumanReadableString(new Date()));
         } else {
             holder.messageText.setText(String.format("Loading %s messages...",message.getMessageContent().getContent()));
             holder.messageText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.menu_new_hive_blanco,0,0,0);

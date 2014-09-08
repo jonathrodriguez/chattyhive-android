@@ -22,21 +22,21 @@ public class PublicProfile extends Profile {
     }
 
     public Boolean getShowSex() {
-        return this.showSex;
+        return (this.showSex!=null)?this.showSex:false;
     }
     public void setShowSex(Boolean value) {
         this.showSex = value;
     }
 
     public Boolean getShowAge() {
-        return this.showAge;
+        return (this.showAge!=null)?this.showAge:false;
     }
     public void setShowAge(Boolean value) {
         this.showAge = value;
     }
 
     public Boolean getShowLocation() {
-        return this.showLocation;
+        return (this.showLocation!=null)?this.showLocation:false;
     }
     public void setShowLocation(Boolean value) {
         this.showLocation = value;

@@ -197,7 +197,7 @@ public class Chat {
 
         if ((previous != null) && (previous.getMessageContent().getContentType().endsWith("_SEPARATOR")))
             previousNewDay = !(DateFormatter.toString(previous.getTimeStamp()).equalsIgnoreCase(DateFormatter.toString(message.getTimeStamp())));
-        else if (previous.getMessageContent().getContentType().endsWith("_SEPARATOR"))
+        else if (previous == null)
             previousNewDay = true;
 
         if ((next != null) && (next.getMessageContent().getContentType().endsWith("_SEPARATOR")))

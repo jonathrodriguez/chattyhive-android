@@ -9,7 +9,7 @@ import com.google.gson.JsonPrimitive;
    
 
  /*
-  * Automatically generated code by ChattyHive API Manager Code Generator on 13/07/2014.
+  * Automatically generated code by ChattyHive API Manager Code Generator on 18/08/2014.
   * Be careful to not modify this file since your changes will not be included in future
   * versions of this file.
   *
@@ -49,19 +49,19 @@ public class MESSAGE_INTERVAL extends Format {
             return JsonNull.INSTANCE;
 
         JsonObject result = new JsonObject();
-        result.add("MESSAGE_INTERVAL (URL)",jsonObject);
+        result.add("MESSAGE_INTERVAL",jsonObject);
 
         return result;
     }
 
     @Override
     public void fromJSON(JsonElement data) {
-        JsonObject object = data.getAsJsonObject().getAsJsonObject("MESSAGE_INTERVAL (URL)");
+        JsonObject object = data.getAsJsonObject().getAsJsonObject("MESSAGE_INTERVAL");
         if ((object == null) || (!object.isJsonObject())) {
             object = data.getAsJsonObject();
         }
         if ((object == null) || (!object.isJsonObject())) {
-            throw new IllegalArgumentException("Data is not an MESSAGE_INTERVAL (URL) object.");
+            throw new IllegalArgumentException("Data is not an MESSAGE_INTERVAL object.");
         }
 
         JsonElement property;

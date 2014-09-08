@@ -3,38 +3,128 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal" android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingTop="8dp"
-    android:paddingBottom="8dp"
-    android:paddingLeft="8dp"
-    android:paddingRight="8dp"
-    android:background="#ffffff"
+    android:background="@color/left_panel_hive_list_item_background"
     android:focusableInTouchMode="false"
-    android:id="@+id/left_panel_hives_list_item_top_view">
+    android:id="@+id/left_panel_hives_list_item_top_view"
+    android:layout_marginBottom="@dimen/left_panel_list_item_margin_bottom">
 
     <ImageView
-        android:layout_width="58dp"
-        android:layout_height="58dp"
+        android:layout_width="@dimen/left_panel_hive_list_item_hive_img_width"
+        android:layout_height="@dimen/left_panel_hive_list_item_hive_img_height"
         android:id="@+id/left_panel_hives_list_item_img"
         android:src="@drawable/pestanha_chats_public_chat"
-        android:layout_gravity="center_vertical"
-        android:scaleType="fitCenter"
+        android:scaleType="centerInside"
         android:layout_weight="0"
-        android:background="#ffffff" />
+        android:background="#00000000"
+        android:layout_marginLeft="@dimen/left_panel_hive_list_item_hive_img_margin_left"
+        android:layout_marginTop="@dimen/left_panel_hive_list_item_hive_img_margin_top"
+        android:layout_marginRight="@dimen/left_panel_hive_list_item_hive_img_margin_right"
+        android:layout_marginBottom="@dimen/left_panel_hive_list_item_hive_img_margin_bottom" />
 
     <LinearLayout
         android:orientation="vertical"
-        android:layout_width="0dp"
-        android:layout_height="fill_parent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:paddingLeft="12dp"
-        android:background="#ffffff">
+        android:background="#00000000">
 
         <TextView
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
             android:id="@+id/left_panel_hives_list_item_hive_name"
-            android:textColor="#000000"
-            android:background="#ffffff" />
+            android:textColor="@color/left_panel_hive_list_item_hive_name"
+            android:background="#00000000"
+            android:text=":A very very very very laaaaaarge hive name"
+            android:minLines="1"
+            android:maxLines="1"
+            android:lines="1"
+            android:layout_marginTop="@dimen/left_panel_hive_list_item_hive_name_margin_top"
+            android:layout_marginRight="@dimen/left_panel_hive_list_item_hive_name_margin_right"
+            android:textSize="@dimen/left_panel_hive_list_item_hive_name_text_size"
+            android:singleLine="true"
+            android:ellipsize="end" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hive description. may use up to two lines of text, so this text may be very large. And some more text to reach the end of the second line"
+            android:id="@+id/left_panel_hives_list_item_hive_description"
+            android:maxLines="2"
+            android:minLines="2"
+            android:lines="2"
+            android:background="#00000000"
+            android:layout_marginTop="@dimen/left_panel_hive_list_item_hive_description_margin_top"
+            android:layout_marginRight="@dimen/left_panel_hive_list_item_hive_description_margin_right"
+            android:textSize="@dimen/left_panel_hive_list_item_hive_description_text_size"
+            android:textColor="@color/left_panel_hive_list_item_hive_description"
+            android:ellipsize="end"
+            android:enabled="false" />
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#00000000"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:layout_width="@dimen/left_panel_hive_list_item_hive_category_img_width"
+                android:layout_height="@dimen/left_panel_hive_list_item_hive_category_img_height"
+                android:id="@+id/left_panel_hives_list_item_hive_categroy_img"
+                android:src="@drawable/registro_important_note_orange"
+                android:scaleType="centerInside"
+                android:background="#00000000"
+                android:layout_marginTop="@dimen/left_panel_hive_list_item_hive_category_img_margin_top"
+                android:layout_marginRight="@dimen/left_panel_hive_list_item_hive_category_img_margin_right"
+                android:layout_marginBottom="@dimen/left_panel_hive_list_item_hive_category_img_margin_bottom"
+                android:layout_gravity="center_vertical|left" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Very very  large Category Name bla bla name of the category"
+                android:id="@+id/left_panel_hives_list_item_hive_category"
+                android:minLines="1"
+                android:maxLines="1"
+                android:lines="1"
+                android:background="#00000000"
+                android:layout_marginTop="@dimen/left_panel_hive_list_item_hive_category_margin_top"
+                android:layout_marginRight="@dimen/left_panel_hive_list_item_hive_category_margin_right"
+                android:layout_marginBottom="@dimen/left_panel_hive_list_item_hive_category_margin_bottom"
+                android:textSize="@dimen/left_panel_hive_list_item_hive_category_text_size"
+                android:textColor="@color/left_panel_hive_list_item_hive_category_text"
+                android:layout_gravity="center_vertical|left"
+                android:layout_weight="1"
+                android:singleLine="true"
+                android:ellipsize="end" />
+
+            <ImageView
+                android:layout_width="@dimen/left_panel_hive_list_item_hive_subscribed_users_img_width"
+                android:layout_height="@dimen/left_panel_hive_list_item_hive_subscribed_users_img_height"
+                android:id="@+id/left_panel_hives_list_item_hive_subscribed_users_img"
+                android:scaleType="centerInside"
+                android:src="@drawable/pestanha_chats_arroba"
+                android:background="#00000000"
+                android:layout_marginTop="@dimen/left_panel_hive_list_item_hive_subscribed_users_img_margin_top"
+                android:layout_marginRight="@dimen/left_panel_hive_list_item_hive_subscribed_users_img_margin_right"
+                android:layout_marginBottom="@dimen/left_panel_hive_list_item_hive_subscribed_users_img_margin_bottom"
+                android:layout_gravity="center_vertical|left" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="99999"
+                android:id="@+id/left_panel_hives_list_item_hive_subscribed_users"
+                android:minLines="1"
+                android:maxLines="1"
+                android:lines="1"
+                android:background="#00000000"
+                android:layout_marginTop="@dimen/left_panel_hive_list_item_hive_subscribed_users_margin_top"
+                android:layout_marginRight="@dimen/left_panel_hive_list_item_hive_subscribed_users_margin_right"
+                android:layout_marginBottom="@dimen/left_panel_hive_list_item_hive_subscribed_users_margin_bottom"
+                android:textSize="@dimen/left_panel_hive_list_item_hive_subscribed_users_text_size"
+                android:textColor="@color/left_panel_hive_list_item_hive_subscribed_users_text"
+                android:layout_gravity="center_vertical|left" />
+        </LinearLayout>
     </LinearLayout>
 </LinearLayout>

@@ -256,6 +256,13 @@ public class Message implements Comparable {
             this.id = ((MESSAGE)format).ID;
             this.timeStamp = ((MESSAGE) format).TIMESTAMP;
             this.serverTimeStamp = ((MESSAGE) format).SERVER_TIMESTAMP;
+            if ((this.timeStamp == null) && (this.serverTimeStamp == null))
+                this.timeStamp = this.serverTimeStamp = new Date();
+            else if ((this.timeStamp == null) && (this.serverTimeStamp != null))
+                this.timeStamp = this.serverTimeStamp;
+            else if ((this.timeStamp != null) && (this.serverTimeStamp == null))
+                this.serverTimeStamp = this.timeStamp;
+
             this.confirmed = ((MESSAGE) format).CONFIRMED;
             this.content = new MessageContent(((MESSAGE) format).CONTENT);
             this.user = User.getUser(((MESSAGE) format).PROFILE);

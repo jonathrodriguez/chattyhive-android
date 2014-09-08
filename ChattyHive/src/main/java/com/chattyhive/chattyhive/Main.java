@@ -12,13 +12,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 
 import com.chattyhive.backend.Controller;
 import com.chattyhive.backend.StaticParameters;
 
+import com.chattyhive.backend.contentprovider.DataProvider;
+import com.chattyhive.backend.contentprovider.server.ServerCommand;
 import com.chattyhive.chattyhive.OSStorageProvider.CookieStore;
 import com.chattyhive.chattyhive.OSStorageProvider.GroupLocalStorage;
 import com.chattyhive.chattyhive.OSStorageProvider.HiveLocalStorage;
@@ -29,6 +30,9 @@ import com.chattyhive.chattyhive.OSStorageProvider.UserLocalStorage;
 import com.chattyhive.chattyhive.backgroundservice.CHService;
 
 import com.chattyhive.chattyhive.framework.FloatingPanel;
+import com.chattyhive.chattyhive.framework.ViewPair;
+
+import java.lang.reflect.Method;
 
 
 public class Main extends Activity {
@@ -38,19 +42,25 @@ public class Main extends Activity {
 
     FloatingPanel floatingPanel;
 
-    Controller _controller;
+    Controller controller;
 
     int ActiveLayoutID;
 
+    //TODO: Add main panel view stack
 
-    protected View ShowLayout (int layoutID, int actionBarID) {
+    protected ViewPair ShowLayout (int layoutID, int actionBarID) {
         FrameLayout mainPanel = ((FrameLayout)findViewById(R.id.mainCenter));
         FrameLayout mainActionBar = ((FrameLayout)findViewById(R.id.actionCenter));
         mainPanel.removeAllViews();
         mainActionBar.removeAllViews();
         ActiveLayoutID = layoutID;
-        LayoutInflater.from(this).inflate(actionBarID,mainActionBar,true);
-        return LayoutInflater.from(this).inflate(layoutID, mainPanel, true);
+        View actionBar = LayoutInflater.from(this).inflate(actionBarID,mainActionBar,true);
+        View mainView = LayoutInflater.from(this).inflate(layoutID, mainPanel, true);
+        ViewPair actualView = new ViewPair(mainView,actionBar);
+
+        //TODO: Populate/manage main panel view stack.
+
+        return actualView;
     }
 
     @Override
@@ -59,9 +69,9 @@ public class Main extends Activity {
         ActiveLayoutID = R.layout.home;
         setContentView(R.layout.main);
 
-
         findViewById(R.id.temp_explore_button).setOnClickListener(this.explore_button_click);
         findViewById(R.id.temp_profile_button).setOnClickListener((new Profile(this)).open_profile);
+        findViewById(R.id.temp_chat_sync_button).setOnClickListener(this.chat_sync_button_click);
         findViewById(R.id.temp_logout_button).setOnClickListener(this.logout_button_click);
         findViewById(R.id.temp_clear_chats_button).setOnClickListener(this.clear_chats_button_click);
 
@@ -71,48 +81,29 @@ public class Main extends Activity {
         Object[] LocalStorage = {LoginLocalStorage.getLoginLocalStorage(), GroupLocalStorage.getGroupLocalStorage(), HiveLocalStorage.getHiveLocalStorage(), MessageLocalStorage.getMessageLocalStorage(), UserLocalStorage.getUserLocalStorage()};
         Controller.Initialize(new CookieStore(),LocalStorage);
 
-        this._controller = Controller.GetRunningController(true);
-        Controller.bindApp();
+        this.controller = Controller.GetRunningController(true);
 
         LeftPanel lp = new LeftPanel(this);
 
-        this.ConnectService();
-
-        this.checkLogin();
-
-    }
-
-    private void checkLogin() {
-        if ((this._controller == null) || (LoginLocalStorage.getLoginLocalStorage().RecoverLoginPassword() == null)) {
-            this.hasToLogin();
-        } else {
-            this.Logged();
+        try {
+            Controller.bindApp(this.getClass().getMethod("hasToLogin"),this);
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
         }
+
+        this.ConnectService();
     }
 
-    private void hasToLogin() {
+    public void hasToLogin() {
         Intent intent = new Intent(this, LoginActivity.class);
         startActivityForResult(intent, OP_CODE_LOGIN);
-    }
-
-    private void Logged () {
-/*        try {
-            this._controller.SubscribeChannelEventHandler(new EventHandler<ChannelEventArgs>(this,"onChannelEvent",ChannelEventArgs.class));
-            this._controller.SubscribeConnectionEventHandler(new EventHandler<PubSubConnectionEventArgs>(this, "onConnectionStateChange",PubSubConnectionEventArgs.class));
-        } catch (NoSuchMethodException e) { }*/
-
-        if (!this._controller.isServerConnected()) {
-            this._controller.Connect();
-        }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             case OP_CODE_LOGIN:
-                    if (resultCode == RESULT_OK) {
-                        this.Logged();
-                    } else {
+                    if (resultCode != RESULT_OK) {
                         Controller.DisposeRunningController();
                         this.finish();
                     }
@@ -192,7 +183,6 @@ public class Main extends Activity {
     protected View.OnClickListener explore_button_click = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-
             Intent intent = new Intent(getApplicationContext(),Explore.class);
             startActivityForResult(intent, OP_CODE_EXPLORE);
         }
@@ -201,15 +191,23 @@ public class Main extends Activity {
     protected View.OnClickListener logout_button_click = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            _controller.clearUserData();
-            checkLogin();
+            controller.clearUserData();
+            hasToLogin();
         }
     };
 
     protected View.OnClickListener clear_chats_button_click = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            _controller.clearAllChats();
+            controller.clearAllChats();
+        }
+    };
+
+    protected View.OnClickListener chat_sync_button_click = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            DataProvider dataProvider = DataProvider.GetDataProvider();
+            dataProvider.InvokeServerCommand(ServerCommand.AvailableCommands.ChatList, null);
         }
     };
 
@@ -218,15 +216,15 @@ public class Main extends Activity {
         if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
             if (event.getAction() == KeyEvent.ACTION_DOWN
                     && event.getRepeatCount() == 0) {
-                if ((ActiveLayoutID != R.layout.home)) { // Tell the framework to start tracking this event.
+                if ((ActiveLayoutID != R.layout.home) && (!floatingPanel.isOpen())) { // Tell the framework to start tracking this event.
                     findViewById(R.id.mainCenter).getKeyDispatcherState().startTracking(event, this);
                     return true;
                 }
             } else if (event.getAction() == KeyEvent.ACTION_UP) {
                 findViewById(R.id.mainCenter).getKeyDispatcherState().handleUpEvent(event);
-                if (event.isTracking() && !event.isCanceled()) {
+                if (event.isTracking() && !event.isCanceled() && (!floatingPanel.isOpen())) { //TODO: Use main panel view stack.
                     if (ActiveLayoutID == R.layout.main_panel_chat_layout) {
-                        this._controller.Leave((String)findViewById(R.id.main_panel_chat_name).getTag());
+                        this.controller.Leave((String) findViewById(R.id.main_panel_chat_name).getTag());
                     }
                     if (ActiveLayoutID != R.layout.home) {
                         ShowLayout(R.layout.home,R.layout.action_bar_layout);

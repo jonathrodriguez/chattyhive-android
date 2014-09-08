@@ -3,9 +3,10 @@ package com.chattyhive.backend.contentprovider.server;
 import com.chattyhive.backend.StaticParameters;
 
 import java.io.BufferedReader;
-import java.io.DataOutputStream;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.CookieStore;
@@ -15,7 +16,6 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.util.List;
-import java.util.concurrent.Callable;
 
 /**
  * Created by Jonathan on 23/12/13.
@@ -99,8 +99,8 @@ public class AsyncHttpURLConnection extends Thread {
 
             if ((this._method.equalsIgnoreCase("POST")) && (this._bodyData != null) && (!this._bodyData.isEmpty())) {
                 httpURLConnection.setDoOutput(true);
-                DataOutputStream wr = new DataOutputStream(httpURLConnection.getOutputStream());
-                wr.writeUTF(this._bodyData);
+                BufferedWriter wr = new BufferedWriter(new OutputStreamWriter(httpURLConnection.getOutputStream(),"UTF-8"));
+                wr.write(this._bodyData);
                 wr.flush();
                 wr.close();
             }

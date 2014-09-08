@@ -55,6 +55,6 @@ public class EventHandler<T extends EventArgs> {
 
     @Override
     public boolean equals(Object o) {
-        return ((o instanceof EventHandler) && (this.subscriber.equals(((EventHandler) o).subscriber)) && (this.method.getName().equalsIgnoreCase(((EventHandler) o).method.getName())));
+        return ((o instanceof EventHandler) && (this.subscriber == (((EventHandler) o).subscriber)) && (this.method.getName().equalsIgnoreCase(((EventHandler) o).method.getName())));
     }
 }

@@ -19,7 +19,7 @@ import java.util.TreeMap;
  * Created by Jonathan on 11/07/2014.
  */
 public class ServerCommand {
-    public enum AvailableCommands { Register, EmailCheck, Explore, Join, SendMessage, GetMessages, LocalProfile, ChatContext, ChatList, UserProfile }
+    public enum AvailableCommands { Register, EmailCheck, Explore, Join, SendMessage, GetMessages, LocalProfile, ChatContext, ChatList, UserProfile, HiveInfo }
     public enum Method { GET, POST }
 
     /*************************************/
@@ -38,7 +38,7 @@ public class ServerCommand {
 
         // REGISTER
         inputFormats = new ArrayList<Class<?>>() {{add(LOCAL_USER_PROFILE.class);}};
-        serverCommand = new ServerCommand(Method.POST,"android.register", null, inputFormats);
+        serverCommand = new ServerCommand(Method.POST,"android.register/", null, inputFormats);
         ServerCommand.CommandDefinitions.put(AvailableCommands.Register,serverCommand);
 
         // EmailCheck
@@ -52,12 +52,12 @@ public class ServerCommand {
 
         // Join
         inputFormats = new ArrayList<Class<?>>() {{add(HIVE_ID.class);}};
-        serverCommand = new ServerCommand(Method.POST,"android.join", null, inputFormats);
+        serverCommand = new ServerCommand(Method.POST,"android.join/", null, inputFormats);
         ServerCommand.CommandDefinitions.put(AvailableCommands.Join,serverCommand);
 
         // SendMessage
         inputFormats = new ArrayList<Class<?>>() {{add(MESSAGE.class);}};
-        serverCommand = new ServerCommand(Method.POST,"android.chat", null, inputFormats);
+        serverCommand = new ServerCommand(Method.POST,"android.chat/", null, inputFormats);
         ServerCommand.CommandDefinitions.put(AvailableCommands.SendMessage,serverCommand);
 
         // GetMessages
@@ -80,8 +80,13 @@ public class ServerCommand {
 
         // UserProfile
         inputFormats = new ArrayList<Class<?>>() {{add(PROFILE_ID.class);}};
-        serverCommand = new ServerCommand(Method.POST,"android.???", null, inputFormats);
+        serverCommand = new ServerCommand(Method.POST,"android.???/", null, inputFormats);
         ServerCommand.CommandDefinitions.put(AvailableCommands.UserProfile,serverCommand);
+
+        // HiveInfo
+        paramFormats = new ArrayList<Class<?>>() {{add(HIVE_ID.class);}};
+        serverCommand = new ServerCommand(Method.GET,"android.get_hive_info/[HIVE_ID.NAME_URL]", paramFormats, null);
+        ServerCommand.CommandDefinitions.put(AvailableCommands.HiveInfo,serverCommand);
     }
 
     public static ServerCommand GetCommand(AvailableCommands command) {
@@ -145,7 +150,7 @@ public class ServerCommand {
 
         for (Format f : formats)
             if (this.paramFormats.contains(f.getClass()))
-                if (f.getClass().getName().equalsIgnoreCase(formatName)) {
+                if (f.getClass().getSimpleName().equalsIgnoreCase(formatName)) {
                     parameterFormat = f;
                     break;
                 }
@@ -174,13 +179,13 @@ public class ServerCommand {
         return field.get(parameterFormat).toString();
     }
     public String getBodyData(Format... formats) {
-        if ((formats == null) || (formats.length == 0)) return null;
+        if ((formats == null) || (formats.length == 0) || (this.inputFormats == null)) return null;
 
         JsonObject bodyData = new JsonObject();
 
         for (Format f : formats) {
             if (this.inputFormats.contains(f.getClass())) {
-                bodyData.add(f.getClass().getName(), f.toJSON());
+                bodyData.add(f.getClass().getSimpleName(), f.toJSON());
             }
         }
 

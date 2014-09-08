@@ -73,5 +73,6 @@ public class Explore extends Activity {
         }
         exploreListAdapter = null;
         controller = null;
+        super.onDestroy();
     }
 }

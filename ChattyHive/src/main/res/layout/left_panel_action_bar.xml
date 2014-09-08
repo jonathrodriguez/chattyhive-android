@@ -4,55 +4,137 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="48dp"
-    android:background="#292929">
+    android:background="@color/left_panel_action_bar_background">
 
-        <Button
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:id="@+id/left_panel_action_bar_tab_chats"
+        android:background="@drawable/left_panel_action_bar_button_background_selector">
+
+        <ImageView
             android:layout_width="wrap_content"
-            android:layout_height="48dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/left_panel_action_bar_tab_img_chats"
+            android:scaleType="centerInside"
+            android:src="@drawable/pestanhas_panel_izquierdo_chats_blanco"
+            android:layout_marginLeft="@dimen/left_panel_action_bar_tab_icon_margin_left"
+            android:layout_marginTop="@dimen/left_panel_action_bar_tab_icon_margin_top"
+            android:layout_marginRight="@dimen/left_panel_action_bar_tab_icon_margin_right"
+            android:layout_marginBottom="@dimen/left_panel_action_bar_tab_icon_margin_top"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/left_panel_chats_button"
+            android:background="#00000000" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:text="@string/left_panel_chats_button"
-            android:id="@+id/left_panel_chats_button"
-            android:textColor="#a1a1a1"
-            android:background="#292929"
-            android:gravity="center|center_vertical|center_horizontal"
-            android:layout_gravity="center" />
+            android:id="@+id/left_panel_action_bar_tab_text_chats"
+            android:layout_marginRight="@dimen/left_panel_action_bar_tab_text_margin_right"
+            android:textSize="@dimen/left_panel_action_bar_tab_text_size"
+            android:textColor="@color/left_panel_action_bar_selected_button_text"
+            android:layout_gravity="center_vertical"
+            android:lines="1"
+            android:maxLines="1"
+            android:minLines="1"
+            android:background="#00000000"
+            android:visibility="gone" />
+    </LinearLayout>
 
-        <Button
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:id="@+id/left_panel_action_bar_tab_hives"
+        android:background="@drawable/left_panel_action_bar_button_background_selector">
+
+        <ImageView
             android:layout_width="wrap_content"
-            android:layout_height="48dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/left_panel_action_bar_tab_img_hives"
+            android:scaleType="centerInside"
+            android:src="@drawable/pestanhas_panel_izquierdo_hives_blanco"
+            android:layout_marginLeft="@dimen/left_panel_action_bar_tab_icon_margin_left"
+            android:layout_marginTop="@dimen/left_panel_action_bar_tab_icon_margin_top"
+            android:layout_marginRight="@dimen/left_panel_action_bar_tab_icon_margin_right"
+            android:layout_marginBottom="@dimen/left_panel_action_bar_tab_icon_margin_top"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/left_panel_hives_button"
+            android:background="#00000000" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:text="@string/left_panel_hives_button"
-            android:id="@+id/left_panel_hives_button"
-            android:textColor="#a1a1a1"
-            android:background="#292929"
-            android:layout_gravity="center"
-            android:gravity="center|center_vertical|center_horizontal" />
+            android:id="@+id/left_panel_action_bar_tab_text_hives"
+            android:layout_marginRight="@dimen/left_panel_action_bar_tab_text_margin_right"
+            android:textSize="@dimen/left_panel_action_bar_tab_text_size"
+            android:textColor="@color/left_panel_action_bar_selected_button_text"
+            android:layout_gravity="center_vertical"
+            android:lines="1"
+            android:maxLines="1"
+            android:minLines="1"
+            android:background="#00000000"
+            android:visibility="gone" />
+    </LinearLayout>
 
-        <Button
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:id="@+id/left_panel_action_bar_tab_friends"
+        android:contentDescription="@string/left_panel_friends_button"
+        android:background="@drawable/left_panel_action_bar_button_background_selector">
+
+        <ImageView
             android:layout_width="wrap_content"
-            android:layout_height="48dp"
-            android:text="@string/left_panel_mates_button"
-            android:id="@+id/left_panel_mates_button"
-            android:textColor="#a1a1a1"
-            android:background="#292929"
-            android:gravity="center|center_vertical|center_horizontal"
-            android:layout_gravity="center" />
+            android:layout_height="wrap_content"
+            android:id="@+id/left_panel_action_bar_tab_img_friends"
+            android:scaleType="centerInside"
+            android:src="@drawable/pestanhas_panel_izquierdo_users_blanco"
+            android:layout_marginLeft="@dimen/left_panel_action_bar_tab_icon_margin_left"
+            android:layout_marginTop="@dimen/left_panel_action_bar_tab_icon_margin_top"
+            android:layout_marginRight="@dimen/left_panel_action_bar_tab_icon_margin_right"
+            android:layout_marginBottom="@dimen/left_panel_action_bar_tab_icon_margin_top"
+            android:adjustViewBounds="true"
+            android:background="#00000000" />
 
-        <FrameLayout
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/left_panel_friends_button"
+            android:id="@+id/left_panel_action_bar_tab_text_friends"
+            android:layout_marginRight="@dimen/left_panel_action_bar_tab_text_margin_right"
+            android:textSize="@dimen/left_panel_action_bar_tab_text_size"
+            android:textColor="@color/left_panel_action_bar_selected_button_text"
+            android:layout_gravity="center_vertical"
+            android:lines="1"
+            android:maxLines="1"
+            android:minLines="1"
+            android:background="#00000000"
+            android:visibility="gone" />
+    </LinearLayout>
+
+    <FrameLayout
             android:layout_width="0dp"
             android:layout_height="fill_parent"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:background="@color/left_panel_action_bar_background" />
 
         <ImageButton
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
             android:id="@+id/left_panel_search_button"
             android:src="@drawable/pestanhas_panel_izquierdo_search_blanco"
-            android:background="#292929"
-            android:paddingTop="12dp"
-            android:paddingBottom="12dp"
-            android:scaleType="fitCenter"
+            android:background="@color/left_panel_action_bar_search_button_background"
+            android:paddingTop="@dimen/left_panel_action_bar_search_img_padding_top"
+            android:paddingBottom="@dimen/left_panel_action_bar_search_img_padding_bottom"
+            android:scaleType="centerInside"
             android:contentDescription="@string/left_panel_search_button"
-            android:layout_gravity="right"
-            android:paddingRight="12dp"
-            android:paddingLeft="12dp" />
+            android:paddingRight="@dimen/left_panel_action_bar_search_img_padding_right"
+            android:paddingLeft="@dimen/left_panel_action_bar_search_img_padding_left"
+            android:adjustViewBounds="true" />
 
 </LinearLayout>

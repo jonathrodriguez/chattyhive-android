@@ -3,8 +3,6 @@ package com.chattyhive.backend;
 import com.chattyhive.backend.businessobjects.Chats.Chat;
 import com.chattyhive.backend.businessobjects.Chats.Group;
 import com.chattyhive.backend.businessobjects.Chats.Hive;
-import com.chattyhive.backend.businessobjects.Chats.Messages.Message;
-import com.chattyhive.backend.businessobjects.Chats.Messages.MessageContent;
 import com.chattyhive.backend.businessobjects.Users.User;
 import com.chattyhive.backend.contentprovider.DataProvider;
 import com.chattyhive.backend.contentprovider.OSStorageProvider.GroupLocalStorageInterface;
@@ -17,30 +15,22 @@ import com.chattyhive.backend.contentprovider.formats.Format;
 import com.chattyhive.backend.contentprovider.formats.HIVE;
 import com.chattyhive.backend.contentprovider.formats.HIVE_ID;
 import com.chattyhive.backend.contentprovider.server.ServerCommand;
-import com.chattyhive.backend.contentprovider.server.ServerStatus;
 import com.chattyhive.backend.contentprovider.server.ServerUser;
 import com.chattyhive.backend.util.events.CancelableEventArgs;
-import com.chattyhive.backend.util.events.ChannelEventArgs;
 import com.chattyhive.backend.util.events.CommandCallbackEventArgs;
 import com.chattyhive.backend.util.events.ConnectionEventArgs;
 import com.chattyhive.backend.util.events.Event;
 import com.chattyhive.backend.util.events.EventArgs;
 import com.chattyhive.backend.util.events.EventHandler;
-import com.chattyhive.backend.util.events.PubSubChannelEventArgs;
 import com.chattyhive.backend.util.events.PubSubConnectionEventArgs;
-import com.chattyhive.backend.util.formatters.DateFormatter;
-import com.chattyhive.backend.util.formatters.TimestampFormatter;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
 import java.net.CookieStore;
 import java.util.ArrayList;
-import java.util.TreeSet;
 
 /**
  * Created by Jonathan on 11/12/13.
@@ -130,13 +120,12 @@ public class Controller {
     //APP STATIC
     private static Boolean appBounded = false;
     private static Boolean svcBounded = false;
-
     public static Event<EventArgs> AppBindingEvent;
 
     public static Boolean isAppBounded() {
         return appBounded;
     }
-    public static void bindApp() {
+    public static void bindApp(Method getLogin, Object main) {
         if (appBounded) return;
         appBounded = true;
         if (AppBindingEvent != null)
@@ -144,22 +133,22 @@ public class Controller {
 
         DataProvider dataProvider = DataProvider.GetDataProvider();
 
-        if (!dataProvider.isServerConnected())
-            dataProvider.Connect();
-
-        ArrayList<ServerCommand.AvailableCommands> commandSequence = new ArrayList<ServerCommand.AvailableCommands>();
-
-        //Load Home
-        //commandSequence.add(ServerCommand.AvailableCommands.Home);
-
-        if (!svcBounded)
-            commandSequence.add(ServerCommand.AvailableCommands.ChatList);
-
-        commandSequence.add(ServerCommand.AvailableCommands.LocalProfile);
-
-        //Execute command sequence
-        for(ServerCommand.AvailableCommands command : commandSequence)
-            dataProvider.InvokeServerCommand(command,null);
+        if (!dataProvider.isServerConnected()) {
+            if (LoginLocalStorage.RecoverLoginPassword() == null) {
+                try {
+                    getLogin.invoke(main);
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                } catch (InvocationTargetException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                dataProvider.Connect();
+            }
+        } else {
+            if (controller == null) GetRunningController(true);
+            controller.onServerConnectionStateChanged(controller,new ConnectionEventArgs(true));
+        }
     }
     public static void unbindApp() {
         if (!appBounded) return;
@@ -167,18 +156,17 @@ public class Controller {
         if (AppBindingEvent != null)
             AppBindingEvent.fire(controller,EventArgs.Empty());
     }
-
-
     public static void bindSvc() {
         if (svcBounded) return;
         svcBounded = true;
 
         DataProvider dataProvider = DataProvider.GetDataProvider();
-        if (!dataProvider.isServerConnected())
+        if ((!dataProvider.isServerConnected()) && (LoginLocalStorage.RecoverLoginPassword() != null))
             dataProvider.Connect();
-
-        if (!appBounded)
-            dataProvider.InvokeServerCommand(ServerCommand.AvailableCommands.ChatList, null);
+        else if (dataProvider.isServerConnected() && (!appBounded)) {
+            if (controller == null) GetRunningController(true);
+            controller.onServerConnectionStateChanged(controller,new ConnectionEventArgs(true));
+        }
     }
     public static void unbindSvc() {
         if (!svcBounded) return;
@@ -284,6 +272,24 @@ public class Controller {
         this.dataProvider.Disconnect();
     }
     public void onServerConnectionStateChanged(Object sender, ConnectionEventArgs eventArgs) {
+        if (this.dataProvider.isServerConnected()) {
+            ArrayList<ServerCommand.AvailableCommands> commandSequence = new ArrayList<ServerCommand.AvailableCommands>();
+            //Define command sequence
+            if (Controller.isAppBounded()) {
+                //Load Home
+                //commandSequence.add(ServerCommand.AvailableCommands.Home);
+                if (!svcBounded)
+                    commandSequence.add(ServerCommand.AvailableCommands.ChatList);
+                commandSequence.add(ServerCommand.AvailableCommands.LocalProfile);
+                if (svcBounded)
+                    commandSequence.add(ServerCommand.AvailableCommands.ChatList);
+            } else if (svcBounded) {
+                commandSequence.add(ServerCommand.AvailableCommands.ChatList);
+            }
+            //Execute command sequence
+            for(ServerCommand.AvailableCommands command : commandSequence)
+                dataProvider.InvokeServerCommand(command,null);
+        }
         if (this.ServerConnectionStateChanged != null)
             this.ServerConnectionStateChanged.fire(sender,eventArgs);
     }

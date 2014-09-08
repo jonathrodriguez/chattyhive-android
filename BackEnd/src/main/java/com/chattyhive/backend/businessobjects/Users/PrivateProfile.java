@@ -37,7 +37,7 @@ public class PrivateProfile extends Profile {
     }
 
     public Boolean getShowAge() {
-        return this.showAge;
+        return (this.showAge!=null)?this.showAge:false;
     }
     public void setShowAge(Boolean value) {
         this.showAge = value;
