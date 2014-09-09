@@ -5,8 +5,7 @@
         Base application theme, dependent on API level. This theme is replaced
         by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
     -->
-    <style name="AppBaseTheme" parent="android:Theme.Black">
-
+    <style name="AppBaseTheme" parent="android:Theme.Light">
         <!--
             Theme customizations available in newer API levels can go in
             res/values-vXX/styles.xml, while customizations related to
@@ -17,6 +16,7 @@
     <!-- Application theme. -->
     <style name="AppTheme" parent="AppBaseTheme">
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+
     </style>
 
     <style name="LoginFormContainer">
@@ -28,8 +28,11 @@
     <style name="AppTheme.WithNoActionBar" parent="AppTheme">
         <item name="android:windowNoTitle">true</item>
         <!--item name="android:fontFamily">Roboto Mediana</item-->
-        <item name="android:textColor">#E5E5E5</item>
-        <item name="android:background">#FF111111</item>
+        <!--item name="android:textColor">#E5E5E5</item>
+        <item name="android:background">#FF111111</item-->
+        <item name="android:textColorSecondaryInverse">@android:color/secondary_text_light</item>
+        <item name="android:textColorPrimaryInverse">@android:color/primary_text_light</item>
+        <item name="android:textColorTertiaryInverse">@android:color/tertiary_text_light</item>
     </style>
 
 </resources>

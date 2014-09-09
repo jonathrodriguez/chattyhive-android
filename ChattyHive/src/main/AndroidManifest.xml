@@ -64,6 +64,8 @@
         <activity
             android:name=".Register"
             android:label="@string/title_activity_register"
+            android:configChanges="orientation|keyboardHidden"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.WithNoActionBar"
             android:windowSoftInputMode="adjustResize|stateUnchanged">
         </activity>

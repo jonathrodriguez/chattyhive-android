@@ -2,9 +2,10 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     tools:context="com.chattyhive.chattyhive.LoginActivity$PlaceholderFragment"
-    android:background="@color/login_background_color">
+    android:background="@color/login_background_color"
+    android:fillViewport="true">
 <LinearLayout
     android:orientation="vertical"
     android:layout_width="match_parent"
@@ -28,7 +29,7 @@
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="309dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_gravity="center"
             android:baselineAligned="false"
             android:background="#00000000">
@@ -71,7 +72,7 @@
 
             <ViewSwitcher
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:id="@+id/viewSwitcher"
                 android:background="#00000000" />
 

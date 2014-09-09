@@ -14,6 +14,7 @@ import com.chattyhive.backend.contentprovider.formats.COMMON;
 import com.chattyhive.backend.contentprovider.formats.Format;
 import com.chattyhive.backend.contentprovider.formats.HIVE;
 import com.chattyhive.backend.contentprovider.formats.HIVE_ID;
+import com.chattyhive.backend.contentprovider.formats.USER_EMAIL;
 import com.chattyhive.backend.contentprovider.server.ServerCommand;
 import com.chattyhive.backend.contentprovider.server.ServerUser;
 import com.chattyhive.backend.util.events.CancelableEventArgs;
@@ -400,6 +401,18 @@ public class Controller {
 
         if (this.ExploreHivesListChange != null)
             this.ExploreHivesListChange.fire(this.exploreHives,EventArgs.Empty());
+    }
+
+    public void checkEmail(String email,EventHandler<CommandCallbackEventArgs> Callback) {
+        USER_EMAIL user_email = new USER_EMAIL();
+        user_email.EMAIL = email;
+        this.dataProvider.InvokeServerCommand(ServerCommand.AvailableCommands.EmailCheck,Callback,user_email);
+    }
+
+    public void checkUsername(String username,EventHandler<CommandCallbackEventArgs> Callback) {
+        /*USER_USERNAME user_username = new USER_USERNAME();
+        user_username.username = username;
+        this.dataProvider.InvokeServerCommand(ServerCommand.AvailableCommands.UsernameCheck,Callback,user_username);*/
     }
 
     public void clearUserData() {

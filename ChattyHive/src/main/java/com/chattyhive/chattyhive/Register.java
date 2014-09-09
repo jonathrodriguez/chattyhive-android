@@ -9,16 +9,20 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.chattyhive.backend.Controller;
 import com.chattyhive.backend.StaticParameters;
 import com.chattyhive.backend.businessobjects.Users.User;
 import com.chattyhive.backend.contentprovider.formats.COMMON;
 import com.chattyhive.backend.contentprovider.formats.Format;
 import com.chattyhive.backend.util.events.CommandCallbackEventArgs;
+import com.chattyhive.backend.util.events.EventHandler;
 import com.chattyhive.backend.util.formatters.DateFormatter;
 import com.chattyhive.chattyhive.framework.OnInflateLayoutListener;
 import com.chattyhive.chattyhive.framework.OnRemoveLayoutListener;
 import com.chattyhive.chattyhive.framework.OnTransitionListener;
 import com.chattyhive.chattyhive.framework.SlidingStepsLayout;
+
+import org.w3c.dom.Text;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -31,11 +35,17 @@ public class Register extends Activity {
 
     private SlidingStepsLayout layout;
     private User newUser;
+    private String password;
+    private String repeatPassword;
+
+    private Register thisActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.register);
+
+        this.thisActivity = this;
 
         this.layout = ((SlidingStepsLayout)findViewById(R.id.slidingsteps));
         this.layout.setOnInflateLayoutListener(onInflateLayoutListener);
@@ -64,12 +74,20 @@ public class Register extends Activity {
                 TextView repeatPasswordView = (TextView)findViewById(R.id.register_third_step_repeat_password);
 
                 if (!emailView.getText().toString().equalsIgnoreCase(newUser.getEmail())) {
-                    //TODO: Validate new email.
+                    try {
+                        Controller.GetRunningController().checkEmail(emailView.getText().toString(), new EventHandler<CommandCallbackEventArgs>(this, "onEmailCheckedCallback", CommandCallbackEventArgs.class));
+                    } catch (NoSuchMethodException e) {
+                        e.printStackTrace();
+                    }
                 }
 
                 if (passwordIsValid(passwordView)) {
                     if (passwordView.getText().toString().equals(repeatPasswordView.getText().toString())) {
-                        //TODO: Register.
+                        try {
+                            newUser.Register(passwordView.getText().toString(),new EventHandler<CommandCallbackEventArgs>(thisActivity,"onRegisterCallback",CommandCallbackEventArgs.class));
+                        } catch (NoSuchMethodException e) {
+                            e.printStackTrace();
+                        }
                     } else {
                         repeatPasswordView.setError("Passwords must match.");
                         repeatPasswordView.requestFocus();
@@ -103,15 +121,18 @@ public class Register extends Activity {
         @Override
         public void OnInflate(View view) {
 
-            //TODO: Restore values
             switch (view.getId()) {
                 case R.id.register_first_step_layout:
                     view.findViewById(R.id.register_first_step_back_button).setOnClickListener(onCancelButtonClick);
                     view.findViewById(R.id.register_first_step_show_age_private).setOnClickListener(onCheckBoxClickListener);
-                    ((ImageView)view.findViewById(R.id.register_first_step_show_age_private_checkbox_image)).setImageResource((newUser.getUserPrivateProfile().getShowAge())?R.drawable.registro_white_tick_activated_grey:R.drawable.registro_white_tick_deactivated_grey);
+                    view.findViewById(R.id.register_first_step_male_redio_button).setOnClickListener(onGenderRadioButtonClick);
+                    view.findViewById(R.id.register_first_step_female_radio_button).setOnClickListener(onGenderRadioButtonClick);
+                    ((ImageView)view.findViewById(R.id.register_first_step_show_age_private_checkbox_image)).setImageResource((newUser.getUserPrivateProfile().getShowAge()) ? R.drawable.registro_white_tick_activated_grey : R.drawable.registro_white_tick_deactivated_grey);
+                    view.findViewById(R.id.register_first_step_show_age_private).setTag(newUser.getUserPrivateProfile().getShowAge());
                     ((TextView)view.findViewById(R.id.register_first_step_name)).setText(newUser.getUserPrivateProfile().getFirstName());
                     ((TextView)view.findViewById(R.id.register_first_step_surname)).setText(newUser.getUserPrivateProfile().getLastName());
-                    ((TextView)view.findViewById(R.id.register_first_step_surname)).setText(DateFormatter.toShortHumanReadableString(newUser.getUserPrivateProfile().getBirthdate()));
+                    if (newUser.getUserPrivateProfile().getBirthdate() != null)
+                        ((TextView)view.findViewById(R.id.register_first_step_date)).setText(DateFormatter.toShortHumanReadableString(newUser.getUserPrivateProfile().getBirthdate()));
                     String sex = newUser.getUserPrivateProfile().getSex();
                     if (sex.equalsIgnoreCase("male")) {
                         ((ImageView)findViewById(R.id.register_first_step_male_radio_image)).setImageResource(R.drawable.registro_selector);
@@ -122,13 +143,25 @@ public class Register extends Activity {
                     }
                     break;
                 case R.id.register_second_step_layout:
-                    if ((newUser.getUserPublicProfile().getPublicName() != null) && (!newUser.getUserPublicProfile().getPublicName().isEmpty()))
-                        ((TextView)view.findViewById(R.id.register_second_step_username)).setText(newUser.getUserPublicProfile().getPublicName());
+                    ((TextView)view.findViewById(R.id.register_second_step_username)).setText(newUser.getUserPublicProfile().getPublicName());
+                    //Show age
+                    view.findViewById(R.id.register_second_step_show_age_public_button).setOnClickListener(onCheckBoxClickListener);
+                    ((ImageView)view.findViewById(R.id.register_second_step_show_age_public_checkbox_image)).setImageResource((newUser.getUserPublicProfile().getShowAge())?R.drawable.registro_white_tick_activated_grey:R.drawable.registro_white_tick_deactivated_grey);
+                    view.findViewById(R.id.register_second_step_show_age_public_button).setTag(newUser.getUserPublicProfile().getShowAge());
+                    //Show location
+                    view.findViewById(R.id.register_second_step_show_location_public_button).setOnClickListener(onCheckBoxClickListener);
+                    ((ImageView)view.findViewById(R.id.register_second_step_show_location_public_checkbox_image)).setImageResource((newUser.getUserPublicProfile().getShowLocation())?R.drawable.registro_white_tick_activated_grey:R.drawable.registro_white_tick_deactivated_grey);
+                    view.findViewById(R.id.register_second_step_show_location_public_button).setTag(newUser.getUserPublicProfile().getShowLocation());
+                    //Show gender
+                    view.findViewById(R.id.register_second_step_show_gender_public_button).setOnClickListener(onCheckBoxClickListener);
+                    ((ImageView)view.findViewById(R.id.register_second_step_show_gender_public_checkbox_image)).setImageResource((newUser.getUserPublicProfile().getShowSex())?R.drawable.registro_white_tick_activated_grey:R.drawable.registro_white_tick_deactivated_grey);
+                    view.findViewById(R.id.register_second_step_show_gender_public_button).setTag(newUser.getUserPublicProfile().getShowSex());
                     break;
                 case R.id.register_third_step_layout:
                     view.findViewById(R.id.register_third_step_next_button).setOnClickListener(onEnterButtonClick);
-                    if ((newUser.getEmail() != null) && (!newUser.getEmail().isEmpty()))
-                        ((TextView)view.findViewById(R.id.register_third_step_email)).setText(newUser.getEmail());
+                    ((TextView)view.findViewById(R.id.register_third_step_email)).setText(newUser.getEmail());
+                    ((TextView)view.findViewById(R.id.register_third_step_password)).setText(password);
+                    ((TextView)view.findViewById(R.id.register_third_step_repeat_password)).setText(repeatPassword);
                     break;
             }
         }
@@ -217,19 +250,24 @@ public class Register extends Activity {
 
         @Override
         public void OnEndTransition(int actualStep, int previousStep) {
-            //TODO: Save values.
             switch (previousStep) {
                 case 0:
                     newUser.getUserPrivateProfile().setFirstName(((TextView)findViewById(R.id.register_first_step_name)).getText().toString());
                     newUser.getUserPrivateProfile().setLastName(((TextView)findViewById(R.id.register_first_step_surname)).getText().toString());
                     newUser.getUserPrivateProfile().setShowAge((Boolean)findViewById(R.id.register_first_step_show_age_private).getTag());
                     newUser.getUserPrivateProfile().setBirthdate(DateFormatter.fromShortHumanReadableString(((TextView)findViewById(R.id.register_first_step_date)).getText().toString()));
+                    //Gender is saved when value changes
                     break;
                 case 1:
-
+                    newUser.getUserPublicProfile().setPublicName(((TextView)findViewById(R.id.register_second_step_username)).getText().toString());
+                    newUser.getUserPublicProfile().setShowAge((Boolean)findViewById(R.id.register_second_step_show_age_public_button).getTag());
+                    newUser.getUserPublicProfile().setShowLocation((Boolean)findViewById(R.id.register_second_step_show_location_public_button).getTag());
+                    newUser.getUserPublicProfile().setShowSex((Boolean) findViewById(R.id.register_second_step_show_gender_public_button).getTag());
                     break;
                 case 2:
-
+                    newUser.setEmail(((TextView)findViewById(R.id.register_third_step_email)).getText().toString());
+                    password = ((TextView)findViewById(R.id.register_third_step_password)).getText().toString();
+                    repeatPassword = ((TextView)findViewById(R.id.register_third_step_repeat_password)).getText().toString();
                     break;
             }
         }
@@ -246,7 +284,18 @@ public class Register extends Activity {
             }
     }
 
-
+    public void onEmailCheckedCallback(Object sender,CommandCallbackEventArgs eventArgs) {
+        for(Format receivedFormat : eventArgs.getReceivedFormats())
+            if ((receivedFormat instanceof COMMON) && (((COMMON) receivedFormat).STATUS.equalsIgnoreCase("OK"))) {
+                this.newUser.setEmail(((TextView) findViewById(R.id.register_third_step_email)).getText().toString());
+                this.findViewById(R.id.register_third_step_next_button).performClick();
+            }
+            else if ((receivedFormat instanceof COMMON) && (!((COMMON) receivedFormat).STATUS.equalsIgnoreCase("OK"))) {
+                TextView emailView = (TextView) findViewById(R.id.register_third_step_email);
+                emailView.setError("Email is already registered");
+                emailView.requestFocus();
+            }
+    }
 
     private boolean isAtLeastYearsOld(Date first, int numYears) {
         Calendar a = getCalendar(first);

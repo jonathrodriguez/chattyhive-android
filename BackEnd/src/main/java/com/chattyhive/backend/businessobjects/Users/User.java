@@ -1,15 +1,18 @@
 package com.chattyhive.backend.businessobjects.Users;
 
+import com.chattyhive.backend.Controller;
 import com.chattyhive.backend.businessobjects.Chats.Hive;
 import com.chattyhive.backend.contentprovider.DataProvider;
 import com.chattyhive.backend.contentprovider.OSStorageProvider.UserLocalStorageInterface;
 import com.chattyhive.backend.contentprovider.formats.Format;
 import com.chattyhive.backend.contentprovider.formats.HIVE_ID;
 import com.chattyhive.backend.contentprovider.formats.LOCAL_USER_PROFILE;
+import com.chattyhive.backend.contentprovider.formats.LOGIN;
 import com.chattyhive.backend.contentprovider.formats.PRIVATE_PROFILE;
 import com.chattyhive.backend.contentprovider.formats.PROFILE_ID;
 import com.chattyhive.backend.contentprovider.formats.PUBLIC_PROFILE;
 import com.chattyhive.backend.contentprovider.server.ServerCommand;
+import com.chattyhive.backend.util.events.CommandCallbackEventArgs;
 import com.chattyhive.backend.util.events.EventHandler;
 import com.chattyhive.backend.util.events.FormatReceivedEventArgs;
 import com.google.gson.JsonElement;
@@ -331,6 +334,21 @@ public class User {
     public User (Format format) {
         if (!this.fromFormat(format))
             throw new IllegalArgumentException("LOCAL_USER_PROFILE, PUBLIC_PROFILE or PRIVATE_PROFILE expected.");
+    }
+    /*************************************/
+
+    /*************************************/
+    /*     COMMUNICATION METHODS         */
+    /*************************************/
+    public void Register(String password,EventHandler<CommandCallbackEventArgs> Callback) {
+        LOGIN login = new LOGIN();
+        login.USER = this.email;
+        login.PASS = password;
+        DataProvider.GetDataProvider().InvokeServerCommand(ServerCommand.AvailableCommands.Register,Callback,this.toFormat(new LOCAL_USER_PROFILE()),login);
+    }
+
+    public void EditProfile(EventHandler<CommandCallbackEventArgs> Callback) {
+        //DataProvider.GetDataProvider().InvokeServerCommand(ServerCommand.AvailableCommands.UpdateProfile,Callback,this.toFormat(new LOCAL_USER_PROFILE()));
     }
     /*************************************/
 

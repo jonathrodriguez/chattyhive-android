@@ -112,6 +112,7 @@
     <dimen name="register_first_step_private_note_img_separation">4dp</dimen>
     <dimen name="register_first_step_private_note_img_size">12.8dp</dimen>
     <dimen name="register_first_step_private_note_margin_left">12dp</dimen>
+    <dimen name="register_first_step_private_note_margin_top">8.8dp</dimen>
     <dimen name="register_first_step_private_note_margin_bottom">8.8dp</dimen>
     <dimen name="register_first_step_private_note_margin_right">12dp</dimen>
 
@@ -155,6 +156,7 @@
     <dimen name="register_second_step_public_note_text">10.8sp</dimen>
     <dimen name="register_second_step_public_note_img_separation">4dp</dimen>
     <dimen name="register_second_step_public_note_img_size">12.8dp</dimen>
+    <dimen name="register_second_step_public_note_margin_top">11.6dp</dimen>
     <dimen name="register_second_step_public_note_margin_bottom">11.6dp</dimen>
 
     <!-- ________________________________ -->

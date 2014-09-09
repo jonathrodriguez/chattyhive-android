@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
+import com.chattyhive.backend.Controller;
 import com.chattyhive.backend.StaticParameters;
 import com.chattyhive.backend.contentprovider.DataProvider;
 import com.chattyhive.backend.contentprovider.formats.COMMON;
@@ -24,6 +25,7 @@ public class LoginActivity extends Activity {
 
     private Boolean connecting;
     private DataProvider dataProvider;
+    private Controller controller;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +52,7 @@ public class LoginActivity extends Activity {
 
         try {
             dataProvider = DataProvider.GetDataProvider();
+            controller = Controller.GetRunningController();
             dataProvider.ServerConnectionStateChanged.add(new EventHandler<ConnectionEventArgs>(this,"onServerConnectionStateChanged",ConnectionEventArgs.class));
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
@@ -111,7 +114,12 @@ public class LoginActivity extends Activity {
             if (StaticParameters.StandAlone) {
                 simulateWait(false);
             } else {
-                //TODO: Check the email
+                try {
+                    this.controller.checkEmail(email,new EventHandler<CommandCallbackEventArgs>(this,"onEmailCheckedCallback",CommandCallbackEventArgs.class));
+                } catch (NoSuchMethodException e) {
+                    e.printStackTrace();
+                }
+
             }
         }
     }

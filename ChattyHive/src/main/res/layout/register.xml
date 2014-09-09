@@ -1,10 +1,14 @@
-<com.chattyhive.chattyhive.framework.SlidingStepsLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:custom="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    tools:context=".Register">
+
+<com.chattyhive.chattyhive.framework.SlidingStepsLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:id="@+id/slidingsteps"
-    tools:context=".Register"
     custom:actionBarArrowPointWidth="@dimen/register_action_bar_arrow_point_width"
     custom:actionBarHeight="@dimen/register_action_bar_height"
     custom:showActionBar="true"
@@ -53,3 +57,4 @@
         />
 
 </com.chattyhive.chattyhive.framework.SlidingStepsLayout>
+</FrameLayout>
