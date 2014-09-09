@@ -410,9 +410,21 @@ public class Controller {
     }
 
     public void checkUsername(String username,EventHandler<CommandCallbackEventArgs> Callback) {
-        /*USER_USERNAME user_username = new USER_USERNAME();
+        /*USER_USERNAME user_username = new USER_USERNAME(); //TODO: implement server function
         user_username.username = username;
         this.dataProvider.InvokeServerCommand(ServerCommand.AvailableCommands.UsernameCheck,Callback,user_username);*/
+        COMMON common = new COMMON();
+        common.STATUS = "OK";
+        ArrayList<Format> rf = new ArrayList<Format>();
+        rf.add(common);
+        CommandCallbackEventArgs eventArgs = new CommandCallbackEventArgs(rf,null);
+        try {
+            Callback.Invoke(this,eventArgs);
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
     }
 
     public void clearUserData() {

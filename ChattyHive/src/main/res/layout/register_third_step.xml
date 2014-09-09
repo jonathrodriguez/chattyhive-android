@@ -234,7 +234,7 @@
                         android:layout_marginLeft="@dimen/register_general_buttons_img_separation"
                         android:adjustViewBounds="true"
                         android:scaleType="centerInside"
-                        android:src="@drawable/menu_log_out"
+                        android:src="@drawable/register_in"
                         android:background="#00000000" />
 
                 </LinearLayout>

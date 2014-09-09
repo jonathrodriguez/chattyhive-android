@@ -38,6 +38,8 @@ public class Register extends Activity {
     private String password;
     private String repeatPassword;
 
+    private Boolean usernameValidated = false;
+
     private Register thisActivity;
 
     @Override
@@ -240,8 +242,13 @@ public class Register extends Activity {
                     }
                     break;
                 case 1:
-                    if (nextStep == 2) {
+                    if ((nextStep == 2) && (!usernameValidated) && (!newUser.getUserPublicProfile().getPublicName().equals(((TextView)findViewById(R.id.register_second_step_username)).getText().toString()))) {
                         //TODO: Check username
+                        try {
+                            Controller.GetRunningController().checkUsername(((TextView)findViewById(R.id.register_second_step_username)).getText().toString(),new EventHandler<CommandCallbackEventArgs>(thisActivity,"onUsernameCheckedCallback",CommandCallbackEventArgs.class));
+                        } catch (NoSuchMethodException e) {
+                            e.printStackTrace();
+                        }
                     }
                     break;
             }
@@ -259,7 +266,10 @@ public class Register extends Activity {
                     //Gender is saved when value changes
                     break;
                 case 1:
-                    newUser.getUserPublicProfile().setPublicName(((TextView)findViewById(R.id.register_second_step_username)).getText().toString());
+                    if (actualStep == 2) {
+                        newUser.getUserPublicProfile().setPublicName(((TextView) findViewById(R.id.register_second_step_username)).getText().toString());
+                        usernameValidated = false;
+                    }
                     newUser.getUserPublicProfile().setShowAge((Boolean)findViewById(R.id.register_second_step_show_age_public_button).getTag());
                     newUser.getUserPublicProfile().setShowLocation((Boolean)findViewById(R.id.register_second_step_show_location_public_button).getTag());
                     newUser.getUserPublicProfile().setShowSex((Boolean) findViewById(R.id.register_second_step_show_gender_public_button).getTag());
@@ -294,6 +304,17 @@ public class Register extends Activity {
                 TextView emailView = (TextView) findViewById(R.id.register_third_step_email);
                 emailView.setError("Email is already registered");
                 emailView.requestFocus();
+            }
+    }
+
+    public void onUsernameCheckedCallback(Object sender, CommandCallbackEventArgs eventArgs) {
+        for (Format receivedFormat : eventArgs.getReceivedFormats())
+            if ((receivedFormat instanceof COMMON) && (((COMMON) receivedFormat).STATUS.equalsIgnoreCase("OK"))) {
+                usernameValidated = true;
+                onTransitionListener.OnEndTransition(1,2);
+            }
+            else if ((receivedFormat instanceof COMMON) && (!((COMMON) receivedFormat).STATUS.equalsIgnoreCase("OK"))) {
+                //TODO: Process errors
             }
     }
 
