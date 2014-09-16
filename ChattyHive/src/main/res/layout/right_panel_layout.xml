@@ -31,25 +31,57 @@
         android:id="@+id/temp_chat_sync_button"
         android:singleLine="false" />-->
 
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="179dp"
+  <!--  <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/scrollView"
+        android:layout_weight="0" >-->
+
+    <!--menu desplegable-->
+
+    <ExpandableListView
+        android:layout_width="wrap_content"
+        android:layout_height="96px"
+        android:layout_marginLeft="17px"
+
+        android:id="@+id/expandableListView"
+        android:layout_weight="0" />
+    <!--android: poner el tamaño y texto-->
+
+    <!--NOTIFICACIONES-->
+
+
+
+
+<!--    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
         android:layout_height="96px"
         android:layout_gravity="right"
         android:layout_weight="0.13">
-        <CheckBox
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Hivemates"
-            android:id="@+id/checkBox2"
-            android:layout_gravity="center" />
-        </LinearLayout>
+    </LinearLayout>
+
+    <ImageView
+        android:layout_width="64px"
+        android:layout_height="64px"
+        android:id="@+id/imageView"
+        android:src="@drawable/registro_load_picture"
+        android:scaleType="centerCrop"
+        android:layout_gravity="right"
+        android:padding="2dp" />-->
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/listView"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="1"/>
 
     <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="192dp"
-        android:layout_height="96px"
-        android:layout_gravity="left">
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="80px"
+        android:layout_gravity="right"
+        android:layout_weight="0.13">
 
         <CheckBox
             android:layout_width="wrap_content"
@@ -57,9 +89,21 @@
             android:text="Amigos"
             android:id="@+id/checkBox"
             android:layout_gravity="center"
-            android:
             android:textSize="29px"/>
+
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="44px"
+            android:text="Hivemates"
+            android:id="@+id/checkBox2"
+            android:layout_gravity="center"
+            android:textSize="29px"/>
+
     </LinearLayout>
+
+
+
+    <!--INVITAR AJUSTES Y OTROS-->
 
 
 
@@ -78,4 +122,5 @@
         android:text="Clear chats"
         android:id="@+id/temp_clear_chats_button"
         android:layout_gravity="right" />-->
+    <!--</ScrollView>-->
 </LinearLayout>

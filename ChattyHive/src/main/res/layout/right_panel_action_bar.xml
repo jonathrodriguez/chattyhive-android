@@ -1,36 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal" android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:gravity="right">
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="96px"
+    android:gravity="right"
+    android:baselineAligned="false">
 
     <LinearLayout
-        android:orientation="vertical"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:paddingRight="3dp"
+        android:paddingLeft="3dp">
+
+    <TextView
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="right"
-        android:paddingRight="3dp">
-
+        android:layout_height="27px"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Surname, Name "
+        android:id="@+id/textView"
+        android:layout_gravity="center"
+        android:textSize="27px"/>
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="First Name, Last Name"
-            android:id="@+id/textView" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="24px"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="\@username"
-            android:id="@+id/textView2"
-            android:textColor="#ff6e25" />
-    </LinearLayout>
+            android:text=" - "
+            android:id="@+id/textView3"
+            android:textColor="#ffff"
+            android:layout_gravity="center"
+            android:textSize="24px"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="24px"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="\@username"
+        android:id="@+id/textView2"
+        android:textColor="#ffff"
+        android:layout_gravity="center"
+        android:textSize="24px"/>
+
+</LinearLayout>
 
     <ImageView
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_width="88px"
+        android:layout_height="88px"
         android:id="@+id/imageView"
         android:src="@drawable/registro_load_picture"
         android:scaleType="centerCrop"
