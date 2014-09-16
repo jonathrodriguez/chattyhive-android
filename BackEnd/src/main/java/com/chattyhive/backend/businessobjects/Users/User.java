@@ -2,6 +2,7 @@ package com.chattyhive.backend.businessobjects.Users;
 
 import com.chattyhive.backend.Controller;
 import com.chattyhive.backend.businessobjects.Chats.Hive;
+import com.chattyhive.backend.contentprovider.AvailableCommands;
 import com.chattyhive.backend.contentprovider.DataProvider;
 import com.chattyhive.backend.contentprovider.OSStorageProvider.UserLocalStorageInterface;
 import com.chattyhive.backend.contentprovider.formats.Format;
@@ -261,7 +262,7 @@ public class User {
 
             this.loading=true;
 
-            dataProvider.InvokeServerCommand(ServerCommand.AvailableCommands.UserProfile,request);
+            dataProvider.InvokeServerCommand(AvailableCommands.UserProfile,request);
             return true;
         }
 
@@ -344,7 +345,7 @@ public class User {
         LOGIN login = new LOGIN();
         login.USER = this.email;
         login.PASS = password;
-        DataProvider.GetDataProvider().InvokeServerCommand(ServerCommand.AvailableCommands.Register,Callback,this.toFormat(new LOCAL_USER_PROFILE()),login);
+        DataProvider.GetDataProvider().InvokeServerCommand(AvailableCommands.Register,Callback,this.toFormat(new LOCAL_USER_PROFILE()),login);
     }
 
     public void EditProfile(EventHandler<CommandCallbackEventArgs> Callback) {

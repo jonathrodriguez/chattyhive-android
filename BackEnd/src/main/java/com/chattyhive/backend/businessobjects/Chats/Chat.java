@@ -239,6 +239,19 @@ public class Chat {
         }
     }
 
+    public void addMessageByID(Message message) {
+        if (message == null) throw new NullPointerException("message must not be null.");
+        if ((message.getId() == null) ||(message.getId().isEmpty())) throw new NullPointerException("message must have an ID.");
+
+        Boolean messageListModified = this.messages.add(message);
+
+        if (messageListModified)
+            this.messagesByID.put(message.getId(),message);
+
+        if ((messageListModified) && (this.MessageListModifiedEvent != null))
+            this.MessageListModifiedEvent.fire(this, EventArgs.Empty());
+    }
+
     public void removeMessage(String ID) {
         Message toBeRemoved = this.getMessageByID(ID);
         this.messagesByID.remove(ID);

@@ -404,7 +404,7 @@ public class DataProvider {
         Hive.getHive(hive.getNameUrl());
 
         try {
-            this.server.RunCommand(ServerCommand.AvailableCommands.Join,new EventHandler<CommandCallbackEventArgs>(this,"onHiveJoinedCallback",CommandCallbackEventArgs.class),hive.toFormat(new HIVE_ID()));
+            this.server.RunCommand(AvailableCommands.Join,new EventHandler<CommandCallbackEventArgs>(this,"onHiveJoinedCallback",CommandCallbackEventArgs.class),hive.toFormat(new HIVE_ID()));
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
@@ -461,11 +461,11 @@ public class DataProvider {
     }
 
 
-    public void InvokeServerCommand(ServerCommand.AvailableCommands command,Format... formats) {
+    public void InvokeServerCommand(AvailableCommands command,Format... formats) {
         this.server.RunCommand(command,formats);
     }
 
-    public void InvokeServerCommand(ServerCommand.AvailableCommands command,EventHandler<CommandCallbackEventArgs> Callback,Format... formats) {
+    public void InvokeServerCommand(AvailableCommands command,EventHandler<CommandCallbackEventArgs> Callback,Format... formats) {
         this.server.RunCommand(command, Callback, formats);
     }
 
@@ -502,8 +502,8 @@ public class DataProvider {
     }
 
     public void ExploreHives(int offset,int length,EventHandler<CommandCallbackEventArgs> Callback) {
-        // TODO: This is for server 0.5.0 which does not support list indexing.
-        this.server.RunCommand(ServerCommand.AvailableCommands.Explore,Callback,null);
+        // TODO: This is for server 0.5.0 which does not support list indexing for explore command.
+        this.server.RunCommand(AvailableCommands.Explore,Callback,null);
     }
 
 

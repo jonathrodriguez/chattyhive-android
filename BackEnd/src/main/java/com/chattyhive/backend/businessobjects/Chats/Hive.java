@@ -1,6 +1,7 @@
 package com.chattyhive.backend.businessobjects.Chats;
 
 import com.chattyhive.backend.Controller;
+import com.chattyhive.backend.contentprovider.AvailableCommands;
 import com.chattyhive.backend.contentprovider.DataProvider;
 import com.chattyhive.backend.contentprovider.OSStorageProvider.HiveLocalStorageInterface;
 import com.chattyhive.backend.contentprovider.formats.CHAT;
@@ -145,8 +146,14 @@ public class Hive {
         }
         if ((this.nameUrl == null) || (!this.nameUrl.equals(nameUrl))) {
             this.nameUrl = nameUrl;
-            DataProvider.GetDataProvider().InvokeServerCommand(ServerCommand.AvailableCommands.HiveInfo,this.toFormat(new HIVE_ID()));
+            DataProvider.GetDataProvider().InvokeServerCommand(AvailableCommands.HiveInfo,this.toFormat(new HIVE_ID()));
         }
+    }
+
+    public Hive(String name, String nameUrl) {
+        this.name = name;
+        this.nameUrl = nameUrl;
+        this.creationDate = new Date();
     }
 
     public static Hive getHive(String nameUrl) {

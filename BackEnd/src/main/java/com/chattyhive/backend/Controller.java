@@ -4,6 +4,7 @@ import com.chattyhive.backend.businessobjects.Chats.Chat;
 import com.chattyhive.backend.businessobjects.Chats.Group;
 import com.chattyhive.backend.businessobjects.Chats.Hive;
 import com.chattyhive.backend.businessobjects.Users.User;
+import com.chattyhive.backend.contentprovider.AvailableCommands;
 import com.chattyhive.backend.contentprovider.DataProvider;
 import com.chattyhive.backend.contentprovider.OSStorageProvider.GroupLocalStorageInterface;
 import com.chattyhive.backend.contentprovider.OSStorageProvider.HiveLocalStorageInterface;
@@ -274,21 +275,21 @@ public class Controller {
     }
     public void onServerConnectionStateChanged(Object sender, ConnectionEventArgs eventArgs) {
         if (this.dataProvider.isServerConnected()) {
-            ArrayList<ServerCommand.AvailableCommands> commandSequence = new ArrayList<ServerCommand.AvailableCommands>();
+            ArrayList<AvailableCommands> commandSequence = new ArrayList<AvailableCommands>();
             //Define command sequence
             if (Controller.isAppBounded()) {
                 //Load Home
-                //commandSequence.add(ServerCommand.AvailableCommands.Home);
+                //commandSequence.add(AvailableCommands.Home);
                 if (!svcBounded)
-                    commandSequence.add(ServerCommand.AvailableCommands.ChatList);
-                commandSequence.add(ServerCommand.AvailableCommands.LocalProfile);
+                    commandSequence.add(AvailableCommands.ChatList);
+                commandSequence.add(AvailableCommands.LocalProfile);
                 if (svcBounded)
-                    commandSequence.add(ServerCommand.AvailableCommands.ChatList);
+                    commandSequence.add(AvailableCommands.ChatList);
             } else if (svcBounded) {
-                commandSequence.add(ServerCommand.AvailableCommands.ChatList);
+                commandSequence.add(AvailableCommands.ChatList);
             }
             //Execute command sequence
-            for(ServerCommand.AvailableCommands command : commandSequence)
+            for(AvailableCommands command : commandSequence)
                 dataProvider.InvokeServerCommand(command,null);
         }
         if (this.ServerConnectionStateChanged != null)
@@ -406,13 +407,13 @@ public class Controller {
     public void checkEmail(String email,EventHandler<CommandCallbackEventArgs> Callback) {
         USER_EMAIL user_email = new USER_EMAIL();
         user_email.EMAIL = email;
-        this.dataProvider.InvokeServerCommand(ServerCommand.AvailableCommands.EmailCheck,Callback,user_email);
+        this.dataProvider.InvokeServerCommand(AvailableCommands.EmailCheck,Callback,user_email);
     }
 
     public void checkUsername(String username,EventHandler<CommandCallbackEventArgs> Callback) {
         /*USER_USERNAME user_username = new USER_USERNAME(); //TODO: implement server function
         user_username.username = username;
-        this.dataProvider.InvokeServerCommand(ServerCommand.AvailableCommands.UsernameCheck,Callback,user_username);*/
+        this.dataProvider.InvokeServerCommand(AvailableCommands.UsernameCheck,Callback,user_username);*/
         COMMON common = new COMMON();
         common.STATUS = "OK";
         ArrayList<Format> rf = new ArrayList<Format>();

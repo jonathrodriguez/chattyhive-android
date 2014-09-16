@@ -3,6 +3,7 @@ package com.chattyhive.backend.businessobjects.Chats.Messages;
 import com.chattyhive.backend.businessobjects.Chats.Chat;
 import com.chattyhive.backend.businessobjects.Chats.Group;
 import com.chattyhive.backend.businessobjects.Users.User;
+import com.chattyhive.backend.contentprovider.AvailableCommands;
 import com.chattyhive.backend.contentprovider.DataProvider;
 import com.chattyhive.backend.contentprovider.formats.CHAT_ID;
 import com.chattyhive.backend.contentprovider.formats.Format;
@@ -38,7 +39,7 @@ public class Message implements Comparable {
     protected User user;
     protected Boolean confirmed;
 
-    private Boolean isMessageHole;
+    private boolean isMessageHole;
     private int holeSize;
     private Boolean filling;
     /*
@@ -113,6 +114,9 @@ public class Message implements Comparable {
             return this.timeStamp;
     }
 
+    //EMPTY CONSTRUCTOR
+    public Message() {}
+
     //CONSTRUCTOR FOR DATE SEPARATOR
     public Message(Chat chat, Date timeStamp) {
         this.user = null;
@@ -165,7 +169,7 @@ public class Message implements Comparable {
 
                 try {
                     filling = true;
-                    dataProvider.InvokeServerCommand(ServerCommand.AvailableCommands.GetMessages,new EventHandler<CommandCallbackEventArgs>(this,"onMessageHoleFilledCallback",CommandCallbackEventArgs.class),chat_id,message_interval);
+                    dataProvider.InvokeServerCommand(AvailableCommands.GetMessages,new EventHandler<CommandCallbackEventArgs>(this,"onMessageHoleFilledCallback",CommandCallbackEventArgs.class),chat_id,message_interval);
                 } catch (NoSuchMethodException e) {
                     filling = false;
                     e.printStackTrace();
@@ -205,7 +209,7 @@ public class Message implements Comparable {
         this.chat.addMessage(this);
         DataProvider dataProvider = DataProvider.GetDataProvider();
         try {
-            dataProvider.InvokeServerCommand(ServerCommand.AvailableCommands.SendMessage,new EventHandler<CommandCallbackEventArgs>(this,"onMessageSendCallback",CommandCallbackEventArgs.class),this.toFormat(new MESSAGE()));
+            dataProvider.InvokeServerCommand(AvailableCommands.SendMessage,new EventHandler<CommandCallbackEventArgs>(this,"onMessageSendCallback",CommandCallbackEventArgs.class),this.toFormat(new MESSAGE()));
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
