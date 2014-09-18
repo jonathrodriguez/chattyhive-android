@@ -110,7 +110,8 @@ public class Server {
     private Boolean recursiveTestCookiePrerequisites(final ServerCommand serverCommand, final Format... formats) {
         if (!serverCommand.checkCookies()) {
             List<Format> formatList = Arrays.asList(formats);
-            formatList.addAll(Arrays.asList(Format.getFormat(this.serverUser.toJson())));
+            if (this.serverUser != null)
+                formatList.addAll(Arrays.asList(Format.getFormat(this.serverUser.toJson())));
             Format[] newFormats = formatList.toArray(new Format[formatList.size()]);
 
             ArrayList<String> unsatisfyingCookies = serverCommand.getUnsatisfyingCookies();

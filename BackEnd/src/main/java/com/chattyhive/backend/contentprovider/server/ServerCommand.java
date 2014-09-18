@@ -10,6 +10,7 @@ import com.chattyhive.backend.contentprovider.formats.MESSAGE;
 import com.chattyhive.backend.contentprovider.formats.MESSAGE_INTERVAL;
 import com.chattyhive.backend.contentprovider.formats.PROFILE_ID;
 import com.chattyhive.backend.contentprovider.formats.USER_EMAIL;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import java.lang.reflect.Field;
@@ -101,9 +102,9 @@ public class ServerCommand {
         command = AvailableCommands.EmailCheck;
         method = Method.GET;
         commandType = CommandType.Query;
-        url = "android.email_check";
-        paramFormats = null;
-        inputFormats = new ArrayList<Class<?>>() {{add(USER_EMAIL.class);}};
+        url = "android.email_check/[USER_EMAIL.EMAIL]";
+        paramFormats = new ArrayList<Class<?>>() {{add(USER_EMAIL.class);}};
+        inputFormats = null;
         requiredCookies = new ArrayList<String>() {{add(CSRFTokenCookie);}};
         returningCookies = null;
         ServerCommand.AddServerCommand(command,method,commandType,url,paramFormats,inputFormats,requiredCookies,returningCookies);
@@ -337,15 +338,21 @@ public class ServerCommand {
     public String getBodyData(Format... formats) {
         if ((formats == null) || (formats.length == 0) || (this.inputFormats == null)) return null;
 
-        JsonObject bodyData = new JsonObject();
+        //JsonObject bodyData = new JsonObject();
+
+        String bodyData = "";
 
         for (Format f : formats) {
             if (this.inputFormats.contains(f.getClass())) {
-                bodyData.add(f.getClass().getSimpleName(), f.toJSON());
+                //bodyData.add(f.getClass().getSimpleName(), f.toJSON());
+                String jsonString = f.toJSON().toString();
+                bodyData += ((bodyData.isEmpty())?"{":", ") + jsonString.substring(1,jsonString.length()-1);
             }
         }
 
-        return bodyData.toString();
+        bodyData += "}";
+
+        return (!bodyData.equalsIgnoreCase("}"))?bodyData:"";//.toString();
     }
 
     public Boolean checkCookies() {

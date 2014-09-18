@@ -18,6 +18,7 @@ import android.widget.ImageButton;
 import com.chattyhive.backend.Controller;
 import com.chattyhive.backend.StaticParameters;
 
+import com.chattyhive.backend.contentprovider.AvailableCommands;
 import com.chattyhive.backend.contentprovider.DataProvider;
 import com.chattyhive.backend.contentprovider.server.ServerCommand;
 import com.chattyhive.chattyhive.OSStorageProvider.CookieStore;
@@ -207,7 +208,7 @@ public class Main extends Activity {
         @Override
         public void onClick(View v) {
             DataProvider dataProvider = DataProvider.GetDataProvider();
-            dataProvider.InvokeServerCommand(ServerCommand.AvailableCommands.ChatList, null);
+            dataProvider.InvokeServerCommand(AvailableCommands.ChatList, null);
         }
     };
 

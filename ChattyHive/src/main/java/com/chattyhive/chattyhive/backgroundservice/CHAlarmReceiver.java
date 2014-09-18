@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import com.chattyhive.backend.contentprovider.AvailableCommands;
 import com.chattyhive.backend.contentprovider.DataProvider;
 import com.chattyhive.backend.contentprovider.server.ServerCommand;
 
@@ -18,7 +19,7 @@ public class CHAlarmReceiver extends BroadcastReceiver {
         Log.w("CHAlarmReceiver", "Alarm tick!.");
         DataProvider dataProvider = DataProvider.GetDataProvider();
         if (dataProvider != null) {
-            dataProvider.InvokeServerCommand(ServerCommand.AvailableCommands.ChatList, null);
+            dataProvider.InvokeServerCommand(AvailableCommands.ChatList, null);
         }
     }
 }
