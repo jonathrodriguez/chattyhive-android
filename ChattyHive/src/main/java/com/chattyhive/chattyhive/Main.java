@@ -48,15 +48,15 @@ public class Main extends Activity {
 
     //TODO: Add main panel view stack
 
-    protected ViewPair ShowLayout (int layoutID, int actionBarID) {
-        FrameLayout mainPanel = ((FrameLayout)findViewById(R.id.mainCenter));
-        FrameLayout mainActionBar = ((FrameLayout)findViewById(R.id.actionCenter));
+    protected ViewPair ShowLayout(int layoutID, int actionBarID) {
+        FrameLayout mainPanel = ((FrameLayout) findViewById(R.id.mainCenter));
+        FrameLayout mainActionBar = ((FrameLayout) findViewById(R.id.actionCenter));
         mainPanel.removeAllViews();
         mainActionBar.removeAllViews();
         ActiveLayoutID = layoutID;
-        View actionBar = LayoutInflater.from(this).inflate(actionBarID,mainActionBar,true);
+        View actionBar = LayoutInflater.from(this).inflate(actionBarID, mainActionBar, true);
         View mainView = LayoutInflater.from(this).inflate(layoutID, mainPanel, true);
-        ViewPair actualView = new ViewPair(mainView,actionBar);
+        ViewPair actualView = new ViewPair(mainView, actionBar);
 
         //TODO: Populate/manage main panel view stack.
 
@@ -79,14 +79,14 @@ public class Main extends Activity {
 
         //Log.w("Main","onCreate..."); //DEBUG
         Object[] LocalStorage = {LoginLocalStorage.getLoginLocalStorage(), GroupLocalStorage.getGroupLocalStorage(), HiveLocalStorage.getHiveLocalStorage(), MessageLocalStorage.getMessageLocalStorage(), UserLocalStorage.getUserLocalStorage()};
-        Controller.Initialize(new CookieStore(),LocalStorage);
+        Controller.Initialize(new CookieStore(), LocalStorage);
 
         this.controller = Controller.GetRunningController(true);
 
         LeftPanel lp = new LeftPanel(this);
 
         try {
-            Controller.bindApp(this.getClass().getMethod("hasToLogin"),this);
+            Controller.bindApp(this.getClass().getMethod("hasToLogin"), this);
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
@@ -103,17 +103,17 @@ public class Main extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             case OP_CODE_LOGIN:
-                    if (resultCode != RESULT_OK) {
-                        Controller.DisposeRunningController();
-                        this.finish();
-                    }
+                if (resultCode != RESULT_OK) {
+                    Controller.DisposeRunningController();
+                    this.finish();
+                }
                 break;
             case OP_CODE_EXPLORE:
-                    if (resultCode == RESULT_OK) {
-                        Log.w("ExploreActionResult","Has to show hives...");
-                    } else {
-                        Log.w("ExploreActionResult","Don't move from here...");
-                    }
+                if (resultCode == RESULT_OK) {
+                    Log.w("ExploreActionResult", "Has to show hives...");
+                } else {
+                    Log.w("ExploreActionResult", "Don't move from here...");
+                }
                 break;
         }
     }
@@ -133,7 +133,7 @@ public class Main extends Activity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        
+
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
@@ -158,7 +158,8 @@ public class Main extends Activity {
                 floatingPanel.close();
             else
                 floatingPanel.openLeft();
-    } };
+        }
+    };
 
     protected View.OnClickListener menuIcon_ClickListener = new View.OnClickListener() {
         @Override
@@ -171,19 +172,19 @@ public class Main extends Activity {
     };
 
     public void setPanelBehaviour() {
-        floatingPanel = ((FloatingPanel)findViewById(R.id.FloatingPanel));
+        floatingPanel = ((FloatingPanel) findViewById(R.id.FloatingPanel));
 
-        ImageButton appIcon = (ImageButton)findViewById(R.id.appIcon);
+        ImageButton appIcon = (ImageButton) findViewById(R.id.appIcon);
         appIcon.setOnClickListener(this.appIcon_ClickListener);
 
-        ImageButton menuIcon = (ImageButton)findViewById(R.id.menuIcon);
+        ImageButton menuIcon = (ImageButton) findViewById(R.id.menuIcon);
         menuIcon.setOnClickListener(this.menuIcon_ClickListener);
     }
 
     protected View.OnClickListener explore_button_click = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Intent intent = new Intent(getApplicationContext(),Explore.class);
+            Intent intent = new Intent(getApplicationContext(), Explore.class);
             startActivityForResult(intent, OP_CODE_EXPLORE);
         }
     };
@@ -227,7 +228,7 @@ public class Main extends Activity {
                         this.controller.Leave((String) findViewById(R.id.main_panel_chat_name).getTag());
                     }
                     if (ActiveLayoutID != R.layout.home) {
-                        ShowLayout(R.layout.home,R.layout.action_bar_layout);
+                        ShowLayout(R.layout.home, R.layout.action_bar_layout);
                         this.setPanelBehaviour();
                         return true;
                     }
@@ -236,8 +237,4 @@ public class Main extends Activity {
         }
         return super.dispatchKeyEvent(event);
     }
-
-
-//comentario2222
-
 }
