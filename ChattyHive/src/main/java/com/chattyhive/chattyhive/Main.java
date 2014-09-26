@@ -69,11 +69,13 @@ public class Main extends Activity {
         ActiveLayoutID = R.layout.home;
         setContentView(R.layout.main);
 
-        findViewById(R.id.temp_explore_button).setOnClickListener(this.explore_button_click);
+        //ERRORES!!!!!?????
+
+        /*findViewById(R.id.temp_explore_button).setOnClickListener(this.explore_button_click);
         findViewById(R.id.temp_profile_button).setOnClickListener((new Profile(this)).open_profile);
         findViewById(R.id.temp_chat_sync_button).setOnClickListener(this.chat_sync_button_click);
         findViewById(R.id.temp_logout_button).setOnClickListener(this.logout_button_click);
-        findViewById(R.id.temp_clear_chats_button).setOnClickListener(this.clear_chats_button_click);
+        findViewById(R.id.temp_clear_chats_button).setOnClickListener(this.clear_chats_button_click);*/
 
         setPanelBehaviour();
 
@@ -84,6 +86,7 @@ public class Main extends Activity {
         this.controller = Controller.GetRunningController(true);
 
         LeftPanel lp = new LeftPanel(this);
+        RightPanel rp = new RightPanel(this);
 
         try {
             Controller.bindApp(this.getClass().getMethod("hasToLogin"), this);
