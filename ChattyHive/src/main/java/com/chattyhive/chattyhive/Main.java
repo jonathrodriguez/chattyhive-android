@@ -64,7 +64,7 @@ public class Main extends Activity {
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)  {
         super.onCreate(savedInstanceState);
         ActiveLayoutID = R.layout.home;
         setContentView(R.layout.main);
