@@ -86,7 +86,7 @@ public class Main extends Activity {
         this.controller = Controller.GetRunningController(true);
 
         LeftPanel lp = new LeftPanel(this);
-        RightPanel rp = new RightPanel(this);
+       // RightPanel rp = new RightPanel(this);
 
         try {
             Controller.bindApp(this.getClass().getMethod("hasToLogin"), this);
