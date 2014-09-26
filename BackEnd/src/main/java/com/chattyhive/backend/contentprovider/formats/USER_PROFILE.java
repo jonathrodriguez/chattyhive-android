@@ -6,8 +6,7 @@ import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
-  import java.util.ArrayList;
-    import com.chattyhive.backend.contentprovider.formats.BASIC_PUBLIC_PROFILE;
+import com.chattyhive.backend.contentprovider.formats.BASIC_PUBLIC_PROFILE;
     import com.chattyhive.backend.contentprovider.formats.PUBLIC_PROFILE;
     import com.chattyhive.backend.contentprovider.formats.BASIC_PRIVATE_PROFILE;
     import com.chattyhive.backend.contentprovider.formats.PRIVATE_PROFILE;
@@ -20,21 +19,18 @@ import com.google.gson.JsonPrimitive;
   *
   * ChattyHive API Manager Code Generator was created by Jonathan on 25/06/2014.
  */
-public class LOCAL_USER_PROFILE extends Format {
-	public String EMAIL;
-    public String PASS;
-    public ArrayList<HIVE_ID> HIVES_SUBSCRIBED;
-    public BASIC_PUBLIC_PROFILE USER_BASIC_PUBLIC_PROFILE;
+public class USER_PROFILE extends Format {
+	public BASIC_PUBLIC_PROFILE USER_BASIC_PUBLIC_PROFILE;
     public PUBLIC_PROFILE USER_PUBLIC_PROFILE;
     public BASIC_PRIVATE_PROFILE USER_BASIC_PRIVATE_PROFILE;
     public PRIVATE_PROFILE USER_PRIVATE_PROFILE;
     
 
-    public LOCAL_USER_PROFILE() {
+    public USER_PROFILE() {
         super();
     }
 
-    public LOCAL_USER_PROFILE(JsonElement data) {
+    public USER_PROFILE(JsonElement data) {
         this();
         this.fromJSON(data);
     }
@@ -43,31 +39,7 @@ public class LOCAL_USER_PROFILE extends Format {
     public JsonElement toJSON() {
         JsonObject jsonObject = new JsonObject();
 
-	    if ((this.EMAIL != null) && (!this.EMAIL.isEmpty()))
-            jsonObject.addProperty("EMAIL",this.EMAIL);
-      else
-            jsonObject.addProperty("EMAIL", JsonNull.INSTANCE);            
-        if ((this.PASS != null) && (!this.PASS.isEmpty()))
-            jsonObject.addProperty("PASS",this.PASS);
-      else
-            jsonObject.addProperty("PASS", JsonNull.INSTANCE);            
-        if (this.HIVES_SUBSCRIBED != null) {
-            JsonArray jsonArray = new JsonArray();
-            for (HIVE_ID element : this.HIVES_SUBSCRIBED) {
-                sonElement jsonElement =   element.toJSON()
-  ;
-                if (!jsonElement.isJsonNull())
-                    jsonArray.add(jsonElement);
-            }
-
-            if (jsonArray.size() > 0)
-                jsonObject.add("HIVES_SUBSCRIBED",jsonArray);
-            else
-                jsonObject.add("HIVES_SUBSCRIBED", JsonNull.INSTANCE);
-        }
-      else
-            jsonObject.addProperty("HIVES_SUBSCRIBED", JsonNull.INSTANCE);        
-        if (this.USER_BASIC_PUBLIC_PROFILE != null) {
+	    if (this.USER_BASIC_PUBLIC_PROFILE != null) {
             JsonElement jsonElement = this.USER_BASIC_PUBLIC_PROFILE.toJSON();
             if (!jsonElement.isJsonNull())
                 jsonObject.add("USER_BASIC_PUBLIC_PROFILE",jsonElement);
@@ -101,41 +73,24 @@ public class LOCAL_USER_PROFILE extends Format {
             return JsonNull.INSTANCE;
 
         JsonObject result = new JsonObject();
-        result.add("LOCAL_USER_PROFILE",jsonObject);
+        result.add("USER_PROFILE",jsonObject);
 
         return result;
     }
 
     @Override
     public void fromJSON(JsonElement data) {
-        JsonObject object = data.getAsJsonObject().getAsJsonObject("LOCAL_USER_PROFILE");
+        JsonObject object = data.getAsJsonObject().getAsJsonObject("USER_PROFILE");
         if ((object == null) || (!object.isJsonObject())) {
             object = data.getAsJsonObject();
         }
         if ((object == null) || (!object.isJsonObject())) {
-            throw new IllegalArgumentException("Data is not an LOCAL_USER_PROFILE object.");
+            throw new IllegalArgumentException("Data is not an USER_PROFILE object.");
         }
 
         JsonElement property;
 
-	    property = object.get("EMAIL");
-        if ((property != null) && (property.isJsonPrimitive()) && (property.getAsString() != null) && (!property.getAsString().isEmpty()))
-            this.EMAIL = property.getAsString();
-            
-        property = object.get("PASS");
-        if ((property != null) && (property.isJsonPrimitive()) && (property.getAsString() != null) && (!property.getAsString().isEmpty()))
-            this.PASS = property.getAsString();
-            
-        property = object.get("HIVES_SUBSCRIBED");
-        if ((property != null) && (property.isJsonArray())) {
-            this.HIVES_SUBSCRIBED = new ArrayList<HIVE_ID>();
-            JsonArray array = property.getAsJsonArray();
-            for (JsonElement jsonElement : array)
-                this.HIVES_SUBSCRIBED.add(  new HIVE_ID(jsonElement)
-      );
-        }
-        
-        property = object.get("USER_BASIC_PUBLIC_PROFILE");
+	    property = object.get("USER_BASIC_PUBLIC_PROFILE");
         if ((property != null) && (property.isJsonObject())) {
             this.USER_BASIC_PUBLIC_PROFILE = new BASIC_PUBLIC_PROFILE(property);
         }

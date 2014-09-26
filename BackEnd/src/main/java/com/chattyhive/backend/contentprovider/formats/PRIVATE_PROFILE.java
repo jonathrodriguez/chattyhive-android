@@ -6,13 +6,13 @@ import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
-     import java.util.Date;
+   import java.util.Date;
 import com.chattyhive.backend.util.formatters.TimestampFormatter;
     import java.util.ArrayList;
-       
+      
 
  /*
-  * Automatically generated code by ChattyHive API Manager Code Generator on 18/08/2014.
+  * Automatically generated code by ChattyHive API Manager Code Generator on 26/09/2014.
   * Be careful to not modify this file since your changes will not be included in future
   * versions of this file.
   *
@@ -20,15 +20,12 @@ import com.chattyhive.backend.util.formatters.TimestampFormatter;
  */
 public class PRIVATE_PROFILE extends Format {
 	public String USER_ID;
-    public String FIRST_NAME;
-    public String LAST_NAME;
     public String LOCATION;
     public String SEX;
     public Date BIRTHDATE;
     public ArrayList<String> LANGUAGE;
     public Boolean PRIVATE_SHOW_AGE;
-    public String USER_COLOR;
-    public String IMAGE_URL;
+    public String STATUS_MESSAGE;
     
 
     public PRIVATE_PROFILE() {
@@ -46,26 +43,25 @@ public class PRIVATE_PROFILE extends Format {
 
 	    if ((this.USER_ID != null) && (!this.USER_ID.isEmpty()))
             jsonObject.addProperty("USER_ID",this.USER_ID);
-            
-        if ((this.FIRST_NAME != null) && (!this.FIRST_NAME.isEmpty()))
-            jsonObject.addProperty("FIRST_NAME",this.FIRST_NAME);
-            
-        if ((this.LAST_NAME != null) && (!this.LAST_NAME.isEmpty()))
-            jsonObject.addProperty("LAST_NAME",this.LAST_NAME);
-            
+      else
+            jsonObject.addProperty("USER_ID", JsonNull.INSTANCE);            
         if ((this.LOCATION != null) && (!this.LOCATION.isEmpty()))
             jsonObject.addProperty("LOCATION",this.LOCATION);
-            
+      else
+            jsonObject.addProperty("LOCATION", JsonNull.INSTANCE);            
         if ((this.SEX != null) && (!this.SEX.isEmpty()))
             jsonObject.addProperty("SEX",this.SEX);
-            
+      else
+            jsonObject.addProperty("SEX", JsonNull.INSTANCE);            
         if ((this.BIRTHDATE != null) && (!TimestampFormatter.toString(this.BIRTHDATE).isEmpty()))
             jsonObject.addProperty("BIRTHDATE", TimestampFormatter.toString(this.BIRTHDATE));
+      else
+            jsonObject.addProperty("BIRTHDATE", JsonNull.INSTANCE);
             
         if (this.LANGUAGE != null) {
             JsonArray jsonArray = new JsonArray();
             for (String element : this.LANGUAGE) {
-                JsonElement jsonElement =   new JsonPrimitive(element)
+                sonElement jsonElement =   new JsonPrimitive(element)
   ;
                 if (!jsonElement.isJsonNull())
                     jsonArray.add(jsonElement);
@@ -73,17 +69,19 @@ public class PRIVATE_PROFILE extends Format {
 
             if (jsonArray.size() > 0)
                 jsonObject.add("LANGUAGE",jsonArray);
+            else
+                jsonObject.add("LANGUAGE", JsonNull.INSTANCE);
         }
-        
+      else
+            jsonObject.addProperty("LANGUAGE", JsonNull.INSTANCE);        
         if (this.PRIVATE_SHOW_AGE != null)
             jsonObject.addProperty("PRIVATE_SHOW_AGE",this.PRIVATE_SHOW_AGE);
-            
-        if ((this.USER_COLOR != null) && (!this.USER_COLOR.isEmpty()))
-            jsonObject.addProperty("USER_COLOR",this.USER_COLOR);
-            
-        if ((this.IMAGE_URL != null) && (!this.IMAGE_URL.isEmpty()))
-            jsonObject.addProperty("IMAGE_URL",this.IMAGE_URL);
-            
+      else
+            jsonObject.addProperty("PRIVATE_SHOW_AGE", JsonNull.INSTANCE);            
+        if ((this.STATUS_MESSAGE != null) && (!this.STATUS_MESSAGE.isEmpty()))
+            jsonObject.addProperty("STATUS_MESSAGE",this.STATUS_MESSAGE);
+      else
+            jsonObject.addProperty("STATUS_MESSAGE", JsonNull.INSTANCE);            
       
 
         if (jsonObject.entrySet().isEmpty())
@@ -111,14 +109,6 @@ public class PRIVATE_PROFILE extends Format {
         if ((property != null) && (property.isJsonPrimitive()) && (property.getAsString() != null) && (!property.getAsString().isEmpty()))
             this.USER_ID = property.getAsString();
             
-        property = object.get("FIRST_NAME");
-        if ((property != null) && (property.isJsonPrimitive()) && (property.getAsString() != null) && (!property.getAsString().isEmpty()))
-            this.FIRST_NAME = property.getAsString();
-            
-        property = object.get("LAST_NAME");
-        if ((property != null) && (property.isJsonPrimitive()) && (property.getAsString() != null) && (!property.getAsString().isEmpty()))
-            this.LAST_NAME = property.getAsString();
-            
         property = object.get("LOCATION");
         if ((property != null) && (property.isJsonPrimitive()) && (property.getAsString() != null) && (!property.getAsString().isEmpty()))
             this.LOCATION = property.getAsString();
@@ -144,13 +134,9 @@ public class PRIVATE_PROFILE extends Format {
         if ((property != null) && (property.isJsonPrimitive()) && (((JsonPrimitive)property).isBoolean()))
             this.PRIVATE_SHOW_AGE = property.getAsBoolean();
             
-        property = object.get("USER_COLOR");
+        property = object.get("STATUS_MESSAGE");
         if ((property != null) && (property.isJsonPrimitive()) && (property.getAsString() != null) && (!property.getAsString().isEmpty()))
-            this.USER_COLOR = property.getAsString();
-            
-        property = object.get("IMAGE_URL");
-        if ((property != null) && (property.isJsonPrimitive()) && (property.getAsString() != null) && (!property.getAsString().isEmpty()))
-            this.IMAGE_URL = property.getAsString();
+            this.STATUS_MESSAGE = property.getAsString();
             
       
     }

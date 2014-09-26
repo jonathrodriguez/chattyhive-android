@@ -6,7 +6,7 @@ import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
-  
+    
 
  /*
   * Automatically generated code by ChattyHive API Manager Code Generator on 26/09/2014.
@@ -15,16 +15,18 @@ import com.google.gson.JsonPrimitive;
   *
   * ChattyHive API Manager Code Generator was created by Jonathan on 25/06/2014.
  */
-public class PROFILE_ID extends Format {
+public class BASIC_PUBLIC_PROFILE extends Format {
 	public String USER_ID;
-    public String PROFILE_TYPE;
+    public String PUBLIC_NAME;
+    public String USER_COLOR;
+    public String IMAGE_URL;
     
 
-    public PROFILE_ID() {
+    public BASIC_PUBLIC_PROFILE() {
         super();
     }
 
-    public PROFILE_ID(JsonElement data) {
+    public BASIC_PUBLIC_PROFILE(JsonElement data) {
         this();
         this.fromJSON(data);
     }
@@ -37,29 +39,37 @@ public class PROFILE_ID extends Format {
             jsonObject.addProperty("USER_ID",this.USER_ID);
       else
             jsonObject.addProperty("USER_ID", JsonNull.INSTANCE);            
-        if ((this.PROFILE_TYPE != null) && (!this.PROFILE_TYPE.isEmpty()))
-            jsonObject.addProperty("PROFILE_TYPE",this.PROFILE_TYPE);
+        if ((this.PUBLIC_NAME != null) && (!this.PUBLIC_NAME.isEmpty()))
+            jsonObject.addProperty("PUBLIC_NAME",this.PUBLIC_NAME);
       else
-            jsonObject.addProperty("PROFILE_TYPE", JsonNull.INSTANCE);            
+            jsonObject.addProperty("PUBLIC_NAME", JsonNull.INSTANCE);            
+        if ((this.USER_COLOR != null) && (!this.USER_COLOR.isEmpty()))
+            jsonObject.addProperty("USER_COLOR",this.USER_COLOR);
+      else
+            jsonObject.addProperty("USER_COLOR", JsonNull.INSTANCE);            
+        if ((this.IMAGE_URL != null) && (!this.IMAGE_URL.isEmpty()))
+            jsonObject.addProperty("IMAGE_URL",this.IMAGE_URL);
+      else
+            jsonObject.addProperty("IMAGE_URL", JsonNull.INSTANCE);            
       
 
         if (jsonObject.entrySet().isEmpty())
             return JsonNull.INSTANCE;
 
         JsonObject result = new JsonObject();
-        result.add("PROFILE_ID",jsonObject);
+        result.add("BASIC_PUBLIC_PROFILE",jsonObject);
 
         return result;
     }
 
     @Override
     public void fromJSON(JsonElement data) {
-        JsonObject object = data.getAsJsonObject().getAsJsonObject("PROFILE_ID");
+        JsonObject object = data.getAsJsonObject().getAsJsonObject("BASIC_PUBLIC_PROFILE");
         if ((object == null) || (!object.isJsonObject())) {
             object = data.getAsJsonObject();
         }
         if ((object == null) || (!object.isJsonObject())) {
-            throw new IllegalArgumentException("Data is not an PROFILE_ID object.");
+            throw new IllegalArgumentException("Data is not an BASIC_PUBLIC_PROFILE object.");
         }
 
         JsonElement property;
@@ -68,9 +78,17 @@ public class PROFILE_ID extends Format {
         if ((property != null) && (property.isJsonPrimitive()) && (property.getAsString() != null) && (!property.getAsString().isEmpty()))
             this.USER_ID = property.getAsString();
             
-        property = object.get("PROFILE_TYPE");
+        property = object.get("PUBLIC_NAME");
         if ((property != null) && (property.isJsonPrimitive()) && (property.getAsString() != null) && (!property.getAsString().isEmpty()))
-            this.PROFILE_TYPE = property.getAsString();
+            this.PUBLIC_NAME = property.getAsString();
+            
+        property = object.get("USER_COLOR");
+        if ((property != null) && (property.isJsonPrimitive()) && (property.getAsString() != null) && (!property.getAsString().isEmpty()))
+            this.USER_COLOR = property.getAsString();
+            
+        property = object.get("IMAGE_URL");
+        if ((property != null) && (property.isJsonPrimitive()) && (property.getAsString() != null) && (!property.getAsString().isEmpty()))
+            this.IMAGE_URL = property.getAsString();
             
       
     }

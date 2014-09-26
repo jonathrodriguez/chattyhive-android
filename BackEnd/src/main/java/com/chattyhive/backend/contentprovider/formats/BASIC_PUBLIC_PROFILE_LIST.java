@@ -16,15 +16,15 @@ import java.util.ArrayList;
   *
   * ChattyHive API Manager Code Generator was created by Jonathan on 25/06/2014.
  */
-public class CHAT_LIST extends Format {
-	public ArrayList<CHAT_SYNC> LIST;
+public class BASIC_PUBLIC_PROFILE_LIST extends Format {
+	public ArrayList<BASIC_PUBLIC_PROFILE> LIST;
     
 
-    public CHAT_LIST() {
+    public BASIC_PUBLIC_PROFILE_LIST() {
         super();
     }
 
-    public CHAT_LIST(JsonElement data) {
+    public BASIC_PUBLIC_PROFILE_LIST(JsonElement data) {
         this();
         this.fromJSON(data);
     }
@@ -35,7 +35,7 @@ public class CHAT_LIST extends Format {
 
 	    if (this.LIST != null) {
             JsonArray jsonArray = new JsonArray();
-            for (CHAT_SYNC element : this.LIST) {
+            for (BASIC_PUBLIC_PROFILE element : this.LIST) {
                 sonElement jsonElement =   element.toJSON()
   ;
                 if (!jsonElement.isJsonNull())
@@ -55,29 +55,29 @@ public class CHAT_LIST extends Format {
             return JsonNull.INSTANCE;
 
         JsonObject result = new JsonObject();
-        result.add("CHAT_LIST",jsonObject);
+        result.add("BASIC_PUBLIC_PROFILE_LIST",jsonObject);
 
         return result;
     }
 
     @Override
     public void fromJSON(JsonElement data) {
-        JsonObject object = data.getAsJsonObject().getAsJsonObject("CHAT_LIST");
+        JsonObject object = data.getAsJsonObject().getAsJsonObject("BASIC_PUBLIC_PROFILE_LIST");
         if ((object == null) || (!object.isJsonObject())) {
             object = data.getAsJsonObject();
         }
         if ((object == null) || (!object.isJsonObject())) {
-            throw new IllegalArgumentException("Data is not an CHAT_LIST object.");
+            throw new IllegalArgumentException("Data is not an BASIC_PUBLIC_PROFILE_LIST object.");
         }
 
         JsonElement property;
 
 	    property = object.get("LIST");
         if ((property != null) && (property.isJsonArray())) {
-            this.LIST = new ArrayList<CHAT_SYNC>();
+            this.LIST = new ArrayList<BASIC_PUBLIC_PROFILE>();
             JsonArray array = property.getAsJsonArray();
             for (JsonElement jsonElement : array)
-                this.LIST.add(  new CHAT_SYNC(jsonElement)
+                this.LIST.add(  new BASIC_PUBLIC_PROFILE(jsonElement)
       );
         }
         

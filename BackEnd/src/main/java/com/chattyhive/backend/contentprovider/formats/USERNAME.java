@@ -15,15 +15,15 @@ import com.google.gson.JsonPrimitive;
   *
   * ChattyHive API Manager Code Generator was created by Jonathan on 25/06/2014.
  */
-public class YES_NO extends Format {
-	public String RESPONSE;
+public class USERNAME extends Format {
+	public String PUBLIC_NAME;
     
 
-    public YES_NO() {
+    public USERNAME() {
         super();
     }
 
-    public YES_NO(JsonElement data) {
+    public USERNAME(JsonElement data) {
         this();
         this.fromJSON(data);
     }
@@ -32,36 +32,36 @@ public class YES_NO extends Format {
     public JsonElement toJSON() {
         JsonObject jsonObject = new JsonObject();
 
-	    if ((this.RESPONSE != null) && (!this.RESPONSE.isEmpty()))
-            jsonObject.addProperty("RESPONSE",this.RESPONSE);
+	    if ((this.PUBLIC_NAME != null) && (!this.PUBLIC_NAME.isEmpty()))
+            jsonObject.addProperty("PUBLIC_NAME",this.PUBLIC_NAME);
       else
-            jsonObject.addProperty("RESPONSE", JsonNull.INSTANCE);            
+            jsonObject.addProperty("PUBLIC_NAME", JsonNull.INSTANCE);            
       
 
         if (jsonObject.entrySet().isEmpty())
             return JsonNull.INSTANCE;
 
         JsonObject result = new JsonObject();
-        result.add("YES_NO",jsonObject);
+        result.add("USERNAME",jsonObject);
 
         return result;
     }
 
     @Override
     public void fromJSON(JsonElement data) {
-        JsonObject object = data.getAsJsonObject().getAsJsonObject("YES_NO");
+        JsonObject object = data.getAsJsonObject().getAsJsonObject("USERNAME");
         if ((object == null) || (!object.isJsonObject())) {
             object = data.getAsJsonObject();
         }
         if ((object == null) || (!object.isJsonObject())) {
-            throw new IllegalArgumentException("Data is not an YES_NO object.");
+            throw new IllegalArgumentException("Data is not an USERNAME object.");
         }
 
         JsonElement property;
 
-	    property = object.get("RESPONSE");
+	    property = object.get("PUBLIC_NAME");
         if ((property != null) && (property.isJsonPrimitive()) && (property.getAsString() != null) && (!property.getAsString().isEmpty()))
-            this.RESPONSE = property.getAsString();
+            this.PUBLIC_NAME = property.getAsString();
             
       
     }

@@ -6,17 +6,18 @@ import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
- 
+  
 
  /*
-  * Automatically generated code by ChattyHive API Manager Code Generator on 18/08/2014.
+  * Automatically generated code by ChattyHive API Manager Code Generator on 26/09/2014.
   * Be careful to not modify this file since your changes will not be included in future
   * versions of this file.
   *
   * ChattyHive API Manager Code Generator was created by Jonathan on 25/06/2014.
  */
 public class USER_EMAIL extends Format {
-	public String EMAIL;
+	public String EMAIL_USER_PART;
+    public String EMAIL_SERVER_PART;
     
 
     public USER_EMAIL() {
@@ -32,9 +33,14 @@ public class USER_EMAIL extends Format {
     public JsonElement toJSON() {
         JsonObject jsonObject = new JsonObject();
 
-	    if ((this.EMAIL != null) && (!this.EMAIL.isEmpty()))
-            jsonObject.addProperty("EMAIL",this.EMAIL);
-            
+	    if ((this.EMAIL_USER_PART != null) && (!this.EMAIL_USER_PART.isEmpty()))
+            jsonObject.addProperty("EMAIL_USER_PART",this.EMAIL_USER_PART);
+      else
+            jsonObject.addProperty("EMAIL_USER_PART", JsonNull.INSTANCE);            
+        if ((this.EMAIL_SERVER_PART != null) && (!this.EMAIL_SERVER_PART.isEmpty()))
+            jsonObject.addProperty("EMAIL_SERVER_PART",this.EMAIL_SERVER_PART);
+      else
+            jsonObject.addProperty("EMAIL_SERVER_PART", JsonNull.INSTANCE);            
       
 
         if (jsonObject.entrySet().isEmpty())
@@ -58,9 +64,13 @@ public class USER_EMAIL extends Format {
 
         JsonElement property;
 
-	    property = object.get("EMAIL");
+	    property = object.get("EMAIL_USER_PART");
         if ((property != null) && (property.isJsonPrimitive()) && (property.getAsString() != null) && (!property.getAsString().isEmpty()))
-            this.EMAIL = property.getAsString();
+            this.EMAIL_USER_PART = property.getAsString();
+            
+        property = object.get("EMAIL_SERVER_PART");
+        if ((property != null) && (property.isJsonPrimitive()) && (property.getAsString() != null) && (!property.getAsString().isEmpty()))
+            this.EMAIL_SERVER_PART = property.getAsString();
             
       
     }

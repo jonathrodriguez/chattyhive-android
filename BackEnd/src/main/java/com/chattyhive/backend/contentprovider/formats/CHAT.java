@@ -7,13 +7,13 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
   import java.util.ArrayList;
-    import java.util.Date;
+     import java.util.Date;
 import com.chattyhive.backend.util.formatters.TimestampFormatter;
     import com.chattyhive.backend.contentprovider.formats.HIVE_ID;
-    
+      
 
  /*
-  * Automatically generated code by ChattyHive API Manager Code Generator on 18/08/2014.
+  * Automatically generated code by ChattyHive API Manager Code Generator on 26/09/2014.
   * Be careful to not modify this file since your changes will not be included in future
   * versions of this file.
   *
@@ -23,8 +23,11 @@ public class CHAT extends Format {
 	public String CHANNEL_UNICODE;
     public String PUSHER_CHANNEL;
     public ArrayList<PROFILE_ID> MEMBERS;
+    public String CHAT_TYPE;
     public Date CREATION_DATE;
     public HIVE_ID PARENT_HIVE;
+    public String NAME;
+    public String DESCRIPTION;
     
 
     public CHAT() {
@@ -42,14 +45,16 @@ public class CHAT extends Format {
 
 	    if ((this.CHANNEL_UNICODE != null) && (!this.CHANNEL_UNICODE.isEmpty()))
             jsonObject.addProperty("CHANNEL_UNICODE",this.CHANNEL_UNICODE);
-            
+      else
+            jsonObject.addProperty("CHANNEL_UNICODE", JsonNull.INSTANCE);            
         if ((this.PUSHER_CHANNEL != null) && (!this.PUSHER_CHANNEL.isEmpty()))
             jsonObject.addProperty("PUSHER_CHANNEL",this.PUSHER_CHANNEL);
-            
+      else
+            jsonObject.addProperty("PUSHER_CHANNEL", JsonNull.INSTANCE);            
         if (this.MEMBERS != null) {
             JsonArray jsonArray = new JsonArray();
             for (PROFILE_ID element : this.MEMBERS) {
-                JsonElement jsonElement =   element.toJSON()
+                sonElement jsonElement =   element.toJSON()
   ;
                 if (!jsonElement.isJsonNull())
                     jsonArray.add(jsonElement);
@@ -57,17 +62,35 @@ public class CHAT extends Format {
 
             if (jsonArray.size() > 0)
                 jsonObject.add("MEMBERS",jsonArray);
+            else
+                jsonObject.add("MEMBERS", JsonNull.INSTANCE);
         }
-        
+      else
+            jsonObject.addProperty("MEMBERS", JsonNull.INSTANCE);        
+        if ((this.CHAT_TYPE != null) && (!this.CHAT_TYPE.isEmpty()))
+            jsonObject.addProperty("CHAT_TYPE",this.CHAT_TYPE);
+      else
+            jsonObject.addProperty("CHAT_TYPE", JsonNull.INSTANCE);            
         if ((this.CREATION_DATE != null) && (!TimestampFormatter.toString(this.CREATION_DATE).isEmpty()))
             jsonObject.addProperty("CREATION_DATE", TimestampFormatter.toString(this.CREATION_DATE));
+      else
+            jsonObject.addProperty("CREATION_DATE", JsonNull.INSTANCE);
             
         if (this.PARENT_HIVE != null) {
             JsonElement jsonElement = this.PARENT_HIVE.toJSON();
             if (!jsonElement.isJsonNull())
                 jsonObject.add("PARENT_HIVE",jsonElement);
         }
-        
+      else
+            jsonObject.addProperty("PARENT_HIVE", JsonNull.INSTANCE);        
+        if ((this.NAME != null) && (!this.NAME.isEmpty()))
+            jsonObject.addProperty("NAME",this.NAME);
+      else
+            jsonObject.addProperty("NAME", JsonNull.INSTANCE);            
+        if ((this.DESCRIPTION != null) && (!this.DESCRIPTION.isEmpty()))
+            jsonObject.addProperty("DESCRIPTION",this.DESCRIPTION);
+      else
+            jsonObject.addProperty("DESCRIPTION", JsonNull.INSTANCE);            
       
 
         if (jsonObject.entrySet().isEmpty())
@@ -108,6 +131,10 @@ public class CHAT extends Format {
       );
         }
         
+        property = object.get("CHAT_TYPE");
+        if ((property != null) && (property.isJsonPrimitive()) && (property.getAsString() != null) && (!property.getAsString().isEmpty()))
+            this.CHAT_TYPE = property.getAsString();
+            
         property = object.get("CREATION_DATE");
         if ((property != null) && (property.isJsonPrimitive()) && (property.getAsString() != null) && (!property.getAsString().isEmpty()))
             this.CREATION_DATE = TimestampFormatter.toDate(property.getAsString());
@@ -117,6 +144,14 @@ public class CHAT extends Format {
             this.PARENT_HIVE = new HIVE_ID(property);
         }
         
+        property = object.get("NAME");
+        if ((property != null) && (property.isJsonPrimitive()) && (property.getAsString() != null) && (!property.getAsString().isEmpty()))
+            this.NAME = property.getAsString();
+            
+        property = object.get("DESCRIPTION");
+        if ((property != null) && (property.isJsonPrimitive()) && (property.getAsString() != null) && (!property.getAsString().isEmpty()))
+            this.DESCRIPTION = property.getAsString();
+            
       
     }
 }

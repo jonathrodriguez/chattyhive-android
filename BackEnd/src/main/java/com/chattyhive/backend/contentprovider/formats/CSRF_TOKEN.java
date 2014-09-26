@@ -9,7 +9,7 @@ import com.google.gson.JsonPrimitive;
  
 
  /*
-  * Automatically generated code by ChattyHive API Manager Code Generator on 18/08/2014.
+  * Automatically generated code by ChattyHive API Manager Code Generator on 26/09/2014.
   * Be careful to not modify this file since your changes will not be included in future
   * versions of this file.
   *
@@ -34,7 +34,8 @@ public class CSRF_TOKEN extends Format {
 
 	    if ((this.CSRF != null) && (!this.CSRF.isEmpty()))
             jsonObject.addProperty("CSRF",this.CSRF);
-            
+      else
+            jsonObject.addProperty("CSRF", JsonNull.INSTANCE);            
       
 
         if (jsonObject.entrySet().isEmpty())

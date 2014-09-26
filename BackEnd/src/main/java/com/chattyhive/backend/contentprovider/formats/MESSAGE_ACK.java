@@ -11,7 +11,7 @@ import com.chattyhive.backend.util.formatters.TimestampFormatter;
     
 
  /*
-  * Automatically generated code by ChattyHive API Manager Code Generator on 18/08/2014.
+  * Automatically generated code by ChattyHive API Manager Code Generator on 26/09/2014.
   * Be careful to not modify this file since your changes will not be included in future
   * versions of this file.
   *
@@ -37,9 +37,12 @@ public class MESSAGE_ACK extends Format {
 
 	    if ((this.ID != null) && (!this.ID.isEmpty()))
             jsonObject.addProperty("ID",this.ID);
-            
+      else
+            jsonObject.addProperty("ID", JsonNull.INSTANCE);            
         if ((this.SERVER_TIMESTAMP != null) && (!TimestampFormatter.toString(this.SERVER_TIMESTAMP).isEmpty()))
             jsonObject.addProperty("SERVER_TIMESTAMP", TimestampFormatter.toString(this.SERVER_TIMESTAMP));
+      else
+            jsonObject.addProperty("SERVER_TIMESTAMP", JsonNull.INSTANCE);
             
       
 

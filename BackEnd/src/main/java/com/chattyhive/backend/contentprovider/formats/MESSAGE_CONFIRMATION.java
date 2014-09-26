@@ -16,15 +16,15 @@ import java.util.ArrayList;
   *
   * ChattyHive API Manager Code Generator was created by Jonathan on 25/06/2014.
  */
-public class CHAT_LIST extends Format {
-	public ArrayList<CHAT_SYNC> LIST;
+public class MESSAGE_CONFIRMATION extends Format {
+	public ArrayList<CHANNEL_MESSAGE_CONFIRMATION> CHANNEL_LIST;
     
 
-    public CHAT_LIST() {
+    public MESSAGE_CONFIRMATION() {
         super();
     }
 
-    public CHAT_LIST(JsonElement data) {
+    public MESSAGE_CONFIRMATION(JsonElement data) {
         this();
         this.fromJSON(data);
     }
@@ -33,9 +33,9 @@ public class CHAT_LIST extends Format {
     public JsonElement toJSON() {
         JsonObject jsonObject = new JsonObject();
 
-	    if (this.LIST != null) {
+	    if (this.CHANNEL_LIST != null) {
             JsonArray jsonArray = new JsonArray();
-            for (CHAT_SYNC element : this.LIST) {
+            for (CHANNEL_MESSAGE_CONFIRMATION element : this.CHANNEL_LIST) {
                 sonElement jsonElement =   element.toJSON()
   ;
                 if (!jsonElement.isJsonNull())
@@ -43,41 +43,41 @@ public class CHAT_LIST extends Format {
             }
 
             if (jsonArray.size() > 0)
-                jsonObject.add("LIST",jsonArray);
+                jsonObject.add("CHANNEL_LIST",jsonArray);
             else
-                jsonObject.add("LIST", JsonNull.INSTANCE);
+                jsonObject.add("CHANNEL_LIST", JsonNull.INSTANCE);
         }
       else
-            jsonObject.addProperty("LIST", JsonNull.INSTANCE);        
+            jsonObject.addProperty("CHANNEL_LIST", JsonNull.INSTANCE);        
       
 
         if (jsonObject.entrySet().isEmpty())
             return JsonNull.INSTANCE;
 
         JsonObject result = new JsonObject();
-        result.add("CHAT_LIST",jsonObject);
+        result.add("MESSAGE_CONFIRMATION",jsonObject);
 
         return result;
     }
 
     @Override
     public void fromJSON(JsonElement data) {
-        JsonObject object = data.getAsJsonObject().getAsJsonObject("CHAT_LIST");
+        JsonObject object = data.getAsJsonObject().getAsJsonObject("MESSAGE_CONFIRMATION");
         if ((object == null) || (!object.isJsonObject())) {
             object = data.getAsJsonObject();
         }
         if ((object == null) || (!object.isJsonObject())) {
-            throw new IllegalArgumentException("Data is not an CHAT_LIST object.");
+            throw new IllegalArgumentException("Data is not an MESSAGE_CONFIRMATION object.");
         }
 
         JsonElement property;
 
-	    property = object.get("LIST");
+	    property = object.get("CHANNEL_LIST");
         if ((property != null) && (property.isJsonArray())) {
-            this.LIST = new ArrayList<CHAT_SYNC>();
+            this.CHANNEL_LIST = new ArrayList<CHANNEL_MESSAGE_CONFIRMATION>();
             JsonArray array = property.getAsJsonArray();
             for (JsonElement jsonElement : array)
-                this.LIST.add(  new CHAT_SYNC(jsonElement)
+                this.CHANNEL_LIST.add(  new CHANNEL_MESSAGE_CONFIRMATION(jsonElement)
       );
         }
         
