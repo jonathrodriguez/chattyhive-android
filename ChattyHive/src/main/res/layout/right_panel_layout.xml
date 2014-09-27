@@ -7,16 +7,24 @@
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin">
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="@color/menu_background_color">
+
+    <ImageView
+        android:layout_width="36px"
+        android:layout_height="36px"
+        android:id="@+id/pestanha_desplegable"
+        android:src="@drawable/ic_action_next_item"
+        android:tint="#FFFF"/>
 
     <!--menu desplegable-->
     <ExpandableListView
         android:id="@+id/right_panel_expandable_list"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        />
 
 </LinearLayout>
-
 
     <!--NOTIFICACIONES-->
 

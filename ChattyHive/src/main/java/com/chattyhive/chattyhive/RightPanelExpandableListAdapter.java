@@ -36,7 +36,7 @@ public class RightPanelExpandableListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public Object getGroup(int groupPosition) {
-        return null;
+        return group.get(groupPosition);
     }
 
     @Override
@@ -67,11 +67,11 @@ public class RightPanelExpandableListAdapter extends BaseExpandableListAdapter {
     @Override
     public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
         if (convertView == null) {
-            convertView = inflater.inflate(R.layout.right_panel_subitems_layout, null);
+            convertView = inflater.inflate(R.layout.right_panel_items_layout, null);
         }
         RightPanelListItem grupo = (RightPanelListItem) getGroup(groupPosition);
-        ((CheckedTextView) convertView).setText(grupo.string);
-        ((CheckedTextView) convertView).setChecked(isExpanded);
+        ((CheckedTextView)convertView).setText(grupo.string);
+        ((CheckedTextView)convertView).setChecked(isExpanded);
         return convertView;
     }
 
@@ -84,6 +84,25 @@ public class RightPanelExpandableListAdapter extends BaseExpandableListAdapter {
         }
         text = (TextView) convertView.findViewById(R.id.right_panel_subitem_layout_text);
         text.setText(children);
+        switch (groupPosition){
+            case 0:
+                switch (childPosition) {
+                    case 0:
+                        text.setCompoundDrawablesWithIntrinsicBounds(R.drawable.menu_explore_blanco , 0, 0, 0);
+                        break;
+                    case 1:
+                        text.setCompoundDrawablesWithIntrinsicBounds(R.drawable.menu_explore_blanco, 0, 0, 0); //naranja????
+                        break;
+                    case 2:
+                        text.setCompoundDrawablesWithIntrinsicBounds(R.drawable.menu_chats_blanco , 0, 0, 0);
+                        break;
+                    case 3:
+                        text.setCompoundDrawablesWithIntrinsicBounds(R.drawable.menu_peticiones_blanco , 0, 0, 0);
+                        break;
+                }
+                break;
+        }
+
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
