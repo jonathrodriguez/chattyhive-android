@@ -47,6 +47,10 @@ public class ServerCommand {
     private static HashMap<String,ArrayList<AvailableCommands>> CookieProductionCommands;
 
     static {
+        ServerCommand.Initialize();
+    }
+
+    private static void Initialize() {
         final String CSRFTokenCookie = "csrftoken";
         final String SessionCookie = "sessionid";
 
@@ -266,7 +270,12 @@ public class ServerCommand {
         this.returningCookies = returningCookies;
     }
 
-    public AvailableCommands getCommand() {return this.command; }
+    public AvailableCommands getCommand() {
+        return this.command;
+    }
+    public CommandType getCommandType() {
+        return this.commandType;
+    }
     public String getMethod() {
         return this.method.toString();
     }

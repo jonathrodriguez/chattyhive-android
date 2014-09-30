@@ -137,6 +137,8 @@ public class DataProvider {
     private static MessageLocalStorageInterface MessageLocalStorage;
     private static UserLocalStorageInterface UserLocalStorage;
 
+
+
     public static void setLocalStorage(Object... LocalStorage) {
         for (Object localStorage : LocalStorage) {
             if ((localStorage instanceof GroupLocalStorageInterface) && (GroupLocalStorage == null)) {
