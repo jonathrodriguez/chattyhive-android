@@ -2,6 +2,7 @@ package com.chattyhive.backend.businessobjects.Chats.Messages;
 
 import com.chattyhive.backend.businessobjects.Chats.Chat;
 import com.chattyhive.backend.businessobjects.Chats.Group;
+import com.chattyhive.backend.businessobjects.Chats.GroupKind;
 import com.chattyhive.backend.businessobjects.Users.User;
 import com.chattyhive.backend.contentprovider.AvailableCommands;
 import com.chattyhive.backend.contentprovider.DataProvider;
@@ -243,7 +244,7 @@ public class Message implements Comparable {
             ((MESSAGE) format).SERVER_TIMESTAMP = this.serverTimeStamp;
             ((MESSAGE) format).CONFIRMED = this.confirmed;
             ((MESSAGE) format).CONTENT = (MESSAGE_CONTENT)this.content.toFormat(new MESSAGE_CONTENT());
-            ((MESSAGE) format).PROFILE = (PROFILE_ID)this.user.toFormat(new PROFILE_ID());
+            ((MESSAGE) format).USER_ID = this.user.getUserID();
             ((MESSAGE) format).CHANNEL_UNICODE = this.chat.getParent().getChannelUnicode();
         } else if (format instanceof MESSAGE_ACK) {
             ((MESSAGE_ACK) format).ID = this.id;
@@ -269,8 +270,13 @@ public class Message implements Comparable {
 
             this.confirmed = ((MESSAGE) format).CONFIRMED;
             this.content = new MessageContent(((MESSAGE) format).CONTENT);
-            this.user = User.getUser(((MESSAGE) format).PROFILE);
             this.chat = Group.getGroup(((MESSAGE) format).CHANNEL_UNICODE,true).getChat();
+
+            PROFILE_ID profile_id = new PROFILE_ID();
+            profile_id.USER_ID = ((MESSAGE) format).USER_ID;
+            profile_id.PROFILE_TYPE = ((this.chat.getParent().getGroupKind() == GroupKind.PRIVATE_GROUP) || (this.chat.getParent().getGroupKind() == GroupKind.PRIVATE_SINGLE))?"BASIC_PRIVATE":"BASIC_PUBLIC";
+            this.user = User.getUser(profile_id);
+
 
             return true;
         } else if (format instanceof MESSAGE_ACK) {

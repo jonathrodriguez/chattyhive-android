@@ -9,7 +9,7 @@ import com.google.gson.JsonPrimitive;
   
 
  /*
-  * Automatically generated code by ChattyHive API Manager Code Generator on 26/09/2014.
+  * Automatically generated code by ChattyHive API Manager Code Generator on 28/09/2014.
   * Be careful to not modify this file since your changes will not be included in future
   * versions of this file.
   *
@@ -36,11 +36,11 @@ public class PROFILE_ID extends Format {
 	    if ((this.USER_ID != null) && (!this.USER_ID.isEmpty()))
             jsonObject.addProperty("USER_ID",this.USER_ID);
       else
-            jsonObject.addProperty("USER_ID", JsonNull.INSTANCE);            
+            jsonObject.add("USER_ID", JsonNull.INSTANCE);            
         if ((this.PROFILE_TYPE != null) && (!this.PROFILE_TYPE.isEmpty()))
             jsonObject.addProperty("PROFILE_TYPE",this.PROFILE_TYPE);
       else
-            jsonObject.addProperty("PROFILE_TYPE", JsonNull.INSTANCE);            
+            jsonObject.add("PROFILE_TYPE", JsonNull.INSTANCE);            
       
 
         if (jsonObject.entrySet().isEmpty())

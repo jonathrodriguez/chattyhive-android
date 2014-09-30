@@ -14,7 +14,7 @@ import com.chattyhive.backend.util.formatters.TimestampFormatter;
     
 
  /*
-  * Automatically generated code by ChattyHive API Manager Code Generator on 26/09/2014.
+  * Automatically generated code by ChattyHive API Manager Code Generator on 28/09/2014.
   * Be careful to not modify this file since your changes will not be included in future
   * versions of this file.
   *
@@ -46,35 +46,35 @@ public class MESSAGE extends Format {
 	    if ((this.ID != null) && (!this.ID.isEmpty()))
             jsonObject.addProperty("ID",this.ID);
       else
-            jsonObject.addProperty("ID", JsonNull.INSTANCE);            
+            jsonObject.add("ID", JsonNull.INSTANCE);            
         if ((this.USER_ID != null) && (!this.USER_ID.isEmpty()))
             jsonObject.addProperty("USER_ID",this.USER_ID);
       else
-            jsonObject.addProperty("USER_ID", JsonNull.INSTANCE);            
+            jsonObject.add("USER_ID", JsonNull.INSTANCE);            
         if ((this.SERVER_TIMESTAMP != null) && (!TimestampFormatter.toString(this.SERVER_TIMESTAMP).isEmpty()))
             jsonObject.addProperty("SERVER_TIMESTAMP", TimestampFormatter.toString(this.SERVER_TIMESTAMP));
       else
-            jsonObject.addProperty("SERVER_TIMESTAMP", JsonNull.INSTANCE);
+            jsonObject.add("SERVER_TIMESTAMP", JsonNull.INSTANCE);
             
         if ((this.CHANNEL_UNICODE != null) && (!this.CHANNEL_UNICODE.isEmpty()))
             jsonObject.addProperty("CHANNEL_UNICODE",this.CHANNEL_UNICODE);
       else
-            jsonObject.addProperty("CHANNEL_UNICODE", JsonNull.INSTANCE);            
+            jsonObject.add("CHANNEL_UNICODE", JsonNull.INSTANCE);            
         if (this.CONFIRMED != null)
             jsonObject.addProperty("CONFIRMED",this.CONFIRMED);
       else
-            jsonObject.addProperty("CONFIRMED", JsonNull.INSTANCE);            
+            jsonObject.add("CONFIRMED", JsonNull.INSTANCE);            
         if (this.CONTENT != null) {
             JsonElement jsonElement = this.CONTENT.toJSON();
             if (!jsonElement.isJsonNull())
                 jsonObject.add("CONTENT",jsonElement);
         }
       else
-            jsonObject.addProperty("CONTENT", JsonNull.INSTANCE);        
+            jsonObject.add("CONTENT", JsonNull.INSTANCE);        
         if ((this.TIMESTAMP != null) && (!TimestampFormatter.toString(this.TIMESTAMP).isEmpty()))
             jsonObject.addProperty("TIMESTAMP", TimestampFormatter.toString(this.TIMESTAMP));
       else
-            jsonObject.addProperty("TIMESTAMP", JsonNull.INSTANCE);
+            jsonObject.add("TIMESTAMP", JsonNull.INSTANCE);
             
       
 

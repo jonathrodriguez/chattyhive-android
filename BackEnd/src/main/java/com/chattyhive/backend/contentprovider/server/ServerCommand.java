@@ -46,7 +46,7 @@ public class ServerCommand {
     private static HashMap<AvailableCommands,ServerCommand> CommandDefinitions;
     private static HashMap<String,ArrayList<AvailableCommands>> CookieProductionCommands;
 
-    public static void Initialize() {
+    static {
         final String CSRFTokenCookie = "csrftoken";
         final String SessionCookie = "sessionid";
 
@@ -230,16 +230,12 @@ public class ServerCommand {
     }
 
     public static ServerCommand GetCommand(AvailableCommands command) {
-        if (ServerCommand.CommandDefinitions == null) ServerCommand.Initialize();
         if (!ServerCommand.CommandDefinitions.containsKey(command)) throw new IllegalArgumentException(String.format("Command (%s) is not defined.",command.toString()));
-
         return ServerCommand.CommandDefinitions.get(command);
     }
 
     public static ArrayList<AvailableCommands> GetCommandForCookie(String cookie) {
-        if (ServerCommand.CookieProductionCommands == null) ServerCommand.Initialize();
         if (!ServerCommand.CookieProductionCommands.containsKey(cookie)) return null;
-
         return ServerCommand.CookieProductionCommands.get(cookie);
     }
 

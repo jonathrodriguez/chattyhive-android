@@ -9,7 +9,7 @@ import com.google.gson.JsonPrimitive;
    
 
  /*
-  * Automatically generated code by ChattyHive API Manager Code Generator on 26/09/2014.
+  * Automatically generated code by ChattyHive API Manager Code Generator on 28/09/2014.
   * Be careful to not modify this file since your changes will not be included in future
   * versions of this file.
   *
@@ -37,15 +37,15 @@ public class INTERVAL extends Format {
 	    if ((this.START_INDEX != null) && (!this.START_INDEX.isEmpty()))
             jsonObject.addProperty("START_INDEX",this.START_INDEX);
       else
-            jsonObject.addProperty("START_INDEX", JsonNull.INSTANCE);            
+            jsonObject.add("START_INDEX", JsonNull.INSTANCE);            
         if (this.COUNT != null)
             jsonObject.addProperty("COUNT",this.COUNT);
       else
-            jsonObject.addProperty("COUNT", JsonNull.INSTANCE);            
+            jsonObject.add("COUNT", JsonNull.INSTANCE);            
         if ((this.END_INDEX != null) && (!this.END_INDEX.isEmpty()))
             jsonObject.addProperty("END_INDEX",this.END_INDEX);
       else
-            jsonObject.addProperty("END_INDEX", JsonNull.INSTANCE);            
+            jsonObject.add("END_INDEX", JsonNull.INSTANCE);            
       
 
         if (jsonObject.entrySet().isEmpty())

@@ -9,7 +9,7 @@ import com.google.gson.JsonPrimitive;
  
 
  /*
-  * Automatically generated code by ChattyHive API Manager Code Generator on 26/09/2014.
+  * Automatically generated code by ChattyHive API Manager Code Generator on 28/09/2014.
   * Be careful to not modify this file since your changes will not be included in future
   * versions of this file.
   *
@@ -35,7 +35,7 @@ public class USERNAME extends Format {
 	    if ((this.PUBLIC_NAME != null) && (!this.PUBLIC_NAME.isEmpty()))
             jsonObject.addProperty("PUBLIC_NAME",this.PUBLIC_NAME);
       else
-            jsonObject.addProperty("PUBLIC_NAME", JsonNull.INSTANCE);            
+            jsonObject.add("PUBLIC_NAME", JsonNull.INSTANCE);            
       
 
         if (jsonObject.entrySet().isEmpty())

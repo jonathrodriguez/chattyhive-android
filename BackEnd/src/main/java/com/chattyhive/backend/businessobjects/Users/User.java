@@ -5,6 +5,9 @@ import com.chattyhive.backend.businessobjects.Chats.Hive;
 import com.chattyhive.backend.contentprovider.AvailableCommands;
 import com.chattyhive.backend.contentprovider.DataProvider;
 import com.chattyhive.backend.contentprovider.OSStorageProvider.UserLocalStorageInterface;
+import com.chattyhive.backend.contentprovider.formats.BASIC_PRIVATE_PROFILE;
+import com.chattyhive.backend.contentprovider.formats.BASIC_PUBLIC_PROFILE;
+import com.chattyhive.backend.contentprovider.formats.COMMON;
 import com.chattyhive.backend.contentprovider.formats.Format;
 import com.chattyhive.backend.contentprovider.formats.HIVE_ID;
 import com.chattyhive.backend.contentprovider.formats.LOCAL_USER_PROFILE;
@@ -12,15 +15,19 @@ import com.chattyhive.backend.contentprovider.formats.LOGIN;
 import com.chattyhive.backend.contentprovider.formats.PRIVATE_PROFILE;
 import com.chattyhive.backend.contentprovider.formats.PROFILE_ID;
 import com.chattyhive.backend.contentprovider.formats.PUBLIC_PROFILE;
-import com.chattyhive.backend.contentprovider.server.ServerCommand;
+import com.chattyhive.backend.contentprovider.formats.USERNAME;
+import com.chattyhive.backend.contentprovider.formats.USER_EMAIL;
+import com.chattyhive.backend.contentprovider.formats.USER_PROFILE;
 import com.chattyhive.backend.util.events.CommandCallbackEventArgs;
+import com.chattyhive.backend.util.events.Event;
 import com.chattyhive.backend.util.events.EventHandler;
 import com.chattyhive.backend.util.events.FormatReceivedEventArgs;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.google.gson.JsonPrimitive;
+import com.sun.istack.internal.NotNull;
+import com.sun.istack.internal.Nullable;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.TreeMap;
 
@@ -29,6 +36,138 @@ import java.util.TreeMap;
  * Represents a user.
  */
 public class User {
+    public static void CheckEmail(String email, Controller controller, EventHandler<CommandCallbackEventArgs> Callback) {
+        if (!email.contains("@")) return;
+
+        String userPart = email.split("@")[0];
+        String serverPart = email.split("@")[1];
+        if ((userPart.isEmpty()) || (serverPart.isEmpty())) return;
+
+        USER_EMAIL user_email = new USER_EMAIL();
+        user_email.EMAIL_USER_PART = userPart;
+        user_email.EMAIL_SERVER_PART = serverPart;
+        controller.getDataProvider().InvokeServerCommand(AvailableCommands.EmailCheck, Callback, user_email);
+    }
+    public static void CheckUsername(String username, Controller controller, EventHandler<CommandCallbackEventArgs> Callback) {
+        USERNAME user_username = new USERNAME();
+        user_username.PUBLIC_NAME = username;
+        //controller.getDataProvider().InvokeServerCommand(AvailableCommands.UsernameCheck,Callback,user_username); //TODO: implement server function
+        COMMON common = new COMMON();
+        common.STATUS = "OK";
+        ArrayList<Format> rf = new ArrayList<Format>();
+        rf.add(common);
+        ArrayList<Format> sf = new ArrayList<Format>();
+        sf.add(user_username);
+        CommandCallbackEventArgs eventArgs = new CommandCallbackEventArgs(rf,sf);
+        try {
+            Callback.Invoke(controller,eventArgs);
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private Controller controller;
+    private Boolean loading;
+
+    private Boolean isMe = false;
+    private String email; //Only for local user;
+
+    private String userID; //ID for any user. (This will be the public username).
+    private PublicProfile userPublicProfile; //Public profile for any user.
+    private PrivateProfile userPrivateProfile; //Private profile for any user.
+
+    public void setController(Controller controller) {
+        this.controller = controller;
+    }
+
+    public Boolean isLoading() {
+        return this.loading;
+    }
+
+    public Boolean isMe() {
+        return this.isMe;
+    }
+
+    public String getEmail() {
+        return this.email;
+    }
+    public void setEmail(String value) {
+        this.email = value;
+    }
+
+    public String getUserID() {
+        return this.userID;
+    }
+    public void setUserID(String value) {
+        this.userID = value;
+    }
+
+    public PublicProfile getUserPublicProfile() {
+        return this.userPublicProfile;
+    }
+    public PrivateProfile getUserPrivateProfile() {
+        return this.userPrivateProfile;
+    }
+
+    /********************************************************************************************/
+
+    public User(String email) {
+        this(email,(Controller)null);
+    }
+
+    public User(String email, Controller controller) {
+        this.email = email;
+        this.isMe = true;
+        this.userPrivateProfile = new PrivateProfile();
+        this.userPublicProfile = new PublicProfile();
+        this.controller = controller;
+    }
+
+    public User (Format format) {
+        this(format,(Controller)null);
+    }
+
+    public User(Format format, Controller controller) {
+        if (!this.fromFormat(format))
+            throw new IllegalArgumentException("LOCAL_USER_PROFILE, PUBLIC_PROFILE or PRIVATE_PROFILE expected.");
+
+        this.controller = controller;
+    }
+
+    public User(String userID, @NotNull ProfileType requiredProfileType) {
+        this(userID,requiredProfileType,(Controller)null);
+    }
+
+    public User(String userID, @NotNull ProfileType requiredProfileType, Controller controller) {
+        this.controller = controller;
+        this.userID = userID;
+
+        if (this.controller == null) return;
+
+        PROFILE_ID requestProfile = new PROFILE_ID();
+        requestProfile.USER_ID = userID;
+        requestProfile.PROFILE_TYPE = (requiredProfileType == ProfileType.PRIVATE)?"BASIC_PRIVATE":"BASIC_PUBLIC";
+
+        try {
+            this.loading = true;
+            this.controller.getDataProvider().RunCommand(AvailableCommands.UserProfile, new EventHandler<CommandCallbackEventArgs>(this, "loadCallback", CommandCallbackEventArgs.class), requestProfile);
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+            this.loading = false;
+        }
+    }
+
+
+    public void loadCallback (Object sender, CommandCallbackEventArgs args) {
+        if (args.countReceivedFormats() == 0) return;
+        ArrayList<Format> receivedFormats = args.getReceivedFormats();
+        for (Format format : receivedFormats) {
+            if ((format instanceof LOCAL_USER_PROFILE) || (format instanceof USER_PROFILE))
+                this.fromFormat(format);
+        }
+    }
 
     /***********************************/
     /*     STATIC USER MANAGEMENT      */
@@ -56,7 +195,7 @@ public class User {
                 for (Format format : formats) {
                     User u = new User(format);
 
-                    u.unloadProfile(); //There is no need to keep in memory complete user profiles.
+                    u.unloadProfile(ProfileLevel.Basic); //There is no need to keep in memory complete user profiles.
 
                     User.knownUsers.put(u.getUserID(), u);
                 }
@@ -85,7 +224,7 @@ public class User {
         else {
             User u = new User(format);
             if (!u.isMe()) {
-                    u.unloadProfile();
+                    u.unloadProfile(ProfileLevel.Basic);
                     User.knownUsers.put(userID, u);
                 }
             else
@@ -97,9 +236,9 @@ public class User {
     public static User getUser(PROFILE_ID profile_id) {
         if (User.knownUsers == null) throw new IllegalStateException("Users must be initialized.");
         else if (profile_id == null) throw new NullPointerException("PROFILE_ID must not be null.");
-        else if (((profile_id.PUBLIC_NAME == null) || profile_id.PUBLIC_NAME.isEmpty()) && ((profile_id.USER_ID == null) || profile_id.USER_ID.isEmpty())) throw new IllegalArgumentException("PROFILE_ID must not be empty.");
+        else if ((profile_id.USER_ID == null) || profile_id.USER_ID.isEmpty()) throw new IllegalArgumentException("PROFILE_ID must not be empty.");
 
-        String userID = ((profile_id.PUBLIC_NAME == null) || profile_id.PUBLIC_NAME.isEmpty())?profile_id.USER_ID:profile_id.PUBLIC_NAME;
+        String userID = profile_id.USER_ID;
 
         if (User.knownUsers.containsKey(userID))
             return User.knownUsers.get(userID);
@@ -109,7 +248,7 @@ public class User {
         else {
             User u = new User(profile_id);
             if (!u.isMe()) {
-                u.unloadProfile();
+                u.unloadProfile(ProfileLevel.Basic);
                 User.knownUsers.put(userID, u);
             }
             else
@@ -121,7 +260,7 @@ public class User {
 
     public static void unloadProfiles() {
         for (User user : User.knownUsers.values())
-            user.unloadProfile();
+            user.unloadProfile(ProfileLevel.Basic);
     }
 
     public static User getMe() {
@@ -147,8 +286,8 @@ public class User {
                     else
                         User.me = new User(format);
                 } else if (format instanceof PUBLIC_PROFILE) {
-                    User.userLocalStorage.StoreCompleteUserProfile(((PUBLIC_PROFILE) format).PUBLIC_NAME,format.toJSON().toString());
-                    User.getUser(((PUBLIC_PROFILE) format).PUBLIC_NAME, format);
+                    User.userLocalStorage.StoreCompleteUserProfile(((PUBLIC_PROFILE) format).USER_ID,format.toJSON().toString());
+                    User.getUser(((PUBLIC_PROFILE) format).USER_ID, format);
                 } else if  (format instanceof PRIVATE_PROFILE) {
                     User.userLocalStorage.StoreCompleteUserProfile(((PRIVATE_PROFILE) format).USER_ID,format.toJSON().toString());
                     User.getUser(((PRIVATE_PROFILE) format).USER_ID, format);
@@ -163,179 +302,6 @@ public class User {
     /***********************************/
     /***********************************/
 
-    /***********************************/
-    /*      DINAMYC MANAGEMENT         */
-    /***********************************/
-
-    /***********************************/
-    /*          SYNC FIELDS            */
-    /***********************************/
-    private Boolean loading;
-
-    public Boolean isLoading() {
-        return this.loading;
-    }
-
-    /***********************************/
-    /*      GENERAL USER FIELDS        */
-    /***********************************/
-    private Boolean isMe = false;
-    private String email; //Only for local user;
-
-    private String userID;
-    private String color;
-    private String showingName;
-    private String imageURL;
-
-    public Boolean isMe() {
-        return this.isMe;
-    }
-
-    public String getEmail() {
-        return this.email;
-    }
-    public void setEmail(String value) {
-        this.email = value;
-    }
-
-    public String getUserID() {
-        return this.userID;
-    }
-
-    public String getColor() {
-        return this.color;
-    }
-
-    public String getShowingName() {
-        return this.showingName;
-    }
-
-    public String getImageURL() {
-        return this.imageURL;
-    }
-    /***********************************/
-
-    /***********************************/
-    /*         USER PROFILES           */
-    /***********************************/
-    private Boolean isPrivate;
-    private PublicProfile userPublicProfile; //Public profile for any user.
-    private PrivateProfile userPrivateProfile; //Private profile for any user;
-
-    public Boolean isPrivate() {
-        return this.isPrivate;
-    }
-    public PublicProfile getUserPublicProfile() {
-        return this.userPublicProfile;
-    }
-    public PrivateProfile getUserPrivateProfile() {
-        return this.userPrivateProfile;
-    }
-    public Profile getUserProfile() {
-        if (this.isPrivate)
-            return this.userPrivateProfile;
-        else
-            return this.userPublicProfile;
-    }
-
-    public Boolean loadProfile() {
-        //Load profile from local storage
-        if (!this.isMe()) {
-            this.fromJson((new JsonParser()).parse(User.userLocalStorage.RecoverCompleteUserProfile(userID)));
-        } else {
-            this.fromJson((new JsonParser()).parse(User.userLocalStorage.RecoverLocalUserProfile()));
-        }
-
-        if ((this.userPublicProfile != null) || (this.userPrivateProfile != null))
-            return true;
-
-
-        //Load profile from server
-        if (DataProvider.isConnectionAvailable()) {
-            DataProvider dataProvider = DataProvider.GetDataProvider();
-
-            PROFILE_ID request = new PROFILE_ID();
-            if (this.isPrivate())
-                request.USER_ID = this.getUserID();
-            else
-                request.PUBLIC_NAME = this.getUserID();
-
-            this.loading=true;
-
-            dataProvider.InvokeServerCommand(AvailableCommands.UserProfile,request);
-            return true;
-        }
-
-        return false;
-    }
-    public void unloadProfile() {
-        if (this.isMe()) return;
-        if (this.isPrivate())
-            this.userPrivateProfile = null;
-        else if (!this.isPrivate())
-            this.userPublicProfile = null;
-    }
-    /*************************************/
-
-
-    /*************************************/
-    /*          CONSTRUCTORS             */
-    /*************************************/
-    /**
-     * Public constructor.
-     * @param profile_id a PROFILE_ID with the user's ID.
-     */
-    public User (PROFILE_ID profile_id) {
-
-        String userID = ((profile_id.PUBLIC_NAME == null) || profile_id.PUBLIC_NAME.isEmpty())?profile_id.USER_ID:profile_id.PUBLIC_NAME;
-
-        String localUser = User.userLocalStorage.RecoverCompleteUserProfile(userID);
-        if ((localUser != null) && (!localUser.isEmpty()))
-            this.fromJson((new JsonParser()).parse(localUser));
-
-        if ((this.userID == null) || (!this.userID.equals(userID))) {
-            localUser = User.userLocalStorage.RecoverLocalUserProfile();
-            if ((localUser != null) && (!localUser.isEmpty()))
-                this.fromJson((new JsonParser()).parse(localUser));
-        }
-
-        if ((this.userID == null) || (!this.userID.equals(userID))) {
-            this.userID = userID;
-            //Server information recovering
-            if (DataProvider.isConnectionAvailable()) {
-                this.loading = true;
-
-                /*TODO: Do this when implemented.
-                DataProvider dataProvider = DataProvider.GetDataProvider();
-                dataProvider.InvokeServerCommand(ServerCommand.AvailableCommands.UserProfile,profile_id);*/
-
-                this.showingName = String.format("%s",this.userID);
-                this.color = "#808080";
-                this.isMe = false;
-                this.isPrivate = false;
-                PUBLIC_PROFILE public_profile = new PUBLIC_PROFILE();
-                public_profile.PUBLIC_NAME = this.userID;
-                public_profile.USER_COLOR = "#808080";
-                this.userPublicProfile = new PublicProfile(public_profile);
-            }
-        }
-    }
-
-    private User () {
-        this.isMe = false;
-    }
-
-    public User(String email) {
-        this.email = email;
-        this.isMe = true;
-        this.userPrivateProfile = new PrivateProfile();
-        this.userPublicProfile = new PublicProfile();
-    }
-
-    public User (Format format) {
-        if (!this.fromFormat(format))
-            throw new IllegalArgumentException("LOCAL_USER_PROFILE, PUBLIC_PROFILE or PRIVATE_PROFILE expected.");
-    }
     /*************************************/
 
     /*************************************/
@@ -345,11 +311,62 @@ public class User {
         LOGIN login = new LOGIN();
         login.USER = this.email;
         login.PASS = password;
-        DataProvider.GetDataProvider().InvokeServerCommand(AvailableCommands.Register,Callback,this.toFormat(new LOCAL_USER_PROFILE()),login);
+        LOCAL_USER_PROFILE lup = (LOCAL_USER_PROFILE)this.toFormat(new LOCAL_USER_PROFILE());
+        lup.PASS = password;
+        this.controller.getDataProvider().InvokeServerCommand(AvailableCommands.Register,Callback,lup,login);
+    }
+    public void EditProfile(EventHandler<CommandCallbackEventArgs> Callback) {
+        //this.controller.getDataProvider().InvokeServerCommand(ServerCommand.AvailableCommands.UpdateProfile,Callback,this.toFormat(new LOCAL_USER_PROFILE()));
     }
 
-    public void EditProfile(EventHandler<CommandCallbackEventArgs> Callback) {
-        //DataProvider.GetDataProvider().InvokeServerCommand(ServerCommand.AvailableCommands.UpdateProfile,Callback,this.toFormat(new LOCAL_USER_PROFILE()));
+    public void loadProfile(ProfileType profileType, ProfileLevel profileLevel) {
+        if (profileLevel == ProfileLevel.None) return;
+
+        PROFILE_ID profile_id = new PROFILE_ID();
+        profile_id.USER_ID = this.userID;
+
+        if (profileType == ProfileType.PUBLIC) {
+            if ((this.userPublicProfile != null) && (this.userPublicProfile.getLoadedProfileLevel().ordinal() >= profileLevel.ordinal()))
+                return;
+            profile_id.PROFILE_TYPE = "_PUBLIC";
+        } else if (profileType == ProfileType.PRIVATE) {
+            if ((this.userPrivateProfile != null) && (this.userPrivateProfile.getLoadedProfileLevel().ordinal() >= profileLevel.ordinal()))
+                return;
+            profile_id.PROFILE_TYPE = "_PRIVATE";
+        } else return;
+
+        switch (profileLevel) {
+            case Basic:
+                profile_id.PROFILE_TYPE = "BASIC".concat(profile_id.PROFILE_TYPE);
+                break;
+            case Extended:
+                profile_id.PROFILE_TYPE = "EXTENDED".concat(profile_id.PROFILE_TYPE);
+                break;
+            case Complete:
+                profile_id.PROFILE_TYPE = "COMPLETE".concat(profile_id.PROFILE_TYPE);
+                break;
+            default:
+                return;
+        }
+
+        try {
+            this.controller.getDataProvider().RunCommand(AvailableCommands.UserProfile,new EventHandler<CommandCallbackEventArgs>(this,"loadCallback",CommandCallbackEventArgs.class),profile_id);
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void unloadProfile(ProfileLevel profileLevel) {
+        if (profileLevel == ProfileLevel.Complete) return;
+
+        if (profileLevel == ProfileLevel.None)
+            //this.controller.removeUser(this);
+
+            if (this.userPublicProfile != null)
+                this.userPublicProfile.unloadProfile(profileLevel);
+
+        if (this.userPrivateProfile != null)
+            this.userPrivateProfile.unloadProfile(profileLevel);
     }
     /*************************************/
 
@@ -358,61 +375,104 @@ public class User {
     /*************************************/
     public Format toFormat(Format format) {
         if ((format instanceof LOCAL_USER_PROFILE) && (!this.isMe())) throw new IllegalArgumentException("Can`t convert general user to LOCAL_USER_PROFILE");
-        else if ((format instanceof PUBLIC_PROFILE) && (!this.isMe()) && (this.isPrivate())) throw  new IllegalArgumentException("Can't convert private profile to public profile");
-        else if ((format instanceof PRIVATE_PROFILE) && (!this.isMe()) && (!this.isPrivate())) throw  new IllegalArgumentException("Can't convert public profile to private profile");
+        else if ((format instanceof USER_PROFILE) && (this.isMe())) throw new IllegalArgumentException("Can`t convert local user to USER_PROFILE");
 
         if (format instanceof LOCAL_USER_PROFILE) {
             ((LOCAL_USER_PROFILE) format).EMAIL = this.email;
-            ((LOCAL_USER_PROFILE) format).USER_PUBLIC_PROFILE = ((PUBLIC_PROFILE)this.userPublicProfile.toFormat(new PUBLIC_PROFILE()));
-            ((LOCAL_USER_PROFILE) format).USER_PRIVATE_PROFILE = ((PRIVATE_PROFILE)this.userPrivateProfile.toFormat(new PRIVATE_PROFILE()));
-        } else if (format instanceof PUBLIC_PROFILE) {
-            format = this.userPublicProfile.toFormat(format);
-        } else if (format instanceof PRIVATE_PROFILE) {
-            format = this.userPrivateProfile.toFormat(format);
+            if (this.userPublicProfile != null) {
+                if (this.userPublicProfile.getLoadedProfileLevel().ordinal() >= ProfileLevel.Basic.ordinal())
+                    ((LOCAL_USER_PROFILE) format).USER_BASIC_PUBLIC_PROFILE = ((BASIC_PUBLIC_PROFILE) this.userPublicProfile.toFormat(new BASIC_PUBLIC_PROFILE()));
+                if (this.userPublicProfile.getLoadedProfileLevel().ordinal() >= ProfileLevel.Extended.ordinal())
+                    ((LOCAL_USER_PROFILE) format).USER_PUBLIC_PROFILE = ((PUBLIC_PROFILE) this.userPublicProfile.toFormat(new PUBLIC_PROFILE()));
+            }
+            if (this.userPrivateProfile != null) {
+                if (this.userPrivateProfile.getLoadedProfileLevel().ordinal() >= ProfileLevel.Basic.ordinal())
+                    ((LOCAL_USER_PROFILE) format).USER_BASIC_PRIVATE_PROFILE = ((BASIC_PRIVATE_PROFILE) this.userPrivateProfile.toFormat(new BASIC_PRIVATE_PROFILE()));
+                if (this.userPrivateProfile.getLoadedProfileLevel().ordinal() >= ProfileLevel.Extended.ordinal())
+                    ((LOCAL_USER_PROFILE) format).USER_PRIVATE_PROFILE = ((PRIVATE_PROFILE) this.userPrivateProfile.toFormat(new PRIVATE_PROFILE()));
+            }
+        } else if (format instanceof USER_PROFILE) {
+            if (this.userPublicProfile != null) {
+                if (this.userPublicProfile.getLoadedProfileLevel().ordinal() >= ProfileLevel.Basic.ordinal())
+                    ((USER_PROFILE) format).USER_BASIC_PUBLIC_PROFILE = ((BASIC_PUBLIC_PROFILE) this.userPublicProfile.toFormat(new BASIC_PUBLIC_PROFILE()));
+                if (this.userPublicProfile.getLoadedProfileLevel().ordinal() >= ProfileLevel.Extended.ordinal())
+                    ((USER_PROFILE) format).USER_PUBLIC_PROFILE = ((PUBLIC_PROFILE) this.userPublicProfile.toFormat(new PUBLIC_PROFILE()));
+            }
+            if (this.userPrivateProfile != null) {
+                if (this.userPrivateProfile.getLoadedProfileLevel().ordinal() >= ProfileLevel.Basic.ordinal())
+                    ((USER_PROFILE) format).USER_BASIC_PRIVATE_PROFILE = ((BASIC_PRIVATE_PROFILE) this.userPrivateProfile.toFormat(new BASIC_PRIVATE_PROFILE()));
+                if (this.userPrivateProfile.getLoadedProfileLevel().ordinal() >= ProfileLevel.Extended.ordinal())
+                    ((USER_PROFILE) format).USER_PRIVATE_PROFILE = ((PRIVATE_PROFILE) this.userPrivateProfile.toFormat(new PRIVATE_PROFILE()));
+            }
         }
 
         return format;
     }
     public Boolean fromFormat(Format format) {
-        if (format instanceof PUBLIC_PROFILE) {
-            PublicProfile profile = new PublicProfile(format);
-            this.isMe = false;
-            this.userID = profile.getID();
-            this.color = profile.getColor();
-            this.showingName = profile.getShowingName();
-            this.imageURL = profile.getImageURL();
-            this.userPublicProfile = profile;
-            this.isPrivate = false;
-            this.loading = false;
+        if (format instanceof USER_PROFILE) {
+            this. isMe = false;
 
-            return true;
-        } else if (format instanceof PRIVATE_PROFILE) {
-            PrivateProfile profile = new PrivateProfile(format);
-            this.isMe = false;
-            this.userID = profile.getID();
-            this.color = profile.getColor();
-            this.showingName = profile.getShowingName();
-            this.imageURL = profile.getImageURL();
-            this.userPrivateProfile = profile;
-            this.isPrivate = true;
+            if ((((USER_PROFILE) format).USER_BASIC_PUBLIC_PROFILE != null) && (this.userPublicProfile == null))
+                this.userPublicProfile = new PublicProfile(((USER_PROFILE) format).USER_BASIC_PUBLIC_PROFILE);
+            else if ((((USER_PROFILE) format).USER_BASIC_PUBLIC_PROFILE != null) && (this.userPublicProfile != null))
+                this.userPublicProfile.fromFormat(((USER_PROFILE) format).USER_BASIC_PUBLIC_PROFILE);
+
+            if ((((USER_PROFILE) format).USER_PUBLIC_PROFILE != null) && (this.userPublicProfile == null))
+                this.userPublicProfile = new PublicProfile(((USER_PROFILE) format).USER_PUBLIC_PROFILE);
+            else if ((((USER_PROFILE) format).USER_PUBLIC_PROFILE != null) && (this.userPublicProfile != null))
+                this.userPublicProfile.fromFormat(((USER_PROFILE) format).USER_PUBLIC_PROFILE);
+
+            if ((((USER_PROFILE) format).USER_BASIC_PRIVATE_PROFILE != null) && (this.userPublicProfile == null))
+                this.userPublicProfile = new PublicProfile(((USER_PROFILE) format).USER_BASIC_PRIVATE_PROFILE);
+            else if ((((USER_PROFILE) format).USER_BASIC_PRIVATE_PROFILE != null) && (this.userPublicProfile != null))
+                this.userPublicProfile.fromFormat(((USER_PROFILE) format).USER_BASIC_PRIVATE_PROFILE);
+
+            if ((((USER_PROFILE) format).USER_PRIVATE_PROFILE != null) && (this.userPublicProfile == null))
+                this.userPublicProfile = new PublicProfile(((USER_PROFILE) format).USER_PRIVATE_PROFILE);
+            else if ((((USER_PROFILE) format).USER_PRIVATE_PROFILE != null) && (this.userPublicProfile != null))
+                this.userPublicProfile.fromFormat(((USER_PROFILE) format).USER_PRIVATE_PROFILE);
+
+            if (this.userPublicProfile != null)
+                this.userID = this.userPublicProfile.userID;
+            else if (this.userPrivateProfile != null)
+                this.userID = this.userPrivateProfile.userID;
+
             this.loading = false;
 
             return true;
         } else if (format instanceof LOCAL_USER_PROFILE) {
             this.isMe = true;
             this.email = ((LOCAL_USER_PROFILE) format).EMAIL;
-            this.userPrivateProfile = new PrivateProfile(((LOCAL_USER_PROFILE) format).USER_PRIVATE_PROFILE);
-            this.userPublicProfile = new PublicProfile(((LOCAL_USER_PROFILE) format).USER_PUBLIC_PROFILE);
-            this.isPrivate = true;
+
+            if ((((LOCAL_USER_PROFILE) format).USER_BASIC_PUBLIC_PROFILE != null) && (this.userPublicProfile == null))
+                this.userPublicProfile = new PublicProfile(((LOCAL_USER_PROFILE) format).USER_BASIC_PUBLIC_PROFILE);
+            else if ((((LOCAL_USER_PROFILE) format).USER_BASIC_PUBLIC_PROFILE != null) && (this.userPublicProfile != null))
+                this.userPublicProfile.fromFormat(((LOCAL_USER_PROFILE) format).USER_BASIC_PUBLIC_PROFILE);
+
+            if ((((LOCAL_USER_PROFILE) format).USER_PUBLIC_PROFILE != null) && (this.userPublicProfile == null))
+                this.userPublicProfile = new PublicProfile(((LOCAL_USER_PROFILE) format).USER_PUBLIC_PROFILE);
+            else if ((((LOCAL_USER_PROFILE) format).USER_PUBLIC_PROFILE != null) && (this.userPublicProfile != null))
+                this.userPublicProfile.fromFormat(((LOCAL_USER_PROFILE) format).USER_PUBLIC_PROFILE);
+
+            if ((((LOCAL_USER_PROFILE) format).USER_BASIC_PRIVATE_PROFILE != null) && (this.userPublicProfile == null))
+                this.userPublicProfile = new PublicProfile(((LOCAL_USER_PROFILE) format).USER_BASIC_PRIVATE_PROFILE);
+            else if ((((LOCAL_USER_PROFILE) format).USER_BASIC_PRIVATE_PROFILE != null) && (this.userPublicProfile != null))
+                this.userPublicProfile.fromFormat(((LOCAL_USER_PROFILE) format).USER_BASIC_PRIVATE_PROFILE);
+
+            if ((((LOCAL_USER_PROFILE) format).USER_PRIVATE_PROFILE != null) && (this.userPublicProfile == null))
+                this.userPublicProfile = new PublicProfile(((LOCAL_USER_PROFILE) format).USER_PRIVATE_PROFILE);
+            else if ((((LOCAL_USER_PROFILE) format).USER_PRIVATE_PROFILE != null) && (this.userPublicProfile != null))
+                this.userPublicProfile.fromFormat(((LOCAL_USER_PROFILE) format).USER_PRIVATE_PROFILE);
 
             for (HIVE_ID hive : ((LOCAL_USER_PROFILE) format).HIVES_SUBSCRIBED) {
                 Hive.getHive(hive.NAME_URL);
             }
 
-            this.userID = this.userPrivateProfile.getID();
-            this.color = this.userPrivateProfile.getColor();
-            this.showingName = this.userPrivateProfile.getShowingName();
-            this.imageURL = this.userPrivateProfile.getImageURL();
+            if (this.userPublicProfile != null)
+                this.userID = this.userPublicProfile.userID;
+            else if (this.userPrivateProfile != null)
+                this.userID = this.userPrivateProfile.userID;
+
             this.loading = false;
 
             return true;
@@ -429,6 +489,6 @@ public class User {
         for (Format format : formats)
             if (this.fromFormat(format)) return;
 
-        throw  new IllegalArgumentException("Expected LOCAL_USER_PROFILE, PUBLIC_PROFILE or PRIVATE_PROFILE formats.");
+        throw  new IllegalArgumentException("Expected LOCAL_USER_PROFILE, or USER_PROFILE formats.");
     }
 }

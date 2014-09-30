@@ -13,7 +13,7 @@ import com.chattyhive.backend.util.formatters.TimestampFormatter;
     
 
  /*
-  * Automatically generated code by ChattyHive API Manager Code Generator on 26/09/2014.
+  * Automatically generated code by ChattyHive API Manager Code Generator on 28/09/2014.
   * Be careful to not modify this file since your changes will not be included in future
   * versions of this file.
   *
@@ -45,23 +45,23 @@ public class HIVE extends Format {
 	    if ((this.NAME_URL != null) && (!this.NAME_URL.isEmpty()))
             jsonObject.addProperty("NAME_URL",this.NAME_URL);
       else
-            jsonObject.addProperty("NAME_URL", JsonNull.INSTANCE);            
+            jsonObject.add("NAME_URL", JsonNull.INSTANCE);            
         if ((this.NAME != null) && (!this.NAME.isEmpty()))
             jsonObject.addProperty("NAME",this.NAME);
       else
-            jsonObject.addProperty("NAME", JsonNull.INSTANCE);            
+            jsonObject.add("NAME", JsonNull.INSTANCE);            
         if ((this.CATEGORY != null) && (!this.CATEGORY.isEmpty()))
             jsonObject.addProperty("CATEGORY",this.CATEGORY);
       else
-            jsonObject.addProperty("CATEGORY", JsonNull.INSTANCE);            
+            jsonObject.add("CATEGORY", JsonNull.INSTANCE);            
         if ((this.DESCRIPTION != null) && (!this.DESCRIPTION.isEmpty()))
             jsonObject.addProperty("DESCRIPTION",this.DESCRIPTION);
       else
-            jsonObject.addProperty("DESCRIPTION", JsonNull.INSTANCE);            
+            jsonObject.add("DESCRIPTION", JsonNull.INSTANCE);            
         if ((this.CREATION_DATE != null) && (!TimestampFormatter.toString(this.CREATION_DATE).isEmpty()))
             jsonObject.addProperty("CREATION_DATE", TimestampFormatter.toString(this.CREATION_DATE));
       else
-            jsonObject.addProperty("CREATION_DATE", JsonNull.INSTANCE);
+            jsonObject.add("CREATION_DATE", JsonNull.INSTANCE);
             
         if (this.PUBLIC_CHAT != null) {
             JsonElement jsonElement = this.PUBLIC_CHAT.toJSON();
@@ -69,11 +69,11 @@ public class HIVE extends Format {
                 jsonObject.add("PUBLIC_CHAT",jsonElement);
         }
       else
-            jsonObject.addProperty("PUBLIC_CHAT", JsonNull.INSTANCE);        
+            jsonObject.add("PUBLIC_CHAT", JsonNull.INSTANCE);        
         if (this.TAGS != null) {
             JsonArray jsonArray = new JsonArray();
             for (String element : this.TAGS) {
-                sonElement jsonElement =   new JsonPrimitive(element)
+                JsonElement jsonElement =   new JsonPrimitive(element)
   ;
                 if (!jsonElement.isJsonNull())
                     jsonArray.add(jsonElement);
@@ -85,7 +85,7 @@ public class HIVE extends Format {
                 jsonObject.add("TAGS", JsonNull.INSTANCE);
         }
       else
-            jsonObject.addProperty("TAGS", JsonNull.INSTANCE);        
+            jsonObject.add("TAGS", JsonNull.INSTANCE);        
       
 
         if (jsonObject.entrySet().isEmpty())

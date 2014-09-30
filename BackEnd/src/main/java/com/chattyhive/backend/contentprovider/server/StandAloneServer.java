@@ -14,8 +14,8 @@ import com.chattyhive.backend.contentprovider.formats.CSRF_TOKEN;
 import com.chattyhive.backend.contentprovider.formats.Format;
 import com.chattyhive.backend.contentprovider.formats.LOGIN;
 import com.chattyhive.backend.contentprovider.formats.MESSAGE;
+import com.chattyhive.backend.contentprovider.formats.MESSAGE_ACK;
 import com.chattyhive.backend.contentprovider.formats.MESSAGE_CONTENT;
-import com.chattyhive.backend.contentprovider.formats.MESSAGE_ID;
 import com.chattyhive.backend.contentprovider.formats.PROFILE_ID;
 import com.chattyhive.backend.util.RandomString;
 import com.chattyhive.backend.util.events.CommandCallbackEventArgs;
@@ -188,8 +188,7 @@ public class StandAloneServer {
                         message.CHANNEL_UNICODE = group.getChannelUnicode();
                         message.CONFIRMED = false;
                         message.TIMESTAMP = new Date();
-                        message.PROFILE = new PROFILE_ID();
-                        message.PROFILE.PUBLIC_NAME = sender.getUserPublicProfile().getPublicName();
+                        message.USER_ID = sender.getUserID();
                         message.CONTENT = new MESSAGE_CONTENT();
                         message.CONTENT.CONTENT_TYPE = "Text";
                         message.CONTENT.CONTENT = String.format("Message #%d",messageNumber++);
@@ -202,7 +201,7 @@ public class StandAloneServer {
         timer.start();
     }
 
-    private static MESSAGE_ID sendMessage(User sender, Group destination, MESSAGE message) {
+    private static MESSAGE_ACK sendMessage(User sender, Group destination, MESSAGE message) {
         Message msg = new Message();
         msg.setUser(sender);
         msg.setChat(destination.getChat());
@@ -214,7 +213,7 @@ public class StandAloneServer {
 
         destination.getChat().addMessageByID(msg);
 
-        return ((MESSAGE_ID)msg.toFormat(new MESSAGE_ID()));
+        return ((MESSAGE_ACK)msg.toFormat(new MESSAGE_ACK()));
     }
     private static Group createChat(Hive hive, String creationDate, String... members) {
         GroupKind groupKind = GroupKind.PUBLIC_SINGLE;

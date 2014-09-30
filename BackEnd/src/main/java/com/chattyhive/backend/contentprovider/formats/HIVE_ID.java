@@ -9,7 +9,7 @@ import com.google.gson.JsonPrimitive;
  
 
  /*
-  * Automatically generated code by ChattyHive API Manager Code Generator on 26/09/2014.
+  * Automatically generated code by ChattyHive API Manager Code Generator on 28/09/2014.
   * Be careful to not modify this file since your changes will not be included in future
   * versions of this file.
   *
@@ -35,7 +35,7 @@ public class HIVE_ID extends Format {
 	    if ((this.NAME_URL != null) && (!this.NAME_URL.isEmpty()))
             jsonObject.addProperty("NAME_URL",this.NAME_URL);
       else
-            jsonObject.addProperty("NAME_URL", JsonNull.INSTANCE);            
+            jsonObject.add("NAME_URL", JsonNull.INSTANCE);            
       
 
         if (jsonObject.entrySet().isEmpty())

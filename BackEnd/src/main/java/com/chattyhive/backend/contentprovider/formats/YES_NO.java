@@ -9,7 +9,7 @@ import com.google.gson.JsonPrimitive;
  
 
  /*
-  * Automatically generated code by ChattyHive API Manager Code Generator on 26/09/2014.
+  * Automatically generated code by ChattyHive API Manager Code Generator on 28/09/2014.
   * Be careful to not modify this file since your changes will not be included in future
   * versions of this file.
   *
@@ -35,7 +35,7 @@ public class YES_NO extends Format {
 	    if ((this.RESPONSE != null) && (!this.RESPONSE.isEmpty()))
             jsonObject.addProperty("RESPONSE",this.RESPONSE);
       else
-            jsonObject.addProperty("RESPONSE", JsonNull.INSTANCE);            
+            jsonObject.add("RESPONSE", JsonNull.INSTANCE);            
       
 
         if (jsonObject.entrySet().isEmpty())

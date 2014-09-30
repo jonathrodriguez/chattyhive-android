@@ -9,7 +9,7 @@ import com.google.gson.JsonPrimitive;
     
 
  /*
-  * Automatically generated code by ChattyHive API Manager Code Generator on 26/09/2014.
+  * Automatically generated code by ChattyHive API Manager Code Generator on 28/09/2014.
   * Be careful to not modify this file since your changes will not be included in future
   * versions of this file.
   *
@@ -20,6 +20,7 @@ public class BASIC_PRIVATE_PROFILE extends Format {
     public String FIRST_NAME;
     public String LAST_NAME;
     public String IMAGE_URL;
+    public String STATUS_MESSAGE;
     
 
     public BASIC_PRIVATE_PROFILE() {
@@ -38,20 +39,23 @@ public class BASIC_PRIVATE_PROFILE extends Format {
 	    if ((this.USER_ID != null) && (!this.USER_ID.isEmpty()))
             jsonObject.addProperty("USER_ID",this.USER_ID);
       else
-            jsonObject.addProperty("USER_ID", JsonNull.INSTANCE);            
+            jsonObject.add("USER_ID", JsonNull.INSTANCE);            
         if ((this.FIRST_NAME != null) && (!this.FIRST_NAME.isEmpty()))
             jsonObject.addProperty("FIRST_NAME",this.FIRST_NAME);
       else
-            jsonObject.addProperty("FIRST_NAME", JsonNull.INSTANCE);            
+            jsonObject.add("FIRST_NAME", JsonNull.INSTANCE);            
         if ((this.LAST_NAME != null) && (!this.LAST_NAME.isEmpty()))
             jsonObject.addProperty("LAST_NAME",this.LAST_NAME);
       else
-            jsonObject.addProperty("LAST_NAME", JsonNull.INSTANCE);            
+            jsonObject.add("LAST_NAME", JsonNull.INSTANCE);            
         if ((this.IMAGE_URL != null) && (!this.IMAGE_URL.isEmpty()))
             jsonObject.addProperty("IMAGE_URL",this.IMAGE_URL);
       else
-            jsonObject.addProperty("IMAGE_URL", JsonNull.INSTANCE);            
-      
+            jsonObject.add("IMAGE_URL", JsonNull.INSTANCE);
+        if ((this.STATUS_MESSAGE != null) && (!this.STATUS_MESSAGE.isEmpty()))
+            jsonObject.addProperty("STATUS_MESSAGE",this.STATUS_MESSAGE);
+        else
+            jsonObject.add("STATUS_MESSAGE", JsonNull.INSTANCE);
 
         if (jsonObject.entrySet().isEmpty())
             return JsonNull.INSTANCE;
@@ -89,7 +93,10 @@ public class BASIC_PRIVATE_PROFILE extends Format {
         property = object.get("IMAGE_URL");
         if ((property != null) && (property.isJsonPrimitive()) && (property.getAsString() != null) && (!property.getAsString().isEmpty()))
             this.IMAGE_URL = property.getAsString();
-            
+
+        property = object.get("STATUS_MESSAGE");
+        if ((property != null) && (property.isJsonPrimitive()) && (property.getAsString() != null) && (!property.getAsString().isEmpty()))
+            this.STATUS_MESSAGE = property.getAsString();
       
     }
 }

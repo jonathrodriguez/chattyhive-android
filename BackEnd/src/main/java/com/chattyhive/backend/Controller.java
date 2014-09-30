@@ -219,6 +219,9 @@ public class Controller {
     /************************************************************************/
     private DataProvider dataProvider;
 
+    public DataProvider getDataProvider() {
+        return this.dataProvider;
+    }
     /************************************************************************/
     //CONSTRUCTORS
 
@@ -405,8 +408,15 @@ public class Controller {
     }
 
     public void checkEmail(String email,EventHandler<CommandCallbackEventArgs> Callback) {
+        if (!email.contains("@")) return;
+
+        String userPart = email.split("@")[0];
+        String serverPart = email.split("@")[1];
+        if ((userPart.isEmpty()) || (serverPart.isEmpty())) return;
+
         USER_EMAIL user_email = new USER_EMAIL();
-        user_email.EMAIL = email;
+        user_email.EMAIL_USER_PART = userPart;
+        user_email.EMAIL_SERVER_PART = serverPart;
         this.dataProvider.InvokeServerCommand(AvailableCommands.EmailCheck,Callback,user_email);
     }
 

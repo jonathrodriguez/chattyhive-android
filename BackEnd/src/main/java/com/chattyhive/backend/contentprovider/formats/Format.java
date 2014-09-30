@@ -1,49 +1,13 @@
 package com.chattyhive.backend.contentprovider.formats;
 
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.Set;
 import com.google.gson.JsonElement;
-import com.chattyhive.backend.contentprovider.formats.CSRF_TOKEN;
-import com.chattyhive.backend.contentprovider.formats.COMMON;
-import com.chattyhive.backend.contentprovider.formats.LOGIN;
-import com.chattyhive.backend.contentprovider.formats.LOCAL_USER_PROFILE;
-import com.chattyhive.backend.contentprovider.formats.USER_PROFILE;
-import com.chattyhive.backend.contentprovider.formats.BASIC_PUBLIC_PROFILE;
-import com.chattyhive.backend.contentprovider.formats.BASIC_PUBLIC_PROFILE_LIST;
-import com.chattyhive.backend.contentprovider.formats.PUBLIC_PROFILE;
-import com.chattyhive.backend.contentprovider.formats.BASIC_PRIVATE_PROFILE;
-import com.chattyhive.backend.contentprovider.formats.PRIVATE_PROFILE;
-import com.chattyhive.backend.contentprovider.formats.PROFILE_ID;
-import com.chattyhive.backend.contentprovider.formats.FRIEND_LIST;
-import com.chattyhive.backend.contentprovider.formats.USER_EMAIL;
-import com.chattyhive.backend.contentprovider.formats.USERNAME;
-import com.chattyhive.backend.contentprovider.formats.EXPLORE_FILTER;
-import com.chattyhive.backend.contentprovider.formats.HIVE_LIST;
-import com.chattyhive.backend.contentprovider.formats.HIVE;
-import com.chattyhive.backend.contentprovider.formats.HIVE_ID;
-import com.chattyhive.backend.contentprovider.formats.CHAT;
-import com.chattyhive.backend.contentprovider.formats.CHAT_ID;
-import com.chattyhive.backend.contentprovider.formats.CHAT_LIST;
-import com.chattyhive.backend.contentprovider.formats.CHAT_SYNC;
-import com.chattyhive.backend.contentprovider.formats.MESSAGE;
-import com.chattyhive.backend.contentprovider.formats.MESSAGE_CONTENT;
-import com.chattyhive.backend.contentprovider.formats.MESSAGE_CONFIRMATION;
-import com.chattyhive.backend.contentprovider.formats.CHANNEL_MESSAGE_CONFIRMATION;
-import com.chattyhive.backend.contentprovider.formats.MESSAGE_ACK;
-import com.chattyhive.backend.contentprovider.formats.MESSAGE_INTERVAL;
-import com.chattyhive.backend.contentprovider.formats.MESSAGE_LIST;
-import com.chattyhive.backend.contentprovider.formats.INTERVAL;
-import com.chattyhive.backend.contentprovider.formats.YES_NO;
-import com.chattyhive.backend.contentprovider.formats.REQUEST_LIST;
-import com.chattyhive.backend.contentprovider.formats.REQUEST;
-import com.chattyhive.backend.contentprovider.formats.REQUEST_ID;
-import com.chattyhive.backend.contentprovider.formats.LOCATION_LIST;
-import com.chattyhive.backend.contentprovider.formats.LOCATION;
-import com.chattyhive.backend.contentprovider.formats.LOCATION_ID;
-import com.chattyhive.backend.contentprovider.formats.REPORT;
 
-      
 
- /*
-  * Automatically generated code by ChattyHive API Manager Code Generator on 26/09/2014.
+/*
+  * Automatically generated code by ChattyHive API Manager Code Generator on 28/09/2014.
   * Be careful to not modify this file since your changes will not be included in future
   * versions of this file.
   *
@@ -74,8 +38,8 @@ public abstract class Format {
                     f = new USER_PROFILE(data);
                 } else if (entry.getKey().equalsIgnoreCase("BASIC_PUBLIC_PROFILE")) {
                     f = new BASIC_PUBLIC_PROFILE(data);
-                } else if (entry.getKey().equalsIgnoreCase("BASIC_PUBLIC_PROFILE_LIST")) {
-                    f = new BASIC_PUBLIC_PROFILE_LIST(data);
+                } else if (entry.getKey().equalsIgnoreCase("USER_PROFILE_LIST")) {
+                    f = new USER_PROFILE_LIST(data);
                 } else if (entry.getKey().equalsIgnoreCase("PUBLIC_PROFILE")) {
                     f = new PUBLIC_PROFILE(data);
                 } else if (entry.getKey().equalsIgnoreCase("BASIC_PRIVATE_PROFILE")) {

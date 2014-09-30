@@ -15,7 +15,7 @@ import com.chattyhive.backend.util.formatters.TimestampFormatter;
     
 
  /*
-  * Automatically generated code by ChattyHive API Manager Code Generator on 26/09/2014.
+  * Automatically generated code by ChattyHive API Manager Code Generator on 28/09/2014.
   * Be careful to not modify this file since your changes will not be included in future
   * versions of this file.
   *
@@ -51,49 +51,49 @@ public class REQUEST extends Format {
 	    if ((this.ID != null) && (!this.ID.isEmpty()))
             jsonObject.addProperty("ID",this.ID);
       else
-            jsonObject.addProperty("ID", JsonNull.INSTANCE);            
+            jsonObject.add("ID", JsonNull.INSTANCE);            
         if ((this.REQUEST_TYPE != null) && (!this.REQUEST_TYPE.isEmpty()))
             jsonObject.addProperty("REQUEST_TYPE",this.REQUEST_TYPE);
       else
-            jsonObject.addProperty("REQUEST_TYPE", JsonNull.INSTANCE);            
+            jsonObject.add("REQUEST_TYPE", JsonNull.INSTANCE);            
         if ((this.REQUEST_STATUS != null) && (!this.REQUEST_STATUS.isEmpty()))
             jsonObject.addProperty("REQUEST_STATUS",this.REQUEST_STATUS);
       else
-            jsonObject.addProperty("REQUEST_STATUS", JsonNull.INSTANCE);            
+            jsonObject.add("REQUEST_STATUS", JsonNull.INSTANCE);            
         if ((this.REQUESTING_USER != null) && (!this.REQUESTING_USER.isEmpty()))
             jsonObject.addProperty("REQUESTING_USER",this.REQUESTING_USER);
       else
-            jsonObject.addProperty("REQUESTING_USER", JsonNull.INSTANCE);            
+            jsonObject.add("REQUESTING_USER", JsonNull.INSTANCE);            
         if ((this.REQUESTED_USER != null) && (!this.REQUESTED_USER.isEmpty()))
             jsonObject.addProperty("REQUESTED_USER",this.REQUESTED_USER);
       else
-            jsonObject.addProperty("REQUESTED_USER", JsonNull.INSTANCE);            
+            jsonObject.add("REQUESTED_USER", JsonNull.INSTANCE);            
         if ((this.CHANNEL_UNICODE != null) && (!this.CHANNEL_UNICODE.isEmpty()))
             jsonObject.addProperty("CHANNEL_UNICODE",this.CHANNEL_UNICODE);
       else
-            jsonObject.addProperty("CHANNEL_UNICODE", JsonNull.INSTANCE);            
+            jsonObject.add("CHANNEL_UNICODE", JsonNull.INSTANCE);            
         if ((this.NAME_URL != null) && (!this.NAME_URL.isEmpty()))
             jsonObject.addProperty("NAME_URL",this.NAME_URL);
       else
-            jsonObject.addProperty("NAME_URL", JsonNull.INSTANCE);            
+            jsonObject.add("NAME_URL", JsonNull.INSTANCE);            
         if ((this.REQUEST_MESSAGE != null) && (!this.REQUEST_MESSAGE.isEmpty()))
             jsonObject.addProperty("REQUEST_MESSAGE",this.REQUEST_MESSAGE);
       else
-            jsonObject.addProperty("REQUEST_MESSAGE", JsonNull.INSTANCE);            
+            jsonObject.add("REQUEST_MESSAGE", JsonNull.INSTANCE);            
         if ((this.TIMESTAMP != null) && (!TimestampFormatter.toString(this.TIMESTAMP).isEmpty()))
             jsonObject.addProperty("TIMESTAMP", TimestampFormatter.toString(this.TIMESTAMP));
       else
-            jsonObject.addProperty("TIMESTAMP", JsonNull.INSTANCE);
+            jsonObject.add("TIMESTAMP", JsonNull.INSTANCE);
             
         if ((this.SERVER_TIMESTAMP != null) && (!TimestampFormatter.toString(this.SERVER_TIMESTAMP).isEmpty()))
             jsonObject.addProperty("SERVER_TIMESTAMP", TimestampFormatter.toString(this.SERVER_TIMESTAMP));
       else
-            jsonObject.addProperty("SERVER_TIMESTAMP", JsonNull.INSTANCE);
+            jsonObject.add("SERVER_TIMESTAMP", JsonNull.INSTANCE);
             
         if ((this.STATUS_TIMESTAMP != null) && (!TimestampFormatter.toString(this.STATUS_TIMESTAMP).isEmpty()))
             jsonObject.addProperty("STATUS_TIMESTAMP", TimestampFormatter.toString(this.STATUS_TIMESTAMP));
       else
-            jsonObject.addProperty("STATUS_TIMESTAMP", JsonNull.INSTANCE);
+            jsonObject.add("STATUS_TIMESTAMP", JsonNull.INSTANCE);
             
       
 

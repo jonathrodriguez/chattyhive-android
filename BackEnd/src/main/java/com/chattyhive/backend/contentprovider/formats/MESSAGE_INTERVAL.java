@@ -9,7 +9,7 @@ import com.google.gson.JsonPrimitive;
    
 
  /*
-  * Automatically generated code by ChattyHive API Manager Code Generator on 26/09/2014.
+  * Automatically generated code by ChattyHive API Manager Code Generator on 28/09/2014.
   * Be careful to not modify this file since your changes will not be included in future
   * versions of this file.
   *
@@ -37,15 +37,15 @@ public class MESSAGE_INTERVAL extends Format {
 	    if ((this.LAST_MESSAGE_ID != null) && (!this.LAST_MESSAGE_ID.isEmpty()))
             jsonObject.addProperty("LAST_MESSAGE_ID",this.LAST_MESSAGE_ID);
       else
-            jsonObject.addProperty("LAST_MESSAGE_ID", JsonNull.INSTANCE);            
+            jsonObject.add("LAST_MESSAGE_ID", JsonNull.INSTANCE);            
         if ((this.START_MESSAGE_ID != null) && (!this.START_MESSAGE_ID.isEmpty()))
             jsonObject.addProperty("START_MESSAGE_ID",this.START_MESSAGE_ID);
       else
-            jsonObject.addProperty("START_MESSAGE_ID", JsonNull.INSTANCE);            
+            jsonObject.add("START_MESSAGE_ID", JsonNull.INSTANCE);            
         if (this.COUNT != null)
             jsonObject.addProperty("COUNT",this.COUNT);
       else
-            jsonObject.addProperty("COUNT", JsonNull.INSTANCE);            
+            jsonObject.add("COUNT", JsonNull.INSTANCE);            
       
 
         if (jsonObject.entrySet().isEmpty())

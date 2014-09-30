@@ -9,7 +9,7 @@ import com.google.gson.JsonPrimitive;
   
 
  /*
-  * Automatically generated code by ChattyHive API Manager Code Generator on 26/09/2014.
+  * Automatically generated code by ChattyHive API Manager Code Generator on 28/09/2014.
   * Be careful to not modify this file since your changes will not be included in future
   * versions of this file.
   *
@@ -36,11 +36,11 @@ public class MESSAGE_CONTENT extends Format {
 	    if ((this.CONTENT_TYPE != null) && (!this.CONTENT_TYPE.isEmpty()))
             jsonObject.addProperty("CONTENT_TYPE",this.CONTENT_TYPE);
       else
-            jsonObject.addProperty("CONTENT_TYPE", JsonNull.INSTANCE);            
+            jsonObject.add("CONTENT_TYPE", JsonNull.INSTANCE);            
         if ((this.CONTENT != null) && (!this.CONTENT.isEmpty()))
             jsonObject.addProperty("CONTENT",this.CONTENT);
       else
-            jsonObject.addProperty("CONTENT", JsonNull.INSTANCE);            
+            jsonObject.add("CONTENT", JsonNull.INSTANCE);            
       
 
         if (jsonObject.entrySet().isEmpty())

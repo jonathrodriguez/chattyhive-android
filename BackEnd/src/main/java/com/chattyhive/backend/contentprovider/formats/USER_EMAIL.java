@@ -9,7 +9,7 @@ import com.google.gson.JsonPrimitive;
   
 
  /*
-  * Automatically generated code by ChattyHive API Manager Code Generator on 26/09/2014.
+  * Automatically generated code by ChattyHive API Manager Code Generator on 28/09/2014.
   * Be careful to not modify this file since your changes will not be included in future
   * versions of this file.
   *
@@ -36,11 +36,11 @@ public class USER_EMAIL extends Format {
 	    if ((this.EMAIL_USER_PART != null) && (!this.EMAIL_USER_PART.isEmpty()))
             jsonObject.addProperty("EMAIL_USER_PART",this.EMAIL_USER_PART);
       else
-            jsonObject.addProperty("EMAIL_USER_PART", JsonNull.INSTANCE);            
+            jsonObject.add("EMAIL_USER_PART", JsonNull.INSTANCE);            
         if ((this.EMAIL_SERVER_PART != null) && (!this.EMAIL_SERVER_PART.isEmpty()))
             jsonObject.addProperty("EMAIL_SERVER_PART",this.EMAIL_SERVER_PART);
       else
-            jsonObject.addProperty("EMAIL_SERVER_PART", JsonNull.INSTANCE);            
+            jsonObject.add("EMAIL_SERVER_PART", JsonNull.INSTANCE);            
       
 
         if (jsonObject.entrySet().isEmpty())

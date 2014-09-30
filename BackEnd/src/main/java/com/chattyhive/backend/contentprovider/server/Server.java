@@ -145,9 +145,9 @@ public class Server {
             try {
                 if (Callback != null)
                     Callback.Invoke(this,new CommandCallbackEventArgs(Arrays.asList(Format.getFormat(new JsonParser().parse("{\"COMMON\": {\"STATUS\": \"OK\", \"ERROR\": null}}"))),Arrays.asList(formats)));
+                return true;
             } catch (Exception e) {
                 e.printStackTrace();
-            } finally {
                 return false;
             }
 

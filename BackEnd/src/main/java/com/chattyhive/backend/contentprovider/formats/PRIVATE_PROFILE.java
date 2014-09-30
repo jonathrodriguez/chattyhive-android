@@ -12,7 +12,7 @@ import com.chattyhive.backend.util.formatters.TimestampFormatter;
       
 
  /*
-  * Automatically generated code by ChattyHive API Manager Code Generator on 26/09/2014.
+  * Automatically generated code by ChattyHive API Manager Code Generator on 28/09/2014.
   * Be careful to not modify this file since your changes will not be included in future
   * versions of this file.
   *
@@ -25,7 +25,7 @@ public class PRIVATE_PROFILE extends Format {
     public Date BIRTHDATE;
     public ArrayList<String> LANGUAGE;
     public Boolean PRIVATE_SHOW_AGE;
-    public String STATUS_MESSAGE;
+
     
 
     public PRIVATE_PROFILE() {
@@ -44,24 +44,24 @@ public class PRIVATE_PROFILE extends Format {
 	    if ((this.USER_ID != null) && (!this.USER_ID.isEmpty()))
             jsonObject.addProperty("USER_ID",this.USER_ID);
       else
-            jsonObject.addProperty("USER_ID", JsonNull.INSTANCE);            
+            jsonObject.add("USER_ID", JsonNull.INSTANCE);            
         if ((this.LOCATION != null) && (!this.LOCATION.isEmpty()))
             jsonObject.addProperty("LOCATION",this.LOCATION);
       else
-            jsonObject.addProperty("LOCATION", JsonNull.INSTANCE);            
+            jsonObject.add("LOCATION", JsonNull.INSTANCE);            
         if ((this.SEX != null) && (!this.SEX.isEmpty()))
             jsonObject.addProperty("SEX",this.SEX);
       else
-            jsonObject.addProperty("SEX", JsonNull.INSTANCE);            
+            jsonObject.add("SEX", JsonNull.INSTANCE);            
         if ((this.BIRTHDATE != null) && (!TimestampFormatter.toString(this.BIRTHDATE).isEmpty()))
             jsonObject.addProperty("BIRTHDATE", TimestampFormatter.toString(this.BIRTHDATE));
       else
-            jsonObject.addProperty("BIRTHDATE", JsonNull.INSTANCE);
+            jsonObject.add("BIRTHDATE", JsonNull.INSTANCE);
             
         if (this.LANGUAGE != null) {
             JsonArray jsonArray = new JsonArray();
             for (String element : this.LANGUAGE) {
-                sonElement jsonElement =   new JsonPrimitive(element)
+                JsonElement jsonElement =   new JsonPrimitive(element)
   ;
                 if (!jsonElement.isJsonNull())
                     jsonArray.add(jsonElement);
@@ -73,15 +73,12 @@ public class PRIVATE_PROFILE extends Format {
                 jsonObject.add("LANGUAGE", JsonNull.INSTANCE);
         }
       else
-            jsonObject.addProperty("LANGUAGE", JsonNull.INSTANCE);        
+            jsonObject.add("LANGUAGE", JsonNull.INSTANCE);        
         if (this.PRIVATE_SHOW_AGE != null)
             jsonObject.addProperty("PRIVATE_SHOW_AGE",this.PRIVATE_SHOW_AGE);
       else
-            jsonObject.addProperty("PRIVATE_SHOW_AGE", JsonNull.INSTANCE);            
-        if ((this.STATUS_MESSAGE != null) && (!this.STATUS_MESSAGE.isEmpty()))
-            jsonObject.addProperty("STATUS_MESSAGE",this.STATUS_MESSAGE);
-      else
-            jsonObject.addProperty("STATUS_MESSAGE", JsonNull.INSTANCE);            
+            jsonObject.add("PRIVATE_SHOW_AGE", JsonNull.INSTANCE);            
+
       
 
         if (jsonObject.entrySet().isEmpty())
@@ -134,9 +131,7 @@ public class PRIVATE_PROFILE extends Format {
         if ((property != null) && (property.isJsonPrimitive()) && (((JsonPrimitive)property).isBoolean()))
             this.PRIVATE_SHOW_AGE = property.getAsBoolean();
             
-        property = object.get("STATUS_MESSAGE");
-        if ((property != null) && (property.isJsonPrimitive()) && (property.getAsString() != null) && (!property.getAsString().isEmpty()))
-            this.STATUS_MESSAGE = property.getAsString();
+
             
       
     }

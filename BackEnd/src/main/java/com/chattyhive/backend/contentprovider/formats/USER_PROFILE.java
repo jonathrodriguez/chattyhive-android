@@ -13,7 +13,7 @@ import com.chattyhive.backend.contentprovider.formats.BASIC_PUBLIC_PROFILE;
     
 
  /*
-  * Automatically generated code by ChattyHive API Manager Code Generator on 26/09/2014.
+  * Automatically generated code by ChattyHive API Manager Code Generator on 28/09/2014.
   * Be careful to not modify this file since your changes will not be included in future
   * versions of this file.
   *
@@ -45,28 +45,28 @@ public class USER_PROFILE extends Format {
                 jsonObject.add("USER_BASIC_PUBLIC_PROFILE",jsonElement);
         }
       else
-            jsonObject.addProperty("USER_BASIC_PUBLIC_PROFILE", JsonNull.INSTANCE);        
+            jsonObject.add("USER_BASIC_PUBLIC_PROFILE", JsonNull.INSTANCE);        
         if (this.USER_PUBLIC_PROFILE != null) {
             JsonElement jsonElement = this.USER_PUBLIC_PROFILE.toJSON();
             if (!jsonElement.isJsonNull())
                 jsonObject.add("USER_PUBLIC_PROFILE",jsonElement);
         }
       else
-            jsonObject.addProperty("USER_PUBLIC_PROFILE", JsonNull.INSTANCE);        
+            jsonObject.add("USER_PUBLIC_PROFILE", JsonNull.INSTANCE);        
         if (this.USER_BASIC_PRIVATE_PROFILE != null) {
             JsonElement jsonElement = this.USER_BASIC_PRIVATE_PROFILE.toJSON();
             if (!jsonElement.isJsonNull())
                 jsonObject.add("USER_BASIC_PRIVATE_PROFILE",jsonElement);
         }
       else
-            jsonObject.addProperty("USER_BASIC_PRIVATE_PROFILE", JsonNull.INSTANCE);        
+            jsonObject.add("USER_BASIC_PRIVATE_PROFILE", JsonNull.INSTANCE);        
         if (this.USER_PRIVATE_PROFILE != null) {
             JsonElement jsonElement = this.USER_PRIVATE_PROFILE.toJSON();
             if (!jsonElement.isJsonNull())
                 jsonObject.add("USER_PRIVATE_PROFILE",jsonElement);
         }
       else
-            jsonObject.addProperty("USER_PRIVATE_PROFILE", JsonNull.INSTANCE);        
+            jsonObject.add("USER_PRIVATE_PROFILE", JsonNull.INSTANCE);        
       
 
         if (jsonObject.entrySet().isEmpty())

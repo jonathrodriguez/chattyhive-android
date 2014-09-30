@@ -10,7 +10,7 @@ import java.util.ArrayList;
     
 
  /*
-  * Automatically generated code by ChattyHive API Manager Code Generator on 26/09/2014.
+  * Automatically generated code by ChattyHive API Manager Code Generator on 28/09/2014.
   * Be careful to not modify this file since your changes will not be included in future
   * versions of this file.
   *
@@ -36,7 +36,7 @@ public class MESSAGE_CONFIRMATION extends Format {
 	    if (this.CHANNEL_LIST != null) {
             JsonArray jsonArray = new JsonArray();
             for (CHANNEL_MESSAGE_CONFIRMATION element : this.CHANNEL_LIST) {
-                sonElement jsonElement =   element.toJSON()
+                JsonElement jsonElement =   element.toJSON()
   ;
                 if (!jsonElement.isJsonNull())
                     jsonArray.add(jsonElement);
@@ -48,7 +48,7 @@ public class MESSAGE_CONFIRMATION extends Format {
                 jsonObject.add("CHANNEL_LIST", JsonNull.INSTANCE);
         }
       else
-            jsonObject.addProperty("CHANNEL_LIST", JsonNull.INSTANCE);        
+            jsonObject.add("CHANNEL_LIST", JsonNull.INSTANCE);        
       
 
         if (jsonObject.entrySet().isEmpty())

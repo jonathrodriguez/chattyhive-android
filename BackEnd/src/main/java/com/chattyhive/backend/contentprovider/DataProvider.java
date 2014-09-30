@@ -469,6 +469,10 @@ public class DataProvider {
         this.server.RunCommand(command, Callback, formats);
     }
 
+    public void RunCommand(AvailableCommands commands,EventHandler<CommandCallbackEventArgs> Callback,Format... formats) {
+
+    }
+
     /**
      * This method will be invoked on a channel event. Its function is to save the message locally, so
      * next time the message has to be read it will be read from local storage.

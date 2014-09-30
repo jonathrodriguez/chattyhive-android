@@ -10,7 +10,7 @@ import com.google.gson.JsonPrimitive;
      
 
  /*
-  * Automatically generated code by ChattyHive API Manager Code Generator on 26/09/2014.
+  * Automatically generated code by ChattyHive API Manager Code Generator on 28/09/2014.
   * Be careful to not modify this file since your changes will not be included in future
   * versions of this file.
   *
@@ -39,22 +39,22 @@ public class EXPLORE_FILTER extends Format {
 	    if ((this.TYPE != null) && (!this.TYPE.isEmpty()))
             jsonObject.addProperty("TYPE",this.TYPE);
       else
-            jsonObject.addProperty("TYPE", JsonNull.INSTANCE);            
+            jsonObject.add("TYPE", JsonNull.INSTANCE);            
         if ((this.CATEGORY != null) && (!this.CATEGORY.isEmpty()))
             jsonObject.addProperty("CATEGORY",this.CATEGORY);
       else
-            jsonObject.addProperty("CATEGORY", JsonNull.INSTANCE);            
+            jsonObject.add("CATEGORY", JsonNull.INSTANCE);            
         if (this.RESULT_INTERVAL != null) {
             JsonElement jsonElement = this.RESULT_INTERVAL.toJSON();
             if (!jsonElement.isJsonNull())
                 jsonObject.add("RESULT_INTERVAL",jsonElement);
         }
       else
-            jsonObject.addProperty("RESULT_INTERVAL", JsonNull.INSTANCE);        
+            jsonObject.add("RESULT_INTERVAL", JsonNull.INSTANCE);        
         if ((this.SEARCH_PATTERN != null) && (!this.SEARCH_PATTERN.isEmpty()))
             jsonObject.addProperty("SEARCH_PATTERN",this.SEARCH_PATTERN);
       else
-            jsonObject.addProperty("SEARCH_PATTERN", JsonNull.INSTANCE);            
+            jsonObject.add("SEARCH_PATTERN", JsonNull.INSTANCE);            
       
 
         if (jsonObject.entrySet().isEmpty())
