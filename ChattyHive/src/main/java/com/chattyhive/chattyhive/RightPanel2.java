@@ -26,6 +26,7 @@ public class RightPanel2  {
         listView = (ExpandableListView) ((Activity)this.context).findViewById(R.id.right_panel_expandable_list);
         RightPanelExpandableListAdapter adapter = new RightPanelExpandableListAdapter((Activity)this.context, grupos); //cast modificado
         listView.setAdapter(adapter);
+        listView.expandGroup(0);
     }
 
     /*    @Override

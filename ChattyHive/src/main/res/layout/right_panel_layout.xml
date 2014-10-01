@@ -8,88 +8,43 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:background="@color/menu_background_color">
-
-    <ImageView
-        android:layout_width="36px"
-        android:layout_height="36px"
-        android:id="@+id/pestanha_desplegable"
-        android:src="@drawable/ic_action_next_item"
-        android:tint="#FFFF"/>
+    android:background="@color/menu_background_color"
+    android:orientation="vertical">
 
     <!--menu desplegable-->
     <ExpandableListView
         android:id="@+id/right_panel_expandable_list"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        />
-
-</LinearLayout>
-
-    <!--NOTIFICACIONES-->
-
-
-    <!--    <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="96px"
-            android:layout_gravity="right"
-            android:layout_weight="0.13">
-        </LinearLayout>
-
-        <ImageView
-            android:layout_width="64px"
-            android:layout_height="64px"
-            android:id="@+id/imageView"
-            android:src="@drawable/registro_load_picture"
-            android:scaleType="centerCrop"
-            android:layout_gravity="right"
-            android:padding="2dp" />--><!--<ListView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/listView"
-        android:layout_gravity="center_horizontal"
-        android:layout_weight="1"/>
+        android:groupIndicator="@null">
+    </ExpandableListView>
 
     <LinearLayout
-        android:orientation="horizontal"
+        android:id="@+id/right_panel_layout_list"
         android:layout_width="match_parent"
-        android:layout_height="80px"
-        android:layout_gravity="right"
-        android:layout_weight="0.13">
+        android:layout_height="45dp">
 
-        <CheckBox
+        <!--margenes!!!!! -->
+        <!--LOGO CHATTYHIVE-->
+
+        <TextView
+            android:layout_height="match_parent"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Amigos"
-            android:id="@+id/checkBox"
-            android:layout_gravity="center"
-            android:textSize="29px"/>
+            android:id="@+id/right_panel_layout_list_notificaciones"
+            android:text="@string/right_panel_layout_list_notificaciones">
 
-        <CheckBox
-            android:layout_width="wrap_content"
-            android:layout_height="44px"
-            android:text="Hivemates"
-            android:id="@+id/checkBox2"
-            android:layout_gravity="center"
-            android:textSize="29px"/>-->
+        </TextView>
+        <RelativeLayout
+            android:id="@+id/right_panel_layout_list_notificaciones_bell"
+            android:layout_width="32dp"
+            android:layout_height="match_parent"
+            >
+            <ImageView
+                android:id="@+id/right_panel_layout_list_notificaciones_bell_image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+            </ImageView>
+        </RelativeLayout>
+    </LinearLayout>
 
-
-    <!--INVITAR AJUSTES Y OTROS-->
-
-
-    <!--<Button
-        style="@android:style/Widget.Button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Logout"
-        android:id="@+id/temp_logout_button"
-        android:layout_gravity="right" />-->
-
-    <!--<Button
-        style="@android:style/Widget.Button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Clear chats"
-        android:id="@+id/temp_clear_chats_button"
-        android:layout_gravity="right" />--><!--</ScrollView>-->
+</LinearLayout>
