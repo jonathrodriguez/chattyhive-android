@@ -1,4 +1,4 @@
-package com.chattyhive.chattyhive.Util;
+package com.chattyhive.chattyhive.framework.Util;
 
 import android.app.Application;
 import android.content.Context;

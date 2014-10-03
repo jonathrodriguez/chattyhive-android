@@ -23,7 +23,6 @@ import com.chattyhive.backend.util.events.EventHandler;
 import com.chattyhive.backend.util.events.FormatReceivedEventArgs;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
-import com.sun.istack.internal.NotNull;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -56,7 +55,7 @@ public class User {
         rf.add(common);
         ArrayList<Format> sf = new ArrayList<Format>();
         sf.add(user_username);
-        CommandCallbackEventArgs eventArgs = new CommandCallbackEventArgs(rf,sf);
+        CommandCallbackEventArgs eventArgs = new CommandCallbackEventArgs(AvailableCommands.EmailCheck,rf,sf,null);
         try {
             Callback.Invoke(controller,eventArgs);
         } catch (InvocationTargetException e) {
@@ -134,11 +133,11 @@ public class User {
         this.controller = controller;
     }
 
-    public User(String userID, @NotNull ProfileType requiredProfileType) {
+    public User(String userID, ProfileType requiredProfileType) {
         this(userID,requiredProfileType,(Controller)null);
     }
 
-    public User(String userID, @NotNull ProfileType requiredProfileType, Controller controller) {
+    public User(String userID, ProfileType requiredProfileType, Controller controller) {
         this.controller = controller;
         this.userID = userID;
 
@@ -148,13 +147,8 @@ public class User {
         requestProfile.USER_ID = userID;
         requestProfile.PROFILE_TYPE = (requiredProfileType == ProfileType.PRIVATE)?"BASIC_PRIVATE":"BASIC_PUBLIC";
 
-        try {
-            this.loading = true;
-            this.controller.getDataProvider().RunCommand(AvailableCommands.UserProfile, new EventHandler<CommandCallbackEventArgs>(this, "loadCallback", CommandCallbackEventArgs.class), requestProfile);
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-            this.loading = false;
-        }
+        this.controller.getDataProvider().RunCommand(AvailableCommands.UserProfile, new EventHandler<CommandCallbackEventArgs>(this, "loadCallback", CommandCallbackEventArgs.class), requestProfile);
+        this.loading = true;
     }
 
 
@@ -179,11 +173,7 @@ public class User {
         User.userLocalStorage = userLocalStorage;
         User.knownUsers = new TreeMap<String, User>();
 
-        try {
-            DataProvider.GetDataProvider().onUserProfileReceived.add(new EventHandler<FormatReceivedEventArgs>(User.class,"onFormatReceived",FormatReceivedEventArgs.class));
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
+        DataProvider.GetDataProvider().onUserProfileReceived.add(new EventHandler<FormatReceivedEventArgs>(User.class,"onFormatReceived",FormatReceivedEventArgs.class));
 
         //Load local stored users.
         String[] users = userLocalStorage.RecoverAllCompleteUserProfiles();
@@ -347,11 +337,7 @@ public class User {
                 return;
         }
 
-        try {
-            this.controller.getDataProvider().RunCommand(AvailableCommands.UserProfile,new EventHandler<CommandCallbackEventArgs>(this,"loadCallback",CommandCallbackEventArgs.class),profile_id);
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
+        this.controller.getDataProvider().RunCommand(AvailableCommands.UserProfile,new EventHandler<CommandCallbackEventArgs>(this,"loadCallback",CommandCallbackEventArgs.class),profile_id);
     }
 
     public void unloadProfile(ProfileLevel profileLevel) {

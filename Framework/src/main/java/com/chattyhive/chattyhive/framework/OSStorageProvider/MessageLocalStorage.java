@@ -1,11 +1,10 @@
-package com.chattyhive.chattyhive.OSStorageProvider;
+package com.chattyhive.chattyhive.framework.OSStorageProvider;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
 
 import com.chattyhive.backend.contentprovider.OSStorageProvider.MessageLocalStorageInterface;
-import com.chattyhive.chattyhive.Util.ApplicationContextProvider;
+import com.chattyhive.chattyhive.framework.Util.ApplicationContextProvider;
 
 import java.util.ArrayList;
 import java.util.Collection;

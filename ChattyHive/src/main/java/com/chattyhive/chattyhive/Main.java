@@ -20,20 +20,17 @@ import com.chattyhive.backend.StaticParameters;
 
 import com.chattyhive.backend.contentprovider.AvailableCommands;
 import com.chattyhive.backend.contentprovider.DataProvider;
-import com.chattyhive.backend.contentprovider.server.ServerCommand;
-import com.chattyhive.chattyhive.OSStorageProvider.CookieStore;
-import com.chattyhive.chattyhive.OSStorageProvider.GroupLocalStorage;
-import com.chattyhive.chattyhive.OSStorageProvider.HiveLocalStorage;
-import com.chattyhive.chattyhive.OSStorageProvider.LoginLocalStorage;
-import com.chattyhive.chattyhive.OSStorageProvider.MessageLocalStorage;
-import com.chattyhive.chattyhive.OSStorageProvider.UserLocalStorage;
+import com.chattyhive.chattyhive.framework.OSStorageProvider.CookieStore;
+import com.chattyhive.chattyhive.framework.OSStorageProvider.GroupLocalStorage;
+import com.chattyhive.chattyhive.framework.OSStorageProvider.HiveLocalStorage;
+import com.chattyhive.chattyhive.framework.OSStorageProvider.LoginLocalStorage;
+import com.chattyhive.chattyhive.framework.OSStorageProvider.MessageLocalStorage;
+import com.chattyhive.chattyhive.framework.OSStorageProvider.UserLocalStorage;
 
 import com.chattyhive.chattyhive.backgroundservice.CHService;
 
-import com.chattyhive.chattyhive.framework.FloatingPanel;
-import com.chattyhive.chattyhive.framework.ViewPair;
-
-import java.lang.reflect.Method;
+import com.chattyhive.chattyhive.framework.CustomViews.ViewGroup.FloatingPanel;
+import com.chattyhive.chattyhive.framework.Util.ViewPair;
 
 
 public class Main extends Activity {

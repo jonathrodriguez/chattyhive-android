@@ -1,23 +1,18 @@
 package com.chattyhive.chattyhive;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.view.View;
-import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.chattyhive.backend.businessobjects.Users.User;
 import com.chattyhive.backend.util.formatters.DateFormatter;
-import com.chattyhive.chattyhive.framework.SquareImageView;
-import com.chattyhive.chattyhive.framework.StaticMethods;
-import com.chattyhive.chattyhive.framework.ViewPair;
+import com.chattyhive.chattyhive.framework.Util.StaticMethods;
+import com.chattyhive.chattyhive.framework.Util.ViewPair;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
-import java.util.StringTokenizer;
 
 /**
  * Created by Jonathan on 20/05/2014.

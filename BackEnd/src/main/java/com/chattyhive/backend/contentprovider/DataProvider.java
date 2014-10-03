@@ -23,6 +23,7 @@ import com.chattyhive.backend.contentprovider.formats.MESSAGE_ACK;
 import com.chattyhive.backend.contentprovider.formats.MESSAGE_LIST;
 import com.chattyhive.backend.contentprovider.formats.PRIVATE_PROFILE;
 import com.chattyhive.backend.contentprovider.formats.PUBLIC_PROFILE;
+import com.chattyhive.backend.contentprovider.local.LocalStorageInterface;
 import com.chattyhive.backend.contentprovider.pubsubservice.ConnectionState;
 import com.chattyhive.backend.contentprovider.pubsubservice.ConnectionStateChange;
 import com.chattyhive.backend.contentprovider.server.Server;
@@ -53,6 +54,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -164,6 +166,9 @@ public class DataProvider {
     /************************************************************************/
 
     private Server server;
+    private LocalStorageInterface localStorage;
+    private Integer nextCommandIndex;
+    private HashMap<Integer,CommandData> commandStack;
 
     @Deprecated
     public Server getServer() {
@@ -174,11 +179,24 @@ public class DataProvider {
     //CONSTRUCTORS
 
     public DataProvider () {
-        this(StaticParameters.DefaultServerAppName);
+        this(null,StaticParameters.DefaultServerAppName);
     }
 
     public DataProvider(String ServerAppName) {
+        this(null,ServerAppName);
+    }
+
+    public DataProvider(LocalStorageInterface localStorage) {
+        this(localStorage,StaticParameters.DefaultServerAppName);
+    }
+
+    public DataProvider(LocalStorageInterface localStorage, String ServerAppName) {
         if (LoginLocalStorage == null) throw new UnsupportedOperationException("DataProvider must be previously initialized with storage objects.");
+
+        this.localStorage = localStorage;
+        this.commandStack = new HashMap<Integer, CommandData>();
+        this.nextCommandIndex = 0;
+
         DataProvider.dataProvider = this;
 
         HttpCookie csrfCookie = null;
@@ -212,17 +230,13 @@ public class DataProvider {
 
     private void SubscribeEvents() {
         //Subscribe to events
-        try {
-            this.server.responseEvent.add(new EventHandler<FormatReceivedEventArgs>(this, "onFormatReceived", FormatReceivedEventArgs.class));
-            this.server.onConnected.add(new EventHandler<ConnectionEventArgs>(this, "onServerConnectionStateChanged", ConnectionEventArgs.class));
+        this.server.responseEvent.add(new EventHandler<FormatReceivedEventArgs>(this, "onFormatReceived", FormatReceivedEventArgs.class));
+        this.server.onConnected.add(new EventHandler<ConnectionEventArgs>(this, "onServerConnectionStateChanged", ConnectionEventArgs.class));
 
-            this.server.CsrfTokenChanged.add(new EventHandler<EventArgs>(this,"onCsrfTokenChanged",EventArgs.class));
+        this.server.CsrfTokenChanged.add(new EventHandler<EventArgs>(this,"onCsrfTokenChanged",EventArgs.class));
 
-            this.pubSub.SubscribeChannelEventHandler(new EventHandler<PubSubChannelEventArgs>(this,"onChannelEvent",PubSubChannelEventArgs.class));
-            this.pubSub.SubscribeConnectionEventHandler(new EventHandler<PubSubConnectionEventArgs>(this, "onConnectionEvent", PubSubConnectionEventArgs.class));
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
+        this.pubSub.SubscribeChannelEventHandler(new EventHandler<PubSubChannelEventArgs>(this,"onChannelEvent",PubSubChannelEventArgs.class));
+        this.pubSub.SubscribeConnectionEventHandler(new EventHandler<PubSubConnectionEventArgs>(this, "onConnectionEvent", PubSubConnectionEventArgs.class));
     }
 
     private void InitializeEvents() {
@@ -333,6 +347,8 @@ public class DataProvider {
     public Event<FormatReceivedEventArgs> onChatProfileReceived;
 
     public void onFormatReceived(Object sender, FormatReceivedEventArgs eventArgs) {
+        if (this.localStorage != null)
+            this.localStorage.FormatsReceived(eventArgs.getReceivedFormats());
         this.ProcessReceivedFormats(eventArgs.getReceivedFormats());
     }
 
@@ -405,11 +421,7 @@ public class DataProvider {
         HiveLocalStorage.StoreHive(hive.getNameUrl(),hive.toJson(new HIVE()).toString());
         Hive.getHive(hive.getNameUrl());
 
-        try {
-            this.server.RunCommand(AvailableCommands.Join,new EventHandler<CommandCallbackEventArgs>(this,"onHiveJoinedCallback",CommandCallbackEventArgs.class),hive.toFormat(new HIVE_ID()));
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
+        this.server.RunCommand(AvailableCommands.Join,new EventHandler<CommandCallbackEventArgs>(this,"onHiveJoinedCallback",CommandCallbackEventArgs.class),hive.toFormat(new HIVE_ID()));
     }
 
     public Event<CommandCallbackEventArgs> onHiveJoined;
@@ -471,7 +483,37 @@ public class DataProvider {
         this.server.RunCommand(command, Callback, formats);
     }
 
-    public void RunCommand(AvailableCommands commands,EventHandler<CommandCallbackEventArgs> Callback,Format... formats) {
+    public void RunCommand(AvailableCommands command,EventHandler<CommandCallbackEventArgs> Callback,Format... formats) {
+        Integer commandIndex = this.nextCommandIndex++;
+        CommandData commandData = new CommandData(command,Callback);
+        this.commandStack.put(commandIndex,commandData);
+
+        if (this.localStorage != null) {
+            commandData.setLevel(ExecutorLevel.LocalStorage);
+            this.localStorage.PreRunCommand(command, new EventHandler<CommandCallbackEventArgs>(this, "CommandCallback", CommandCallbackEventArgs.class), commandIndex, formats);
+        }
+
+        commandData.setLevel(ExecutorLevel.Server);
+        this.server.RunCommand(command,new EventHandler<CommandCallbackEventArgs>(this,"CommandCallback",CommandCallbackEventArgs.class),commandIndex,formats);
+    }
+
+    public void CommandCallback(Object sender, CommandCallbackEventArgs Callback) {
+        Object additionalData = Callback.getAdditionalData();
+        if (!(additionalData instanceof Integer)) return;
+        Integer commandIndex = (Integer)additionalData;
+        CommandData commandData = this.commandStack.get(commandIndex);
+        if (commandData.getLevel().ordinal() > ExecutorLevel.LocalStorage.ordinal()) {
+            if (this.localStorage != null) {
+                ArrayList<Format> formats = new ArrayList<Format>(Callback.getSentFormats());
+                formats.addAll(Callback.getReceivedFormats());
+                this.localStorage.PostRunCommand(Callback.getCommand(), formats.toArray(new Format[formats.size()]));
+            }
+        }
+        try {
+            commandData.getCallback().Invoke(sender, Callback);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -521,6 +563,34 @@ public class DataProvider {
     public Boolean isPubsubConnected() {
         ConnectionState cs = this.pubSub.GetConnectionState();
         return ((cs == ConnectionState.CONNECTED) || (cs == ConnectionState.CONNECTING));
+    }
+
+    protected enum ExecutorLevel { LocalStorage, Server };
+
+    private class CommandData {
+
+        AvailableCommands command;
+        EventHandler<CommandCallbackEventArgs> callback;
+        ExecutorLevel level;
+
+        private CommandData(AvailableCommands command,EventHandler<CommandCallbackEventArgs> callback) {
+            this.command = command;
+            this.callback = callback;
+        }
+
+        AvailableCommands getCommand() {
+            return this.command;
+        }
+        EventHandler<CommandCallbackEventArgs> getCallback() {
+            return this.callback;
+        }
+
+        void setLevel(ExecutorLevel level) {
+            this.level = level;
+        }
+        ExecutorLevel getLevel() {
+            return this.level;
+        }
     }
 }
 

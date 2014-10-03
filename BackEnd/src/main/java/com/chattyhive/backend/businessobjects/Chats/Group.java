@@ -48,11 +48,7 @@ public class Group {
         Group.controller = controller;
         Group.localStorage = groupLocalStorageInterface;
 
-        try {
-            DataProvider.GetDataProvider().onChatProfileReceived.add(new EventHandler<FormatReceivedEventArgs>(Group.class, "onFormatReceived", FormatReceivedEventArgs.class));
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
+        DataProvider.GetDataProvider().onChatProfileReceived.add(new EventHandler<FormatReceivedEventArgs>(Group.class, "onFormatReceived", FormatReceivedEventArgs.class));
 
         //Local recovering of groups.
         String[] groups = groupLocalStorageInterface.RecoverGroups();

@@ -273,6 +273,7 @@ public class StandAloneServer {
     }
     private static User createUser(String email, String firstName, String lastName, String publicName, String color, String birthdate, String location, String sex, Boolean privateShowAge, Boolean publicShowAge, Boolean publicShowSex, Boolean publicShowLocation, String... languages) {
         User user = new User(email);
+        user.setUserID(publicName);
         user.getUserPrivateProfile().setFirstName(firstName);
         user.getUserPrivateProfile().setLastName(lastName);
         user.getUserPrivateProfile().setShowAge(privateShowAge);
@@ -285,12 +286,12 @@ public class StandAloneServer {
         user.getUserPublicProfile().setLocation(location);
         user.getUserPublicProfile().setLanguages(Arrays.asList(languages));
         user.getUserPublicProfile().setSex(sex);
+        user.getUserPublicProfile().setID(user.getUserID());
         user.getUserPrivateProfile().setLanguages(user.getUserPublicProfile().getLanguages());
         user.getUserPrivateProfile().setLocation(user.getUserPublicProfile().getLocation());
         user.getUserPrivateProfile().setBirthdate(user.getUserPublicProfile().getBirthdate());
-        user.getUserPrivateProfile().setColor(user.getUserPublicProfile().getColor());
         user.getUserPrivateProfile().setSex(user.getUserPublicProfile().getSex());
-        user.getUserPrivateProfile().setUserID(user.getUserPublicProfile().getID());
+        user.getUserPrivateProfile().setID(user.getUserPublicProfile().getID());
 
         return user;
     }
@@ -342,7 +343,7 @@ public class StandAloneServer {
                     if (((COMMON) format).STATUS.equalsIgnoreCase("OK")) {
                         result = true;
                         if (Callback != null)
-                            Callback.Invoke(server, new CommandCallbackEventArgs(Arrays.asList(receivedFormats), (formats!=null)?Arrays.asList(formats):null));
+                            Callback.Invoke(server, new CommandCallbackEventArgs(serverCommand.getCommand(),Arrays.asList(receivedFormats), (formats!=null)?Arrays.asList(formats):null, null));
                         else if ((serverCommand.getCommand() == AvailableCommands.Login) && (server.onConnected != null)) {
                             server.onConnected.fire(server, new ConnectionEventArgs(true));
                             return true;

@@ -88,14 +88,14 @@ public class Server {
     /************************************************************************/
 
     public void StartSession() {
-        RunCommand(AvailableCommands.StartSession,null,true,null);
+        RunCommand(AvailableCommands.StartSession,null,null,true,null);
      }
     public void Login() {
         if (serverUser == null) return;
 
         final Format[] loginFormats = Format.getFormat(this.serverUser.toJson());
 
-        RunCommand(AvailableCommands.Login,null,true,loginFormats);
+        RunCommand(AvailableCommands.Login,null,null,true,loginFormats);
     }
 
     public void Connect() {
@@ -104,7 +104,7 @@ public class Server {
     }
 
     public void RunCommand(AvailableCommands command, final Format... formats) {
-        this.RunCommand(command,null,formats);
+        this.RunCommand(command,null,null,formats);
     }
 
     private Boolean recursiveTestCookiePrerequisites(final ServerCommand serverCommand, final Format... formats) {
@@ -136,15 +136,15 @@ public class Server {
         return recursiveTestCookiePrerequisites(serverCommand,formats);
     }
 
-    public void RunCommand(final AvailableCommands command, final EventHandler<CommandCallbackEventArgs> Callback, final Format... formats) {
-        RunCommand(command,Callback,false,formats);
+    public void RunCommand(final AvailableCommands command, final EventHandler<CommandCallbackEventArgs> Callback, Object CallbackAdditionalData, final Format... formats) {
+        RunCommand(command,Callback,CallbackAdditionalData,false,formats);
     }
 
-    private Boolean RunCommand(final AvailableCommands command, final EventHandler<CommandCallbackEventArgs> Callback, boolean waitForEnd, final Format... formats) {
+    private Boolean RunCommand(final AvailableCommands command, final EventHandler<CommandCallbackEventArgs> Callback, final Object CallbackAdditionalData, boolean waitForEnd, final Format... formats) {
         if (StaticParameters.StandAlone) //TODO: Replace this by a static class call (StandAloneServer) which may return fake values for all server commands.
             try {
                 if (Callback != null)
-                    Callback.Invoke(this,new CommandCallbackEventArgs(Arrays.asList(Format.getFormat(new JsonParser().parse("{\"COMMON\": {\"STATUS\": \"OK\", \"ERROR\": null}}"))),Arrays.asList(formats)));
+                    Callback.Invoke(this,new CommandCallbackEventArgs(command,Arrays.asList(Format.getFormat(new JsonParser().parse("{\"COMMON\": {\"STATUS\": \"OK\", \"ERROR\": null}}"))),Arrays.asList(formats),CallbackAdditionalData));
                 return true;
             } catch (Exception e) {
                 e.printStackTrace();
@@ -164,7 +164,7 @@ public class Server {
             @Override
             public void run() {
                 int retryCount = 0;
-                result[0] = RunCommand(serverCommand,Callback,retryCount,formats);
+                result[0] = RunCommand(serverCommand,Callback,CallbackAdditionalData,retryCount,formats);
                 if (!result[0]) {
                     //TODO: Test connection availability.
                     if (!DataProvider.isConnectionAvailable()) {
@@ -192,7 +192,7 @@ public class Server {
         return true;
     }
 
-    private Boolean RunCommand (ServerCommand serverCommand, EventHandler<CommandCallbackEventArgs> Callback,int retryCount, Format... formats) {
+    private Boolean RunCommand (ServerCommand serverCommand, EventHandler<CommandCallbackEventArgs> Callback, Object CallbackAdditionalData, int retryCount, Format... formats) {
         Boolean result = false;
 
         if (retryCount >= 3) return false;
@@ -285,18 +285,18 @@ public class Server {
                         if (((COMMON) format).STATUS.equalsIgnoreCase("OK")) {
                             result = true;
                             if (Callback != null)
-                                Callback.Invoke(httpURLConnection, new CommandCallbackEventArgs(Arrays.asList(receivedFormats), (formats!=null)?Arrays.asList(formats):null));
-                            else if ((serverCommand.getCommand() == AvailableCommands.Login) && (onConnected != null)) {
-                                onConnected.fire(httpURLConnection, new ConnectionEventArgs(true));
+                                Callback.Invoke(httpURLConnection, new CommandCallbackEventArgs(serverCommand.getCommand(), Arrays.asList(receivedFormats), (formats != null) ? Arrays.asList(formats) : null, CallbackAdditionalData));
+                            else if (serverCommand.getCommand() == AvailableCommands.Login){
+                                if (onConnected != null)
+                                    onConnected.fire(httpURLConnection, new ConnectionEventArgs(true));
                                 return true;
-                            } else if (serverCommand.getCommand() == AvailableCommands.Login)
-                                return true;
+                            }
                             else if (responseEvent != null)
                                 responseEvent.fire(httpURLConnection, new FormatReceivedEventArgs(Arrays.asList(receivedFormats)));
                         } else if (((COMMON) format).STATUS.equalsIgnoreCase("SESSION EXPIRED")) {
                             serverUser.setStatus(ServerStatus.EXPIRED);
                             Login();
-                            result = RunCommand(serverCommand, Callback, retryCount + 1, formats);
+                            result = RunCommand(serverCommand, Callback, CallbackAdditionalData, retryCount + 1, formats);
                         } else {
                             //TODO: Check COMMON for operation Error and set result here.
                             serverUser.setStatus(ServerStatus.ERROR);
@@ -305,7 +305,7 @@ public class Server {
                     }
             } else if (responseCode == 403) { //CSRF-Token error.
                 StartSession();
-                result = RunCommand(serverCommand, Callback, retryCount + 1, formats);
+                result = RunCommand(serverCommand, Callback, CallbackAdditionalData, retryCount + 1, formats);
             }
 
             httpURLConnection.disconnect();

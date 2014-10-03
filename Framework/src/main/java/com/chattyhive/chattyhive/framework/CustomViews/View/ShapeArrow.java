@@ -1,4 +1,4 @@
-package com.chattyhive.chattyhive.framework;
+package com.chattyhive.chattyhive.framework.CustomViews.View;
 
 import android.content.Context;
 import android.graphics.Canvas;

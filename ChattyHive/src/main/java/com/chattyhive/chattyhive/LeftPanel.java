@@ -14,7 +14,7 @@ import com.chattyhive.backend.businessobjects.Chats.Group;
 import com.chattyhive.backend.businessobjects.Chats.Hive;
 import com.chattyhive.backend.util.events.EventArgs;
 import com.chattyhive.backend.util.events.EventHandler;
-import com.chattyhive.chattyhive.framework.ViewPair;
+import com.chattyhive.chattyhive.framework.Util.ViewPair;
 
 /**
  * Created by Jonathan on 7/03/14.

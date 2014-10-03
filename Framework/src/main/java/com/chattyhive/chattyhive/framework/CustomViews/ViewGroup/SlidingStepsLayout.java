@@ -1,4 +1,4 @@
-package com.chattyhive.chattyhive.framework;
+package com.chattyhive.chattyhive.framework.CustomViews.ViewGroup;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -20,6 +20,12 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.Scroller;
 import android.widget.TextView;
+
+import com.chattyhive.chattyhive.framework.CustomViews.Listener.OnInflateLayoutListener;
+import com.chattyhive.chattyhive.framework.CustomViews.Listener.OnRemoveLayoutListener;
+import com.chattyhive.chattyhive.framework.CustomViews.Listener.OnTransitionListener;
+import com.chattyhive.chattyhive.framework.CustomViews.View.ShapeArrow;
+import com.chattyhive.chattyhive.framework.R;
 
 import java.security.InvalidParameterException;
 import java.util.HashMap;

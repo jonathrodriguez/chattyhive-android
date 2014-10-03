@@ -11,8 +11,6 @@ import android.widget.TextView;
 import com.chattyhive.backend.Controller;
 import com.chattyhive.backend.util.events.EventArgs;
 import com.chattyhive.backend.util.events.EventHandler;
-import com.chattyhive.chattyhive.OSStorageProvider.LoginLocalStorage;
-import com.chattyhive.chattyhive.OSStorageProvider.MessageLocalStorage;
 
 public class Explore extends Activity {
 

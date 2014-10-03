@@ -45,11 +45,7 @@ public class Hive {
 
         Hive.localStorage = hiveLocalStorageInterface;
 
-        try {
-            DataProvider.GetDataProvider().onHiveProfileReceived.add(new EventHandler<FormatReceivedEventArgs>(Hive.class, "onFormatReceived", FormatReceivedEventArgs.class));
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
+        DataProvider.GetDataProvider().onHiveProfileReceived.add(new EventHandler<FormatReceivedEventArgs>(Hive.class, "onFormatReceived", FormatReceivedEventArgs.class));
 
         //Local recovering of hives
         String[] hives = Hive.localStorage.RecoverHives();

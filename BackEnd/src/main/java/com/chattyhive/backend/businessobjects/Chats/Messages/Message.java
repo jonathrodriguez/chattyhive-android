@@ -168,13 +168,8 @@ public class Message implements Comparable {
                 message_interval.COUNT = this.holeSize+1;
                 message_interval.LAST_MESSAGE_ID = nextMessageId;
 
-                try {
-                    filling = true;
-                    dataProvider.InvokeServerCommand(AvailableCommands.GetMessages,new EventHandler<CommandCallbackEventArgs>(this,"onMessageHoleFilledCallback",CommandCallbackEventArgs.class),chat_id,message_interval);
-                } catch (NoSuchMethodException e) {
-                    filling = false;
-                    e.printStackTrace();
-                }
+                dataProvider.InvokeServerCommand(AvailableCommands.GetMessages,new EventHandler<CommandCallbackEventArgs>(this,"onMessageHoleFilledCallback",CommandCallbackEventArgs.class),chat_id,message_interval);
+                filling = true;
             }
         }
     }
@@ -209,11 +204,8 @@ public class Message implements Comparable {
 
         this.chat.addMessage(this);
         DataProvider dataProvider = DataProvider.GetDataProvider();
-        try {
-            dataProvider.InvokeServerCommand(AvailableCommands.SendMessage,new EventHandler<CommandCallbackEventArgs>(this,"onMessageSendCallback",CommandCallbackEventArgs.class),this.toFormat(new MESSAGE()));
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
+
+        dataProvider.InvokeServerCommand(AvailableCommands.SendMessage,new EventHandler<CommandCallbackEventArgs>(this,"onMessageSendCallback",CommandCallbackEventArgs.class),this.toFormat(new MESSAGE()));
     }
 
     public void onMessageSendCallback (Object sender, CommandCallbackEventArgs eventArgs) {

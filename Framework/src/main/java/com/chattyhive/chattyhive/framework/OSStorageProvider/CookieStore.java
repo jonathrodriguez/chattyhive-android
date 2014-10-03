@@ -1,9 +1,9 @@
-package com.chattyhive.chattyhive.OSStorageProvider;
+package com.chattyhive.chattyhive.framework.OSStorageProvider;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.chattyhive.chattyhive.Util.ApplicationContextProvider;
+import com.chattyhive.chattyhive.framework.Util.ApplicationContextProvider;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;

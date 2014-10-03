@@ -57,7 +57,6 @@ public class Controller {
         ConnectionAvailabilityChanged = new Event<EventArgs>();
 
         DataProvider.Initialize();
-        ServerCommand.Initialize();
 
         return (Initialized = true);
     }
@@ -238,16 +237,10 @@ public class Controller {
         Chat.Initialize(this,MessageLocalStorage);
         User.Initialize(UserLocalStorage);
 
-        try {
-            DataProvider.ConnectionAvailabilityChanged.add(new EventHandler<EventArgs>(this,"onConnectionAvailabilityChanged",EventArgs.class));
-            this.dataProvider.ServerConnectionStateChanged.add(new EventHandler<ConnectionEventArgs>(this,"onServerConnectionStateChanged",ConnectionEventArgs.class));
+        DataProvider.ConnectionAvailabilityChanged.add(new EventHandler<EventArgs>(this,"onConnectionAvailabilityChanged",EventArgs.class));
+        this.dataProvider.ServerConnectionStateChanged.add(new EventHandler<ConnectionEventArgs>(this,"onServerConnectionStateChanged",ConnectionEventArgs.class));
 
-            this.dataProvider.onHiveJoined.add(new EventHandler<CommandCallbackEventArgs>(this,"onJoinHiveCallback",CommandCallbackEventArgs.class));
-
-
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
+        this.dataProvider.onHiveJoined.add(new EventHandler<CommandCallbackEventArgs>(this,"onJoinHiveCallback",CommandCallbackEventArgs.class));
     }
 
     /************************************************************************/
@@ -387,13 +380,8 @@ public class Controller {
      */
     public void exploreHives(int offset,int length) {
         if (offset == 0) { exploreHives.clear(); }
-        if (!StaticParameters.StandAlone) {
-            try {
-                this.dataProvider.ExploreHives(offset,length,new EventHandler<CommandCallbackEventArgs>(this,"onExploreHivesCallback",CommandCallbackEventArgs.class));
-            } catch (NoSuchMethodException e) {
-                e.printStackTrace();
-            }
-        }
+        if (!StaticParameters.StandAlone)
+            this.dataProvider.ExploreHives(offset,length,new EventHandler<CommandCallbackEventArgs>(this,"onExploreHivesCallback",CommandCallbackEventArgs.class));
     }
 
     public void onExploreHivesCallback(Object sender,CommandCallbackEventArgs eventArgs) {
@@ -428,7 +416,7 @@ public class Controller {
         common.STATUS = "OK";
         ArrayList<Format> rf = new ArrayList<Format>();
         rf.add(common);
-        CommandCallbackEventArgs eventArgs = new CommandCallbackEventArgs(rf,null);
+        CommandCallbackEventArgs eventArgs = new CommandCallbackEventArgs(AvailableCommands.EmailCheck,rf,null,null);
         try {
             Callback.Invoke(this,eventArgs);
         } catch (InvocationTargetException e) {

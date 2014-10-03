@@ -1,4 +1,4 @@
-package com.chattyhive.chattyhive.framework;
+package com.chattyhive.chattyhive.framework.CustomViews.ViewGroup;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -13,6 +13,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Scroller;
+
+import com.chattyhive.chattyhive.framework.R;
 
 import java.util.Map;
 import java.util.TreeMap;

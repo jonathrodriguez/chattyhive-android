@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -17,12 +16,10 @@ import com.chattyhive.backend.contentprovider.formats.Format;
 import com.chattyhive.backend.util.events.CommandCallbackEventArgs;
 import com.chattyhive.backend.util.events.EventHandler;
 import com.chattyhive.backend.util.formatters.DateFormatter;
-import com.chattyhive.chattyhive.framework.OnInflateLayoutListener;
-import com.chattyhive.chattyhive.framework.OnRemoveLayoutListener;
-import com.chattyhive.chattyhive.framework.OnTransitionListener;
-import com.chattyhive.chattyhive.framework.SlidingStepsLayout;
-
-import org.w3c.dom.Text;
+import com.chattyhive.chattyhive.framework.CustomViews.Listener.OnInflateLayoutListener;
+import com.chattyhive.chattyhive.framework.CustomViews.Listener.OnRemoveLayoutListener;
+import com.chattyhive.chattyhive.framework.CustomViews.Listener.OnTransitionListener;
+import com.chattyhive.chattyhive.framework.CustomViews.ViewGroup.SlidingStepsLayout;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
