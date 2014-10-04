@@ -9,13 +9,14 @@ import com.chattyhive.backend.contentprovider.formats.LOCAL_USER_PROFILE;
 import com.chattyhive.backend.contentprovider.formats.LOGIN;
 import com.chattyhive.backend.contentprovider.formats.MESSAGE;
 import com.chattyhive.backend.contentprovider.formats.MESSAGE_ACK;
-import com.chattyhive.backend.contentprovider.formats.MESSAGE_CONTENT;
 import com.chattyhive.backend.contentprovider.formats.MESSAGE_LIST;
 import com.chattyhive.backend.contentprovider.local.LocalStorageInterface;
 import com.chattyhive.backend.util.events.CommandCallbackEventArgs;
 import com.chattyhive.backend.util.events.EventHandler;
 import com.chattyhive.backend.util.formatters.TimestampFormatter;
+import com.google.gson.JsonParser;
 
+import java.util.Arrays;
 import java.util.Collection;
 
 /**
@@ -36,12 +37,31 @@ public class LocalStorage implements LocalStorageInterface {
                 result = false;
                 break;
             case SendMessage:   //ForcePush
+                result = false;
+                break;
             case GetMessages:   //Pull
+                result = false;
+                break;
             case LocalProfile:  //Pull
+                result = false;
+                LOCAL_USER_PROFILE local_user_profile = null;
+                String profile = UserLocalStorage.getUserLocalStorage().RecoverLocalUserProfile();
+                if ((profile != null) && (!profile.isEmpty()))
+                    local_user_profile = new LOCAL_USER_PROFILE(new JsonParser().parse(profile));
+                result = true;
+                Callback.Run(this,new CommandCallbackEventArgs(command, Arrays.asList((Format)local_user_profile),null,CallbackAdditionalData));
+                break;
             case ChatContext:   //Pull
+                result = false;
+                break;
             case ChatList:      //Pull
+                result = false;
+                break;
             case UserProfile:   //Pull
+                result = false;
+                break;
             case HiveInfo:      //Pull
+                result = false;
                 break;
         }
         return result;

@@ -139,8 +139,6 @@ public class DataProvider {
     private static MessageLocalStorageInterface MessageLocalStorage;
     private static UserLocalStorageInterface UserLocalStorage;
 
-
-
     public static void setLocalStorage(Object... LocalStorage) {
         for (Object localStorage : LocalStorage) {
             if ((localStorage instanceof GroupLocalStorageInterface) && (GroupLocalStorage == null)) {
@@ -276,6 +274,7 @@ public class DataProvider {
             this.pubSub.Connect();
         }
     }
+
     public void Disconnect() {
         this.server.Disconnect();
         this.targetState = ConnectionState.DISCONNECTED;
@@ -291,8 +290,6 @@ public class DataProvider {
 
         if (LoginLocalStorage != null)
             LoginLocalStorage.ClearStoredLogin();
-
-
     }
 
     public void onServerConnectionStateChanged(Object sender, ConnectionEventArgs eventArgs) {

@@ -61,6 +61,16 @@ public class EventHandler<T extends EventArgs> {
         this.method.invoke(this.subscriber, sender, eventArgs);
     }
 
+    public void Run(Object sender, T eventArgs) {
+        try {
+            this.method.invoke(this.subscriber, sender, eventArgs);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public boolean equals(Object o) {
         return ((o instanceof EventHandler) && (this.subscriber == (((EventHandler) o).subscriber)) && (this.method.getName().equalsIgnoreCase(((EventHandler) o).method.getName())));
