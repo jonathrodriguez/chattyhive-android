@@ -60,9 +60,7 @@ public class CHService extends Service {
         notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         pendingMessages = 0;
         handleConnectivity();
-        try {
-            Controller.AppBindingEvent.add(new EventHandler<EventArgs>(this,"onAppBinding",EventArgs.class));
-        } catch (NoSuchMethodException e) {}
+        Controller.AppBindingEvent.add(new EventHandler<EventArgs>(this,"onAppBinding",EventArgs.class));
         Controller.bindSvc();
     }
 
@@ -82,13 +80,12 @@ public class CHService extends Service {
 
         if ((this.controller == null) || (this.controller != Controller.GetRunningController(true))) {
             this.controller = Controller.GetRunningController();
-            try {
-                if (DataProvider.GetDataProvider() == null)
-                    DataProvider.GetDataProvider(true);
 
-                DataProvider.GetDataProvider().onMessageReceived.add(new EventHandler<FormatReceivedEventArgs>(this,"onChannelEvent",FormatReceivedEventArgs.class));
-                DataProvider.GetDataProvider().PubSubConnectionStateChanged.add(new EventHandler<PubSubConnectionEventArgs>(this, "onConnectionEvent", PubSubConnectionEventArgs.class));
-            } catch (NoSuchMethodException e) { }
+            if (DataProvider.GetDataProvider() == null)
+                DataProvider.GetDataProvider(true);
+
+            DataProvider.GetDataProvider().onMessageReceived.add(new EventHandler<FormatReceivedEventArgs>(this,"onChannelEvent",FormatReceivedEventArgs.class));
+            DataProvider.GetDataProvider().PubSubConnectionStateChanged.add(new EventHandler<PubSubConnectionEventArgs>(this, "onConnectionEvent", PubSubConnectionEventArgs.class));
         }
     }
 

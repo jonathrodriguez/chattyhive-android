@@ -360,7 +360,7 @@ public class Group {
             this.pusherChannel = ((CHAT) format).PUSHER_CHANNEL;
             this.members = new TreeMap<String, User>();
             for (PROFILE_ID profile_id : ((CHAT) format).MEMBERS)
-                this.addMember(User.getUser(profile_id));
+                this.addMember(controller.getUser(profile_id));
 
             this.chat = new Chat(this);
             this.CalculateGroupKind();

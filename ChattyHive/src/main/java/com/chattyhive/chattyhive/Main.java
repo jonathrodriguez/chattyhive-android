@@ -20,6 +20,7 @@ import com.chattyhive.backend.StaticParameters;
 
 import com.chattyhive.backend.contentprovider.AvailableCommands;
 import com.chattyhive.backend.contentprovider.DataProvider;
+import com.chattyhive.backend.contentprovider.formats.Format;
 import com.chattyhive.chattyhive.framework.OSStorageProvider.CookieStore;
 import com.chattyhive.chattyhive.framework.OSStorageProvider.GroupLocalStorage;
 import com.chattyhive.chattyhive.framework.OSStorageProvider.HiveLocalStorage;
@@ -205,7 +206,7 @@ public class Main extends Activity {
         @Override
         public void onClick(View v) {
             DataProvider dataProvider = DataProvider.GetDataProvider();
-            dataProvider.InvokeServerCommand(AvailableCommands.ChatList, null);
+            dataProvider.InvokeServerCommand(AvailableCommands.ChatList, (Format)null);
         }
     };
 

@@ -88,7 +88,7 @@ public class Server {
     /************************************************************************/
 
     public void StartSession() {
-        RunCommand(AvailableCommands.StartSession,null,null,true,null);
+        RunCommand(AvailableCommands.StartSession,null,null,true,(Format)null);
      }
     public void Login() {
         if (serverUser == null) return;

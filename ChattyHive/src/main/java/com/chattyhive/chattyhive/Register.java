@@ -73,20 +73,12 @@ public class Register extends Activity {
                 TextView repeatPasswordView = (TextView)findViewById(R.id.register_third_step_repeat_password);
 
                 if (!emailView.getText().toString().equalsIgnoreCase(newUser.getEmail())) {
-                    try {
-                        Controller.GetRunningController().checkEmail(emailView.getText().toString(), new EventHandler<CommandCallbackEventArgs>(this, "onEmailCheckedCallback", CommandCallbackEventArgs.class));
-                    } catch (NoSuchMethodException e) {
-                        e.printStackTrace();
-                    }
+                    Controller.GetRunningController().CheckEmail(emailView.getText().toString(), new EventHandler<CommandCallbackEventArgs>(this, "onEmailCheckedCallback", CommandCallbackEventArgs.class));
                 }
 
                 if (passwordIsValid(passwordView)) {
                     if (passwordView.getText().toString().equals(repeatPasswordView.getText().toString())) {
-                        try {
-                            newUser.Register(passwordView.getText().toString(),new EventHandler<CommandCallbackEventArgs>(thisActivity,"onRegisterCallback",CommandCallbackEventArgs.class));
-                        } catch (NoSuchMethodException e) {
-                            e.printStackTrace();
-                        }
+                        newUser.Register(passwordView.getText().toString(),new EventHandler<CommandCallbackEventArgs>(thisActivity,"onRegisterCallback",CommandCallbackEventArgs.class));
                     } else {
                         repeatPasswordView.setError("Passwords must match.");
                         repeatPasswordView.requestFocus();
@@ -240,12 +232,7 @@ public class Register extends Activity {
                     break;
                 case 1:
                     if ((nextStep == 2) && (!usernameValidated) && (!newUser.getUserPublicProfile().getPublicName().equals(((TextView)findViewById(R.id.register_second_step_username)).getText().toString()))) {
-                        //TODO: Check username
-                        try {
-                            Controller.GetRunningController().checkUsername(((TextView)findViewById(R.id.register_second_step_username)).getText().toString(),new EventHandler<CommandCallbackEventArgs>(thisActivity,"onUsernameCheckedCallback",CommandCallbackEventArgs.class));
-                        } catch (NoSuchMethodException e) {
-                            e.printStackTrace();
-                        }
+                        Controller.GetRunningController().CheckUsername(((TextView)findViewById(R.id.register_second_step_username)).getText().toString(),new EventHandler<CommandCallbackEventArgs>(thisActivity,"onUsernameCheckedCallback",CommandCallbackEventArgs.class));
                     }
                     break;
             }

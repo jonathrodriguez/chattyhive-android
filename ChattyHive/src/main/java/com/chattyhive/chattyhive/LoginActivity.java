@@ -50,13 +50,9 @@ public class LoginActivity extends Activity {
 
         connecting = false;
 
-        try {
             dataProvider = DataProvider.GetDataProvider();
             controller = Controller.GetRunningController();
             dataProvider.ServerConnectionStateChanged.add(new EventHandler<ConnectionEventArgs>(this,"onServerConnectionStateChanged",ConnectionEventArgs.class));
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
     }
 
     protected void setTabButtonsBehaviour() {
@@ -114,12 +110,7 @@ public class LoginActivity extends Activity {
             if (StaticParameters.StandAlone) {
                 simulateWait(false);
             } else {
-                try {
-                    this.controller.checkEmail(email,new EventHandler<CommandCallbackEventArgs>(this,"onEmailCheckedCallback",CommandCallbackEventArgs.class));
-                } catch (NoSuchMethodException e) {
-                    e.printStackTrace();
-                }
-
+                this.controller.CheckEmail(email,new EventHandler<CommandCallbackEventArgs>(this,"onEmailCheckedCallback",CommandCallbackEventArgs.class));
             }
         }
     }

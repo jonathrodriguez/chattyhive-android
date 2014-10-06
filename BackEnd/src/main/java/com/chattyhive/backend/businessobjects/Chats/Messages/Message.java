@@ -1,5 +1,6 @@
 package com.chattyhive.backend.businessobjects.Chats.Messages;
 
+import com.chattyhive.backend.Controller;
 import com.chattyhive.backend.businessobjects.Chats.Chat;
 import com.chattyhive.backend.businessobjects.Chats.Group;
 import com.chattyhive.backend.businessobjects.Chats.GroupKind;
@@ -30,6 +31,7 @@ import java.util.Date;
  * Generally a message is sent by a user, in a concrete date and time (timestamp) and it has a content.
  */
 public class Message implements Comparable {
+    private Controller controller;
 
     protected Chat chat;
     protected MessageContent content;
@@ -116,7 +118,9 @@ public class Message implements Comparable {
     }
 
     //EMPTY CONSTRUCTOR
-    public Message() {}
+    public Message() {
+        this.controller = Controller.GetRunningController();
+    }
 
     //CONSTRUCTOR FOR DATE SEPARATOR
     public Message(Chat chat, Date timeStamp) {
@@ -126,6 +130,7 @@ public class Message implements Comparable {
         this.timeStamp = timeStamp;
         this.serverTimeStamp = timeStamp;
         this.id = this.serverTimeStamp.toString().concat("-DATE_SEPARATOR");
+        this.controller = Controller.GetRunningController();
     }
 
     //CONSTRUCTOR FOR MESSAGE HOLE
@@ -140,6 +145,7 @@ public class Message implements Comparable {
         this.isMessageHole = true;
         this.filling = false;
         this.holeSize = holeSize;
+        this.controller = Controller.GetRunningController();
     }
 
     /**
@@ -153,6 +159,8 @@ public class Message implements Comparable {
         this.content = content;
         this.timeStamp = timeStamp;
         this.chat = chat;
+
+        this.controller = Controller.GetRunningController();
 
         this.InitializeEvents();
     }
@@ -187,10 +195,12 @@ public class Message implements Comparable {
      */
     public Message(JsonElement jsonMessage) {
         this.fromJson(jsonMessage);
+        this.controller = Controller.GetRunningController();
     }
 
     public Message(Format format) {
         this.fromFormat(format);
+        this.controller = Controller.GetRunningController();
     }
 
     private void InitializeEvents() {
@@ -267,7 +277,7 @@ public class Message implements Comparable {
             PROFILE_ID profile_id = new PROFILE_ID();
             profile_id.USER_ID = ((MESSAGE) format).USER_ID;
             profile_id.PROFILE_TYPE = ((this.chat.getParent().getGroupKind() == GroupKind.PRIVATE_GROUP) || (this.chat.getParent().getGroupKind() == GroupKind.PRIVATE_SINGLE))?"BASIC_PRIVATE":"BASIC_PUBLIC";
-            this.user = User.getUser(profile_id);
+            this.user = controller.getUser(profile_id);
 
 
             return true;

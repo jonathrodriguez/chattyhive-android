@@ -15,6 +15,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.chattyhive.backend.businessobjects.Chats.Group;
@@ -136,7 +137,7 @@ public class LeftPanelListAdapter extends BaseAdapter {
             } else if (type == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Chats)) {
                 holder = new ChatViewHolder();
                 convertView = this.inflater.inflate(R.layout.left_panel_chat_list_item,parent,false);
-                ((ChatViewHolder)holder).chatItem = (LinearLayout)convertView.findViewById((R.id.left_panel_chat_list_item_top_view));
+                ((ChatViewHolder)holder).chatItem = (RelativeLayout)convertView.findViewById((R.id.left_panel_chat_list_item_top_view));
                 ((ChatViewHolder)holder).chatName = (TextView)convertView.findViewById(R.id.left_panel_chat_list_item_chat_name);
                 ((ChatViewHolder)holder).chatLastMessage = (TextView)convertView.findViewById(R.id.left_panel_chat_list_item_last_message);
                 ((ChatViewHolder)holder).chatImage = (ImageView)convertView.findViewById(R.id.left_panel_chat_list_item_big_img);
@@ -222,7 +223,7 @@ public class LeftPanelListAdapter extends BaseAdapter {
                         GroupName = ((Group)item).getName();
                     else
                         for (User user : ((Group) item).getMembers())
-                            if (!user.isMe()) GroupName += ((GroupName.isEmpty())?"":", ") + "@" + user.getShowingName();
+                            if (!user.isMe()) GroupName += ((GroupName.isEmpty())?"":", ") + "@" + user.getUserPublicProfile().getShowingName();
 
                     if (lastMessage != null) {
                         LastMessage = new SpannableString(" ".concat(lastMessage.getMessageContent().getContent()));
@@ -246,7 +247,7 @@ public class LeftPanelListAdapter extends BaseAdapter {
                     if (((Group) item).getParentHive() != null)
                         GroupName = ((Group) item).getParentHive().getName();
                     if (lastMessage != null) {
-                        LastMessage = new SpannableString("@" + lastMessage.getUser().getShowingName() + ": " + lastMessage.getMessageContent().getContent());
+                        LastMessage = new SpannableString("@" + lastMessage.getUser().getUserPublicProfile().getShowingName() + ": " + lastMessage.getMessageContent().getContent());
                     }
                     ((ChatViewHolder)holder).chatLastMessageTimestamp.setVisibility(View.INVISIBLE);
                     ((ChatViewHolder)holder).chatPendingMessagesNumber.setVisibility(View.INVISIBLE);
@@ -322,7 +323,7 @@ public class LeftPanelListAdapter extends BaseAdapter {
     }
 
     private class ChatViewHolder extends ViewHolder {
-        public LinearLayout chatItem;
+        public RelativeLayout chatItem;
         public TextView chatName;
         public TextView chatLastMessage;
         public ImageView chatImage;

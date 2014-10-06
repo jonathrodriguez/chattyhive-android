@@ -61,14 +61,10 @@ public class LeftPanel {
         this.leftPanelListAdapter = new LeftPanelListAdapter(this.context);
         ((ListView)((Activity)this.context).findViewById(R.id.left_panel_element_list)).setAdapter(this.leftPanelListAdapter);
 
-        try {
-            Hive.HiveListChanged.add(new EventHandler<EventArgs>(leftPanelListAdapter, "OnAddItem", EventArgs.class));
-            Group.GroupListChanged.add(new EventHandler<EventArgs>(leftPanelListAdapter, "OnAddItem", EventArgs.class));
+        Hive.HiveListChanged.add(new EventHandler<EventArgs>(leftPanelListAdapter, "OnAddItem", EventArgs.class));
+        Group.GroupListChanged.add(new EventHandler<EventArgs>(leftPanelListAdapter, "OnAddItem", EventArgs.class));
 
-            this.leftPanelListAdapter.ListSizeChanged.add(new EventHandler<EventArgs>(this,"OnListSizeChanged",EventArgs.class));
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        };
+        this.leftPanelListAdapter.ListSizeChanged.add(new EventHandler<EventArgs>(this,"OnListSizeChanged",EventArgs.class));
 
         this.leftPanelListAdapter.SetOnClickListener(OpenChat);
 

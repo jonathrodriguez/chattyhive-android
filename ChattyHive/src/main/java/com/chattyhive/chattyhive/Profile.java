@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.chattyhive.backend.Controller;
 import com.chattyhive.backend.businessobjects.Users.User;
 import com.chattyhive.backend.util.formatters.DateFormatter;
 import com.chattyhive.chattyhive.framework.Util.StaticMethods;
@@ -60,13 +61,13 @@ public class Profile {
     };
 
     private void setData() {
-        User me = User.getMe();
+        User me = Controller.GetRunningController().getMe();
 
         if (me != null) {
             ((TextView) profileView.findViewById(R.id.my_profile_full_name)).setText(String.format("%s %s",me.getUserPrivateProfile().getFirstName(),me.getUserPrivateProfile().getLastName()));
 
             ((TextView) profileView.findViewById(R.id.my_profile_public_name)).setText(me.getUserPublicProfile().getPublicName());
-            ((TextView) profileView.findViewById(R.id.my_profile_public_name)).setTextColor(Color.parseColor(me.getColor()));
+            ((TextView) profileView.findViewById(R.id.my_profile_public_name)).setTextColor(Color.parseColor(me.getUserPublicProfile().getColor()));
 
             if (me.getUserPrivateProfile().getSex().equalsIgnoreCase("male"))
                 ((TextView) profileView.findViewById(R.id.my_profile_information_gender)).setText(R.string.my_profile_information_gender_male_value);

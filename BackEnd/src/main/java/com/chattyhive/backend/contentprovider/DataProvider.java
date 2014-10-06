@@ -1,5 +1,6 @@
 package com.chattyhive.backend.contentprovider;
 
+import com.chattyhive.backend.Controller;
 import com.chattyhive.backend.StaticParameters;
 import com.chattyhive.backend.businessobjects.Chats.Group;
 import com.chattyhive.backend.businessobjects.Chats.Hive;
@@ -23,6 +24,7 @@ import com.chattyhive.backend.contentprovider.formats.MESSAGE_ACK;
 import com.chattyhive.backend.contentprovider.formats.MESSAGE_LIST;
 import com.chattyhive.backend.contentprovider.formats.PRIVATE_PROFILE;
 import com.chattyhive.backend.contentprovider.formats.PUBLIC_PROFILE;
+import com.chattyhive.backend.contentprovider.formats.USER_PROFILE;
 import com.chattyhive.backend.contentprovider.local.LocalStorageInterface;
 import com.chattyhive.backend.contentprovider.pubsubservice.ConnectionState;
 import com.chattyhive.backend.contentprovider.pubsubservice.ConnectionStateChange;
@@ -167,6 +169,7 @@ public class DataProvider {
     private LocalStorageInterface localStorage;
     private Integer nextCommandIndex;
     private HashMap<Integer,CommandData> commandStack;
+    private Controller controller;
 
     @Deprecated
     public Server getServer() {
@@ -194,6 +197,7 @@ public class DataProvider {
         this.localStorage = localStorage;
         this.commandStack = new HashMap<Integer, CommandData>();
         this.nextCommandIndex = 0;
+        this.controller = Controller.GetRunningController(); //TODO: this must be sent in another way
 
         DataProvider.dataProvider = this;
 
@@ -344,6 +348,7 @@ public class DataProvider {
     public Event<FormatReceivedEventArgs> onChatProfileReceived;
 
     public void onFormatReceived(Object sender, FormatReceivedEventArgs eventArgs) {
+        if ((eventArgs.getReceivedFormats() == null) || (eventArgs.countReceivedFormats() == 0)) return;
         if (this.localStorage != null)
             this.localStorage.FormatsReceived(eventArgs.getReceivedFormats());
         this.ProcessReceivedFormats(eventArgs.getReceivedFormats());
@@ -359,7 +364,7 @@ public class DataProvider {
             if ((format instanceof MESSAGE) || (format instanceof MESSAGE_ACK) || (format instanceof MESSAGE_LIST)) {
                 MessageFormats.add(format);
             }
-            if ((format instanceof PUBLIC_PROFILE) || (format instanceof PRIVATE_PROFILE) || (format instanceof LOCAL_USER_PROFILE)) {
+            if ((format instanceof USER_PROFILE) || (format instanceof LOCAL_USER_PROFILE)) {
                 UserProfileFormats.add(format);
             }
             if ((format instanceof HIVE) || (format instanceof HIVE_ID)) {
@@ -376,7 +381,7 @@ public class DataProvider {
         if ((onMessageReceived != null) && (MessageFormats.size() > 0))
             onMessageReceived.fire(this,new FormatReceivedEventArgs(MessageFormats));
 
-        if ((onUserProfileReceived != null) && (UserProfileFormats.size() > 0))
+        if (UserProfileFormats.size() > 0)
             onUserProfileReceived.fire(this,new FormatReceivedEventArgs(UserProfileFormats));
 
         if ((onHiveProfileReceived != null) && (HiveProfileFormats.size() > 0))
@@ -384,6 +389,49 @@ public class DataProvider {
 
         if ((onChatProfileReceived != null) && (ChatProfileFormats.size() > 0))
             onChatProfileReceived.fire(this,new FormatReceivedEventArgs(ChatProfileFormats));
+    }
+
+    private void ProcessUserReceivedFormats(Collection<Format> receivedFormats) {
+        for (Format format : receivedFormats) {
+            if (format instanceof LOCAL_USER_PROFILE) {
+                UserLocalStorage.StoreLocalUserProfile(format.toJSON().toString());
+                this.controller.updateUser(null,format);
+            } else if (format instanceof USER_PROFILE) {
+                String userID = null;
+                if ((((USER_PROFILE) format).USER_BASIC_PRIVATE_PROFILE != null) && (((USER_PROFILE) format).USER_BASIC_PRIVATE_PROFILE.USER_ID != null) && (!((USER_PROFILE) format).USER_BASIC_PRIVATE_PROFILE.USER_ID.isEmpty()))
+                    userID = ((USER_PROFILE) format).USER_BASIC_PRIVATE_PROFILE.USER_ID;
+                else if ((((USER_PROFILE) format).USER_PRIVATE_PROFILE != null) && (((USER_PROFILE) format).USER_PRIVATE_PROFILE.USER_ID != null) && (!((USER_PROFILE) format).USER_PRIVATE_PROFILE.USER_ID.isEmpty()))
+                    userID = ((USER_PROFILE) format).USER_PRIVATE_PROFILE.USER_ID;
+                else if ((((USER_PROFILE) format).USER_BASIC_PUBLIC_PROFILE != null) && (((USER_PROFILE) format).USER_BASIC_PUBLIC_PROFILE.USER_ID != null) && (!((USER_PROFILE) format).USER_BASIC_PUBLIC_PROFILE.USER_ID.isEmpty()))
+                    userID = ((USER_PROFILE) format).USER_BASIC_PUBLIC_PROFILE.USER_ID;
+                else if ((((USER_PROFILE) format).USER_PUBLIC_PROFILE != null) && (((USER_PROFILE) format).USER_PUBLIC_PROFILE.USER_ID != null) && (!((USER_PROFILE) format).USER_PUBLIC_PROFILE.USER_ID.isEmpty()))
+                    userID = ((USER_PROFILE) format).USER_PUBLIC_PROFILE.USER_ID;
+
+                if (userID == null)
+                    continue;
+
+                USER_PROFILE updateFormat = null;
+                String remote_profile = UserLocalStorage.RecoverCompleteUserProfile(userID);
+                if ((remote_profile != null) && (!remote_profile.isEmpty()))
+                    updateFormat = new USER_PROFILE(new JsonParser().parse(remote_profile));
+                if (updateFormat != null) {
+                    if (((USER_PROFILE) format).USER_BASIC_PRIVATE_PROFILE != null)
+                        updateFormat.USER_BASIC_PRIVATE_PROFILE = ((USER_PROFILE) format).USER_BASIC_PRIVATE_PROFILE;
+                    if (((USER_PROFILE) format).USER_PRIVATE_PROFILE != null)
+                        updateFormat.USER_PRIVATE_PROFILE = ((USER_PROFILE) format).USER_PRIVATE_PROFILE;
+                    if (((USER_PROFILE) format).USER_BASIC_PUBLIC_PROFILE != null)
+                        updateFormat.USER_BASIC_PUBLIC_PROFILE = ((USER_PROFILE) format).USER_BASIC_PUBLIC_PROFILE;
+                    if (((USER_PROFILE) format).USER_PUBLIC_PROFILE != null)
+                        updateFormat.USER_PUBLIC_PROFILE = ((USER_PROFILE) format).USER_PUBLIC_PROFILE;
+
+                    UserLocalStorage.StoreCompleteUserProfile(userID,updateFormat.toJSON().toString());
+                    this.controller.updateUser(userID,updateFormat);
+                } else {
+                    UserLocalStorage.StoreCompleteUserProfile(userID,format.toJSON().toString());
+                    this.controller.updateUser(userID,format);
+                }
+            }
+        }
     }
 
     /************************************************************************/

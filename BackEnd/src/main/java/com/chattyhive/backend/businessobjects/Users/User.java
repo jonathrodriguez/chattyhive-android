@@ -19,6 +19,8 @@ import com.chattyhive.backend.contentprovider.formats.USERNAME;
 import com.chattyhive.backend.contentprovider.formats.USER_EMAIL;
 import com.chattyhive.backend.contentprovider.formats.USER_PROFILE;
 import com.chattyhive.backend.util.events.CommandCallbackEventArgs;
+import com.chattyhive.backend.util.events.Event;
+import com.chattyhive.backend.util.events.EventArgs;
 import com.chattyhive.backend.util.events.EventHandler;
 import com.chattyhive.backend.util.events.FormatReceivedEventArgs;
 import com.google.gson.JsonElement;
@@ -33,37 +35,7 @@ import java.util.TreeMap;
  * Represents a user.
  */
 public class User {
-    public static void CheckEmail(String email, Controller controller, EventHandler<CommandCallbackEventArgs> Callback) {
-        if (!email.contains("@")) return;
-
-        String userPart = email.split("@")[0];
-        String serverPart = email.split("@")[1];
-        if ((userPart.isEmpty()) || (serverPart.isEmpty())) return;
-
-        USER_EMAIL user_email = new USER_EMAIL();
-        user_email.EMAIL_USER_PART = userPart;
-        user_email.EMAIL_SERVER_PART = serverPart;
-        controller.getDataProvider().InvokeServerCommand(AvailableCommands.EmailCheck, Callback, user_email);
-    }
-    public static void CheckUsername(String username, Controller controller, EventHandler<CommandCallbackEventArgs> Callback) {
-        USERNAME user_username = new USERNAME();
-        user_username.PUBLIC_NAME = username;
-        //controller.getDataProvider().InvokeServerCommand(AvailableCommands.UsernameCheck,Callback,user_username); //TODO: implement server function
-        COMMON common = new COMMON();
-        common.STATUS = "OK";
-        ArrayList<Format> rf = new ArrayList<Format>();
-        rf.add(common);
-        ArrayList<Format> sf = new ArrayList<Format>();
-        sf.add(user_username);
-        CommandCallbackEventArgs eventArgs = new CommandCallbackEventArgs(AvailableCommands.EmailCheck,rf,sf,null);
-        try {
-            Callback.Invoke(controller,eventArgs);
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
-    }
+    public Event<EventArgs> UserLoaded;
 
     private Controller controller;
     private Boolean loading;
@@ -120,6 +92,7 @@ public class User {
         this.userPrivateProfile = new PrivateProfile();
         this.userPublicProfile = new PublicProfile();
         this.controller = controller;
+        this.UserLoaded = new Event<EventArgs>();
     }
 
     public User (Format format) {
@@ -128,169 +101,37 @@ public class User {
 
     public User(Format format, Controller controller) {
         if (!this.fromFormat(format))
-            throw new IllegalArgumentException("LOCAL_USER_PROFILE, PUBLIC_PROFILE or PRIVATE_PROFILE expected.");
+            throw new IllegalArgumentException("LOCAL_USER_PROFILE or USER_PROFILE expected.");
 
         this.controller = controller;
+        this.UserLoaded = new Event<EventArgs>();
     }
 
-    public User(String userID, ProfileType requiredProfileType) {
-        this(userID,requiredProfileType,(Controller)null);
+    public User(String userID, PROFILE_ID requestProfile) {
+        this(userID,requestProfile,(Controller)null);
     }
 
-    public User(String userID, ProfileType requiredProfileType, Controller controller) {
+    public User(String userID, PROFILE_ID requestProfile, Controller controller) {
         this.controller = controller;
         this.userID = userID;
 
         if (this.controller == null) return;
 
-        PROFILE_ID requestProfile = new PROFILE_ID();
-        requestProfile.USER_ID = userID;
-        requestProfile.PROFILE_TYPE = (requiredProfileType == ProfileType.PRIVATE)?"BASIC_PRIVATE":"BASIC_PUBLIC";
-
         this.controller.getDataProvider().RunCommand(AvailableCommands.UserProfile, new EventHandler<CommandCallbackEventArgs>(this, "loadCallback", CommandCallbackEventArgs.class), requestProfile);
         this.loading = true;
-    }
 
+        this.UserLoaded = new Event<EventArgs>();
+    }
 
     public void loadCallback (Object sender, CommandCallbackEventArgs args) {
         if (args.countReceivedFormats() == 0) return;
         ArrayList<Format> receivedFormats = args.getReceivedFormats();
         for (Format format : receivedFormats) {
             if ((format instanceof LOCAL_USER_PROFILE) || (format instanceof USER_PROFILE))
-                this.fromFormat(format);
+                if (this.fromFormat(format))
+                    this.UserLoaded.fire(this,EventArgs.Empty());
         }
     }
-
-    /***********************************/
-    /*     STATIC USER MANAGEMENT      */
-    /***********************************/
-    private static UserLocalStorageInterface userLocalStorage;
-
-    private static TreeMap<String,User> knownUsers;
-    private static User me;
-
-    public static void Initialize(UserLocalStorageInterface userLocalStorage) {
-        User.userLocalStorage = userLocalStorage;
-        User.knownUsers = new TreeMap<String, User>();
-
-        DataProvider.GetDataProvider().onUserProfileReceived.add(new EventHandler<FormatReceivedEventArgs>(User.class,"onFormatReceived",FormatReceivedEventArgs.class));
-
-        //Load local stored users.
-        String[] users = userLocalStorage.RecoverAllCompleteUserProfiles();
-        if (users != null) {
-            for (String user : users) {
-                Format[] formats = Format.getFormat((new JsonParser()).parse(user));
-                for (Format format : formats) {
-                    User u = new User(format);
-
-                    u.unloadProfile(ProfileLevel.Basic); //There is no need to keep in memory complete user profiles.
-
-                    User.knownUsers.put(u.getUserID(), u);
-                }
-            }
-        }
-
-        String localUser = userLocalStorage.RecoverLocalUserProfile();
-        if (localUser != null) {
-            Format[] formats = Format.getFormat((new JsonParser()).parse(localUser));
-            for (Format format : formats) {
-                me = new User(format);
-            }
-        }
-    }
-
-    private static User getUser(String userID,Format format) {
-        if (User.knownUsers == null) throw new IllegalStateException("Users must be initialized.");
-        else if (userID == null) throw new NullPointerException("UserID must not be null.");
-        else if (userID.isEmpty()) throw new IllegalArgumentException("UserID must not be empty.");
-
-        if (User.knownUsers.containsKey(userID))
-            return User.knownUsers.get(userID);
-        else if ((me != null) && ((me.userPrivateProfile.getID().equalsIgnoreCase(userID)) || (me.userPublicProfile.getID().equalsIgnoreCase(userID)))) {
-            return me;
-        }
-        else {
-            User u = new User(format);
-            if (!u.isMe()) {
-                    u.unloadProfile(ProfileLevel.Basic);
-                    User.knownUsers.put(userID, u);
-                }
-            else
-                me = u;
-            return u;
-        }
-    }
-
-    public static User getUser(PROFILE_ID profile_id) {
-        if (User.knownUsers == null) throw new IllegalStateException("Users must be initialized.");
-        else if (profile_id == null) throw new NullPointerException("PROFILE_ID must not be null.");
-        else if ((profile_id.USER_ID == null) || profile_id.USER_ID.isEmpty()) throw new IllegalArgumentException("PROFILE_ID must not be empty.");
-
-        String userID = profile_id.USER_ID;
-
-        if (User.knownUsers.containsKey(userID))
-            return User.knownUsers.get(userID);
-        else if ((me != null) && ((me.userPrivateProfile.getID().equalsIgnoreCase(userID)) || (me.userPublicProfile.getID().equalsIgnoreCase(userID)))) {
-            return me;
-        }
-        else {
-            User u = new User(profile_id);
-            if (!u.isMe()) {
-                u.unloadProfile(ProfileLevel.Basic);
-                User.knownUsers.put(userID, u);
-            }
-            else
-                me = u;
-
-            return u;
-        }
-    }
-
-    public static void unloadProfiles() {
-        for (User user : User.knownUsers.values())
-            user.unloadProfile(ProfileLevel.Basic);
-    }
-
-    public static User getMe() {
-        return User.me;
-    }
-    public static void removeMe() {
-        me = null;
-    }
-
-    /***********************************/
-    /*        STATIC CALLBACKS         */
-    /***********************************/
-
-    public static void onFormatReceived(Object sender, FormatReceivedEventArgs args) {
-        if (args.countReceivedFormats() > 0) {
-            ArrayList<Format> formats = args.getReceivedFormats();
-            for (Format format : formats) {
-                if (format instanceof LOCAL_USER_PROFILE) {
-                    User.userLocalStorage.StoreLocalUserProfile(format.toJSON().toString());
-
-                    if (User.me != null)
-                        User.getMe().fromFormat(format);
-                    else
-                        User.me = new User(format);
-                } else if (format instanceof PUBLIC_PROFILE) {
-                    User.userLocalStorage.StoreCompleteUserProfile(((PUBLIC_PROFILE) format).USER_ID,format.toJSON().toString());
-                    User.getUser(((PUBLIC_PROFILE) format).USER_ID, format);
-                } else if  (format instanceof PRIVATE_PROFILE) {
-                    User.userLocalStorage.StoreCompleteUserProfile(((PRIVATE_PROFILE) format).USER_ID,format.toJSON().toString());
-                    User.getUser(((PRIVATE_PROFILE) format).USER_ID, format);
-                }
-            }
-        }
-    }
-
-
-    /***********************************/
-    /***********************************/
-    /***********************************/
-    /***********************************/
-
-    /*************************************/
 
     /*************************************/
     /*     COMMUNICATION METHODS         */
@@ -339,7 +180,6 @@ public class User {
 
         this.controller.getDataProvider().RunCommand(AvailableCommands.UserProfile,new EventHandler<CommandCallbackEventArgs>(this,"loadCallback",CommandCallbackEventArgs.class),profile_id);
     }
-
     public void unloadProfile(ProfileLevel profileLevel) {
         if (profileLevel == ProfileLevel.Complete) return;
 
