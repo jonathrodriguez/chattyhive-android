@@ -10,6 +10,8 @@ import com.chattyhive.backend.contentprovider.formats.LOGIN;
 import com.chattyhive.backend.contentprovider.formats.MESSAGE;
 import com.chattyhive.backend.contentprovider.formats.MESSAGE_ACK;
 import com.chattyhive.backend.contentprovider.formats.MESSAGE_LIST;
+import com.chattyhive.backend.contentprovider.formats.PROFILE_ID;
+import com.chattyhive.backend.contentprovider.formats.USER_PROFILE;
 import com.chattyhive.backend.contentprovider.local.LocalStorageInterface;
 import com.chattyhive.backend.util.events.CommandCallbackEventArgs;
 import com.chattyhive.backend.util.events.EventHandler;
@@ -27,6 +29,9 @@ public class LocalStorage implements LocalStorageInterface {
     @Override
     public Boolean PreRunCommand(AvailableCommands command, EventHandler<CommandCallbackEventArgs> Callback, Object CallbackAdditionalData, Format... formats) {
         Boolean result = false;
+        LOCAL_USER_PROFILE local_user_profile = null;
+        USER_PROFILE remote_user_profile = null;
+        PROFILE_ID profile_id = null;
         switch (command) {
             case StartSession:  //Session
             case Login:         //Session
@@ -36,31 +41,64 @@ public class LocalStorage implements LocalStorageInterface {
             case Join:          //ImmediateResponsePush
                 result = false;
                 break;
-            case SendMessage:   //ForcePush
+            case SendMessage:   //ForcePush //TODO
                 result = false;
                 break;
-            case GetMessages:   //Pull
+            case GetMessages:   //Pull //TODO
                 result = false;
                 break;
             case LocalProfile:  //Pull
                 result = false;
-                LOCAL_USER_PROFILE local_user_profile = null;
-                String profile = UserLocalStorage.getUserLocalStorage().RecoverLocalUserProfile();
-                if ((profile != null) && (!profile.isEmpty()))
-                    local_user_profile = new LOCAL_USER_PROFILE(new JsonParser().parse(profile));
-                result = true;
-                Callback.Run(this,new CommandCallbackEventArgs(command, Arrays.asList((Format)local_user_profile),null,CallbackAdditionalData));
+                String local_profile = UserLocalStorage.getUserLocalStorage().RecoverLocalUserProfile();
+                if ((local_profile != null) && (!local_profile.isEmpty()))
+                    local_user_profile = new LOCAL_USER_PROFILE(new JsonParser().parse(local_profile));
+                result = (local_user_profile != null);
+                if (result)
+                    Callback.Run(this,new CommandCallbackEventArgs(command, Arrays.asList((Format)local_user_profile),null,CallbackAdditionalData));
                 break;
-            case ChatContext:   //Pull
+            case ChatContext:   //Pull //TODO
                 result = false;
                 break;
-            case ChatList:      //Pull
+            case ChatList:      //Pull //TODO
                 result = false;
                 break;
             case UserProfile:   //Pull
                 result = false;
+                for(Format format : formats)
+                    if (format instanceof PROFILE_ID)
+                        profile_id = (PROFILE_ID) format;
+                if ((profile_id != null) && (profile_id.USER_ID != null) && (!profile_id.USER_ID.isEmpty()) && (profile_id.PROFILE_TYPE != null) && (!profile_id.PROFILE_TYPE.isEmpty())) {
+                    String remote_profile = UserLocalStorage.getUserLocalStorage().RecoverCompleteUserProfile(profile_id.USER_ID);
+                    if ((remote_profile != null) && (!remote_profile.isEmpty()))
+                        remote_user_profile = new USER_PROFILE(new JsonParser().parse(remote_profile));
+                    if (remote_user_profile != null) {
+                        if (profile_id.PROFILE_TYPE.equalsIgnoreCase("BASIC_PUBLIC")) {
+                            remote_user_profile.USER_BASIC_PRIVATE_PROFILE = null;
+                            remote_user_profile.USER_PRIVATE_PROFILE = null;
+                            remote_user_profile.USER_PUBLIC_PROFILE = null;
+                        } else if (profile_id.PROFILE_TYPE.equalsIgnoreCase("BASIC_PRIVATE")) {
+                            remote_user_profile.USER_PRIVATE_PROFILE = null;
+                            remote_user_profile.USER_BASIC_PUBLIC_PROFILE = null;
+                            remote_user_profile.USER_PUBLIC_PROFILE = null;
+                        } else if (profile_id.PROFILE_TYPE.equalsIgnoreCase("EXTENDED_PUBLIC")) {
+                            remote_user_profile.USER_BASIC_PRIVATE_PROFILE = null;
+                            remote_user_profile.USER_PRIVATE_PROFILE = null;
+                        } else if (profile_id.PROFILE_TYPE.equalsIgnoreCase("EXTENDED_PRIVATE")) {
+                            remote_user_profile.USER_BASIC_PUBLIC_PROFILE = null;
+                            remote_user_profile.USER_PUBLIC_PROFILE = null;
+                        } else if (profile_id.PROFILE_TYPE.equalsIgnoreCase("COMPLETE_PUBLIC")) {
+                            remote_user_profile.USER_BASIC_PRIVATE_PROFILE = null;
+                            remote_user_profile.USER_PRIVATE_PROFILE = null;
+                        } else if (profile_id.PROFILE_TYPE.equalsIgnoreCase("COMPLETE_PRIVATE")) {
+                            remote_user_profile.USER_PUBLIC_PROFILE = null;
+                        }
+                        result = ((remote_user_profile.USER_BASIC_PRIVATE_PROFILE != null) || (remote_user_profile.USER_PRIVATE_PROFILE != null) || (remote_user_profile.USER_BASIC_PUBLIC_PROFILE != null) || (remote_user_profile.USER_PUBLIC_PROFILE != null));
+                        if (result)
+                            Callback.Run(this, new CommandCallbackEventArgs(command, Arrays.asList((Format) remote_user_profile), null, CallbackAdditionalData));
+                    }
+                }
                 break;
-            case HiveInfo:      //Pull
+            case HiveInfo:      //Pull //TODO
                 result = false;
                 break;
         }
@@ -74,6 +112,9 @@ public class LocalStorage implements LocalStorageInterface {
         HIVE hive = null;
         CHAT chat = null;
         LOCAL_USER_PROFILE local_user_profile = null;
+        USER_PROFILE remote_user_profile = null;
+        USER_PROFILE remote_user_profile_aux = null;
+        PROFILE_ID profile_id = null;
         LOGIN login = null;
         MESSAGE message = null;
         MESSAGE_ACK message_ack = null;
@@ -150,6 +191,7 @@ public class LocalStorage implements LocalStorageInterface {
                     MessageLocalStorage.getMessageLocalStorage().StoreMessage(message.CHANNEL_UNICODE,message.ID,message.toJSON().toString());
                     result = true;
                 }
+                break;
             case GetMessages:   //Pull
                 for(Format format : formats)
                     if (format instanceof COMMON)
@@ -157,15 +199,15 @@ public class LocalStorage implements LocalStorageInterface {
                     else if (format instanceof MESSAGE_LIST)
                         message_list = (MESSAGE_LIST) format;
 
-                if ((common == null) || (message_list == null) || (!common.STATUS.equalsIgnoreCase("OK")))
+                if ((common == null) || (message_list == null) || (message_list.MESSAGES == null) || (message_list.MESSAGES.size() == 0) || (!common.STATUS.equalsIgnoreCase("OK")))
                     result = false;
                 else {
                     for (MESSAGE m : message_list.MESSAGES) {
                         MessageLocalStorage.getMessageLocalStorage().StoreMessage(m.CHANNEL_UNICODE, m.ID, m.toJSON().toString());
-                        result = (result || true);
                     }
                     result = true;
                 }
+                break;
             case LocalProfile:  //Pull
                 for(Format format : formats)
                     if (format instanceof COMMON)
@@ -179,10 +221,47 @@ public class LocalStorage implements LocalStorageInterface {
                     UserLocalStorage.getUserLocalStorage().StoreLocalUserProfile(local_user_profile.toJSON().toString());
                     result = true;
                 }
-            case ChatContext:   //Pull
-            case ChatList:      //Pull
+                break;
+            case ChatContext:   //Pull //TODO
+                result = false;
+                break;
+            case ChatList:      //Pull //TODO
+                result = false;
+                break;
             case UserProfile:   //Pull
-            case HiveInfo:      //Pull
+                for(Format format : formats)
+                    if (format instanceof COMMON)
+                        common = (COMMON) format;
+                    else if (format instanceof USER_PROFILE)
+                        remote_user_profile = (USER_PROFILE) format;
+                    else if (format instanceof PROFILE_ID)
+                        profile_id = (PROFILE_ID) format;
+
+                if ((common == null) || (remote_user_profile == null) || (profile_id == null) || (profile_id.USER_ID == null) || (profile_id.USER_ID.isEmpty()) || (!common.STATUS.equalsIgnoreCase("OK")))
+                    result = false;
+                else {
+                    String remote_profile = UserLocalStorage.getUserLocalStorage().RecoverCompleteUserProfile(profile_id.USER_ID);
+                    if ((remote_profile != null) && (!remote_profile.isEmpty()))
+                        remote_user_profile_aux = new USER_PROFILE(new JsonParser().parse(remote_profile));
+                    if (remote_user_profile_aux != null) {
+                        if (remote_user_profile.USER_BASIC_PRIVATE_PROFILE != null)
+                            remote_user_profile_aux.USER_BASIC_PRIVATE_PROFILE = remote_user_profile.USER_BASIC_PRIVATE_PROFILE;
+                        if (remote_user_profile.USER_PRIVATE_PROFILE != null)
+                            remote_user_profile_aux.USER_PRIVATE_PROFILE = remote_user_profile.USER_PRIVATE_PROFILE;
+                        if (remote_user_profile.USER_BASIC_PUBLIC_PROFILE != null)
+                            remote_user_profile_aux.USER_BASIC_PUBLIC_PROFILE = remote_user_profile.USER_BASIC_PUBLIC_PROFILE;
+                        if (remote_user_profile.USER_PUBLIC_PROFILE != null)
+                            remote_user_profile_aux.USER_PUBLIC_PROFILE = remote_user_profile.USER_PUBLIC_PROFILE;
+
+                        UserLocalStorage.getUserLocalStorage().StoreCompleteUserProfile(profile_id.USER_ID,remote_user_profile_aux.toJSON().toString());
+                    } else {
+                        UserLocalStorage.getUserLocalStorage().StoreCompleteUserProfile(profile_id.USER_ID,remote_user_profile.toJSON().toString());
+                    }
+                    result = true;
+                }
+                break;
+            case HiveInfo:      //Pull //TODO
+                result = false;
                 break;
         }
         return result;
