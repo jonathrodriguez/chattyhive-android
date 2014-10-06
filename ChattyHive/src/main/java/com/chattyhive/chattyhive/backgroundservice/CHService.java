@@ -17,23 +17,21 @@ import android.util.Log;
 
 import com.chattyhive.backend.Controller;
 import com.chattyhive.backend.StaticParameters;
-import com.chattyhive.backend.businessobjects.Chats.Messages.Message;
 import com.chattyhive.backend.contentprovider.DataProvider;
 import com.chattyhive.backend.contentprovider.formats.Format;
 import com.chattyhive.backend.contentprovider.formats.MESSAGE;
 import com.chattyhive.backend.contentprovider.pubsubservice.ConnectionState;
-import com.chattyhive.backend.util.events.ChannelEventArgs;
 import com.chattyhive.backend.util.events.EventArgs;
 import com.chattyhive.backend.util.events.EventHandler;
 import com.chattyhive.backend.util.events.FormatReceivedEventArgs;
 import com.chattyhive.backend.util.events.PubSubConnectionEventArgs;
 import com.chattyhive.chattyhive.Main;
-import com.chattyhive.chattyhive.OSStorageProvider.CookieStore;
-import com.chattyhive.chattyhive.OSStorageProvider.GroupLocalStorage;
-import com.chattyhive.chattyhive.OSStorageProvider.HiveLocalStorage;
-import com.chattyhive.chattyhive.OSStorageProvider.LoginLocalStorage;
-import com.chattyhive.chattyhive.OSStorageProvider.MessageLocalStorage;
-import com.chattyhive.chattyhive.OSStorageProvider.UserLocalStorage;
+import com.chattyhive.chattyhive.framework.OSStorageProvider.CookieStore;
+import com.chattyhive.chattyhive.framework.OSStorageProvider.GroupLocalStorage;
+import com.chattyhive.chattyhive.framework.OSStorageProvider.HiveLocalStorage;
+import com.chattyhive.chattyhive.framework.OSStorageProvider.LoginLocalStorage;
+import com.chattyhive.chattyhive.framework.OSStorageProvider.MessageLocalStorage;
+import com.chattyhive.chattyhive.framework.OSStorageProvider.UserLocalStorage;
 import com.chattyhive.chattyhive.R;
 
 import java.io.FileDescriptor;
@@ -62,9 +60,7 @@ public class CHService extends Service {
         notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         pendingMessages = 0;
         handleConnectivity();
-        try {
-            Controller.AppBindingEvent.add(new EventHandler<EventArgs>(this,"onAppBinding",EventArgs.class));
-        } catch (NoSuchMethodException e) {}
+        Controller.AppBindingEvent.add(new EventHandler<EventArgs>(this,"onAppBinding",EventArgs.class));
         Controller.bindSvc();
     }
 
@@ -84,13 +80,12 @@ public class CHService extends Service {
 
         if ((this.controller == null) || (this.controller != Controller.GetRunningController(true))) {
             this.controller = Controller.GetRunningController();
-            try {
-                if (DataProvider.GetDataProvider() == null)
-                    DataProvider.GetDataProvider(true);
 
-                DataProvider.GetDataProvider().onMessageReceived.add(new EventHandler<FormatReceivedEventArgs>(this,"onChannelEvent",FormatReceivedEventArgs.class));
-                DataProvider.GetDataProvider().PubSubConnectionStateChanged.add(new EventHandler<PubSubConnectionEventArgs>(this, "onConnectionEvent", PubSubConnectionEventArgs.class));
-            } catch (NoSuchMethodException e) { }
+            if (DataProvider.GetDataProvider() == null)
+                DataProvider.GetDataProvider(true);
+
+            DataProvider.GetDataProvider().onMessageReceived.add(new EventHandler<FormatReceivedEventArgs>(this,"onChannelEvent",FormatReceivedEventArgs.class));
+            DataProvider.GetDataProvider().PubSubConnectionStateChanged.add(new EventHandler<PubSubConnectionEventArgs>(this, "onConnectionEvent", PubSubConnectionEventArgs.class));
         }
     }
 

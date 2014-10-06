@@ -1,5 +1,6 @@
 package com.chattyhive.backend.contentprovider;
 
+import com.chattyhive.backend.Controller;
 import com.chattyhive.backend.StaticParameters;
 import com.chattyhive.backend.businessobjects.Chats.Group;
 import com.chattyhive.backend.businessobjects.Chats.Hive;
@@ -23,6 +24,8 @@ import com.chattyhive.backend.contentprovider.formats.MESSAGE_ACK;
 import com.chattyhive.backend.contentprovider.formats.MESSAGE_LIST;
 import com.chattyhive.backend.contentprovider.formats.PRIVATE_PROFILE;
 import com.chattyhive.backend.contentprovider.formats.PUBLIC_PROFILE;
+import com.chattyhive.backend.contentprovider.formats.USER_PROFILE;
+import com.chattyhive.backend.contentprovider.local.LocalStorageInterface;
 import com.chattyhive.backend.contentprovider.pubsubservice.ConnectionState;
 import com.chattyhive.backend.contentprovider.pubsubservice.ConnectionStateChange;
 import com.chattyhive.backend.contentprovider.server.Server;
@@ -53,6 +56,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -162,6 +166,10 @@ public class DataProvider {
     /************************************************************************/
 
     private Server server;
+    private LocalStorageInterface localStorage;
+    private Integer nextCommandIndex;
+    private HashMap<Integer,CommandData> commandStack;
+    private Controller controller;
 
     @Deprecated
     public Server getServer() {
@@ -172,11 +180,25 @@ public class DataProvider {
     //CONSTRUCTORS
 
     public DataProvider () {
-        this(StaticParameters.DefaultServerAppName);
+        this(null,StaticParameters.DefaultServerAppName);
     }
 
     public DataProvider(String ServerAppName) {
+        this(null,ServerAppName);
+    }
+
+    public DataProvider(LocalStorageInterface localStorage) {
+        this(localStorage,StaticParameters.DefaultServerAppName);
+    }
+
+    public DataProvider(LocalStorageInterface localStorage, String ServerAppName) {
         if (LoginLocalStorage == null) throw new UnsupportedOperationException("DataProvider must be previously initialized with storage objects.");
+
+        this.localStorage = localStorage;
+        this.commandStack = new HashMap<Integer, CommandData>();
+        this.nextCommandIndex = 0;
+        this.controller = Controller.GetRunningController(); //TODO: this must be sent in another way
+
         DataProvider.dataProvider = this;
 
         HttpCookie csrfCookie = null;
@@ -210,17 +232,13 @@ public class DataProvider {
 
     private void SubscribeEvents() {
         //Subscribe to events
-        try {
-            this.server.responseEvent.add(new EventHandler<FormatReceivedEventArgs>(this, "onFormatReceived", FormatReceivedEventArgs.class));
-            this.server.onConnected.add(new EventHandler<ConnectionEventArgs>(this, "onServerConnectionStateChanged", ConnectionEventArgs.class));
+        this.server.responseEvent.add(new EventHandler<FormatReceivedEventArgs>(this, "onFormatReceived", FormatReceivedEventArgs.class));
+        this.server.onConnected.add(new EventHandler<ConnectionEventArgs>(this, "onServerConnectionStateChanged", ConnectionEventArgs.class));
 
-            this.server.CsrfTokenChanged.add(new EventHandler<EventArgs>(this,"onCsrfTokenChanged",EventArgs.class));
+        this.server.CsrfTokenChanged.add(new EventHandler<EventArgs>(this,"onCsrfTokenChanged",EventArgs.class));
 
-            this.pubSub.SubscribeChannelEventHandler(new EventHandler<PubSubChannelEventArgs>(this,"onChannelEvent",PubSubChannelEventArgs.class));
-            this.pubSub.SubscribeConnectionEventHandler(new EventHandler<PubSubConnectionEventArgs>(this, "onConnectionEvent", PubSubConnectionEventArgs.class));
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
+        this.pubSub.SubscribeChannelEventHandler(new EventHandler<PubSubChannelEventArgs>(this,"onChannelEvent",PubSubChannelEventArgs.class));
+        this.pubSub.SubscribeConnectionEventHandler(new EventHandler<PubSubConnectionEventArgs>(this, "onConnectionEvent", PubSubConnectionEventArgs.class));
     }
 
     private void InitializeEvents() {
@@ -260,6 +278,7 @@ public class DataProvider {
             this.pubSub.Connect();
         }
     }
+
     public void Disconnect() {
         this.server.Disconnect();
         this.targetState = ConnectionState.DISCONNECTED;
@@ -275,8 +294,6 @@ public class DataProvider {
 
         if (LoginLocalStorage != null)
             LoginLocalStorage.ClearStoredLogin();
-
-
     }
 
     public void onServerConnectionStateChanged(Object sender, ConnectionEventArgs eventArgs) {
@@ -331,6 +348,9 @@ public class DataProvider {
     public Event<FormatReceivedEventArgs> onChatProfileReceived;
 
     public void onFormatReceived(Object sender, FormatReceivedEventArgs eventArgs) {
+        if ((eventArgs.getReceivedFormats() == null) || (eventArgs.countReceivedFormats() == 0)) return;
+        if (this.localStorage != null)
+            this.localStorage.FormatsReceived(eventArgs.getReceivedFormats());
         this.ProcessReceivedFormats(eventArgs.getReceivedFormats());
     }
 
@@ -344,7 +364,7 @@ public class DataProvider {
             if ((format instanceof MESSAGE) || (format instanceof MESSAGE_ACK) || (format instanceof MESSAGE_LIST)) {
                 MessageFormats.add(format);
             }
-            if ((format instanceof PUBLIC_PROFILE) || (format instanceof PRIVATE_PROFILE) || (format instanceof LOCAL_USER_PROFILE)) {
+            if ((format instanceof USER_PROFILE) || (format instanceof LOCAL_USER_PROFILE)) {
                 UserProfileFormats.add(format);
             }
             if ((format instanceof HIVE) || (format instanceof HIVE_ID)) {
@@ -361,7 +381,7 @@ public class DataProvider {
         if ((onMessageReceived != null) && (MessageFormats.size() > 0))
             onMessageReceived.fire(this,new FormatReceivedEventArgs(MessageFormats));
 
-        if ((onUserProfileReceived != null) && (UserProfileFormats.size() > 0))
+        if (UserProfileFormats.size() > 0)
             onUserProfileReceived.fire(this,new FormatReceivedEventArgs(UserProfileFormats));
 
         if ((onHiveProfileReceived != null) && (HiveProfileFormats.size() > 0))
@@ -369,6 +389,49 @@ public class DataProvider {
 
         if ((onChatProfileReceived != null) && (ChatProfileFormats.size() > 0))
             onChatProfileReceived.fire(this,new FormatReceivedEventArgs(ChatProfileFormats));
+    }
+
+    private void ProcessUserReceivedFormats(Collection<Format> receivedFormats) {
+        for (Format format : receivedFormats) {
+            if (format instanceof LOCAL_USER_PROFILE) {
+                UserLocalStorage.StoreLocalUserProfile(format.toJSON().toString());
+                this.controller.updateUser(null,format);
+            } else if (format instanceof USER_PROFILE) {
+                String userID = null;
+                if ((((USER_PROFILE) format).USER_BASIC_PRIVATE_PROFILE != null) && (((USER_PROFILE) format).USER_BASIC_PRIVATE_PROFILE.USER_ID != null) && (!((USER_PROFILE) format).USER_BASIC_PRIVATE_PROFILE.USER_ID.isEmpty()))
+                    userID = ((USER_PROFILE) format).USER_BASIC_PRIVATE_PROFILE.USER_ID;
+                else if ((((USER_PROFILE) format).USER_PRIVATE_PROFILE != null) && (((USER_PROFILE) format).USER_PRIVATE_PROFILE.USER_ID != null) && (!((USER_PROFILE) format).USER_PRIVATE_PROFILE.USER_ID.isEmpty()))
+                    userID = ((USER_PROFILE) format).USER_PRIVATE_PROFILE.USER_ID;
+                else if ((((USER_PROFILE) format).USER_BASIC_PUBLIC_PROFILE != null) && (((USER_PROFILE) format).USER_BASIC_PUBLIC_PROFILE.USER_ID != null) && (!((USER_PROFILE) format).USER_BASIC_PUBLIC_PROFILE.USER_ID.isEmpty()))
+                    userID = ((USER_PROFILE) format).USER_BASIC_PUBLIC_PROFILE.USER_ID;
+                else if ((((USER_PROFILE) format).USER_PUBLIC_PROFILE != null) && (((USER_PROFILE) format).USER_PUBLIC_PROFILE.USER_ID != null) && (!((USER_PROFILE) format).USER_PUBLIC_PROFILE.USER_ID.isEmpty()))
+                    userID = ((USER_PROFILE) format).USER_PUBLIC_PROFILE.USER_ID;
+
+                if (userID == null)
+                    continue;
+
+                USER_PROFILE updateFormat = null;
+                String remote_profile = UserLocalStorage.RecoverCompleteUserProfile(userID);
+                if ((remote_profile != null) && (!remote_profile.isEmpty()))
+                    updateFormat = new USER_PROFILE(new JsonParser().parse(remote_profile));
+                if (updateFormat != null) {
+                    if (((USER_PROFILE) format).USER_BASIC_PRIVATE_PROFILE != null)
+                        updateFormat.USER_BASIC_PRIVATE_PROFILE = ((USER_PROFILE) format).USER_BASIC_PRIVATE_PROFILE;
+                    if (((USER_PROFILE) format).USER_PRIVATE_PROFILE != null)
+                        updateFormat.USER_PRIVATE_PROFILE = ((USER_PROFILE) format).USER_PRIVATE_PROFILE;
+                    if (((USER_PROFILE) format).USER_BASIC_PUBLIC_PROFILE != null)
+                        updateFormat.USER_BASIC_PUBLIC_PROFILE = ((USER_PROFILE) format).USER_BASIC_PUBLIC_PROFILE;
+                    if (((USER_PROFILE) format).USER_PUBLIC_PROFILE != null)
+                        updateFormat.USER_PUBLIC_PROFILE = ((USER_PROFILE) format).USER_PUBLIC_PROFILE;
+
+                    UserLocalStorage.StoreCompleteUserProfile(userID,updateFormat.toJSON().toString());
+                    this.controller.updateUser(userID,updateFormat);
+                } else {
+                    UserLocalStorage.StoreCompleteUserProfile(userID,format.toJSON().toString());
+                    this.controller.updateUser(userID,format);
+                }
+            }
+        }
     }
 
     /************************************************************************/
@@ -403,11 +466,7 @@ public class DataProvider {
         HiveLocalStorage.StoreHive(hive.getNameUrl(),hive.toJson(new HIVE()).toString());
         Hive.getHive(hive.getNameUrl());
 
-        try {
-            this.server.RunCommand(ServerCommand.AvailableCommands.Join,new EventHandler<CommandCallbackEventArgs>(this,"onHiveJoinedCallback",CommandCallbackEventArgs.class),hive.toFormat(new HIVE_ID()));
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
+        this.server.RunCommand(AvailableCommands.Join,new EventHandler<CommandCallbackEventArgs>(this,"onHiveJoinedCallback",CommandCallbackEventArgs.class),hive.toFormat(new HIVE_ID()));
     }
 
     public Event<CommandCallbackEventArgs> onHiveJoined;
@@ -461,12 +520,46 @@ public class DataProvider {
     }
 
 
-    public void InvokeServerCommand(ServerCommand.AvailableCommands command,Format... formats) {
+    public void InvokeServerCommand(AvailableCommands command,Format... formats) {
         this.server.RunCommand(command,formats);
     }
 
-    public void InvokeServerCommand(ServerCommand.AvailableCommands command,EventHandler<CommandCallbackEventArgs> Callback,Format... formats) {
+    public void InvokeServerCommand(AvailableCommands command,EventHandler<CommandCallbackEventArgs> Callback,Format... formats) {
         this.server.RunCommand(command, Callback, formats);
+    }
+
+    public void RunCommand(AvailableCommands command,EventHandler<CommandCallbackEventArgs> Callback,Format... formats) {
+        Integer commandIndex = this.nextCommandIndex++;
+        CommandData commandData = new CommandData(command,Callback);
+        this.commandStack.put(commandIndex,commandData);
+
+        if (this.localStorage != null) {
+            commandData.setLevel(ExecutorLevel.LocalStorage);
+            this.localStorage.PreRunCommand(command, new EventHandler<CommandCallbackEventArgs>(this, "CommandCallback", CommandCallbackEventArgs.class), commandIndex, formats);
+        }
+
+        commandData.setLevel(ExecutorLevel.Server);
+        this.server.RunCommand(command,new EventHandler<CommandCallbackEventArgs>(this,"CommandCallback",CommandCallbackEventArgs.class),commandIndex,formats);
+    }
+
+    public void CommandCallback(Object sender, CommandCallbackEventArgs Callback) {
+        Object additionalData = Callback.getAdditionalData();
+        if (!(additionalData instanceof Integer)) return;
+        Integer commandIndex = (Integer)additionalData;
+        CommandData commandData = this.commandStack.get(commandIndex);
+        if (commandData.getLevel().ordinal() > ExecutorLevel.LocalStorage.ordinal()) {
+            if (this.localStorage != null) {
+                ArrayList<Format> formats = new ArrayList<Format>(Callback.getSentFormats());
+                formats.addAll(Callback.getReceivedFormats());
+                this.localStorage.PostRunCommand(Callback.getCommand(), formats.toArray(new Format[formats.size()]));
+            }
+        }
+        try {
+            commandData.getCallback().Invoke(sender, Callback);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     /**
@@ -502,8 +595,8 @@ public class DataProvider {
     }
 
     public void ExploreHives(int offset,int length,EventHandler<CommandCallbackEventArgs> Callback) {
-        // TODO: This is for server 0.5.0 which does not support list indexing.
-        this.server.RunCommand(ServerCommand.AvailableCommands.Explore,Callback,null);
+        // TODO: This is for server 0.5.0 which does not support list indexing for explore command.
+        this.server.RunCommand(AvailableCommands.Explore,Callback,null);
     }
 
 
@@ -515,6 +608,34 @@ public class DataProvider {
     public Boolean isPubsubConnected() {
         ConnectionState cs = this.pubSub.GetConnectionState();
         return ((cs == ConnectionState.CONNECTED) || (cs == ConnectionState.CONNECTING));
+    }
+
+    protected enum ExecutorLevel { LocalStorage, Server };
+
+    private class CommandData {
+
+        AvailableCommands command;
+        EventHandler<CommandCallbackEventArgs> callback;
+        ExecutorLevel level;
+
+        private CommandData(AvailableCommands command,EventHandler<CommandCallbackEventArgs> callback) {
+            this.command = command;
+            this.callback = callback;
+        }
+
+        AvailableCommands getCommand() {
+            return this.command;
+        }
+        EventHandler<CommandCallbackEventArgs> getCallback() {
+            return this.callback;
+        }
+
+        void setLevel(ExecutorLevel level) {
+            this.level = level;
+        }
+        ExecutorLevel getLevel() {
+            return this.level;
+        }
     }
 }
 

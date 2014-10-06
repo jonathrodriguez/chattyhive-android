@@ -9,12 +9,12 @@ buildscript {
 apply plugin: 'android-library'
 
 repositories {
-        mavenCentral()
+    mavenCentral()
 }
 
 android {
     compileSdkVersion 19
-    buildToolsVersion "19.1.0"
+    buildToolsVersion '19.1.0'
 
     defaultConfig {
         minSdkVersion 10
@@ -33,4 +33,5 @@ android {
 dependencies {
     compile 'com.android.support:appcompat-v7:19.+'
     compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile project(':BackEnd')
 }

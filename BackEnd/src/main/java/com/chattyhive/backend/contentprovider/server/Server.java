@@ -2,6 +2,7 @@ package com.chattyhive.backend.contentprovider.server;
 
 
 import com.chattyhive.backend.StaticParameters;
+import com.chattyhive.backend.contentprovider.AvailableCommands;
 import com.chattyhive.backend.contentprovider.DataProvider;
 import com.chattyhive.backend.contentprovider.formats.COMMON;
 import com.chattyhive.backend.contentprovider.formats.Format;
@@ -28,10 +29,9 @@ import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.AbstractMap;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import javax.security.auth.callback.Callback;
 
 /**
  * Created by Jonathan on 20/11/13.
@@ -43,7 +43,6 @@ public class Server {
     /************************************************************************/
     public Event<ConnectionEventArgs> onConnected;
     public Event<FormatReceivedEventArgs> responseEvent;
-
     public Event<EventArgs> CsrfTokenChanged;
 
     private ServerUser serverUser;
@@ -62,29 +61,12 @@ public class Server {
     public void setServerUser(ServerUser serverUser) {
         this.serverUser = serverUser;
     }
-
+    public ServerUser getServerUser() {
+        return this.serverUser;
+    }
     /************************************************************************/
     /*                           CONSTRUCTORS                               */
     /************************************************************************/
-    @Deprecated
-    public Server(ServerUser serverUser, String appName) {
-        this.serverUser = serverUser;
-        this.appName = appName;
-        this.appProtocol = StaticParameters.DefaultServerAppProtocol;
-        this.host = StaticParameters.DefaultServerHost;
-
-        this.InitializeEvents();
-    }
-
-    @Deprecated
-    public Server(String username, String appName) {
-        this.serverUser = new ServerUser(username,"");
-        this.appName = appName;
-        this.appProtocol = StaticParameters.DefaultServerAppProtocol;
-        this.host = StaticParameters.DefaultServerHost;
-
-        this.InitializeEvents();
-    }
 
     public Server(AbstractMap.SimpleEntry<String, String> loginInfo, String appName) {
         if (loginInfo != null)
@@ -106,181 +88,14 @@ public class Server {
     /************************************************************************/
 
     public void StartSession() {
-        if (StaticParameters.StandAlone) return;
-
-        String function = "android.start_session";
-        final String Url = String.format("%s://%s.%s/%s",appProtocol,appName,host,function);
-
-        Thread thread = new Thread() {
-            @Override
-            public void run() {
-                try {
-                    URL url = new URL(Url);
-
-                    HttpURLConnection httpURLConnection = (HttpURLConnection)url.openConnection();
-                    httpURLConnection.setRequestMethod("GET");
-                    httpURLConnection.setRequestProperty("User-Agent", StaticParameters.UserAgent());
-
-                    int responseCode = httpURLConnection.getResponseCode();
-
-                    BufferedReader inputReader;
-
-                    if (responseCode == 200)
-                        inputReader = new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream()));
-                    else
-                        inputReader = new BufferedReader(new InputStreamReader(httpURLConnection.getErrorStream()));
-
-                    String inputLine;
-                    StringBuffer response = new StringBuffer();
-
-                    while ((inputLine = inputReader.readLine()) != null) {
-                        response.append(inputLine);
-                    }
-                    inputReader.close();
-
-                    String responseBody = response.toString();
-                    System.out.println(String.format("Request: %s\nCode: %d\n%s",url.toString(), responseCode, responseBody));
-
-                    if (responseCode == 200) {
-                        if (CsrfTokenChanged != null)
-                            CsrfTokenChanged.fire(this,EventArgs.Empty());
-                    }
-
-                    httpURLConnection.disconnect();
-
-
-                } catch (SocketTimeoutException e) {
-                    onNetworkUnavailable();
-                } catch (MalformedURLException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        };
-
-        thread.start();
-        try {
-            thread.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
+        RunCommand(AvailableCommands.StartSession,null,null,true,(Format)null);
+     }
     public void Login() {
-        if (StaticParameters.StandAlone) return;
+        if (serverUser == null) return;
 
-        String function = "android.login";
-        final String Url = String.format("%s://%s.%s/%s/",appProtocol,appName,host,function);
+        final Format[] loginFormats = Format.getFormat(this.serverUser.toJson());
 
-        Thread thread = new Thread() {
-            @Override
-            public void run() {
-                try {
-                    URL url = new URL(Url);
-                    if (serverUser == null) return;
-                    String BodyData = serverUser.toJson().toString();
-
-
-                    HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
-                    httpURLConnection.setRequestMethod("POST");
-                    httpURLConnection.setRequestProperty("User-Agent", StaticParameters.UserAgent());
-
-                    if ((BodyData != null) && (!BodyData.isEmpty()))
-                        httpURLConnection.addRequestProperty("Content-Type", "application/json");
-
-                    HttpCookie csrfCookie = null;
-
-                    while (csrfCookie == null) {
-                        CookieManager cookieManager = (CookieManager) CookieHandler.getDefault();
-                        CookieStore cookieStore = cookieManager.getCookieStore();
-                        List<HttpCookie> cookies = cookieStore.getCookies();
-
-                        if (cookies != null) {
-                            for (HttpCookie cookie : cookies)
-                                if (cookie.getName().equalsIgnoreCase("csrftoken")) {
-                                    csrfCookie = cookie;
-                                    break;
-                                }
-                        }
-
-                        if ((csrfCookie == null) || (csrfCookie.hasExpired())) StartSession();
-                    }
-
-                    if (csrfCookie != null) {
-                        httpURLConnection.setRequestProperty("X-CSRFToken", csrfCookie.getValue());
-                    }
-
-                    if ((BodyData != null) && (!BodyData.isEmpty())) {
-                        httpURLConnection.setDoOutput(true);
-                        BufferedWriter wr = new BufferedWriter(new OutputStreamWriter(httpURLConnection.getOutputStream(),"UTF-8"));
-                        wr.write(BodyData);
-                        wr.flush();
-                        wr.close();
-                    }
-
-                    int responseCode = httpURLConnection.getResponseCode();
-
-                    BufferedReader inputReader;
-
-                    if (responseCode == 200)
-                        inputReader = new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream()));
-                    else
-                        inputReader = new BufferedReader(new InputStreamReader(httpURLConnection.getErrorStream()));
-
-                    String inputLine;
-                    StringBuffer response = new StringBuffer();
-
-                    while ((inputLine = inputReader.readLine()) != null) {
-                        response.append(inputLine);
-                    }
-                    inputReader.close();
-
-                    String responseBody = response.toString();
-
-                    System.out.println(String.format("Request: %s\nCode: %d\n%s",url.toString(), responseCode, responseBody));
-
-                    if (responseCode == 200) {
-
-                        Format[] receivedFormats = Format.getFormat(new JsonParser().parse(responseBody));
-
-                        for (Format format : receivedFormats)
-                            if (format instanceof COMMON) {
-                                if (((COMMON) format).STATUS.equalsIgnoreCase("OK")) {
-                                    serverUser.setStatus(ServerStatus.LOGGED);
-                                    if (onConnected != null)
-                                        onConnected.fire(httpURLConnection, new ConnectionEventArgs(true));
-                                } else if (((COMMON) format).STATUS.equalsIgnoreCase("SESSION EXPIRED")) {
-                                    //TODO: What happens in this case? This case has no sense.
-                                    serverUser.setStatus(ServerStatus.EXPIRED);
-                                } else {
-                                    //TODO: Check COMMON for operation Error and set result here.
-                                    serverUser.setStatus(ServerStatus.ERROR);
-                                }
-                                break;
-                            }
-                    } else if (responseCode == 403) { //CSRF-Token error.
-                        StartSession();
-                        Login();
-                    }
-
-                    httpURLConnection.disconnect();
-
-                } catch (SocketTimeoutException e) {
-                    onNetworkUnavailable();
-                } catch (MalformedURLException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        };
-
-        thread.start();
-        try {
-            thread.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        RunCommand(AvailableCommands.Login,null,null,true,loginFormats);
     }
 
     public void Connect() {
@@ -288,22 +103,69 @@ public class Server {
         this.Login();
     }
 
-    public void RunCommand(ServerCommand.AvailableCommands command, final Format... formats) {
-        this.RunCommand(command,null,formats);
+    public void RunCommand(AvailableCommands command, final Format... formats) {
+        this.RunCommand(command,null,null,formats);
     }
 
-    public void RunCommand(final ServerCommand.AvailableCommands command, final EventHandler<CommandCallbackEventArgs> Callback, final Format... formats) {
-        if (StaticParameters.StandAlone) { return; }
+    private Boolean recursiveTestCookiePrerequisites(final ServerCommand serverCommand, final Format... formats) {
+        if (!serverCommand.checkCookies()) {
+            List<Format> formatList = Arrays.asList(formats);
+            if (this.serverUser != null)
+                formatList.addAll(Arrays.asList(Format.getFormat(this.serverUser.toJson())));
+            Format[] newFormats = formatList.toArray(new Format[formatList.size()]);
+
+            ArrayList<String> unsatisfyingCookies = serverCommand.getUnsatisfyingCookies();
+            for (String unsatisfyingCookie : unsatisfyingCookies) {
+                ArrayList<AvailableCommands> commandsForCookie = ServerCommand.GetCommandForCookie(unsatisfyingCookie);
+                for (AvailableCommands commandForCookie : commandsForCookie) {
+                    ServerCommand serverCommandForCookie = ServerCommand.GetCommand(commandForCookie);
+                    if (serverCommandForCookie == null) { continue; }
+                    if (!serverCommandForCookie.checkFormats(newFormats)) { continue; }
+
+                    if (!serverCommandForCookie.checkCookies())
+                        recursiveTestCookiePrerequisites(serverCommandForCookie,newFormats);
+                    else {
+                        RunCommand(commandForCookie,null,true,newFormats);
+                        break;
+                    }
+                }
+            }
+        } else {
+            return true;
+        }
+        return recursiveTestCookiePrerequisites(serverCommand,formats);
+    }
+
+    public void RunCommand(final AvailableCommands command, final EventHandler<CommandCallbackEventArgs> Callback, Object CallbackAdditionalData, final Format... formats) {
+        RunCommand(command,Callback,CallbackAdditionalData,false,formats);
+    }
+
+    private Boolean RunCommand(final AvailableCommands command, final EventHandler<CommandCallbackEventArgs> Callback, final Object CallbackAdditionalData, boolean waitForEnd, final Format... formats) {
+        if (StaticParameters.StandAlone) //TODO: Replace this by a static class call (StandAloneServer) which may return fake values for all server commands.
+            try {
+                if (Callback != null)
+                    Callback.Invoke(this,new CommandCallbackEventArgs(command,Arrays.asList(Format.getFormat(new JsonParser().parse("{\"COMMON\": {\"STATUS\": \"OK\", \"ERROR\": null}}"))),Arrays.asList(formats),CallbackAdditionalData));
+                return true;
+            } catch (Exception e) {
+                e.printStackTrace();
+                return false;
+            }
 
         final ServerCommand serverCommand = ServerCommand.GetCommand(command);
-        if (serverCommand == null) { return; }
-        if (!serverCommand.checkFormats(formats)) { return; }
+        if (serverCommand == null) { return false; }
+        if (!serverCommand.checkFormats(formats)) { return false; }
 
-        new Thread() {
+        if (!serverCommand.checkCookies())
+            recursiveTestCookiePrerequisites(serverCommand,formats);
+
+        final boolean[] result = new boolean[1];
+
+        Thread thread = new Thread() {
             @Override
             public void run() {
                 int retryCount = 0;
-                if (!RunCommand(serverCommand,Callback,retryCount,formats)) {
+                result[0] = RunCommand(serverCommand,Callback,CallbackAdditionalData,retryCount,formats);
+                if (!result[0]) {
                     //TODO: Test connection availability.
                     if (!DataProvider.isConnectionAvailable()) {
                         //There is no network. What to do with pending command?
@@ -314,10 +176,23 @@ public class Server {
                     }
                 }
             }
-        }.start();
+        };
+
+        thread.start();
+        try {
+            if (waitForEnd) {
+                thread.join();
+                return result[0];
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        return true;
     }
 
-    private Boolean RunCommand (ServerCommand serverCommand, EventHandler<CommandCallbackEventArgs> Callback,int retryCount, Format... formats) {
+    private Boolean RunCommand (ServerCommand serverCommand, EventHandler<CommandCallbackEventArgs> Callback, Object CallbackAdditionalData, int retryCount, Format... formats) {
         Boolean result = false;
 
         if (retryCount >= 3) return false;
@@ -335,12 +210,9 @@ public class Server {
                 httpURLConnection.addRequestProperty("Content-Type", "application/json");
 
             HttpCookie csrfCookie = null;
-            HttpCookie sessionCookie = null;
+            int startSessionTries = 1;
 
-            int startSessionTries = 0;
-            int loginTries = 0;
-
-            while (csrfCookie == null) {
+            while ((csrfCookie == null) && (startSessionTries > 0)) {
                 CookieManager cookieManager = (CookieManager) CookieHandler.getDefault();
                 CookieStore cookieStore = cookieManager.getCookieStore();
                 List<HttpCookie> cookies = cookieStore.getCookies();
@@ -349,26 +221,17 @@ public class Server {
                     for (HttpCookie cookie : cookies)
                         if (cookie.getName().equalsIgnoreCase("csrftoken")) {
                             csrfCookie = cookie;
-                        } else if (cookie.getName().equalsIgnoreCase("sessionid")) {
-                            sessionCookie = cookie;
                         }
                 }
-                if ((csrfCookie == null) || (csrfCookie.hasExpired())) {
-                    if (startSessionTries < 3) {
+                if ((csrfCookie != null) && (csrfCookie.hasExpired())) {
+                    if (startSessionTries <= 3) {
                         StartSession();
                         startSessionTries++;
                     } else {
                         return false;
                     }
-                }
-                if ((sessionCookie == null) || (sessionCookie.hasExpired())) {
-                    if (loginTries < 3) {
-                        Login();
-                        loginTries++;
-                    } else {
-                        return false;
-                    }
-                }
+                } else
+                    startSessionTries--;
             }
 
             if (csrfCookie != null) {
@@ -411,18 +274,29 @@ public class Server {
                 String preparedResponseBody = responseBody.replace("\\\"","\"").replace("\"{","{").replace("}\"","}").replaceAll("\"PROFILE\": \"(.*?)\"","\"PROFILE\": {\"PUBLIC_NAME\": \"$1\"}");
                 receivedFormats = Format.getFormat(new JsonParser().parse(preparedResponseBody));
 
+                if (serverCommand.getCommand() == AvailableCommands.StartSession) {
+                    if (CsrfTokenChanged != null)
+                        CsrfTokenChanged.fire(this,EventArgs.Empty());
+                    return true;
+                }
+
                 for (Format format : receivedFormats)
                     if (format instanceof COMMON) {
                         if (((COMMON) format).STATUS.equalsIgnoreCase("OK")) {
                             result = true;
                             if (Callback != null)
-                                Callback.Invoke(httpURLConnection, new CommandCallbackEventArgs((receivedFormats!=null)?Arrays.asList(receivedFormats):null, (formats!=null)?Arrays.asList(formats):null));
+                                Callback.Invoke(httpURLConnection, new CommandCallbackEventArgs(serverCommand.getCommand(), Arrays.asList(receivedFormats), (formats != null) ? Arrays.asList(formats) : null, CallbackAdditionalData));
+                            else if (serverCommand.getCommand() == AvailableCommands.Login){
+                                if (onConnected != null)
+                                    onConnected.fire(httpURLConnection, new ConnectionEventArgs(true));
+                                return true;
+                            }
                             else if (responseEvent != null)
                                 responseEvent.fire(httpURLConnection, new FormatReceivedEventArgs(Arrays.asList(receivedFormats)));
                         } else if (((COMMON) format).STATUS.equalsIgnoreCase("SESSION EXPIRED")) {
                             serverUser.setStatus(ServerStatus.EXPIRED);
                             Login();
-                            result = RunCommand(serverCommand, Callback, retryCount + 1, formats);
+                            result = RunCommand(serverCommand, Callback, CallbackAdditionalData, retryCount + 1, formats);
                         } else {
                             //TODO: Check COMMON for operation Error and set result here.
                             serverUser.setStatus(ServerStatus.ERROR);
@@ -431,7 +305,7 @@ public class Server {
                     }
             } else if (responseCode == 403) { //CSRF-Token error.
                 StartSession();
-                result = RunCommand(serverCommand, Callback, retryCount + 1, formats);
+                result = RunCommand(serverCommand, Callback, CallbackAdditionalData, retryCount + 1, formats);
             }
 
             httpURLConnection.disconnect();

@@ -14,7 +14,7 @@ import com.chattyhive.backend.businessobjects.Chats.Group;
 import com.chattyhive.backend.businessobjects.Chats.Hive;
 import com.chattyhive.backend.util.events.EventArgs;
 import com.chattyhive.backend.util.events.EventHandler;
-import com.chattyhive.chattyhive.framework.ViewPair;
+import com.chattyhive.chattyhive.framework.Util.ViewPair;
 
 /**
  * Created by Jonathan on 7/03/14.
@@ -61,14 +61,10 @@ public class LeftPanel {
         this.leftPanelListAdapter = new LeftPanelListAdapter(this.context);
         ((ListView)((Activity)this.context).findViewById(R.id.left_panel_element_list)).setAdapter(this.leftPanelListAdapter);
 
-        try {
-            Hive.HiveListChanged.add(new EventHandler<EventArgs>(leftPanelListAdapter, "OnAddItem", EventArgs.class));
-            Group.GroupListChanged.add(new EventHandler<EventArgs>(leftPanelListAdapter, "OnAddItem", EventArgs.class));
+        Hive.HiveListChanged.add(new EventHandler<EventArgs>(leftPanelListAdapter, "OnAddItem", EventArgs.class));
+        Group.GroupListChanged.add(new EventHandler<EventArgs>(leftPanelListAdapter, "OnAddItem", EventArgs.class));
 
-            this.leftPanelListAdapter.ListSizeChanged.add(new EventHandler<EventArgs>(this,"OnListSizeChanged",EventArgs.class));
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        };
+        this.leftPanelListAdapter.ListSizeChanged.add(new EventHandler<EventArgs>(this,"OnListSizeChanged",EventArgs.class));
 
         this.leftPanelListAdapter.SetOnClickListener(OpenChat);
 

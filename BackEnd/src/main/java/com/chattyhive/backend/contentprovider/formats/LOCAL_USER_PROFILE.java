@@ -6,13 +6,15 @@ import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
- import java.util.ArrayList;
+  import java.util.ArrayList;
+    import com.chattyhive.backend.contentprovider.formats.BASIC_PUBLIC_PROFILE;
     import com.chattyhive.backend.contentprovider.formats.PUBLIC_PROFILE;
+    import com.chattyhive.backend.contentprovider.formats.BASIC_PRIVATE_PROFILE;
     import com.chattyhive.backend.contentprovider.formats.PRIVATE_PROFILE;
     
 
  /*
-  * Automatically generated code by ChattyHive API Manager Code Generator on 18/08/2014.
+  * Automatically generated code by ChattyHive API Manager Code Generator on 28/09/2014.
   * Be careful to not modify this file since your changes will not be included in future
   * versions of this file.
   *
@@ -20,8 +22,11 @@ import com.google.gson.JsonPrimitive;
  */
 public class LOCAL_USER_PROFILE extends Format {
 	public String EMAIL;
+    public String PASS;
     public ArrayList<HIVE_ID> HIVES_SUBSCRIBED;
+    public BASIC_PUBLIC_PROFILE USER_BASIC_PUBLIC_PROFILE;
     public PUBLIC_PROFILE USER_PUBLIC_PROFILE;
+    public BASIC_PRIVATE_PROFILE USER_BASIC_PRIVATE_PROFILE;
     public PRIVATE_PROFILE USER_PRIVATE_PROFILE;
     
 
@@ -40,7 +45,12 @@ public class LOCAL_USER_PROFILE extends Format {
 
 	    if ((this.EMAIL != null) && (!this.EMAIL.isEmpty()))
             jsonObject.addProperty("EMAIL",this.EMAIL);
-            
+      else
+            jsonObject.add("EMAIL", JsonNull.INSTANCE);            
+        if ((this.PASS != null) && (!this.PASS.isEmpty()))
+            jsonObject.addProperty("PASS",this.PASS);
+      else
+            jsonObject.add("PASS", JsonNull.INSTANCE);            
         if (this.HIVES_SUBSCRIBED != null) {
             JsonArray jsonArray = new JsonArray();
             for (HIVE_ID element : this.HIVES_SUBSCRIBED) {
@@ -52,20 +62,39 @@ public class LOCAL_USER_PROFILE extends Format {
 
             if (jsonArray.size() > 0)
                 jsonObject.add("HIVES_SUBSCRIBED",jsonArray);
+            else
+                jsonObject.add("HIVES_SUBSCRIBED", JsonNull.INSTANCE);
         }
-        
+      else
+            jsonObject.add("HIVES_SUBSCRIBED", JsonNull.INSTANCE);        
+        if (this.USER_BASIC_PUBLIC_PROFILE != null) {
+            JsonElement jsonElement = this.USER_BASIC_PUBLIC_PROFILE.toJSON();
+            if (!jsonElement.isJsonNull())
+                jsonObject.add("USER_BASIC_PUBLIC_PROFILE",jsonElement);
+        }
+      else
+            jsonObject.add("USER_BASIC_PUBLIC_PROFILE", JsonNull.INSTANCE);        
         if (this.USER_PUBLIC_PROFILE != null) {
             JsonElement jsonElement = this.USER_PUBLIC_PROFILE.toJSON();
             if (!jsonElement.isJsonNull())
                 jsonObject.add("USER_PUBLIC_PROFILE",jsonElement);
         }
-        
+      else
+            jsonObject.add("USER_PUBLIC_PROFILE", JsonNull.INSTANCE);        
+        if (this.USER_BASIC_PRIVATE_PROFILE != null) {
+            JsonElement jsonElement = this.USER_BASIC_PRIVATE_PROFILE.toJSON();
+            if (!jsonElement.isJsonNull())
+                jsonObject.add("USER_BASIC_PRIVATE_PROFILE",jsonElement);
+        }
+      else
+            jsonObject.add("USER_BASIC_PRIVATE_PROFILE", JsonNull.INSTANCE);        
         if (this.USER_PRIVATE_PROFILE != null) {
             JsonElement jsonElement = this.USER_PRIVATE_PROFILE.toJSON();
             if (!jsonElement.isJsonNull())
                 jsonObject.add("USER_PRIVATE_PROFILE",jsonElement);
         }
-        
+      else
+            jsonObject.add("USER_PRIVATE_PROFILE", JsonNull.INSTANCE);        
       
 
         if (jsonObject.entrySet().isEmpty())
@@ -93,6 +122,10 @@ public class LOCAL_USER_PROFILE extends Format {
         if ((property != null) && (property.isJsonPrimitive()) && (property.getAsString() != null) && (!property.getAsString().isEmpty()))
             this.EMAIL = property.getAsString();
             
+        property = object.get("PASS");
+        if ((property != null) && (property.isJsonPrimitive()) && (property.getAsString() != null) && (!property.getAsString().isEmpty()))
+            this.PASS = property.getAsString();
+            
         property = object.get("HIVES_SUBSCRIBED");
         if ((property != null) && (property.isJsonArray())) {
             this.HIVES_SUBSCRIBED = new ArrayList<HIVE_ID>();
@@ -102,9 +135,19 @@ public class LOCAL_USER_PROFILE extends Format {
       );
         }
         
+        property = object.get("USER_BASIC_PUBLIC_PROFILE");
+        if ((property != null) && (property.isJsonObject())) {
+            this.USER_BASIC_PUBLIC_PROFILE = new BASIC_PUBLIC_PROFILE(property);
+        }
+        
         property = object.get("USER_PUBLIC_PROFILE");
         if ((property != null) && (property.isJsonObject())) {
             this.USER_PUBLIC_PROFILE = new PUBLIC_PROFILE(property);
+        }
+        
+        property = object.get("USER_BASIC_PRIVATE_PROFILE");
+        if ((property != null) && (property.isJsonObject())) {
+            this.USER_BASIC_PRIVATE_PROFILE = new BASIC_PRIVATE_PROFILE(property);
         }
         
         property = object.get("USER_PRIVATE_PROFILE");

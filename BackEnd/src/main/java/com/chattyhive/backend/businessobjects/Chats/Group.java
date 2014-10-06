@@ -3,6 +3,7 @@ package com.chattyhive.backend.businessobjects.Chats;
 import com.chattyhive.backend.Controller;
 import com.chattyhive.backend.businessobjects.Chats.Messages.Message;
 import com.chattyhive.backend.businessobjects.Users.User;
+import com.chattyhive.backend.contentprovider.AvailableCommands;
 import com.chattyhive.backend.contentprovider.DataProvider;
 import com.chattyhive.backend.contentprovider.OSStorageProvider.GroupLocalStorageInterface;
 import com.chattyhive.backend.contentprovider.formats.CHAT;
@@ -47,11 +48,7 @@ public class Group {
         Group.controller = controller;
         Group.localStorage = groupLocalStorageInterface;
 
-        try {
-            DataProvider.GetDataProvider().onChatProfileReceived.add(new EventHandler<FormatReceivedEventArgs>(Group.class, "onFormatReceived", FormatReceivedEventArgs.class));
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
+        DataProvider.GetDataProvider().onChatProfileReceived.add(new EventHandler<FormatReceivedEventArgs>(Group.class, "onFormatReceived", FormatReceivedEventArgs.class));
 
         //Local recovering of groups.
         String[] groups = groupLocalStorageInterface.RecoverGroups();
@@ -120,10 +117,19 @@ public class Group {
         }
         if ((this.channelUnicode == null) || (!this.channelUnicode.equals(channelUnicode))) {
             this.channelUnicode = channelUnicode;
-            DataProvider.GetDataProvider().InvokeServerCommand(ServerCommand.AvailableCommands.ChatContext,this.toFormat(new CHAT_ID()));
+            DataProvider.GetDataProvider().InvokeServerCommand(AvailableCommands.ChatContext,this.toFormat(new CHAT_ID()));
         }
 
         this.CalculateGroupKind();
+    }
+
+    public Group(GroupKind groupKind, Hive parentHive) {
+        if ((groupKind != GroupKind.PRIVATE_SINGLE) && (groupKind != GroupKind.PRIVATE_GROUP) && (parentHive == null))
+            throw new IllegalArgumentException("If chat is not private, parentHive CAN'T be null.");
+        this.groupKind = groupKind;
+        this.parentHive = parentHive;
+        this.chat = new Chat(this);
+        this.creationDate = new Date();
     }
 
     private void CalculateGroupKind() {
@@ -354,7 +360,7 @@ public class Group {
             this.pusherChannel = ((CHAT) format).PUSHER_CHANNEL;
             this.members = new TreeMap<String, User>();
             for (PROFILE_ID profile_id : ((CHAT) format).MEMBERS)
-                this.addMember(User.getUser(profile_id));
+                this.addMember(controller.getUser(profile_id));
 
             this.chat = new Chat(this);
             this.CalculateGroupKind();

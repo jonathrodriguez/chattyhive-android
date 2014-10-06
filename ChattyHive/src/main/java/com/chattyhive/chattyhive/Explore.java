@@ -11,8 +11,6 @@ import android.widget.TextView;
 import com.chattyhive.backend.Controller;
 import com.chattyhive.backend.util.events.EventArgs;
 import com.chattyhive.backend.util.events.EventHandler;
-import com.chattyhive.chattyhive.OSStorageProvider.LoginLocalStorage;
-import com.chattyhive.chattyhive.OSStorageProvider.MessageLocalStorage;
 
 public class Explore extends Activity {
 
@@ -35,12 +33,8 @@ public class Explore extends Activity {
 
         this.exploreListAdapter = new ExploreListAdapter(this,this.controller.getExploreHives(),(ListView)this.findViewById(R.id.explore_list_listView));
 
-        try {
-            this.controller.ExploreHivesListChange.add(new EventHandler<EventArgs>(exploreListAdapter, "OnAddItem", EventArgs.class));
-            this.controller.HiveJoined.add(new EventHandler<EventArgs>(this,"onHiveJoined",EventArgs.class));
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
+        this.controller.ExploreHivesListChange.add(new EventHandler<EventArgs>(exploreListAdapter, "OnAddItem", EventArgs.class));
+        this.controller.HiveJoined.add(new EventHandler<EventArgs>(this,"onHiveJoined",EventArgs.class));
     }
 
     public void GetMoreHives() {
@@ -65,12 +59,9 @@ public class Explore extends Activity {
 
     @Override
     protected void onDestroy(){
-        try {
-            this.controller.ExploreHivesListChange.remove(new EventHandler<EventArgs>(exploreListAdapter, "OnAddItem", EventArgs.class));
-            this.controller.HiveJoined.remove(new EventHandler<EventArgs>(this,"onHiveJoined",EventArgs.class));
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
+        this.controller.ExploreHivesListChange.remove(new EventHandler<EventArgs>(exploreListAdapter, "OnAddItem", EventArgs.class));
+        this.controller.HiveJoined.remove(new EventHandler<EventArgs>(this,"onHiveJoined",EventArgs.class));
+
         exploreListAdapter = null;
         controller = null;
         super.onDestroy();

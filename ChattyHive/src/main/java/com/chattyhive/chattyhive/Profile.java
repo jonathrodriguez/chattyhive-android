@@ -1,23 +1,19 @@
 package com.chattyhive.chattyhive;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.view.View;
-import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.chattyhive.backend.Controller;
 import com.chattyhive.backend.businessobjects.Users.User;
 import com.chattyhive.backend.util.formatters.DateFormatter;
-import com.chattyhive.chattyhive.framework.SquareImageView;
-import com.chattyhive.chattyhive.framework.StaticMethods;
-import com.chattyhive.chattyhive.framework.ViewPair;
+import com.chattyhive.chattyhive.framework.Util.StaticMethods;
+import com.chattyhive.chattyhive.framework.Util.ViewPair;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
-import java.util.StringTokenizer;
 
 /**
  * Created by Jonathan on 20/05/2014.
@@ -65,13 +61,13 @@ public class Profile {
     };
 
     private void setData() {
-        User me = User.getMe();
+        User me = Controller.GetRunningController().getMe();
 
         if (me != null) {
             ((TextView) profileView.findViewById(R.id.my_profile_full_name)).setText(String.format("%s %s",me.getUserPrivateProfile().getFirstName(),me.getUserPrivateProfile().getLastName()));
 
             ((TextView) profileView.findViewById(R.id.my_profile_public_name)).setText(me.getUserPublicProfile().getPublicName());
-            ((TextView) profileView.findViewById(R.id.my_profile_public_name)).setTextColor(Color.parseColor(me.getColor()));
+            ((TextView) profileView.findViewById(R.id.my_profile_public_name)).setTextColor(Color.parseColor(me.getUserPublicProfile().getColor()));
 
             if (me.getUserPrivateProfile().getSex().equalsIgnoreCase("male"))
                 ((TextView) profileView.findViewById(R.id.my_profile_information_gender)).setText(R.string.my_profile_information_gender_male_value);

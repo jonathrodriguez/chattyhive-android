@@ -3,7 +3,10 @@ package com.chattyhive.backend;
 import com.chattyhive.backend.businessobjects.Chats.Chat;
 import com.chattyhive.backend.businessobjects.Chats.Group;
 import com.chattyhive.backend.businessobjects.Chats.Hive;
+import com.chattyhive.backend.businessobjects.Users.ProfileLevel;
+import com.chattyhive.backend.businessobjects.Users.ProfileType;
 import com.chattyhive.backend.businessobjects.Users.User;
+import com.chattyhive.backend.contentprovider.AvailableCommands;
 import com.chattyhive.backend.contentprovider.DataProvider;
 import com.chattyhive.backend.contentprovider.OSStorageProvider.GroupLocalStorageInterface;
 import com.chattyhive.backend.contentprovider.OSStorageProvider.HiveLocalStorageInterface;
@@ -14,7 +17,11 @@ import com.chattyhive.backend.contentprovider.formats.COMMON;
 import com.chattyhive.backend.contentprovider.formats.Format;
 import com.chattyhive.backend.contentprovider.formats.HIVE;
 import com.chattyhive.backend.contentprovider.formats.HIVE_ID;
+import com.chattyhive.backend.contentprovider.formats.LOCAL_USER_PROFILE;
+import com.chattyhive.backend.contentprovider.formats.PROFILE_ID;
+import com.chattyhive.backend.contentprovider.formats.USERNAME;
 import com.chattyhive.backend.contentprovider.formats.USER_EMAIL;
+import com.chattyhive.backend.contentprovider.formats.USER_PROFILE;
 import com.chattyhive.backend.contentprovider.server.ServerCommand;
 import com.chattyhive.backend.contentprovider.server.ServerUser;
 import com.chattyhive.backend.util.events.CancelableEventArgs;
@@ -23,7 +30,9 @@ import com.chattyhive.backend.util.events.ConnectionEventArgs;
 import com.chattyhive.backend.util.events.Event;
 import com.chattyhive.backend.util.events.EventArgs;
 import com.chattyhive.backend.util.events.EventHandler;
+import com.chattyhive.backend.util.events.FormatReceivedEventArgs;
 import com.chattyhive.backend.util.events.PubSubConnectionEventArgs;
+import com.google.gson.JsonParser;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -32,6 +41,7 @@ import java.net.CookieManager;
 import java.net.CookiePolicy;
 import java.net.CookieStore;
 import java.util.ArrayList;
+import java.util.TreeMap;
 
 /**
  * Created by Jonathan on 11/12/13.
@@ -56,7 +66,6 @@ public class Controller {
         ConnectionAvailabilityChanged = new Event<EventArgs>();
 
         DataProvider.Initialize();
-        ServerCommand.Initialize();
 
         return (Initialized = true);
     }
@@ -218,6 +227,9 @@ public class Controller {
     /************************************************************************/
     private DataProvider dataProvider;
 
+    public DataProvider getDataProvider() {
+        return this.dataProvider;
+    }
     /************************************************************************/
     //CONSTRUCTORS
 
@@ -232,18 +244,11 @@ public class Controller {
         Hive.Initialize(this,HiveLocalStorage);
         Group.Initialize(this,GroupLocalStorage);
         Chat.Initialize(this,MessageLocalStorage);
-        User.Initialize(UserLocalStorage);
 
-        try {
-            DataProvider.ConnectionAvailabilityChanged.add(new EventHandler<EventArgs>(this,"onConnectionAvailabilityChanged",EventArgs.class));
-            this.dataProvider.ServerConnectionStateChanged.add(new EventHandler<ConnectionEventArgs>(this,"onServerConnectionStateChanged",ConnectionEventArgs.class));
+        DataProvider.ConnectionAvailabilityChanged.add(new EventHandler<EventArgs>(this,"onConnectionAvailabilityChanged",EventArgs.class));
+        this.dataProvider.ServerConnectionStateChanged.add(new EventHandler<ConnectionEventArgs>(this,"onServerConnectionStateChanged",ConnectionEventArgs.class));
 
-            this.dataProvider.onHiveJoined.add(new EventHandler<CommandCallbackEventArgs>(this,"onJoinHiveCallback",CommandCallbackEventArgs.class));
-
-
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
+        this.dataProvider.onHiveJoined.add(new EventHandler<CommandCallbackEventArgs>(this,"onJoinHiveCallback",CommandCallbackEventArgs.class));
     }
 
     /************************************************************************/
@@ -274,22 +279,22 @@ public class Controller {
     }
     public void onServerConnectionStateChanged(Object sender, ConnectionEventArgs eventArgs) {
         if (this.dataProvider.isServerConnected()) {
-            ArrayList<ServerCommand.AvailableCommands> commandSequence = new ArrayList<ServerCommand.AvailableCommands>();
+            ArrayList<AvailableCommands> commandSequence = new ArrayList<AvailableCommands>();
             //Define command sequence
             if (Controller.isAppBounded()) {
                 //Load Home
-                //commandSequence.add(ServerCommand.AvailableCommands.Home);
+                //commandSequence.add(AvailableCommands.Home);
                 if (!svcBounded)
-                    commandSequence.add(ServerCommand.AvailableCommands.ChatList);
-                commandSequence.add(ServerCommand.AvailableCommands.LocalProfile);
+                    commandSequence.add(AvailableCommands.ChatList);
+                commandSequence.add(AvailableCommands.LocalProfile);
                 if (svcBounded)
-                    commandSequence.add(ServerCommand.AvailableCommands.ChatList);
+                    commandSequence.add(AvailableCommands.ChatList);
             } else if (svcBounded) {
-                commandSequence.add(ServerCommand.AvailableCommands.ChatList);
+                commandSequence.add(AvailableCommands.ChatList);
             }
             //Execute command sequence
-            for(ServerCommand.AvailableCommands command : commandSequence)
-                dataProvider.InvokeServerCommand(command,null);
+            for(AvailableCommands command : commandSequence)
+                dataProvider.InvokeServerCommand(command,(Format)null);
         }
         if (this.ServerConnectionStateChanged != null)
             this.ServerConnectionStateChanged.fire(sender,eventArgs);
@@ -383,13 +388,8 @@ public class Controller {
      */
     public void exploreHives(int offset,int length) {
         if (offset == 0) { exploreHives.clear(); }
-        if (!StaticParameters.StandAlone) {
-            try {
-                this.dataProvider.ExploreHives(offset,length,new EventHandler<CommandCallbackEventArgs>(this,"onExploreHivesCallback",CommandCallbackEventArgs.class));
-            } catch (NoSuchMethodException e) {
-                e.printStackTrace();
-            }
-        }
+        if (!StaticParameters.StandAlone)
+            this.dataProvider.ExploreHives(offset,length,new EventHandler<CommandCallbackEventArgs>(this,"onExploreHivesCallback",CommandCallbackEventArgs.class));
     }
 
     public void onExploreHivesCallback(Object sender,CommandCallbackEventArgs eventArgs) {
@@ -403,21 +403,9 @@ public class Controller {
             this.ExploreHivesListChange.fire(this.exploreHives,EventArgs.Empty());
     }
 
-    public void checkEmail(String email,EventHandler<CommandCallbackEventArgs> Callback) {
-        USER_EMAIL user_email = new USER_EMAIL();
-        user_email.EMAIL = email;
-        this.dataProvider.InvokeServerCommand(ServerCommand.AvailableCommands.EmailCheck,Callback,user_email);
-    }
-
-    public void checkUsername(String username,EventHandler<CommandCallbackEventArgs> Callback) {
-        /*USER_USERNAME user_username = new USER_USERNAME();
-        user_username.username = username;
-        this.dataProvider.InvokeServerCommand(ServerCommand.AvailableCommands.UsernameCheck,Callback,user_username);*/
-    }
-
     public void clearUserData() {
         this.dataProvider.clearSession();
-        User.removeMe();
+        me = null;
     }
 
     public void clearAllChats() {
@@ -428,4 +416,119 @@ public class Controller {
         Group.removeGroup(channelUnicode);
     }
 
+
+    /*******************************************************************************************/
+    /*******************************************************************************************/
+    /*                            USERS                                                        */
+    /*******************************************************************************************/
+    /*******************************************************************************************/
+    public void CheckEmail(String email, EventHandler<CommandCallbackEventArgs> Callback) {
+        if (!email.contains("@")) return;
+
+        String userPart = email.split("@")[0];
+        String serverPart = email.split("@")[1];
+        if ((userPart.isEmpty()) || (serverPart.isEmpty())) return;
+
+        USER_EMAIL user_email = new USER_EMAIL();
+        user_email.EMAIL_USER_PART = userPart;
+        user_email.EMAIL_SERVER_PART = serverPart;
+        this.dataProvider.RunCommand(AvailableCommands.EmailCheck, Callback, user_email);
+    }
+    public void CheckUsername(String username, EventHandler<CommandCallbackEventArgs> Callback) {
+        USERNAME user_username = new USERNAME();
+        user_username.PUBLIC_NAME = username;
+        //this.dataProvider.RunCommand(AvailableCommands.UsernameCheck,Callback,user_username); //TODO: implement server function
+        COMMON common = new COMMON();
+        common.STATUS = "OK";
+        ArrayList<Format> rf = new ArrayList<Format>();
+        rf.add(common);
+        ArrayList<Format> sf = new ArrayList<Format>();
+        sf.add(user_username);
+        CommandCallbackEventArgs eventArgs = new CommandCallbackEventArgs(AvailableCommands.EmailCheck,rf,sf,null);
+        Callback.Run(this,eventArgs);
+    }
+
+    private TreeMap<String,User> knownUsers;
+    private User me;
+
+    private void InitializeUsers() {
+        this.knownUsers = new TreeMap<String, User>();
+        DataProvider.GetDataProvider().onUserProfileReceived.add(new EventHandler<FormatReceivedEventArgs>(User.class,"onFormatReceived",FormatReceivedEventArgs.class));
+    }
+    private User getUser(String userID,Format format) {
+        if (this.knownUsers == null) throw new IllegalStateException("Users must be initialized.");
+        else if (userID == null) throw new NullPointerException("UserID must not be null.");
+        else if (userID.isEmpty()) throw new IllegalArgumentException("UserID must not be empty.");
+
+        if (this.knownUsers.containsKey(userID))
+            return this.knownUsers.get(userID);
+        else if ((me != null) && (me.getUserID().equalsIgnoreCase(userID))) {
+            return me;
+        }
+        else {
+            User u = new User(format,this);
+            if (!u.isMe()) {
+                this.knownUsers.put(userID, u);
+            }
+            else
+                me = u;
+            return u;
+        }
+    }
+    public User getUser(PROFILE_ID profile_id) {
+        if (this.knownUsers == null) throw new IllegalStateException("Users must be initialized.");
+        else if (profile_id == null) throw new NullPointerException("PROFILE_ID must not be null.");
+        else if ((profile_id.USER_ID == null) || profile_id.USER_ID.isEmpty()) throw new IllegalArgumentException("PROFILE_ID must not be empty.");
+
+        String userID = profile_id.USER_ID;
+
+        if (this.knownUsers.containsKey(userID))
+            return this.knownUsers.get(userID);
+        else if ((me != null) && (me.getUserID().equalsIgnoreCase(userID))) {
+            return me;
+        }
+        else {
+            User u = new User(userID,profile_id,this);
+            u.UserLoaded.add(new EventHandler<EventArgs>(this,"onUserLoaded",EventArgs.class));
+            return u;
+        }
+    }
+    public void updateUser(String userID,Format format) {
+        if (this.knownUsers == null) throw new IllegalStateException("Users must be initialized.");
+
+        if (format instanceof LOCAL_USER_PROFILE) {
+            if (this.me != null)
+                this.getMe().fromFormat(format);
+            else
+                this.me = new User(format, this);
+        } else if (format instanceof USER_PROFILE) {
+            if (userID == null) throw new NullPointerException("UserID must not be null.");
+            else if (userID.isEmpty()) throw new IllegalArgumentException("UserID must not be empty.");
+
+            if (this.knownUsers.containsKey(userID))
+                this.knownUsers.get(userID).fromFormat(format);
+            else
+                this.knownUsers.put(userID,new User(format,this));
+        }
+    }
+
+    public void onUserLoaded(Object sender,EventArgs eventArgs) {
+        if (!(sender instanceof User)) return;
+
+        if (!((User) sender).isMe()) {
+            if ((this.knownUsers.containsKey(((User) sender).getUserID())) && (this.knownUsers.get(((User) sender).getUserID()) == sender))
+                return;
+            this.knownUsers.put(((User) sender).getUserID(), (User) sender);
+        } else if (sender != this.me) {
+            this.me = (User)sender;
+        }
+    }
+
+    public void unloadUserProfiles() {
+        for (User user : this.knownUsers.values())
+            user.unloadProfile(ProfileLevel.Basic);
+    }
+    public User getMe() {
+        return this.me;
+    }
 }

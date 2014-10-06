@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     tools:context=".Main">
 
-<com.chattyhive.chattyhive.framework.FloatingPanel
+<com.chattyhive.chattyhive.framework.CustomViews.ViewGroup.FloatingPanel
     android:id="@+id/FloatingPanel"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -66,5 +66,5 @@
         <include layout="@layout/right_panel_action_bar"/>
     </FrameLayout>
 
-</com.chattyhive.chattyhive.framework.FloatingPanel>
+</com.chattyhive.chattyhive.framework.CustomViews.ViewGroup.FloatingPanel>
 </FrameLayout>
