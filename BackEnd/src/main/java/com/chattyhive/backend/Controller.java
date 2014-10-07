@@ -3,6 +3,9 @@ package com.chattyhive.backend;
 import com.chattyhive.backend.businessobjects.Chats.Chat;
 import com.chattyhive.backend.businessobjects.Chats.Group;
 import com.chattyhive.backend.businessobjects.Chats.Hive;
+import com.chattyhive.backend.businessobjects.Chats.Messages.Message;
+import com.chattyhive.backend.businessobjects.Home.Cards.HiveMessageCard;
+import com.chattyhive.backend.businessobjects.Home.HomeCard;
 import com.chattyhive.backend.businessobjects.Users.ProfileLevel;
 import com.chattyhive.backend.businessobjects.Users.ProfileType;
 import com.chattyhive.backend.businessobjects.Users.User;
@@ -41,6 +44,7 @@ import java.net.CookieManager;
 import java.net.CookiePolicy;
 import java.net.CookieStore;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.TreeMap;
 
 /**
@@ -244,6 +248,9 @@ public class Controller {
         Hive.Initialize(this,HiveLocalStorage);
         Group.Initialize(this,GroupLocalStorage);
         Chat.Initialize(this,MessageLocalStorage);
+
+        this.InitializeUsers();
+        this.InitializeHome();
 
         DataProvider.ConnectionAvailabilityChanged.add(new EventHandler<EventArgs>(this,"onConnectionAvailabilityChanged",EventArgs.class));
         this.dataProvider.ServerConnectionStateChanged.add(new EventHandler<ConnectionEventArgs>(this,"onServerConnectionStateChanged",ConnectionEventArgs.class));
@@ -530,5 +537,53 @@ public class Controller {
     }
     public User getMe() {
         return this.me;
+    }
+
+    /*******************************************************************************************/
+    /*******************************************************************************************/
+    /*                            HOME                                                         */
+    /*******************************************************************************************/
+    /*******************************************************************************************/
+
+    private TreeMap<Date,HomeCard> homeCards = null;
+    public Event<EventArgs> HomeReceived;
+
+    private void InitializeHome() {
+        this.HomeReceived = new Event<EventArgs>();
+    }
+    public ArrayList<HomeCard> getHomeCards() {
+        ArrayList<HomeCard> result = new ArrayList<HomeCard>();
+
+        if (homeCards != null)
+            result.addAll(this.homeCards.values());
+
+        return result;
+    }
+
+    public void RequestHome() {
+        //TODO: Request home to the server when implemented.
+
+        new Thread() {
+            @Override
+            public void run() {
+                if (homeCards != null)
+                    homeCards.clear();
+                else
+                    homeCards = new TreeMap<Date, HomeCard>();
+
+                int hiveCount = Hive.getHiveCount();
+                Hive hive;
+                Message message;
+                HiveMessageCard homeCard;
+                for (int i = 0; i < hiveCount; i++) {
+                    hive = Hive.getHiveByIndex(i);
+                    message = hive.getPublicChat().getChat().getLastMessage();
+                    homeCard = new HiveMessageCard(message);
+                    homeCards.put(message.getOrdinationTimeStamp(),homeCard);
+                }
+
+                HomeReceived.fire(dataProvider,EventArgs.Empty());
+            }
+        }.start();
     }
 }

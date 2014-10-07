@@ -65,6 +65,7 @@ public class LeftPanelListAdapter extends BaseAdapter {
         this.ListSizeChanged = new Event<EventArgs>();
         this.inflater = ((Activity)this.context).getLayoutInflater();
         this.listView = ((ListView)((Activity)this.context).findViewById(R.id.left_panel_element_list));
+        this.listView.setAdapter(this);
     }
 
     @Override
@@ -152,7 +153,7 @@ public class LeftPanelListAdapter extends BaseAdapter {
                 //TODO: StaticMethods.SetAlpha(((ChatViewHolder)holder).chatTypeImage,alpha.getFloat());
             } else if (type == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Mates)) {
                 //convertView = this.inflater.inflate(R.layout.main_panel_chat_hive_message_me,parent,false);
-                holder = new MateViewHolder();
+                holder = new FriendViewHolder();
             }
 
             if (convertView != null)
@@ -333,7 +334,7 @@ public class LeftPanelListAdapter extends BaseAdapter {
         public TextView chatPendingMessagesNumber;
     }
 
-    private class MateViewHolder extends ViewHolder {
+    private class FriendViewHolder extends ViewHolder {
 
     }
 }
