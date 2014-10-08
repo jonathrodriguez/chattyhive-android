@@ -1,28 +1,41 @@
 package com.chattyhive.chattyhive;
 
 import android.app.Activity;
+import android.graphics.LinearGradient;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.CheckedTextView;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 /**
  * Created by J.Guzmán on 24/09/2014.
  */
+
 public class RightPanelExpandableListAdapter extends BaseExpandableListAdapter {
     private final SparseArray<RightPanelListItem> group;
     public LayoutInflater inflater;
     public Activity activity;
+    private boolean flag;
 
     public RightPanelExpandableListAdapter(Activity act, SparseArray<RightPanelListItem> group) {
+    //public RightPanelExpandableListAdapter(Activity act) {
         activity = act;
         this.group = group;
         inflater = act.getLayoutInflater();
+        flag = true;
     }
+
+    View.OnClickListener listener = new View.OnClickListener() {
+        public void onClick(View v) {
+            activity.findViewById(R.id.menu_notexpanded_explora_img).setVisibility(View.INVISIBLE);
+        }
+    };
 
     @Override
     public int getGroupCount() {
@@ -36,11 +49,13 @@ public class RightPanelExpandableListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public Object getGroup(int groupPosition) {
+        //LinearLayout ly= (LinearLayout) activity.findViewById(R.id.right_panel_items_layout);
         return group.get(groupPosition);
     }
 
     @Override
     public Object getChild(int groupPosition, int childPosition) {
+        //LinearLayout ly= (LinearLayout) activity.findViewById(R.id.menu_subitems_layout);
         return group.get(groupPosition).children.get(childPosition);
     }
 
@@ -69,9 +84,9 @@ public class RightPanelExpandableListAdapter extends BaseExpandableListAdapter {
         if (convertView == null) {
             convertView = inflater.inflate(R.layout.right_panel_items_layout, null);
         }
-        RightPanelListItem grupo = (RightPanelListItem) getGroup(groupPosition);
+        /*RightPanelListItem grupo = (RightPanelListItem) getGroup(groupPosition);
         ((CheckedTextView)convertView).setText(grupo.string);
-        ((CheckedTextView)convertView).setChecked(isExpanded);
+        ((CheckedTextView)convertView).setChecked(isExpanded);*/
         return convertView;
     }
 
@@ -82,7 +97,7 @@ public class RightPanelExpandableListAdapter extends BaseExpandableListAdapter {
         if (convertView == null) {
             convertView = inflater.inflate(R.layout.right_panel_subitems_layout, null);
         }
-        text = (TextView) convertView.findViewById(R.id.right_panel_subitem_layout_text);
+        /*text = (TextView) convertView.findViewById(R.id.right_panel_subitem_layout_text);
         text.setText(children);
         switch (groupPosition){
             case 0:
@@ -101,12 +116,24 @@ public class RightPanelExpandableListAdapter extends BaseExpandableListAdapter {
                         break;
                 }
                 break;
-        }
+        }*/
 
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(activity, children, Toast.LENGTH_SHORT).show();
+/*                ImageView img1, img2;
+                //Toast.makeText(activity, children, Toast.LENGTH_SHORT).show();
+                if (flag == true){
+                    flag = false;
+                    //volver a redireccionar????
+                }
+                else if (flag == false) {
+                    img1 = (ImageView) v.findViewById(R.id.menu_notexpanded_explora_img); // ??????
+                    img2 = (ImageView) v.findViewById(R.id.menu_notexpanded_explora_img); // ??????
+                    img1.setVisibility(View.GONE);
+                    img2 = null;
+                    flag = true;
+                }*/
             }
         });
         return convertView;

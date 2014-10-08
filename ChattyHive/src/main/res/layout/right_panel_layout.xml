@@ -4,10 +4,6 @@
     android:id="@+id/right_panel_linear_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
     android:background="@color/menu_background_color"
     android:orientation="vertical">
 
@@ -16,29 +12,25 @@
         android:id="@+id/right_panel_expandable_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:groupIndicator="@null">
+        android:groupIndicator="@null"
+        android:cacheColorHint="@color/menu_background_color">
     </ExpandableListView>
 
+    <!--dejar para comprobar que sube lo de abajo-->
     <LinearLayout
         android:id="@+id/right_panel_layout_list"
         android:layout_width="match_parent"
         android:layout_height="45dp">
-
-        <!--margenes!!!!! -->
-        <!--LOGO CHATTYHIVE-->
-
         <TextView
             android:layout_height="match_parent"
             android:layout_width="wrap_content"
             android:id="@+id/right_panel_layout_list_notificaciones"
             android:text="@string/right_panel_layout_list_notificaciones">
-
         </TextView>
         <RelativeLayout
             android:id="@+id/right_panel_layout_list_notificaciones_bell"
             android:layout_width="32dp"
-            android:layout_height="match_parent"
-            >
+            android:layout_height="match_parent">
             <ImageView
                 android:id="@+id/right_panel_layout_list_notificaciones_bell_image"
                 android:layout_width="match_parent"
@@ -46,5 +38,8 @@
             </ImageView>
         </RelativeLayout>
     </LinearLayout>
+    <!--Aquí iran dos expandable list view mas (en ppio)-->
+
+    <!--LOGO CHATTYHIVE-->
 
 </LinearLayout>

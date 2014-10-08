@@ -12,7 +12,8 @@
         android:id="@+id/menu_layout_inicio"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:background="@drawable/borde1px">
         <RelativeLayout
             android:layout_width="54dp"
             android:layout_height="match_parent"
@@ -41,7 +42,8 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:gravity="right">
+        android:gravity="right"
+        android:background="@drawable/borde1px">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="48dp"
@@ -90,7 +92,8 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:gravity="right">
+        android:gravity="right"
+        android:background="@drawable/borde1px">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="48dp"
@@ -142,7 +145,8 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:gravity="right">
+        android:gravity="right"
+        android:background="@drawable/borde1px">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="48dp"
@@ -202,7 +206,7 @@
             android:layout_marginLeft="37dp">
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
                 android:text="Notificaciones"
@@ -211,7 +215,8 @@
                 android:textColor="@color/menu_text_white"
                 android:layout_gravity="center"
                 android:paddingLeft="5dp"
-                android:paddingRight="0dp"/>
+                android:paddingRight="0dp"
+                android:background="@drawable/borde1px"/>
         </LinearLayout>
 
         <RelativeLayout
@@ -298,7 +303,8 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="35dp">
+        android:layout_height="35dp"
+        android:background="@drawable/borde1px">
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -315,7 +321,8 @@
         android:id="@+id/menu_layout_ajustes"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:background="@drawable/borde1px">
         <RelativeLayout
             android:layout_width="54dp"
             android:layout_height="match_parent"
@@ -343,7 +350,8 @@
         android:id="@+id/menu_layout_feedback"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:background="@drawable/borde1px">
         <RelativeLayout
             android:layout_width="54dp"
             android:layout_height="match_parent"
@@ -371,7 +379,8 @@
         android:id="@+id/menu_layout_invite"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:background="@drawable/borde1px">
         <RelativeLayout
             android:layout_width="54dp"
             android:layout_height="match_parent"
@@ -399,7 +408,8 @@
         android:id="@+id/menu_layout_ayuda"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:background="@drawable/borde1px">
         <RelativeLayout
             android:layout_width="54dp"
             android:layout_height="match_parent"
