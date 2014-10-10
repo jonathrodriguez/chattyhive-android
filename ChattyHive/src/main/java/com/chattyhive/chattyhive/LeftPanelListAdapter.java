@@ -65,6 +65,7 @@ public class LeftPanelListAdapter extends BaseAdapter {
         this.ListSizeChanged = new Event<EventArgs>();
         this.inflater = ((Activity)this.context).getLayoutInflater();
         this.listView = ((ListView)((Activity)this.context).findViewById(R.id.left_panel_element_list));
+        this.listView.setAdapter(this);
     }
 
     @Override
@@ -152,7 +153,7 @@ public class LeftPanelListAdapter extends BaseAdapter {
                 //TODO: StaticMethods.SetAlpha(((ChatViewHolder)holder).chatTypeImage,alpha.getFloat());
             } else if (type == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Mates)) {
                 //convertView = this.inflater.inflate(R.layout.main_panel_chat_hive_message_me,parent,false);
-                holder = new MateViewHolder();
+                holder = new FriendViewHolder();
             }
 
             if (convertView != null)
@@ -184,11 +185,11 @@ public class LeftPanelListAdapter extends BaseAdapter {
                 yesterday.setTime(today);
                 yesterday.roll(Calendar.DAY_OF_MONTH, false);
                 if (timeStamp.after( fiveMinutesAgo ))
-                    LastMessageTimestamp = "NOW"; //TODO: get here a string
+                    LastMessageTimestamp = this.context.getString(R.string.left_panel_imprecise_time_now);
                 else if (timeStamp.after(today))
                     LastMessageTimestamp = TimestampFormatter.toLocaleString(timeStamp);
                 else if (timeStamp.after(yesterday.getTime()))
-                    LastMessageTimestamp = "YESTERDAY"; //TODO: get here a string
+                    LastMessageTimestamp = this.context.getString(R.string.left_panel_imprecise_time_yesterday);
                 else
                     LastMessageTimestamp = DateFormatter.toHumanReadableString(timeStamp);
             } catch (Exception e) {
@@ -333,7 +334,7 @@ public class LeftPanelListAdapter extends BaseAdapter {
         public TextView chatPendingMessagesNumber;
     }
 
-    private class MateViewHolder extends ViewHolder {
+    private class FriendViewHolder extends ViewHolder {
 
     }
 }

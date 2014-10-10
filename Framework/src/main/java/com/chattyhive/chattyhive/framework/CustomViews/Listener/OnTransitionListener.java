@@ -1,7 +1,7 @@
 package com.chattyhive.chattyhive.framework.CustomViews.Listener;
 
 /**
- * Created by Lord Nivaar on 05/09/2014.
+ * Created by Jonathan on 05/09/2014.
  */
 public interface OnTransitionListener {
 

@@ -3,7 +3,7 @@ package com.chattyhive.chattyhive.framework.Util;
 import android.view.View;
 
 /**
- * Created by Lord Nivaar on 18/08/2014.
+ * Created by Jonathan on 18/08/2014.
  */
 public class ViewPair {
     private View mainView;
