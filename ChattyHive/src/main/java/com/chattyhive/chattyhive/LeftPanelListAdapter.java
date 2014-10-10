@@ -185,11 +185,11 @@ public class LeftPanelListAdapter extends BaseAdapter {
                 yesterday.setTime(today);
                 yesterday.roll(Calendar.DAY_OF_MONTH, false);
                 if (timeStamp.after( fiveMinutesAgo ))
-                    LastMessageTimestamp = "NOW"; //TODO: get here a string
+                    LastMessageTimestamp = this.context.getString(R.string.left_panel_imprecise_time_now);
                 else if (timeStamp.after(today))
                     LastMessageTimestamp = TimestampFormatter.toLocaleString(timeStamp);
                 else if (timeStamp.after(yesterday.getTime()))
-                    LastMessageTimestamp = "YESTERDAY"; //TODO: get here a string
+                    LastMessageTimestamp = this.context.getString(R.string.left_panel_imprecise_time_yesterday);
                 else
                     LastMessageTimestamp = DateFormatter.toHumanReadableString(timeStamp);
             } catch (Exception e) {

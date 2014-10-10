@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item >
+        <shape android:shape="rectangle">
+            <corners android:radius="@dimen/home_card_corner_radius"/>
+            <solid android:color="@color/home_card_border" />
+        </shape>
+    </item>
+    <item android:bottom="@dimen/home_card_bottom_border">
+        <shape android:shape="rectangle">
+            <corners android:radius="@dimen/home_card_corner_radius"/>
+            <solid android:color="@color/home_card_background" />
+        </shape>
+    </item>
+</layer-list>

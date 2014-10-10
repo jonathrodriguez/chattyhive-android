@@ -90,6 +90,20 @@ public class LeftPanel {
             ((Activity)context).findViewById(R.id.left_panel_list_filter).setVisibility(View.GONE);
     }
 
+    protected void OpenChats() {
+        SetButtonSelected(chats,true, (TextView)chats.findViewById(R.id.left_panel_action_bar_tab_text_chats), (ImageView)chats.findViewById(R.id.left_panel_action_bar_tab_img_chats),R.drawable.pestanhas_panel_izquierdo_chats);
+        SetButtonSelected(hives,false, (TextView)hives.findViewById(R.id.left_panel_action_bar_tab_text_hives), (ImageView)hives.findViewById(R.id.left_panel_action_bar_tab_img_hives),R.drawable.pestanhas_panel_izquierdo_hives_blanco);
+        SetButtonSelected(friends,false, (TextView)friends.findViewById(R.id.left_panel_action_bar_tab_text_friends), (ImageView)friends.findViewById(R.id.left_panel_action_bar_tab_img_friends),R.drawable.pestanhas_panel_izquierdo_users_blanco);
+        leftPanelListAdapter.SetVisibleList(context.getResources().getInteger(R.integer.LeftPanel_ListKind_Chats));
+        emptyMessage.setText(R.string.left_panel_chats_empty_list);
+        if ((showingEmpty) && (leftPanelListAdapter.getCount() > 0)) {
+            showingEmpty = false;
+            view_switcher.showPrevious();
+        } else if ((!showingEmpty) && (leftPanelListAdapter.getCount() == 0)) {
+            showingEmpty = true;
+            view_switcher.showNext();
+        }
+    }
 
     protected View.OnClickListener left_panel_tab_button_click = new View.OnClickListener() {
 
@@ -97,18 +111,7 @@ public class LeftPanel {
         public void onClick(View v) {
             switch (v.getId()) {
                 case R.id.left_panel_action_bar_tab_chats:
-                    SetButtonSelected(chats,true, (TextView)chats.findViewById(R.id.left_panel_action_bar_tab_text_chats), (ImageView)chats.findViewById(R.id.left_panel_action_bar_tab_img_chats),R.drawable.pestanhas_panel_izquierdo_chats);
-                    SetButtonSelected(hives,false, (TextView)hives.findViewById(R.id.left_panel_action_bar_tab_text_hives), (ImageView)hives.findViewById(R.id.left_panel_action_bar_tab_img_hives),R.drawable.pestanhas_panel_izquierdo_hives_blanco);
-                    SetButtonSelected(friends,false, (TextView)friends.findViewById(R.id.left_panel_action_bar_tab_text_friends), (ImageView)friends.findViewById(R.id.left_panel_action_bar_tab_img_friends),R.drawable.pestanhas_panel_izquierdo_users_blanco);
-                    leftPanelListAdapter.SetVisibleList(context.getResources().getInteger(R.integer.LeftPanel_ListKind_Chats));
-                    emptyMessage.setText(R.string.left_panel_chats_empty_list);
-                    if ((showingEmpty) && (leftPanelListAdapter.getCount() > 0)) {
-                        showingEmpty = false;
-                        view_switcher.showPrevious();
-                    } else if ((!showingEmpty) && (leftPanelListAdapter.getCount() == 0)) {
-                        showingEmpty = true;
-                        view_switcher.showNext();
-                    }
+                    OpenChats();
                     break;
                 case R.id.left_panel_action_bar_tab_hives:
                     SetButtonSelected(chats,false, (TextView)chats.findViewById(R.id.left_panel_action_bar_tab_text_chats), (ImageView)chats.findViewById(R.id.left_panel_action_bar_tab_img_chats),R.drawable.pestanhas_panel_izquierdo_chats_blanco);

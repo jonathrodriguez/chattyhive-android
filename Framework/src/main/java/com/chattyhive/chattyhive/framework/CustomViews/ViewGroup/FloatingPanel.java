@@ -197,6 +197,10 @@ public class FloatingPanel extends ViewGroup {
                 return;
         }
 
+        if ((position.equalsIgnoreCase("right")) && (actualPosition >= 0)) {
+            child.setVisibility(GONE);
+        }
+
         super.addView(child, index, params);
     }
 
@@ -403,6 +407,14 @@ public class FloatingPanel extends ViewGroup {
             actualState = 2;
         } else { //center
             actualState = 0;
+        }
+
+        if (actualPosition < 0) {
+            mainPanels.get("right").setVisibility(VISIBLE);
+            actionBars.get("right").setVisibility(VISIBLE);
+        } else {
+            mainPanels.get("right").setVisibility(GONE);
+            actionBars.get("right").setVisibility(GONE);
         }
     }
 

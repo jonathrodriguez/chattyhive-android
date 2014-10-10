@@ -460,7 +460,6 @@ public class Controller {
 
     private void InitializeUsers() {
         this.knownUsers = new TreeMap<String, User>();
-        DataProvider.GetDataProvider().onUserProfileReceived.add(new EventHandler<FormatReceivedEventArgs>(User.class,"onFormatReceived",FormatReceivedEventArgs.class));
     }
     private User getUser(String userID,Format format) {
         if (this.knownUsers == null) throw new IllegalStateException("Users must be initialized.");

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
+import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -31,6 +32,7 @@ import com.chattyhive.chattyhive.framework.OSStorageProvider.UserLocalStorage;
 import com.chattyhive.chattyhive.backgroundservice.CHService;
 
 import com.chattyhive.chattyhive.framework.CustomViews.ViewGroup.FloatingPanel;
+import com.chattyhive.chattyhive.framework.Util.StaticMethods;
 import com.chattyhive.chattyhive.framework.Util.ViewPair;
 
 
@@ -44,6 +46,10 @@ public class Main extends Activity {
     Controller controller;
 
     int ActiveLayoutID;
+
+    Home home;
+
+    LeftPanel leftPanel;
 
     //TODO: Add main panel view stack
 
@@ -62,6 +68,34 @@ public class Main extends Activity {
         return actualView;
     }
 
+    protected void ShowHome() {
+        ViewPair pair = this.ShowLayout(R.layout.home,R.layout.home_action_bar);
+        setPanelBehaviour();
+
+        TypedValue alpha = new TypedValue();
+
+        getResources().getValue(R.color.home_action_bar_app_icon_alpha,alpha,true);
+        StaticMethods.SetAlpha(pair.getActionBarView().findViewById(R.id.appIcon),alpha.getFloat());
+
+        getResources().getValue(R.color.home_action_bar_menu_icon_alpha,alpha,true);
+        StaticMethods.SetAlpha(pair.getActionBarView().findViewById(R.id.menuIcon),alpha.getFloat());
+
+        getResources().getValue(R.color.home_top_bar_image_alpha,alpha,true);
+        StaticMethods.SetAlpha(pair.getMainView().findViewById(R.id.home_chat_button_image),alpha.getFloat());
+        StaticMethods.SetAlpha(pair.getMainView().findViewById(R.id.home_explore_button_image),alpha.getFloat());
+        StaticMethods.SetAlpha(pair.getMainView().findViewById(R.id.home_hive_button_image),alpha.getFloat());
+
+        if (this.home == null)
+            this.home = new Home(this);
+        else
+            this.controller.RequestHome();
+    }
+
+    protected void ShowChats() {
+        this.leftPanel.OpenChats();
+        floatingPanel.openLeft();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,15 +108,14 @@ public class Main extends Activity {
         findViewById(R.id.temp_logout_button).setOnClickListener(this.logout_button_click);
         findViewById(R.id.temp_clear_chats_button).setOnClickListener(this.clear_chats_button_click);
 
-        setPanelBehaviour();
-
         //Log.w("Main","onCreate..."); //DEBUG
         Object[] LocalStorage = {LoginLocalStorage.getLoginLocalStorage(), GroupLocalStorage.getGroupLocalStorage(), HiveLocalStorage.getHiveLocalStorage(), MessageLocalStorage.getMessageLocalStorage(), UserLocalStorage.getUserLocalStorage()};
         Controller.Initialize(new CookieStore(),LocalStorage);
 
         this.controller = Controller.GetRunningController(true);
 
-        LeftPanel lp = new LeftPanel(this);
+        this.leftPanel = new LeftPanel(this);
+        this.ShowHome();
 
         try {
             Controller.bindApp(this.getClass().getMethod("hasToLogin"),this);
@@ -226,7 +259,7 @@ public class Main extends Activity {
                         this.controller.Leave((String) findViewById(R.id.main_panel_chat_name).getTag());
                     }
                     if (ActiveLayoutID != R.layout.home) {
-                        ShowLayout(R.layout.home,R.layout.action_bar_layout);
+                        ShowHome();
                         this.setPanelBehaviour();
                         return true;
                     }

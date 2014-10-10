@@ -15,6 +15,9 @@
     <string name="left_panel_filter_hive_chats">Hive chats</string>
     <string name="left_panel_filter_help_button_description">Help</string>
 
+    <string name="left_panel_imprecise_time_now">NOW</string>
+    <string name="left_panel_imprecise_time_yesterday">YESTERDAY</string>
+
     <string name="left_panel_chats_empty_list">You have no chats at this time.</string>
     <string name="left_panel_hives_empty_list">You haven\'t subscribed to any Hive yet.</string>
     <string name="left_panel_friends_empty_list">You haven\'t any friends yet. Try meeting somebody.</string>
