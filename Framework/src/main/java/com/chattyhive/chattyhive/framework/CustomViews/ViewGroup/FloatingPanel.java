@@ -6,7 +6,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
-import android.util.Log;
+//import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
@@ -245,37 +245,52 @@ public class FloatingPanel extends ViewGroup {
         final float x = ev.getX();
         final float y = ev.getY();
 
-        Log.w("onInterceptTouchEvent",String.format("Event X: %f\tEvent Y: %f\tAction: %s\tStatus moving: %b",x,y,ev.getAction(),moving));
+        //Log.w("onInterceptTouchEvent",String.format("Event X: %f\tEvent Y: %f\tAction: %s\tStatus moving: %b",x,y,ev.getAction(),moving));
+
+        Boolean result = false;
 
         if (moving) {
-            return true;
-        }
-        switch (ev.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                Boolean result = false;
-                if (actualPosition == 0) {
-                    this.StartEventX = this.LastEventX = x;
-                    this.StartEventY = y;
-                } else if (actualPosition > 0) {
-                    if (x >= (mainPanelsWidth.get("left")+((LayoutParams)mainPanels.get("left").getLayoutParams()).leftMargin+((LayoutParams)mainPanels.get("left").getLayoutParams()).rightMargin)) {
-                        this.StartEventX = this.LastEventX = x;
-                        this.StartEventY = y;
-                    }
+            result = true;
+        } else {
+                switch (ev.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        if (actualPosition == 0) {
+                            this.StartEventX = this.LastEventX = x;
+                            this.StartEventY = y;
+                        } else if (actualPosition > 0) {
+                            if (x >= (mainPanelsWidth.get("left") + ((LayoutParams) mainPanels.get("left").getLayoutParams()).leftMargin + ((LayoutParams) mainPanels.get("left").getLayoutParams()).rightMargin)) {
+                                this.StartEventX = this.LastEventX = x;
+                                this.StartEventY = y;
+                            }
 
-                } else if (actualPosition < 0) {
-                    if (x <= (mainPanelsWidth.get("center")+((LayoutParams)mainPanels.get("center").getLayoutParams()).leftMargin+((LayoutParams)mainPanels.get("center").getLayoutParams()).rightMargin-(mainPanelsWidth.get("right")+((LayoutParams)mainPanels.get("right").getLayoutParams()).leftMargin+((LayoutParams)mainPanels.get("right").getLayoutParams()).rightMargin))) {
-                        this.StartEventX = this.LastEventX = x;
-                        this.StartEventY = y;
-                    }
+                        } else if (actualPosition < 0) {
+                            if (x <= (mainPanelsWidth.get("center") + ((LayoutParams) mainPanels.get("center").getLayoutParams()).leftMargin + ((LayoutParams) mainPanels.get("center").getLayoutParams()).rightMargin - (mainPanelsWidth.get("right") + ((LayoutParams) mainPanels.get("right").getLayoutParams()).leftMargin + ((LayoutParams) mainPanels.get("right").getLayoutParams()).rightMargin))) {
+                                this.StartEventX = this.LastEventX = x;
+                                this.StartEventY = y;
+                            }
+                        }
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        if ((this.StartEventX < 0) || (this.StartEventY < 0) || (this.LastEventX < 0)) {
+                            result = false;
+                        } else {
+                            float deltaX = x - this.StartEventX;
+                            float deltaY = y - this.StartEventY;
+
+                            if (actualPosition == 0) {
+                                result = true;
+                            } else if (actualPosition > 0) {
+                                result = (this.StartEventX >= (mainPanels.get("left").getMeasuredWidth() + ((LayoutParams) mainPanels.get("left").getLayoutParams()).leftMargin + ((LayoutParams) mainPanels.get("left").getLayoutParams()).rightMargin));
+                            } else if (actualPosition < 0) {
+                                result = (this.StartEventX <= (mainPanels.get("center").getMeasuredWidth() + ((LayoutParams) mainPanels.get("center").getLayoutParams()).leftMargin + ((LayoutParams) mainPanels.get("center").getLayoutParams()).rightMargin - (mainPanels.get("right").getMeasuredWidth() + ((LayoutParams) mainPanels.get("right").getLayoutParams()).leftMargin + ((LayoutParams) mainPanels.get("right").getLayoutParams()).rightMargin)));
+                            }
+                            if ((Math.abs(deltaX) < Math.abs(deltaY)) || (Math.abs(deltaX) < this.actionMoveThreshold))
+                                result = false;
+                        }
+                        break;
                 }
-                return false;
-            case MotionEvent.ACTION_MOVE:
-                float deltaX = x-this.StartEventX;
-                float deltaY = y-this.StartEventY;
-                if ((Math.abs(deltaX) > Math.abs(deltaY)) && (Math.abs(deltaX) > this.actionMoveThreshold)) return true;
-                else return false;
-        }
-        return false;
+            }
+        return result;
     }
 
 
@@ -284,7 +299,7 @@ public class FloatingPanel extends ViewGroup {
         final float x = ev.getX();
         final float y = ev.getY();
 
-        Log.w("onTouchEvent",String.format("Event X: %f\tEvent Y: %f\tAction: %s",x,y,ev.getAction()));
+        //Log.w("onTouchEvent",String.format("Event X: %f\tEvent Y: %f\tAction: %s",x,y,ev.getAction()));
 
         if ((this.StartEventX < 0) || (this.StartEventY < 0) || (this.LastEventX < 0)) return false;
 

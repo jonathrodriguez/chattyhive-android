@@ -10,7 +10,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     custom:centerActionBarRightVisibleWidth="48dp"
-    custom:centerMainPanelRightVisibleWidth="48dp">
+    custom:centerMainPanelRightVisibleWidth="48dp"
+    custom:touchActionMoveDistanceThreshold="10dp">
 
     <FrameLayout
         android:layout_width="match_parent"
