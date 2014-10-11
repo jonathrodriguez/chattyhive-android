@@ -2,6 +2,7 @@ package com.chattyhive.chattyhive;
 
 import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.ImageView;
@@ -109,11 +110,14 @@ public class LeftPanel {
 
         @Override
         public void onClick(View v) {
+            Log.w("LeftPanel_TabClicked",String.format("View: %s",((Activity)context).getResources().getResourceName(v.getId())));
             switch (v.getId()) {
                 case R.id.left_panel_action_bar_tab_chats:
+                    Log.w("LeftPanel_TabClicked","Opening chats.");
                     OpenChats();
                     break;
                 case R.id.left_panel_action_bar_tab_hives:
+                    Log.w("LeftPanel_TabClicked","Opening hives.");
                     SetButtonSelected(chats,false, (TextView)chats.findViewById(R.id.left_panel_action_bar_tab_text_chats), (ImageView)chats.findViewById(R.id.left_panel_action_bar_tab_img_chats),R.drawable.pestanhas_panel_izquierdo_chats_blanco);
                     SetButtonSelected(hives,true, (TextView)hives.findViewById(R.id.left_panel_action_bar_tab_text_hives), (ImageView)hives.findViewById(R.id.left_panel_action_bar_tab_img_hives),R.drawable.pestanhas_panel_izquierdo_hives);
                     SetButtonSelected(friends,false, (TextView)friends.findViewById(R.id.left_panel_action_bar_tab_text_friends), (ImageView)friends.findViewById(R.id.left_panel_action_bar_tab_img_friends),R.drawable.pestanhas_panel_izquierdo_users_blanco);
@@ -128,6 +132,7 @@ public class LeftPanel {
                     }
                     break;
                 case R.id.left_panel_action_bar_tab_friends:
+                    Log.w("LeftPanel_TabClicked","Opening friends.");
                     SetButtonSelected(chats,false, (TextView)chats.findViewById(R.id.left_panel_action_bar_tab_text_chats), (ImageView)chats.findViewById(R.id.left_panel_action_bar_tab_img_chats),R.drawable.pestanhas_panel_izquierdo_chats_blanco);
                     SetButtonSelected(hives,false, (TextView)hives.findViewById(R.id.left_panel_action_bar_tab_text_hives), (ImageView)hives.findViewById(R.id.left_panel_action_bar_tab_img_hives),R.drawable.pestanhas_panel_izquierdo_hives_blanco);
                     SetButtonSelected(friends,true, (TextView)friends.findViewById(R.id.left_panel_action_bar_tab_text_friends), (ImageView)friends.findViewById(R.id.left_panel_action_bar_tab_img_friends),R.drawable.pestanhas_panel_izquierdo_users);

@@ -6,6 +6,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
@@ -244,6 +245,8 @@ public class FloatingPanel extends ViewGroup {
         final float x = ev.getX();
         final float y = ev.getY();
 
+        Log.w("onInterceptTouchEvent",String.format("Event X: %f\tEvent Y: %f\tAction: %s\tStatus moving: %b",x,y,ev.getAction(),moving));
+
         if (moving) {
             return true;
         }
@@ -280,6 +283,8 @@ public class FloatingPanel extends ViewGroup {
     public boolean onTouchEvent(MotionEvent ev) {
         final float x = ev.getX();
         final float y = ev.getY();
+
+        Log.w("onTouchEvent",String.format("Event X: %f\tEvent Y: %f\tAction: %s",x,y,ev.getAction()));
 
         if ((this.StartEventX < 0) || (this.StartEventY < 0) || (this.LastEventX < 0)) return false;
 
