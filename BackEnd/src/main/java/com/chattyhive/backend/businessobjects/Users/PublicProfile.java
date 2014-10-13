@@ -52,6 +52,7 @@ public class PublicProfile extends Profile {
     }
 
     public PublicProfile(Format format) {
+        this();
         if (!this.fromFormat(format)) {
             throw new IllegalArgumentException("Format not valid.");
         }

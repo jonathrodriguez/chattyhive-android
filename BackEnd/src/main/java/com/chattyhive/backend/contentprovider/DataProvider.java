@@ -19,6 +19,7 @@ import com.chattyhive.backend.contentprovider.formats.Format;
 import com.chattyhive.backend.contentprovider.formats.HIVE;
 import com.chattyhive.backend.contentprovider.formats.HIVE_ID;
 import com.chattyhive.backend.contentprovider.formats.LOCAL_USER_PROFILE;
+import com.chattyhive.backend.contentprovider.formats.LOGIN;
 import com.chattyhive.backend.contentprovider.formats.MESSAGE;
 import com.chattyhive.backend.contentprovider.formats.MESSAGE_ACK;
 import com.chattyhive.backend.contentprovider.formats.MESSAGE_LIST;
@@ -94,17 +95,17 @@ public class DataProvider {
     public static Event<EventArgs> DataProviderDisposed;
 
     public static DataProvider GetDataProvider() {
-        return GetDataProvider(false);
+        return dataProvider;
     }
-    public static DataProvider GetDataProvider(Boolean initialize) {
-        if ((dataProvider == null) && (initialize))
-            dataProvider = new DataProvider();
+    public static DataProvider GetDataProvider(LocalStorageInterface localStorage) {
+        if (dataProvider == null)
+            dataProvider = new DataProvider(localStorage);
 
         return dataProvider;
     }
-    public static DataProvider GetDataProvider(Object... LocalStorage) {
+    public static DataProvider GetDataProvider(LocalStorageInterface localStorage, Object... LocalStorage) {
         setLocalStorage(LocalStorage);
-        return GetDataProvider(true);
+        return GetDataProvider(localStorage);
     }
     public static void DisposeDataProvider() {
         Boolean disposeCanceled = false;
@@ -271,11 +272,16 @@ public class DataProvider {
 
     public void Connect() {
         if (connectionAvailable) {
-            if (!this.csrfTokenValid) this.server.StartSession();
-            if (!this.sessionValid) this.server.Login();
+            if (this.serverUser == null) {
+                this.serverUser = new ServerUser(LoginLocalStorage);
+            }
+            if ((!this.csrfTokenValid) || (StaticParameters.StandAlone)) this.server.StartSession();
+            if ((!this.sessionValid) || (StaticParameters.StandAlone)) this.RunCommand(AvailableCommands.Login,null,Format.getFormat(this.serverUser.toJson()));
 
-            this.targetState = ConnectionState.CONNECTED;
-            this.pubSub.Connect();
+            if (!StaticParameters.StandAlone) {
+                this.targetState = ConnectionState.CONNECTED;
+                this.pubSub.Connect();
+            }
         }
     }
 
@@ -382,7 +388,8 @@ public class DataProvider {
             onMessageReceived.fire(this,new FormatReceivedEventArgs(MessageFormats));
 
         if (UserProfileFormats.size() > 0)
-            onUserProfileReceived.fire(this,new FormatReceivedEventArgs(UserProfileFormats));
+            this.ProcessUserReceivedFormats(UserProfileFormats);
+            //onUserProfileReceived.fire(this,new FormatReceivedEventArgs(UserProfileFormats));
 
         if ((onHiveProfileReceived != null) && (HiveProfileFormats.size() > 0))
             onHiveProfileReceived.fire(this,new FormatReceivedEventArgs(HiveProfileFormats));
@@ -392,6 +399,8 @@ public class DataProvider {
     }
 
     private void ProcessUserReceivedFormats(Collection<Format> receivedFormats) {
+        if (this.controller == null)
+            this.controller = Controller.GetRunningController(this.localStorage);
         for (Format format : receivedFormats) {
             if (format instanceof LOCAL_USER_PROFILE) {
                 UserLocalStorage.StoreLocalUserProfile(format.toJSON().toString());
@@ -466,7 +475,7 @@ public class DataProvider {
         HiveLocalStorage.StoreHive(hive.getNameUrl(),hive.toJson(new HIVE()).toString());
         Hive.getHive(hive.getNameUrl());
 
-        this.server.RunCommand(AvailableCommands.Join,new EventHandler<CommandCallbackEventArgs>(this,"onHiveJoinedCallback",CommandCallbackEventArgs.class),hive.toFormat(new HIVE_ID()));
+        this.server.RunCommand(AvailableCommands.Join,new EventHandler<CommandCallbackEventArgs>(this,"onHiveJoinedCallback",CommandCallbackEventArgs.class),null,hive.toFormat(new HIVE_ID()));
     }
 
     public Event<CommandCallbackEventArgs> onHiveJoined;
@@ -509,6 +518,7 @@ public class DataProvider {
             this.pubSub.SubscribeChannelEventHandler(new EventHandler<PubSubChannelEventArgs>(this,"onChannelEvent",PubSubChannelEventArgs.class));
             this.pubSub.SubscribeConnectionEventHandler(new EventHandler<PubSubConnectionEventArgs>(this, "onConnectionEvent", PubSubConnectionEventArgs.class));
         } catch (NoSuchMethodException e) { }*/
+        if (StaticParameters.StandAlone) return;
 
         while (!this.pubSub.Join(channel)) {
             this.pubSub.Leave(channel);
@@ -525,7 +535,7 @@ public class DataProvider {
     }
 
     public void InvokeServerCommand(AvailableCommands command,EventHandler<CommandCallbackEventArgs> Callback,Format... formats) {
-        this.server.RunCommand(command, Callback, formats);
+        this.server.RunCommand(command, Callback, null, formats);
     }
 
     public void RunCommand(AvailableCommands command,EventHandler<CommandCallbackEventArgs> Callback,Format... formats) {
@@ -536,7 +546,8 @@ public class DataProvider {
         if (this.localStorage != null) {
             commandData.setLevel(ExecutorLevel.LocalStorage);
             this.localStorage.PreRunCommand(command, new EventHandler<CommandCallbackEventArgs>(this, "CommandCallback", CommandCallbackEventArgs.class), commandIndex, formats);
-        }
+        } else
+            System.out.println("LocalStorage is NULL");
 
         commandData.setLevel(ExecutorLevel.Server);
         this.server.RunCommand(command,new EventHandler<CommandCallbackEventArgs>(this,"CommandCallback",CommandCallbackEventArgs.class),commandIndex,formats);
@@ -552,14 +563,15 @@ public class DataProvider {
                 ArrayList<Format> formats = new ArrayList<Format>(Callback.getSentFormats());
                 formats.addAll(Callback.getReceivedFormats());
                 this.localStorage.PostRunCommand(Callback.getCommand(), formats.toArray(new Format[formats.size()]));
-            }
+            } else
+                System.out.println("LocalStorage is NULL");
         }
         try {
-            commandData.getCallback().Invoke(sender, Callback);
+            if (commandData.getCallback() != null)
+                commandData.getCallback().Invoke(sender, Callback);
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
     /**
@@ -596,7 +608,7 @@ public class DataProvider {
 
     public void ExploreHives(int offset,int length,EventHandler<CommandCallbackEventArgs> Callback) {
         // TODO: This is for server 0.5.0 which does not support list indexing for explore command.
-        this.server.RunCommand(AvailableCommands.Explore,Callback,null);
+        this.server.RunCommand(AvailableCommands.Explore,Callback,null,null);
     }
 
 

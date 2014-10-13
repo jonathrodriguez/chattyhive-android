@@ -10,7 +10,8 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/left_panel_list_filter_height"
         android:background="@drawable/left_panel_list_filter_background"
-        android:id="@+id/left_panel_list_filter">
+        android:id="@+id/left_panel_list_filter"
+        android:visibility="visible">
 
         <TextView
             android:layout_width="wrap_content"
@@ -78,17 +79,22 @@
         android:layout_height="match_parent"
         android:id="@+id/left_panel_empty_list_view_switcher"
         android:animateFirstView="false"
-        android:background="@drawable/left_panel_list_background">
+        android:background="@drawable/left_panel_list_background"
+        android:visibility="visible">
+
         <ListView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/left_panel_element_list"
-            android:background="@drawable/left_panel_list_background" />
+            android:background="@drawable/left_panel_list_background"
+            android:visibility="visible" />
+
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:foregroundGravity="center_vertical|center_horizontal"
-            android:background="@drawable/left_panel_list_background">
+            android:background="@drawable/left_panel_list_background"
+            android:visibility="visible">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -99,8 +105,10 @@
                 android:id="@+id/left_panel_empty_list_message"
                 android:textColor="#000000"
                 android:layout_gravity="center"
-                android:gravity="center"/>
+                android:gravity="center"
+                android:visibility="visible" />
         </FrameLayout>
+
     </ViewSwitcher>
 
 </LinearLayout>

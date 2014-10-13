@@ -20,11 +20,13 @@ import com.chattyhive.backend.contentprovider.formats.COMMON;
 import com.chattyhive.backend.contentprovider.formats.Format;
 import com.chattyhive.backend.contentprovider.formats.HIVE;
 import com.chattyhive.backend.contentprovider.formats.HIVE_ID;
+import com.chattyhive.backend.contentprovider.formats.HIVE_LIST;
 import com.chattyhive.backend.contentprovider.formats.LOCAL_USER_PROFILE;
 import com.chattyhive.backend.contentprovider.formats.PROFILE_ID;
 import com.chattyhive.backend.contentprovider.formats.USERNAME;
 import com.chattyhive.backend.contentprovider.formats.USER_EMAIL;
 import com.chattyhive.backend.contentprovider.formats.USER_PROFILE;
+import com.chattyhive.backend.contentprovider.local.LocalStorageInterface;
 import com.chattyhive.backend.contentprovider.server.ServerCommand;
 import com.chattyhive.backend.contentprovider.server.ServerUser;
 import com.chattyhive.backend.util.events.CancelableEventArgs;
@@ -102,17 +104,17 @@ public class Controller {
     public static Event<EventArgs> RunningControllerDisposed;
 
     public static Controller GetRunningController() {
-        return GetRunningController(false);
+        return controller;
     }
-    public static Controller GetRunningController(Boolean initialize) {
-        if ((controller == null) && (initialize))
-            controller = new Controller();
+    public static Controller GetRunningController(LocalStorageInterface localStorage) {
+        if (controller == null)
+            controller = new Controller(localStorage);
 
         return controller;
     }
-    public static Controller GetRunningController(Object... LocalStorage) {
+    public static Controller GetRunningController(LocalStorageInterface localStorage, Object... LocalStorage) {
         setLocalStorage(LocalStorage);
-        return GetRunningController(true);
+        return GetRunningController(localStorage);
     }
     public static void DisposeRunningController() {
         Boolean disposeCanceled = false;
@@ -147,7 +149,7 @@ public class Controller {
 
         DataProvider dataProvider = DataProvider.GetDataProvider();
 
-        if (!dataProvider.isServerConnected()) {
+        //if (!dataProvider.isServerConnected()) {
             if (LoginLocalStorage.RecoverLoginPassword() == null) {
                 try {
                     getLogin.invoke(main);
@@ -159,10 +161,10 @@ public class Controller {
             } else {
                 dataProvider.Connect();
             }
-        } else {
-            if (controller == null) GetRunningController(true);
-            controller.onServerConnectionStateChanged(controller,new ConnectionEventArgs(true));
-        }
+        //} else {
+        //    if (controller == null) GetRunningController(true);
+        //    controller.onServerConnectionStateChanged(controller,new ConnectionEventArgs(true));
+        //}
     }
     public static void unbindApp() {
         if (!appBounded) return;
@@ -170,7 +172,7 @@ public class Controller {
         if (AppBindingEvent != null)
             AppBindingEvent.fire(controller,EventArgs.Empty());
     }
-    public static void bindSvc() {
+    public static void bindSvc(LocalStorageInterface localStorage) {
         if (svcBounded) return;
         svcBounded = true;
 
@@ -178,7 +180,7 @@ public class Controller {
         if ((!dataProvider.isServerConnected()) && (LoginLocalStorage.RecoverLoginPassword() != null))
             dataProvider.Connect();
         else if (dataProvider.isServerConnected() && (!appBounded)) {
-            if (controller == null) GetRunningController(true);
+            if (controller == null) GetRunningController(localStorage);
             controller.onServerConnectionStateChanged(controller,new ConnectionEventArgs(true));
         }
     }
@@ -237,17 +239,18 @@ public class Controller {
     /************************************************************************/
     //CONSTRUCTORS
 
-    public Controller () {
+    public Controller (LocalStorageInterface localStorage) {
         this.ServerConnectionStateChanged = new Event<ConnectionEventArgs>();
         this.ExploreHivesListChange = new Event<EventArgs>();
         this.HiveJoined = new Event<EventArgs>();
         this.PubSubConnectionStateChanged = new Event<PubSubConnectionEventArgs>();
 
-        this.dataProvider = DataProvider.GetDataProvider(true);
+        this.dataProvider = DataProvider.GetDataProvider(localStorage);
 
-        Hive.Initialize(this,HiveLocalStorage);
-        Group.Initialize(this,GroupLocalStorage);
         Chat.Initialize(this,MessageLocalStorage);
+        Group.Initialize(this,GroupLocalStorage);
+        Hive.Initialize(this,HiveLocalStorage);
+        Group.RecoverLocalGroups();
 
         this.InitializeUsers();
         this.InitializeHome();
@@ -301,7 +304,7 @@ public class Controller {
             }
             //Execute command sequence
             for(AvailableCommands command : commandSequence)
-                dataProvider.InvokeServerCommand(command,(Format)null);
+                dataProvider.InvokeServerCommand(command,null);
         }
         if (this.ServerConnectionStateChanged != null)
             this.ServerConnectionStateChanged.fire(sender,eventArgs);
@@ -361,11 +364,15 @@ public class Controller {
                 if (((COMMON) format).STATUS.equalsIgnoreCase("OK")) {
                     hiveJoined = true;
                     ArrayList<Format> sentFormats = eventArgs.getSentFormats();
+                    ArrayList<Hive> toRemove = new ArrayList<Hive>();
                     for (Format sentFormat : sentFormats)
                         if (sentFormat instanceof HIVE_ID)
                             for (Hive h : exploreHives)
                                 if (h.getNameUrl().equalsIgnoreCase(((HIVE_ID) sentFormat).NAME_URL))
-                                    exploreHivesChanged = (exploreHivesChanged || exploreHives.remove(h));
+                                    toRemove.add(h);
+
+                    for (Hive h : toRemove)
+                        exploreHivesChanged = (exploreHivesChanged || exploreHives.remove(h));
                 }
                 break;
             }
@@ -395,8 +402,7 @@ public class Controller {
      */
     public void exploreHives(int offset,int length) {
         if (offset == 0) { exploreHives.clear(); }
-        if (!StaticParameters.StandAlone)
-            this.dataProvider.ExploreHives(offset,length,new EventHandler<CommandCallbackEventArgs>(this,"onExploreHivesCallback",CommandCallbackEventArgs.class));
+        this.dataProvider.ExploreHives(offset,length,new EventHandler<CommandCallbackEventArgs>(this,"onExploreHivesCallback",CommandCallbackEventArgs.class));
     }
 
     public void onExploreHivesCallback(Object sender,CommandCallbackEventArgs eventArgs) {
@@ -405,6 +411,9 @@ public class Controller {
         for (Format format : receivedFormats)
             if (format instanceof HIVE)
                 this.exploreHives.add(new Hive((HIVE)format));
+            else if (format instanceof HIVE_LIST)
+                for (HIVE hive : ((HIVE_LIST) format).LIST)
+                    this.exploreHives.add(new Hive(hive));
 
         if (this.ExploreHivesListChange != null)
             this.ExploreHivesListChange.fire(this.exploreHives,EventArgs.Empty());
@@ -444,15 +453,7 @@ public class Controller {
     public void CheckUsername(String username, EventHandler<CommandCallbackEventArgs> Callback) {
         USERNAME user_username = new USERNAME();
         user_username.PUBLIC_NAME = username;
-        //this.dataProvider.RunCommand(AvailableCommands.UsernameCheck,Callback,user_username); //TODO: implement server function
-        COMMON common = new COMMON();
-        common.STATUS = "OK";
-        ArrayList<Format> rf = new ArrayList<Format>();
-        rf.add(common);
-        ArrayList<Format> sf = new ArrayList<Format>();
-        sf.add(user_username);
-        CommandCallbackEventArgs eventArgs = new CommandCallbackEventArgs(AvailableCommands.EmailCheck,rf,sf,null);
-        Callback.Run(this,eventArgs);
+        this.dataProvider.RunCommand(AvailableCommands.UsernameCheck,Callback,user_username);
     }
 
     private TreeMap<String,User> knownUsers;
@@ -488,23 +489,44 @@ public class Controller {
 
         String userID = profile_id.USER_ID;
 
-        if (this.knownUsers.containsKey(userID))
-            return this.knownUsers.get(userID);
-        else if ((me != null) && (me.getUserID().equalsIgnoreCase(userID))) {
-            return me;
+        User u;
+
+        if (this.knownUsers.containsKey(userID)) {
+            u = this.knownUsers.get(userID);
+            u.loadProfile(profile_id);
+        }
+        else if ((me != null) && (me.getUserID() != null) && (me.getUserID().equalsIgnoreCase(userID))) {
+            u = me;
+            u.loadProfile(profile_id);
         }
         else {
-            User u = new User(userID,profile_id,this);
+            u = new User(userID,profile_id,this);
             u.UserLoaded.add(new EventHandler<EventArgs>(this,"onUserLoaded",EventArgs.class));
-            return u;
         }
+
+        return u;
     }
     public void updateUser(String userID,Format format) {
         if (this.knownUsers == null) throw new IllegalStateException("Users must be initialized.");
 
         if (format instanceof LOCAL_USER_PROFILE) {
+            String mineID = "";
+            if ((((LOCAL_USER_PROFILE) format).USER_BASIC_PRIVATE_PROFILE != null) && (((LOCAL_USER_PROFILE) format).USER_BASIC_PRIVATE_PROFILE.USER_ID != null) && (!((LOCAL_USER_PROFILE) format).USER_BASIC_PRIVATE_PROFILE.USER_ID.isEmpty()))
+                mineID = ((LOCAL_USER_PROFILE) format).USER_BASIC_PRIVATE_PROFILE.USER_ID;
+            else if ((((LOCAL_USER_PROFILE) format).USER_BASIC_PUBLIC_PROFILE != null) && (((LOCAL_USER_PROFILE) format).USER_BASIC_PUBLIC_PROFILE.USER_ID != null) && (!((LOCAL_USER_PROFILE) format).USER_BASIC_PUBLIC_PROFILE.USER_ID.isEmpty()))
+                mineID = ((LOCAL_USER_PROFILE) format).USER_BASIC_PUBLIC_PROFILE.USER_ID;
+            else if ((((LOCAL_USER_PROFILE) format).USER_PRIVATE_PROFILE != null) && (((LOCAL_USER_PROFILE) format).USER_PRIVATE_PROFILE.USER_ID != null) && (!((LOCAL_USER_PROFILE) format).USER_PRIVATE_PROFILE.USER_ID.isEmpty()))
+                mineID = ((LOCAL_USER_PROFILE) format).USER_PRIVATE_PROFILE.USER_ID;
+            else if ((((LOCAL_USER_PROFILE) format).USER_PUBLIC_PROFILE != null) && (((LOCAL_USER_PROFILE) format).USER_PUBLIC_PROFILE.USER_ID != null) && (!((LOCAL_USER_PROFILE) format).USER_PUBLIC_PROFILE.USER_ID.isEmpty()))
+                mineID = ((LOCAL_USER_PROFILE) format).USER_PUBLIC_PROFILE.USER_ID;
+
             if (this.me != null)
                 this.getMe().fromFormat(format);
+            else if ((!mineID.isEmpty()) && this.knownUsers.containsKey(mineID)) {
+                this.me = this.knownUsers.get(mineID);
+                this.knownUsers.remove(mineID);
+                this.getMe().fromFormat(format);
+            }
             else
                 this.me = new User(format, this);
         } else if (format instanceof USER_PROFILE) {
@@ -549,6 +571,7 @@ public class Controller {
 
     private void InitializeHome() {
         this.HomeReceived = new Event<EventArgs>();
+        Hive.HiveListChanged.add(new EventHandler<EventArgs>(this,"onHiveListChanged",EventArgs.class));
     }
     public ArrayList<HomeCard> getHomeCards() {
         ArrayList<HomeCard> result = new ArrayList<HomeCard>();
@@ -576,13 +599,21 @@ public class Controller {
                 HiveMessageCard homeCard;
                 for (int i = 0; i < hiveCount; i++) {
                     hive = Hive.getHiveByIndex(i);
-                    message = hive.getPublicChat().getChat().getLastMessage();
-                    homeCard = new HiveMessageCard(message);
-                    homeCards.put(message.getOrdinationTimeStamp(),homeCard);
+                    if ((hive != null) && (hive.getPublicChat() != null) && (hive.getPublicChat().getChat() != null) && (hive.getPublicChat().getChat().getCount() > 0)) {
+                        message = hive.getPublicChat().getChat().getLastMessage();
+                        homeCard = new HiveMessageCard(message);
+                        homeCards.put(message.getOrdinationTimeStamp(), homeCard);
+                    }
                 }
 
                 HomeReceived.fire(dataProvider,EventArgs.Empty());
             }
         }.start();
+    }
+
+    public void onHiveListChanged (Object sender, EventArgs eventArgs) {
+        if ((sender == null) || ((sender instanceof Hive) && (((Hive) sender).getPublicChat() != null) && (((Hive) sender).getPublicChat().getChat() != null) && (((Hive) sender).getPublicChat().getChat().getCount() > 0))) {
+            this.RequestHome();
+        }
     }
 }

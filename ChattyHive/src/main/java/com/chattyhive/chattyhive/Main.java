@@ -15,6 +15,7 @@ import android.view.View;
 
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ListView;
 
 import com.chattyhive.backend.Controller;
 import com.chattyhive.backend.StaticParameters;
@@ -87,12 +88,19 @@ public class Main extends Activity {
 
         if (this.home == null)
             this.home = new Home(this);
-        else
+        else {
+            ((ListView)pair.getMainView().findViewById(R.id.home_listView)).setAdapter(this.home.homeListAdapter);
             this.controller.RequestHome();
+        }
     }
 
     protected void ShowChats() {
         this.leftPanel.OpenChats();
+        floatingPanel.openLeft();
+    }
+
+    protected void ShowHives() {
+        this.leftPanel.OpenHives();
         floatingPanel.openLeft();
     }
 
@@ -112,7 +120,7 @@ public class Main extends Activity {
         Object[] LocalStorage = {LoginLocalStorage.getLoginLocalStorage(), GroupLocalStorage.getGroupLocalStorage(), HiveLocalStorage.getHiveLocalStorage(), MessageLocalStorage.getMessageLocalStorage(), UserLocalStorage.getUserLocalStorage()};
         Controller.Initialize(new CookieStore(),LocalStorage);
 
-        this.controller = Controller.GetRunningController(true);
+        this.controller = Controller.GetRunningController(com.chattyhive.chattyhive.framework.OSStorageProvider.LocalStorage.getLocalStorage());
 
         this.leftPanel = new LeftPanel(this);
         this.ShowHome();
@@ -142,9 +150,7 @@ public class Main extends Activity {
                 break;
             case OP_CODE_EXPLORE:
                     if (resultCode == RESULT_OK) {
-                        Log.w("ExploreActionResult","Has to show hives...");
-                    } else {
-                        Log.w("ExploreActionResult","Don't move from here...");
+                        this.ShowHives();
                     }
                 break;
         }
@@ -239,7 +245,7 @@ public class Main extends Activity {
         @Override
         public void onClick(View v) {
             DataProvider dataProvider = DataProvider.GetDataProvider();
-            dataProvider.InvokeServerCommand(AvailableCommands.ChatList, (Format)null);
+            dataProvider.InvokeServerCommand(AvailableCommands.ChatList, null);
         }
     };
 

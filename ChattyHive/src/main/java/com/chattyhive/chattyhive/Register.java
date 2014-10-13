@@ -64,10 +64,6 @@ public class Register extends Activity {
     public View.OnClickListener onEnterButtonClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (StaticParameters.StandAlone) {
-                setResult(RESULT_OK);
-                finish();
-            } else {
                 TextView emailView = (TextView)findViewById(R.id.register_third_step_email);
                 TextView passwordView = (TextView)findViewById(R.id.register_third_step_password);
                 TextView repeatPasswordView = (TextView)findViewById(R.id.register_third_step_repeat_password);
@@ -85,7 +81,6 @@ public class Register extends Activity {
                     }
                 }
             }
-        }
     };
 
     private boolean passwordIsValid(TextView passwordView) {

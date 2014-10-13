@@ -108,7 +108,7 @@ public class Hive {
         if (data.PUBLIC_CHAT != null) {
             this.publicChat = Group.getGroup(data.PUBLIC_CHAT.CHANNEL_UNICODE, false);
             if (this.publicChat == null) {
-                this.publicChat = new Group(data.PUBLIC_CHAT);
+                this.publicChat = new Group(data.PUBLIC_CHAT,this);
             }
         }
     }
@@ -131,7 +131,7 @@ public class Hive {
                         if (data.PUBLIC_CHAT != null) {
                             this.publicChat = Group.getGroup(data.PUBLIC_CHAT.CHANNEL_UNICODE, false);
                             if (this.publicChat == null) {
-                                this.publicChat = new Group(data.PUBLIC_CHAT);
+                                this.publicChat = new Group(data.PUBLIC_CHAT,this);
                             }
                         } else {
                             this.publicChat = Group.getGroup(String.format("presence-%s",this.nameUrl));
@@ -250,7 +250,7 @@ public class Hive {
             if (((HIVE) format).PUBLIC_CHAT != null) {
                 this.publicChat = Group.getGroup(((HIVE) format).PUBLIC_CHAT);
                 if (this.publicChat == null) {
-                    this.publicChat = new Group(((HIVE) format).PUBLIC_CHAT);
+                    this.publicChat = new Group(((HIVE) format).PUBLIC_CHAT,this);
                 }
             } else {
                 this.publicChat = Group.getGroup(String.format("presence-%s",this.nameUrl));

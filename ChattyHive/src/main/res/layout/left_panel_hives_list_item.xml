@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal" android:layout_width="match_parent"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/left_panel_hive_list_item_background"
     android:focusableInTouchMode="false"
     android:id="@+id/left_panel_hives_list_item_top_view"
-    android:layout_marginBottom="@dimen/left_panel_list_item_margin_bottom">
+    android:layout_marginBottom="@dimen/left_panel_list_item_margin_bottom"
+    android:visibility="visible">
 
     <ImageView
         android:layout_width="@dimen/left_panel_hive_list_item_hive_img_width"
@@ -19,14 +21,16 @@
         android:layout_marginLeft="@dimen/left_panel_hive_list_item_hive_img_margin_left"
         android:layout_marginTop="@dimen/left_panel_hive_list_item_hive_img_margin_top"
         android:layout_marginRight="@dimen/left_panel_hive_list_item_hive_img_margin_right"
-        android:layout_marginBottom="@dimen/left_panel_hive_list_item_hive_img_margin_bottom" />
+        android:layout_marginBottom="@dimen/left_panel_hive_list_item_hive_img_margin_bottom"
+        android:visibility="visible" />
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:background="#00000000">
+        android:background="#00000000"
+        android:visibility="visible">
 
         <TextView
             android:layout_width="fill_parent"
@@ -42,7 +46,8 @@
             android:layout_marginRight="@dimen/left_panel_hive_list_item_hive_name_margin_right"
             android:textSize="@dimen/left_panel_hive_list_item_hive_name_text_size"
             android:singleLine="true"
-            android:ellipsize="end" />
+            android:ellipsize="end"
+            android:visibility="visible" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -58,14 +63,16 @@
             android:textSize="@dimen/left_panel_hive_list_item_hive_description_text_size"
             android:textColor="@color/left_panel_hive_list_item_hive_description"
             android:ellipsize="end"
-            android:enabled="false" />
+            android:enabled="false"
+            android:visibility="visible" />
 
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="#00000000"
-            android:gravity="center_vertical">
+            android:gravity="center_vertical"
+            android:visibility="visible">
 
             <ImageView
                 android:layout_width="@dimen/left_panel_hive_list_item_hive_category_img_width"

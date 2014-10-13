@@ -40,11 +40,11 @@ public class Message implements Comparable {
     protected Date timeStamp;  
 
     protected User user;
-    protected Boolean confirmed;
+    protected Boolean confirmed = false;
 
-    private boolean isMessageHole;
+    private boolean isMessageHole = false;
     private int holeSize;
-    private Boolean filling;
+    private Boolean filling = false;
     /*
      * Events for class message.
      */
@@ -120,21 +120,25 @@ public class Message implements Comparable {
     //EMPTY CONSTRUCTOR
     public Message() {
         this.controller = Controller.GetRunningController();
+        this.InitializeEvents();
     }
 
     //CONSTRUCTOR FOR DATE SEPARATOR
     public Message(Chat chat, Date timeStamp) {
+        this();
+
         this.user = null;
         this.chat = chat;
         this.content = new MessageContent("DATE_SEPARATOR",null);
         this.timeStamp = timeStamp;
         this.serverTimeStamp = timeStamp;
         this.id = this.serverTimeStamp.toString().concat("-DATE_SEPARATOR");
-        this.controller = Controller.GetRunningController();
     }
 
     //CONSTRUCTOR FOR MESSAGE HOLE
     public Message(Chat chat, Date timeStamp, int holeSize) {
+        this();
+
         this.user = null;
         this.chat = chat;
         this.content = new MessageContent("HOLE_SEPARATOR",String.format("%d",holeSize));
@@ -145,7 +149,6 @@ public class Message implements Comparable {
         this.isMessageHole = true;
         this.filling = false;
         this.holeSize = holeSize;
-        this.controller = Controller.GetRunningController();
     }
 
     /**
@@ -155,14 +158,12 @@ public class Message implements Comparable {
      * @param timeStamp The timestamp of the message
      */
     public Message(User user, Chat chat, MessageContent content, Date timeStamp) {
+        this();
+
         this.user = user;
         this.content = content;
         this.timeStamp = timeStamp;
         this.chat = chat;
-
-        this.controller = Controller.GetRunningController();
-
-        this.InitializeEvents();
     }
 
     public void FillMessageHole(String nextMessageId) {
@@ -194,13 +195,13 @@ public class Message implements Comparable {
      * @param jsonMessage the JSONElement representing the message.
      */
     public Message(JsonElement jsonMessage) {
+        this();
         this.fromJson(jsonMessage);
-        this.controller = Controller.GetRunningController();
     }
 
     public Message(Format format) {
+        this();
         this.fromFormat(format);
-        this.controller = Controller.GetRunningController();
     }
 
     private void InitializeEvents() {
@@ -341,7 +342,7 @@ public class Message implements Comparable {
             Boolean result = true;
 
             result = result && (this.getChat().getParent().getChannelUnicode().equalsIgnoreCase(m.getChat().getParent().getChannelUnicode()));
-            result = result && (this.getId().equalsIgnoreCase(m.getId()));
+            result = result && (this.getId() != null) && (m.getId() != null) && (this.getId().equalsIgnoreCase(m.getId()));
             
             return result;
         }

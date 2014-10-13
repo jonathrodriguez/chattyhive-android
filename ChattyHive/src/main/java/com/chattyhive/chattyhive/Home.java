@@ -20,7 +20,8 @@ public class Home {
     public Home (final Context context) {
         this.context = context;
         this.homeListAdapter = new HomeListAdapter(context);
-        ((Main)this.context).controller.HomeReceived.add(new EventHandler<EventArgs>(this.homeListAdapter,"onHomeChanged",EventArgs.class));
+        ((ListView)((Activity)this.context).findViewById(R.id.home_listView)).setAdapter(this.homeListAdapter);
+
         ((Main)this.context).controller.RequestHome();
 
         ((Activity)this.context).findViewById(R.id.home_chat_button).setOnClickListener(new View.OnClickListener() {

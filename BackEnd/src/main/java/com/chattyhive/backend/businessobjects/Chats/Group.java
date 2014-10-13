@@ -13,7 +13,6 @@ import com.chattyhive.backend.contentprovider.formats.Format;
 import com.chattyhive.backend.contentprovider.formats.HIVE_ID;
 import com.chattyhive.backend.contentprovider.formats.MESSAGE;
 import com.chattyhive.backend.contentprovider.formats.PROFILE_ID;
-import com.chattyhive.backend.contentprovider.server.ServerCommand;
 import com.chattyhive.backend.util.events.Event;
 import com.chattyhive.backend.util.events.EventArgs;
 import com.chattyhive.backend.util.events.EventHandler;
@@ -50,23 +49,29 @@ public class Group {
 
         DataProvider.GetDataProvider().onChatProfileReceived.add(new EventHandler<FormatReceivedEventArgs>(Group.class, "onFormatReceived", FormatReceivedEventArgs.class));
 
-        //Local recovering of groups.
-        String[] groups = groupLocalStorageInterface.RecoverGroups();
-        if (groups != null) {
-            for (String group : groups) {
-                Format[] formats = Format.getFormat((new JsonParser()).parse(group));
-                for (Format format : formats) {
-                    if (format instanceof CHAT) {
-                        Group.Groups.put(((CHAT) format).CHANNEL_UNICODE, new Group((CHAT) format));
-                    }
-                }
-            }
-        }
+
 
         //Remote recovering of groups -> Recovered when binding app or service.
 /*        if (DataProvider.isConnectionAvailable()) {
             DataProvider.GetDataProvider().InvokeServerCommand(ServerCommand.AvailableCommands.ChatList,null);
         }*/
+    }
+
+    public static void RecoverLocalGroups() {
+        if ((Group.localStorage == null) || (Group.controller == null)) throw new IllegalStateException("Groups must be initialized");
+
+        //Local recovering of groups.
+        String[] groups = Group.localStorage.RecoverGroups();
+        if (groups != null) {
+            for (String group : groups) {
+                Format[] formats = Format.getFormat((new JsonParser()).parse(group));
+                for (Format format : formats) {
+                    if (format instanceof CHAT) {
+                        Group.Groups.put(((CHAT) format).CHANNEL_UNICODE, new Group((CHAT) format,null));
+                    }
+                }
+            }
+        }
     }
 
     /***********************************/
@@ -84,12 +89,12 @@ public class Group {
     /*****************************************
                  Constructor
      *****************************************/
-    public Group(Format format) {
+    public Group(Format format,Hive hive) {
         this.members = new TreeMap<String, User>();
         this.chat = new Chat(this);
+        if (hive != null)
+            this.parentHive = hive;
         this.fromFormat(format);
-
-        this.CalculateGroupKind();
     }
 
     protected Group(String channelUnicode) {
@@ -103,8 +108,9 @@ public class Group {
                     if (data.CHANNEL_UNICODE.equals(channelUnicode)) {
                         this.channelUnicode = data.CHANNEL_UNICODE;
                         this.creationDate = data.CREATION_DATE;
-                        this.description = ""; //TODO: There is no description.
-                        this.name = ""; //TODO: There is no name;
+                        this.description = data.DESCRIPTION;
+                        this.name = data.NAME;
+                        this.groupKind = GroupKind.valueOf(data.CHAT_TYPE);
                         if ((data.PARENT_HIVE != null) && (data.PARENT_HIVE.NAME_URL != null) && (!data.PARENT_HIVE.NAME_URL.isEmpty()))
                             this.parentHive = Hive.getHive(data.PARENT_HIVE.NAME_URL);
                         else
@@ -117,10 +123,9 @@ public class Group {
         }
         if ((this.channelUnicode == null) || (!this.channelUnicode.equals(channelUnicode))) {
             this.channelUnicode = channelUnicode;
-            DataProvider.GetDataProvider().InvokeServerCommand(AvailableCommands.ChatContext,this.toFormat(new CHAT_ID()));
+            this.chat = new Chat(this);
+            DataProvider.GetDataProvider().InvokeServerCommand(AvailableCommands.ChatInfo,this.toFormat(new CHAT_ID()));
         }
-
-        this.CalculateGroupKind();
     }
 
     public Group(GroupKind groupKind, Hive parentHive) {
@@ -130,23 +135,6 @@ public class Group {
         this.parentHive = parentHive;
         this.chat = new Chat(this);
         this.creationDate = new Date();
-    }
-
-    private void CalculateGroupKind() {
-/*        Boolean isSingle = this.members.size() < 2;
-        Boolean isPrivate = false;
-        for (User user : this.members.values())
-            isPrivate = isPrivate || user.isPrivate();
-
-        if (isPrivate && isSingle)
-            this.groupKind = GroupKind.PRIVATE_SINGLE;
-        else if (isPrivate && !isSingle)
-            this.groupKind = GroupKind.PRIVATE_GROUP;
-        else if (!isPrivate && !isSingle)
-            this.groupKind = GroupKind.PUBLIC_GROUP;
-        else if (!isPrivate && isSingle)
-            this.groupKind = (this.members.size() == 0)?GroupKind.HIVE:GroupKind.PUBLIC_SINGLE;*/
-        this.groupKind = GroupKind.PUBLIC_SINGLE;
     }
 
     public static Group getGroup(String channelUnicode) {
@@ -172,7 +160,7 @@ public class Group {
     }
 
     public static Group getGroup(Format format) {
-        Group g = new Group(format);
+        Group g = new Group(format,null);
         if ((g.channelUnicode != null) && (!g.channelUnicode.isEmpty())) {
             Group existent = Group.getGroup(g.channelUnicode,false);
             if (existent == null) {
@@ -269,6 +257,9 @@ public class Group {
     public void addMember(User user) {
         if (user == null) throw new NullPointerException("User must not be null.");
 
+        if (this.members == null)
+            this.members = new TreeMap<String, User>();
+
         members.put(user.getUserID(), user);
     }
 
@@ -312,7 +303,30 @@ public class Group {
         //TODO: implement local update
     }
 
-    public GroupKind getGroupKind() { return this.groupKind; }
+
+    private void CalculateGroupKind() {
+        if (this.getParentHive() == null) {
+            if (this.members.size() < 3)
+                this.groupKind = GroupKind.PRIVATE_SINGLE;
+            else
+                this.groupKind = GroupKind.PRIVATE_GROUP;
+        } else {
+            if ((this.members == null) || (this.members.size() == 0))
+                this.groupKind = GroupKind.HIVE;
+            else if (this.members.size() < 3)
+                this.groupKind = GroupKind.PUBLIC_SINGLE;
+            else
+                this.groupKind = GroupKind.PUBLIC_GROUP;
+        }
+    }
+    public GroupKind getGroupKind() {
+        if (this.groupKind == null)
+            this.CalculateGroupKind();
+        return this.groupKind;
+    }
+    public void setGroupKind(GroupKind value) {
+        this.groupKind = value;
+    }
 
     public String getName() { return this.name; }
     public void setName(String value) { this.name = value; }
@@ -336,12 +350,21 @@ public class Group {
     public Format toFormat(Format format) {
         if (format instanceof CHAT) {
             ((CHAT) format).CHANNEL_UNICODE = this.channelUnicode;
-            ((CHAT) format).PARENT_HIVE = (HIVE_ID)this.parentHive.toFormat(new HIVE_ID());
+            if (this.parentHive != null)
+                ((CHAT) format).PARENT_HIVE = (HIVE_ID)this.parentHive.toFormat(new HIVE_ID());
+
             ((CHAT) format).CREATION_DATE = this.creationDate;
             ((CHAT) format).PUSHER_CHANNEL = this.pusherChannel;
-            ((CHAT) format).MEMBERS = new ArrayList<PROFILE_ID>();
-            for (User user : this.members.values())
-                ((CHAT) format).MEMBERS.add((PROFILE_ID)user.toFormat(new PROFILE_ID()));
+            ((CHAT) format).CHAT_TYPE = this.groupKind.toString();
+            if ((this.members != null) && (this.members.size() > 0)) {
+                ((CHAT) format).MEMBERS = new ArrayList<PROFILE_ID>();
+                for (User user : this.members.values()) {
+                    PROFILE_ID profile_id = new PROFILE_ID();
+                    profile_id.USER_ID = user.getUserID();
+                    profile_id.PROFILE_TYPE = "BASIC_" + ((this.groupKind.toString().startsWith("PRIVATE_"))?"PRIVATE":"PUBLIC");
+                    ((CHAT) format).MEMBERS.add(profile_id);
+                }
+            }
         } else if (format instanceof CHAT_ID) {
             ((CHAT_ID) format).CHANNEL_UNICODE = this.channelUnicode;
 
@@ -358,12 +381,18 @@ public class Group {
             this.channelUnicode = ((CHAT) format).CHANNEL_UNICODE;
             this.creationDate = ((CHAT) format).CREATION_DATE;
             this.pusherChannel = ((CHAT) format).PUSHER_CHANNEL;
-            this.members = new TreeMap<String, User>();
-            for (PROFILE_ID profile_id : ((CHAT) format).MEMBERS)
-                this.addMember(controller.getUser(profile_id));
+            this.groupKind = GroupKind.valueOf(((CHAT) format).CHAT_TYPE);
+            if (((CHAT) format).MEMBERS != null) {
+                this.members = new TreeMap<String, User>();
+                for (PROFILE_ID profile_id : ((CHAT) format).MEMBERS)
+                    this.addMember(controller.getUser(profile_id));
+            }
+            if (((CHAT) format).PARENT_HIVE != null)
+                if ((this.parentHive == null) || (!this.parentHive.getNameUrl().equalsIgnoreCase(((CHAT) format).PARENT_HIVE.NAME_URL)))
+                    this.parentHive = Hive.getHive(((CHAT) format).PARENT_HIVE.NAME_URL);
 
             this.chat = new Chat(this);
-            this.CalculateGroupKind();
+            //this.CalculateGroupKind();
             return true;
         } else if (format instanceof CHAT_ID) {
             this.channelUnicode = ((CHAT_ID) format).CHANNEL_UNICODE;

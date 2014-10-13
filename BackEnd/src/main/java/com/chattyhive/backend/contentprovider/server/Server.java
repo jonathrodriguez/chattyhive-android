@@ -88,13 +88,11 @@ public class Server {
     /************************************************************************/
 
     public void StartSession() {
-        RunCommand(AvailableCommands.StartSession,null,null,true,(Format)null);
-     }
+        RunCommand(AvailableCommands.StartSession, null, null, true, null);
+    }
     public void Login() {
         if (serverUser == null) return;
-
         final Format[] loginFormats = Format.getFormat(this.serverUser.toJson());
-
         RunCommand(AvailableCommands.Login,null,null,true,loginFormats);
     }
 
@@ -141,16 +139,6 @@ public class Server {
     }
 
     private Boolean RunCommand(final AvailableCommands command, final EventHandler<CommandCallbackEventArgs> Callback, final Object CallbackAdditionalData, boolean waitForEnd, final Format... formats) {
-        if (StaticParameters.StandAlone) //TODO: Replace this by a static class call (StandAloneServer) which may return fake values for all server commands.
-            try {
-                if (Callback != null)
-                    Callback.Invoke(this,new CommandCallbackEventArgs(command,Arrays.asList(Format.getFormat(new JsonParser().parse("{\"COMMON\": {\"STATUS\": \"OK\", \"ERROR\": null}}"))),Arrays.asList(formats),CallbackAdditionalData));
-                return true;
-            } catch (Exception e) {
-                e.printStackTrace();
-                return false;
-            }
-
         final ServerCommand serverCommand = ServerCommand.GetCommand(command);
         if (serverCommand == null) { return false; }
         if (!serverCommand.checkFormats(formats)) { return false; }
@@ -160,14 +148,20 @@ public class Server {
 
         final boolean[] result = new boolean[1];
 
+        final Server thisServer = (StaticParameters.StandAlone)?this:null;
+
         Thread thread = new Thread() {
             @Override
             public void run() {
                 int retryCount = 0;
-                result[0] = RunCommand(serverCommand,Callback,CallbackAdditionalData,retryCount,formats);
+                if (StaticParameters.StandAlone) {
+                    result[0] = StandAloneServer.ExecuteCommand(thisServer, serverCommand.getCommand(), Callback, CallbackAdditionalData, retryCount, formats);
+                } else {
+                    result[0] = RunCommand(serverCommand, Callback, CallbackAdditionalData, retryCount, formats);
+                }
                 if (!result[0]) {
                     //TODO: Test connection availability.
-                    if (!DataProvider.isConnectionAvailable()) {
+                    if ((!DataProvider.isConnectionAvailable()) && (!StaticParameters.StandAlone)) {
                         //There is no network. What to do with pending command?
                         System.out.println("No network available.");
                     } else {
@@ -286,13 +280,14 @@ public class Server {
                             result = true;
                             if (Callback != null)
                                 Callback.Invoke(httpURLConnection, new CommandCallbackEventArgs(serverCommand.getCommand(), Arrays.asList(receivedFormats), (formats != null) ? Arrays.asList(formats) : null, CallbackAdditionalData));
-                            else if (serverCommand.getCommand() == AvailableCommands.Login){
+                            else if (responseEvent != null)
+                                responseEvent.fire(httpURLConnection, new FormatReceivedEventArgs(Arrays.asList(receivedFormats)));
+
+                            if (serverCommand.getCommand() == AvailableCommands.Login){
                                 if (onConnected != null)
                                     onConnected.fire(httpURLConnection, new ConnectionEventArgs(true));
                                 return true;
                             }
-                            else if (responseEvent != null)
-                                responseEvent.fire(httpURLConnection, new FormatReceivedEventArgs(Arrays.asList(receivedFormats)));
                         } else if (((COMMON) format).STATUS.equalsIgnoreCase("SESSION EXPIRED")) {
                             serverUser.setStatus(ServerStatus.EXPIRED);
                             Login();

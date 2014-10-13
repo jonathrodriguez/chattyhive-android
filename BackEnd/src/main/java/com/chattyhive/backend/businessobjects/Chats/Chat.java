@@ -71,10 +71,10 @@ public class Chat {
         this.chatWindowActive = value;
         if (value) {
             this.showingIndex = this.messages.size() - 100;
-            this.controller.Join(this.parent.pusherChannel);
+            controller.Join(this.parent.pusherChannel);
         }
         else {
-            this.controller.Leave(this.parent.pusherChannel);
+            controller.Leave(this.parent.pusherChannel);
             this.showingIndex = -1;
         }
     }
@@ -113,7 +113,7 @@ public class Chat {
 
     public Event<EventArgs> MessageListModifiedEvent;
 
-    private void onMessageChanged(Object sender,EventArgs eventArgs) {
+    public void onMessageChanged(Object sender,EventArgs eventArgs) {
         if (sender instanceof Message) {
             Message m = (Message)sender;
             boolean idReceived = false;
@@ -175,6 +175,9 @@ public class Chat {
     }
 
     public int getCount() {
+        if (this.messages == null)
+            return 0;
+
         return this.messages.size();
     }
 
@@ -215,6 +218,9 @@ public class Chat {
 
         if ((messageListModified) && (this.MessageListModifiedEvent != null))
             this.MessageListModifiedEvent.fire(this, EventArgs.Empty());
+
+        if ((messageListModified) && (this.getParent().groupKind == GroupKind.HIVE))
+            Hive.HiveListChanged.fire(null,EventArgs.Empty());
 
         if ((message.getId() != null) && (!message.getId().isEmpty())) {
             if (StaticParameters.MaxLocalMessages != 0) {

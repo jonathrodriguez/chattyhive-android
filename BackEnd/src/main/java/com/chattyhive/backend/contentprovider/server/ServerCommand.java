@@ -9,9 +9,8 @@ import com.chattyhive.backend.contentprovider.formats.LOGIN;
 import com.chattyhive.backend.contentprovider.formats.MESSAGE;
 import com.chattyhive.backend.contentprovider.formats.MESSAGE_INTERVAL;
 import com.chattyhive.backend.contentprovider.formats.PROFILE_ID;
+import com.chattyhive.backend.contentprovider.formats.USERNAME;
 import com.chattyhive.backend.contentprovider.formats.USER_EMAIL;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 
 import java.lang.reflect.Field;
 import java.net.CookieHandler;
@@ -106,13 +105,23 @@ public class ServerCommand {
         command = AvailableCommands.EmailCheck;
         method = Method.GET;
         commandType = CommandType.Query;
-        url = "android.email_check/[USER_EMAIL.EMAIL]";
+        url = "android.email_check/[USER_EMAIL.EMAIL_USER_PART]/[USER_EMAIL.EMAIL_SERVER_PART]";
         paramFormats = new ArrayList<Class<?>>() {{add(USER_EMAIL.class);}};
         inputFormats = null;
         requiredCookies = new ArrayList<String>() {{add(CSRFTokenCookie);}};
         returningCookies = null;
         ServerCommand.AddServerCommand(command,method,commandType,url,paramFormats,inputFormats,requiredCookies,returningCookies);
 
+        // UsernameCheck
+        command = AvailableCommands.UsernameCheck;
+        method = Method.GET;
+        commandType = CommandType.Query;
+        url = "android.username_check/[USERNAME.PUBLIC_NAME]";
+        paramFormats = new ArrayList<Class<?>>() {{add(USERNAME.class);}};
+        inputFormats = null;
+        requiredCookies = new ArrayList<String>() {{add(CSRFTokenCookie);}};
+        returningCookies = null;
+        ServerCommand.AddServerCommand(command,method,commandType,url,paramFormats,inputFormats,requiredCookies,returningCookies);
 
         // Explore
         command = AvailableCommands.Explore;
@@ -174,8 +183,8 @@ public class ServerCommand {
         ServerCommand.AddServerCommand(command,method,commandType,url,paramFormats,inputFormats,requiredCookies,returningCookies);
 
 
-        // ChatContext
-        command = AvailableCommands.ChatContext;
+        // ChatInfo
+        command = AvailableCommands.ChatInfo;
         method = Method.GET;
         commandType = CommandType.Pull;
         url = "android.get_chat_context/[CHAT_ID.CHANNEL_UNICODE]";

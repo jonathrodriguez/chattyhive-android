@@ -128,8 +128,7 @@ public class User {
         ArrayList<Format> receivedFormats = args.getReceivedFormats();
         for (Format format : receivedFormats) {
             if ((format instanceof LOCAL_USER_PROFILE) || (format instanceof USER_PROFILE))
-                if (this.fromFormat(format))
-                    this.UserLoaded.fire(this,EventArgs.Empty());
+                this.fromFormat(format);
         }
     }
 
@@ -178,8 +177,20 @@ public class User {
                 return;
         }
 
+        this.loadProfile(profile_id);
+    }
+
+    public void loadProfile(PROFILE_ID profile_id) {
+
+        ProfileLevel profileLevel = (profile_id.PROFILE_TYPE.startsWith("BASIC_"))?ProfileLevel.Basic:((profile_id.PROFILE_TYPE.startsWith("EXTENDED_"))?ProfileLevel.Extended:((profile_id.PROFILE_TYPE.startsWith("COMPLETE_"))?ProfileLevel.Complete:ProfileLevel.None));
+
+        if ((profile_id.PROFILE_TYPE.endsWith("_PUBLIC")) && (this.userPublicProfile != null) && (this.userPublicProfile.getLoadedProfileLevel().ordinal() >= profileLevel.ordinal())) return;
+        else if ((profile_id.PROFILE_TYPE.endsWith("_PRIVATE")) && (this.userPrivateProfile != null) && (this.userPrivateProfile.getLoadedProfileLevel().ordinal() >= profileLevel.ordinal())) return;
+
+        this.loading = true;
         this.controller.getDataProvider().RunCommand(AvailableCommands.UserProfile,new EventHandler<CommandCallbackEventArgs>(this,"loadCallback",CommandCallbackEventArgs.class),profile_id);
     }
+
     public void unloadProfile(ProfileLevel profileLevel) {
         if (profileLevel == ProfileLevel.Complete) return;
 
@@ -233,6 +244,8 @@ public class User {
         return format;
     }
     public Boolean fromFormat(Format format) {
+        boolean result = false;
+
         if (format instanceof USER_PROFILE) {
             this. isMe = false;
 
@@ -246,15 +259,15 @@ public class User {
             else if ((((USER_PROFILE) format).USER_PUBLIC_PROFILE != null) && (this.userPublicProfile != null))
                 this.userPublicProfile.fromFormat(((USER_PROFILE) format).USER_PUBLIC_PROFILE);
 
-            if ((((USER_PROFILE) format).USER_BASIC_PRIVATE_PROFILE != null) && (this.userPublicProfile == null))
-                this.userPublicProfile = new PublicProfile(((USER_PROFILE) format).USER_BASIC_PRIVATE_PROFILE);
+            if ((((USER_PROFILE) format).USER_BASIC_PRIVATE_PROFILE != null) && (this.userPrivateProfile == null))
+                this.userPrivateProfile = new PrivateProfile(((USER_PROFILE) format).USER_BASIC_PRIVATE_PROFILE);
             else if ((((USER_PROFILE) format).USER_BASIC_PRIVATE_PROFILE != null) && (this.userPublicProfile != null))
-                this.userPublicProfile.fromFormat(((USER_PROFILE) format).USER_BASIC_PRIVATE_PROFILE);
+                this.userPrivateProfile.fromFormat(((USER_PROFILE) format).USER_BASIC_PRIVATE_PROFILE);
 
-            if ((((USER_PROFILE) format).USER_PRIVATE_PROFILE != null) && (this.userPublicProfile == null))
-                this.userPublicProfile = new PublicProfile(((USER_PROFILE) format).USER_PRIVATE_PROFILE);
+            if ((((USER_PROFILE) format).USER_PRIVATE_PROFILE != null) && (this.userPrivateProfile == null))
+                this.userPrivateProfile = new PrivateProfile(((USER_PROFILE) format).USER_PRIVATE_PROFILE);
             else if ((((USER_PROFILE) format).USER_PRIVATE_PROFILE != null) && (this.userPublicProfile != null))
-                this.userPublicProfile.fromFormat(((USER_PROFILE) format).USER_PRIVATE_PROFILE);
+                this.userPrivateProfile.fromFormat(((USER_PROFILE) format).USER_PRIVATE_PROFILE);
 
             if (this.userPublicProfile != null)
                 this.userID = this.userPublicProfile.userID;
@@ -263,7 +276,7 @@ public class User {
 
             this.loading = false;
 
-            return true;
+            result=true;
         } else if (format instanceof LOCAL_USER_PROFILE) {
             this.isMe = true;
             this.email = ((LOCAL_USER_PROFILE) format).EMAIL;
@@ -278,19 +291,20 @@ public class User {
             else if ((((LOCAL_USER_PROFILE) format).USER_PUBLIC_PROFILE != null) && (this.userPublicProfile != null))
                 this.userPublicProfile.fromFormat(((LOCAL_USER_PROFILE) format).USER_PUBLIC_PROFILE);
 
-            if ((((LOCAL_USER_PROFILE) format).USER_BASIC_PRIVATE_PROFILE != null) && (this.userPublicProfile == null))
-                this.userPublicProfile = new PublicProfile(((LOCAL_USER_PROFILE) format).USER_BASIC_PRIVATE_PROFILE);
-            else if ((((LOCAL_USER_PROFILE) format).USER_BASIC_PRIVATE_PROFILE != null) && (this.userPublicProfile != null))
-                this.userPublicProfile.fromFormat(((LOCAL_USER_PROFILE) format).USER_BASIC_PRIVATE_PROFILE);
+            if ((((LOCAL_USER_PROFILE) format).USER_BASIC_PRIVATE_PROFILE != null) && (this.userPrivateProfile == null))
+                this.userPrivateProfile = new PrivateProfile(((LOCAL_USER_PROFILE) format).USER_BASIC_PRIVATE_PROFILE);
+            else if ((((LOCAL_USER_PROFILE) format).USER_BASIC_PRIVATE_PROFILE != null) && (this.userPrivateProfile != null))
+                this.userPrivateProfile.fromFormat(((LOCAL_USER_PROFILE) format).USER_BASIC_PRIVATE_PROFILE);
 
-            if ((((LOCAL_USER_PROFILE) format).USER_PRIVATE_PROFILE != null) && (this.userPublicProfile == null))
-                this.userPublicProfile = new PublicProfile(((LOCAL_USER_PROFILE) format).USER_PRIVATE_PROFILE);
-            else if ((((LOCAL_USER_PROFILE) format).USER_PRIVATE_PROFILE != null) && (this.userPublicProfile != null))
-                this.userPublicProfile.fromFormat(((LOCAL_USER_PROFILE) format).USER_PRIVATE_PROFILE);
+            if ((((LOCAL_USER_PROFILE) format).USER_PRIVATE_PROFILE != null) && (this.userPrivateProfile == null))
+                this.userPrivateProfile = new PrivateProfile(((LOCAL_USER_PROFILE) format).USER_PRIVATE_PROFILE);
+            else if ((((LOCAL_USER_PROFILE) format).USER_PRIVATE_PROFILE != null) && (this.userPrivateProfile != null))
+                this.userPrivateProfile.fromFormat(((LOCAL_USER_PROFILE) format).USER_PRIVATE_PROFILE);
 
-            for (HIVE_ID hive : ((LOCAL_USER_PROFILE) format).HIVES_SUBSCRIBED) {
-                Hive.getHive(hive.NAME_URL);
-            }
+            if (((LOCAL_USER_PROFILE) format).HIVES_SUBSCRIBED != null)
+                for (HIVE_ID hive : ((LOCAL_USER_PROFILE) format).HIVES_SUBSCRIBED) {
+                    Hive.getHive(hive.NAME_URL);
+                }
 
             if (this.userPublicProfile != null)
                 this.userID = this.userPublicProfile.userID;
@@ -299,10 +313,13 @@ public class User {
 
             this.loading = false;
 
-            return true;
+            result=true;
         }
 
-        return false;
+        if ((result) && (this.UserLoaded != null))
+            this.UserLoaded.fire(this,EventArgs.Empty());
+
+        return result;
     }
 
     public JsonElement toJson(Format format) {
