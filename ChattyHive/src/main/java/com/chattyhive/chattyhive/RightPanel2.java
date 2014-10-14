@@ -64,11 +64,11 @@ public class RightPanel2{
             lay.setOnClickListener(listener);
         }*/
 
-    View.OnClickListener listener = new View.OnClickListener() {
+    /*View.OnClickListener listener = new View.OnClickListener() {
         public void onClick(View v) {
             ((Activity)context).findViewById(R.id.menu_notexpanded_explora_img).setVisibility(View.INVISIBLE);
         }
-    };
+    };*/
 
     public void crearDatos()  {
         RightPanelListItem grupo0 = new RightPanelListItem(" ");
