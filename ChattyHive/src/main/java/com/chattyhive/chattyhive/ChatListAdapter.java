@@ -60,6 +60,7 @@ public class ChatListAdapter extends BaseAdapter {
     @Override
     public int getItemViewType(int position) {
         Message m = this.channelChat.getMessageByIndex(position);
+
         if (m.getUser() == null) {
             if (m.getMessageContent().getContentType().equalsIgnoreCase("DATE_SEPARATOR"))
                 return context.getResources().getInteger(R.integer.MainPanelChat_ListKind_DateSeparator);
@@ -68,6 +69,7 @@ public class ChatListAdapter extends BaseAdapter {
             else
                 return context.getResources().getInteger(R.integer.MainPanelChat_ListKind_None);
         }
+
         return (((m.getUser() != null) && (m.getUser().isMe()))?context.getResources().getInteger(R.integer.MainPanelChat_ListKind_Me):context.getResources().getInteger(R.integer.MainPanelChat_ListKind_Other));
     }
 
@@ -99,7 +101,7 @@ public class ChatListAdapter extends BaseAdapter {
         Boolean isMessage = false;
         Boolean isHoleMarker = false;
 
-        if(convertView==null){
+        if (convertView==null) {
             holder = new ViewHolder();
             switch (chatKind) {
                 case HIVE:
@@ -163,6 +165,12 @@ public class ChatListAdapter extends BaseAdapter {
             convertView.setTag(R.id.MainPanelChat_ListViewHolder,holder);
         } else {
             holder = (ViewHolder)convertView.getTag(R.id.MainPanelChat_ListViewHolder);
+            isMessage = ((type == context.getResources().getInteger(R.integer.MainPanelChat_ListKind_Me)) || (type == context.getResources().getInteger(R.integer.MainPanelChat_ListKind_Other)));
+            isHoleMarker = (type == context.getResources().getInteger(R.integer.MainPanelChat_ListKind_HoleSeparator));
+            if ((type != context.getResources().getInteger(R.integer.MainPanelChat_ListKind_DateSeparator)) && (!isMessage) && (!isHoleMarker)) {
+                Log.e("ChatListAdapter.getView()","Incompatible type!");
+                return null;
+            }
         }
 
         Message message = this.channelChat.getMessageByIndex(position);

@@ -56,7 +56,7 @@ public class Register extends Activity {
         String email = intent.getStringExtra("email");
         String proposedUsername = intent.getStringExtra("username");
 
-        this.newUser = new User(email);
+        this.newUser = new User(email,Controller.GetRunningController());
         this.newUser.getUserPublicProfile().setPublicName(proposedUsername);
         this.newUser.getUserPrivateProfile().setSex("female"); //Load default value.
     }
