@@ -9,7 +9,7 @@ import com.google.gson.JsonPrimitive;
   
 
  /*
-  * Automatically generated code by ChattyHive API Manager Code Generator on 18/08/2014.
+  * Automatically generated code by ChattyHive API Manager Code Generator on 28/09/2014.
   * Be careful to not modify this file since your changes will not be included in future
   * versions of this file.
   *
@@ -17,7 +17,7 @@ import com.google.gson.JsonPrimitive;
  */
 public class PROFILE_ID extends Format {
 	public String USER_ID;
-    public String PUBLIC_NAME;
+    public String PROFILE_TYPE;
     
 
     public PROFILE_ID() {
@@ -35,10 +35,12 @@ public class PROFILE_ID extends Format {
 
 	    if ((this.USER_ID != null) && (!this.USER_ID.isEmpty()))
             jsonObject.addProperty("USER_ID",this.USER_ID);
-            
-        if ((this.PUBLIC_NAME != null) && (!this.PUBLIC_NAME.isEmpty()))
-            jsonObject.addProperty("PUBLIC_NAME",this.PUBLIC_NAME);
-            
+      else
+            jsonObject.add("USER_ID", JsonNull.INSTANCE);            
+        if ((this.PROFILE_TYPE != null) && (!this.PROFILE_TYPE.isEmpty()))
+            jsonObject.addProperty("PROFILE_TYPE",this.PROFILE_TYPE);
+      else
+            jsonObject.add("PROFILE_TYPE", JsonNull.INSTANCE);            
       
 
         if (jsonObject.entrySet().isEmpty())
@@ -66,9 +68,9 @@ public class PROFILE_ID extends Format {
         if ((property != null) && (property.isJsonPrimitive()) && (property.getAsString() != null) && (!property.getAsString().isEmpty()))
             this.USER_ID = property.getAsString();
             
-        property = object.get("PUBLIC_NAME");
+        property = object.get("PROFILE_TYPE");
         if ((property != null) && (property.isJsonPrimitive()) && (property.getAsString() != null) && (!property.getAsString().isEmpty()))
-            this.PUBLIC_NAME = property.getAsString();
+            this.PROFILE_TYPE = property.getAsString();
             
       
     }

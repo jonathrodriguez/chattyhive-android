@@ -9,7 +9,7 @@ import com.google.gson.JsonPrimitive;
  
 
  /*
-  * Automatically generated code by ChattyHive API Manager Code Generator on 18/08/2014.
+  * Automatically generated code by ChattyHive API Manager Code Generator on 28/09/2014.
   * Be careful to not modify this file since your changes will not be included in future
   * versions of this file.
   *
@@ -34,7 +34,8 @@ public class CHAT_ID extends Format {
 
 	    if ((this.CHANNEL_UNICODE != null) && (!this.CHANNEL_UNICODE.isEmpty()))
             jsonObject.addProperty("CHANNEL_UNICODE",this.CHANNEL_UNICODE);
-            
+      else
+            jsonObject.add("CHANNEL_UNICODE", JsonNull.INSTANCE);            
       
 
         if (jsonObject.entrySet().isEmpty())

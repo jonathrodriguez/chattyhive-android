@@ -129,11 +129,7 @@ public class PubSub implements ChannelEventListener, ConnectionEventListener, Pr
             pubSubAuthorizer.setHeaders(headers);
         }
 
-        try {
-            DataProvider.GetDataProvider().CsrfTokenChanged.add(new EventHandler<EventArgs>(this,"onCSRFTokenChanged",EventArgs.class));
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
+        DataProvider.GetDataProvider().CsrfTokenChanged.add(new EventHandler<EventArgs>(this,"onCSRFTokenChanged",EventArgs.class));
 
         PusherOptions pO = new PusherOptions();
         pO.setEncrypted(false);

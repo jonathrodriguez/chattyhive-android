@@ -165,8 +165,12 @@ public class ChatListAdapter extends BaseAdapter {
 
         if (isMessage) {
             if ((message.getUser() != null) && (holder.username != null)) {
-                holder.username.setText(message.getUser().getShowingName());
-                holder.username.setTextColor(Color.parseColor(message.getUser().getColor()));
+                if ((this.chatKind == GroupKind.PRIVATE_SINGLE) || (this.chatKind == GroupKind.PRIVATE_GROUP)) {
+                    holder.username.setText(message.getUser().getUserPrivateProfile().getShowingName());
+                } else {
+                    holder.username.setText(message.getUser().getUserPublicProfile().getShowingName());
+                    holder.username.setTextColor(Color.parseColor(message.getUser().getUserPublicProfile().getColor()));
+                }
             }
 
             holder.messageText.setText(message.getMessageContent().getContent());

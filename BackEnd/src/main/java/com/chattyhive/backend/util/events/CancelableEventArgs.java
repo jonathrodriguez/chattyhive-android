@@ -1,7 +1,7 @@
 package com.chattyhive.backend.util.events;
 
 /*
- * Created by Lord Nivaar on 14/07/2014.
+ * Created by Jonathan on 14/07/2014.
  */
 public class CancelableEventArgs extends EventArgs {
     private Boolean canceled;

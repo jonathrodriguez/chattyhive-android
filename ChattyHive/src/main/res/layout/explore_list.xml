@@ -9,5 +9,6 @@
         android:layout_height="match_parent"
         android:id="@+id/explore_list_listView"
         android:layout_gravity="center"
-        android:background="#ededed" />
+        android:background="#ededed"
+        android:divider="@null"/>
 </FrameLayout>

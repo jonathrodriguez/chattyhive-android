@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -17,12 +16,10 @@ import com.chattyhive.backend.contentprovider.formats.Format;
 import com.chattyhive.backend.util.events.CommandCallbackEventArgs;
 import com.chattyhive.backend.util.events.EventHandler;
 import com.chattyhive.backend.util.formatters.DateFormatter;
-import com.chattyhive.chattyhive.framework.OnInflateLayoutListener;
-import com.chattyhive.chattyhive.framework.OnRemoveLayoutListener;
-import com.chattyhive.chattyhive.framework.OnTransitionListener;
-import com.chattyhive.chattyhive.framework.SlidingStepsLayout;
-
-import org.w3c.dom.Text;
+import com.chattyhive.chattyhive.framework.CustomViews.Listener.OnInflateLayoutListener;
+import com.chattyhive.chattyhive.framework.CustomViews.Listener.OnRemoveLayoutListener;
+import com.chattyhive.chattyhive.framework.CustomViews.Listener.OnTransitionListener;
+import com.chattyhive.chattyhive.framework.CustomViews.ViewGroup.SlidingStepsLayout;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -37,6 +34,8 @@ public class Register extends Activity {
     private User newUser;
     private String password;
     private String repeatPassword;
+
+    private Boolean usernameValidated = false;
 
     private Register thisActivity;
 
@@ -65,36 +64,23 @@ public class Register extends Activity {
     public View.OnClickListener onEnterButtonClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (StaticParameters.StandAlone) {
-                setResult(RESULT_OK);
-                finish();
-            } else {
                 TextView emailView = (TextView)findViewById(R.id.register_third_step_email);
                 TextView passwordView = (TextView)findViewById(R.id.register_third_step_password);
                 TextView repeatPasswordView = (TextView)findViewById(R.id.register_third_step_repeat_password);
 
                 if (!emailView.getText().toString().equalsIgnoreCase(newUser.getEmail())) {
-                    try {
-                        Controller.GetRunningController().checkEmail(emailView.getText().toString(), new EventHandler<CommandCallbackEventArgs>(this, "onEmailCheckedCallback", CommandCallbackEventArgs.class));
-                    } catch (NoSuchMethodException e) {
-                        e.printStackTrace();
-                    }
+                    Controller.GetRunningController().CheckEmail(emailView.getText().toString(), new EventHandler<CommandCallbackEventArgs>(this, "onEmailCheckedCallback", CommandCallbackEventArgs.class));
                 }
 
                 if (passwordIsValid(passwordView)) {
                     if (passwordView.getText().toString().equals(repeatPasswordView.getText().toString())) {
-                        try {
-                            newUser.Register(passwordView.getText().toString(),new EventHandler<CommandCallbackEventArgs>(thisActivity,"onRegisterCallback",CommandCallbackEventArgs.class));
-                        } catch (NoSuchMethodException e) {
-                            e.printStackTrace();
-                        }
+                        newUser.Register(passwordView.getText().toString(),new EventHandler<CommandCallbackEventArgs>(thisActivity,"onRegisterCallback",CommandCallbackEventArgs.class));
                     } else {
                         repeatPasswordView.setError("Passwords must match.");
                         repeatPasswordView.requestFocus();
                     }
                 }
             }
-        }
     };
 
     private boolean passwordIsValid(TextView passwordView) {
@@ -240,8 +226,8 @@ public class Register extends Activity {
                     }
                     break;
                 case 1:
-                    if (nextStep == 2) {
-                        //TODO: Check username
+                    if ((nextStep == 2) && (!usernameValidated) && (!newUser.getUserPublicProfile().getPublicName().equals(((TextView)findViewById(R.id.register_second_step_username)).getText().toString()))) {
+                        Controller.GetRunningController().CheckUsername(((TextView)findViewById(R.id.register_second_step_username)).getText().toString(),new EventHandler<CommandCallbackEventArgs>(thisActivity,"onUsernameCheckedCallback",CommandCallbackEventArgs.class));
                     }
                     break;
             }
@@ -259,7 +245,10 @@ public class Register extends Activity {
                     //Gender is saved when value changes
                     break;
                 case 1:
-                    newUser.getUserPublicProfile().setPublicName(((TextView)findViewById(R.id.register_second_step_username)).getText().toString());
+                    if (actualStep == 2) {
+                        newUser.getUserPublicProfile().setPublicName(((TextView) findViewById(R.id.register_second_step_username)).getText().toString());
+                        usernameValidated = false;
+                    }
                     newUser.getUserPublicProfile().setShowAge((Boolean)findViewById(R.id.register_second_step_show_age_public_button).getTag());
                     newUser.getUserPublicProfile().setShowLocation((Boolean)findViewById(R.id.register_second_step_show_location_public_button).getTag());
                     newUser.getUserPublicProfile().setShowSex((Boolean) findViewById(R.id.register_second_step_show_gender_public_button).getTag());
@@ -294,6 +283,17 @@ public class Register extends Activity {
                 TextView emailView = (TextView) findViewById(R.id.register_third_step_email);
                 emailView.setError("Email is already registered");
                 emailView.requestFocus();
+            }
+    }
+
+    public void onUsernameCheckedCallback(Object sender, CommandCallbackEventArgs eventArgs) {
+        for (Format receivedFormat : eventArgs.getReceivedFormats())
+            if ((receivedFormat instanceof COMMON) && (((COMMON) receivedFormat).STATUS.equalsIgnoreCase("OK"))) {
+                usernameValidated = true;
+                onTransitionListener.OnEndTransition(1,2);
+            }
+            else if ((receivedFormat instanceof COMMON) && (!((COMMON) receivedFormat).STATUS.equalsIgnoreCase("OK"))) {
+                //TODO: Process errors
             }
     }
 

@@ -51,7 +51,7 @@
     <dimen name="register_first_step_columns_separation">24.8dp</dimen>
 
     <dimen name="register_first_step_name_text">12sp</dimen>
-    <dimen name="register_first_step_name_text_margin_top">8.400001dp</dimen>
+    <dimen name="register_first_step_name_text_margin_top">7.4dp</dimen>
     <dimen name="register_first_step_name_text_margin_bottom">9.2dp</dimen>
     <dimen name="register_first_step_name_field_height">32dp</dimen>
     <dimen name="register_first_step_name_field_text">15.2sp</dimen>
@@ -62,12 +62,12 @@
 
     <dimen name="register_first_step_photo_text">12sp</dimen>
     <dimen name="register_first_step_photo_img_size">87.2dp</dimen>
-    <dimen name="register_first_step_photo_img_margin_top">8.400001dp</dimen>
+    <dimen name="register_first_step_photo_img_margin_top">8.4dp</dimen>
     <dimen name="register_first_step_photo_img_margin_bottom">16dp</dimen>
     <dimen name="register_first_step_photo_img_border_thick">1px</dimen>
 
     <dimen name="register_first_step_surname_text">12sp</dimen>
-    <dimen name="register_first_step_surname_text_margin_top">8.400001dp</dimen>
+    <dimen name="register_first_step_surname_text_margin_top">7.4dp</dimen>
     <dimen name="register_first_step_surname_text_margin_bottom">9.2dp</dimen>
     <dimen name="register_first_step_surname_field_height">32dp</dimen>
     <dimen name="register_first_step_surname_field_text">15.2sp</dimen>
@@ -90,7 +90,7 @@
     <dimen name="register_first_step_checkbox_margin_bottom">11.6dp</dimen>
 
     <dimen name="register_first_step_gender_text">12sp</dimen>
-    <dimen name="register_first_step_gender_text_margin_bottom">8.400001dp</dimen>
+    <dimen name="register_first_step_gender_text_margin_bottom">8.4dp</dimen>
     <dimen name="register_first_step_radio_button_text">12sp</dimen>
     <dimen name="register_first_step_radio_button_img_separation">5.6dp</dimen>
     <dimen name="register_first_step_radio_button_img_size">14.4dp</dimen>
@@ -112,8 +112,8 @@
     <dimen name="register_first_step_private_note_img_separation">4dp</dimen>
     <dimen name="register_first_step_private_note_img_size">12.8dp</dimen>
     <dimen name="register_first_step_private_note_margin_left">12dp</dimen>
-    <dimen name="register_first_step_private_note_margin_top">8.8dp</dimen>
-    <dimen name="register_first_step_private_note_margin_bottom">8.8dp</dimen>
+    <dimen name="register_first_step_private_note_margin_top">7.8dp</dimen>
+    <dimen name="register_first_step_private_note_margin_bottom">7.8dp</dimen>
     <dimen name="register_first_step_private_note_margin_right">12dp</dimen>
 
     <!-- ________________________________ -->
@@ -171,7 +171,7 @@
     <dimen name="register_third_step_email_field_height">32dp</dimen>
     <dimen name="register_third_step_email_field_text">12.8sp</dimen>
     <dimen name="register_third_step_email_field_margin_right">18.8dp</dimen>
-    <dimen name="register_third_step_email_field_margin_bottom">29.2dp</dimen>
+    <dimen name="register_third_step_email_field_margin_bottom">26.2dp</dimen>
     <dimen name="register_third_step_email_field_padding_left">8dp</dimen>
     <dimen name="register_third_step_email_field_padding_right">8dp</dimen>
     <dimen name="register_third_step_email_field_border_thick">1px</dimen>
@@ -200,11 +200,11 @@
     <dimen name="register_third_step_email_confirmation_note_img_separation">11.2dp</dimen>
     <dimen name="register_third_step_email_confirmation_note_img_size">22dp</dimen>
     <dimen name="register_third_step_email_confirmation_note_margin_left">12dp</dimen>
-    <dimen name="register_third_step_email_confirmation_note_margin_bottom">16.4dp</dimen>
+    <dimen name="register_third_step_email_confirmation_note_margin_bottom">15.4dp</dimen>
     <dimen name="register_third_step_email_confirmation_note_margin_right">12dp</dimen>
 
     <dimen name="register_third_step_tos_note_text">10.8sp</dimen>
     <dimen name="register_third_step_tos_note_margin_left">12dp</dimen>
-    <dimen name="register_third_step_tos_note_margin_bottom">14.8dp</dimen>
+    <dimen name="register_third_step_tos_note_margin_bottom">13.8dp</dimen>
     <dimen name="register_third_step_tos_note_margin_right">12dp</dimen>
 </resources>

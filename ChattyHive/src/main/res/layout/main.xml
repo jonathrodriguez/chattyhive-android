@@ -5,12 +5,13 @@
     android:layout_height="match_parent"
     tools:context=".Main">
 
-<com.chattyhive.chattyhive.framework.FloatingPanel
+<com.chattyhive.chattyhive.framework.CustomViews.ViewGroup.FloatingPanel
     android:id="@+id/FloatingPanel"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     custom:centerActionBarRightVisibleWidth="48dp"
-    custom:centerMainPanelRightVisibleWidth="48dp">
+    custom:centerMainPanelRightVisibleWidth="48dp"
+    custom:touchActionMoveDistanceThreshold="10dp">
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -27,7 +28,7 @@
         android:id="@+id/actionCenter"
         custom:layout_position="center"
         custom:layout_type="actionBar">
-        <include layout="@layout/action_bar_layout"/>
+        <include layout="@layout/home_action_bar"/>
     </FrameLayout>
 
     <FrameLayout
@@ -66,5 +67,5 @@
         <include layout="@layout/right_panel_action_bar"/>
     </FrameLayout>
 
-</com.chattyhive.chattyhive.framework.FloatingPanel>
+</com.chattyhive.chattyhive.framework.CustomViews.ViewGroup.FloatingPanel>
 </FrameLayout>

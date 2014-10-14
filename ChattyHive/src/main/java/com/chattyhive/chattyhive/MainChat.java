@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.chattyhive.backend.Controller;
 import com.chattyhive.backend.businessobjects.Chats.Chat;
 import com.chattyhive.backend.businessobjects.Chats.Group;
 import com.chattyhive.backend.businessobjects.Chats.Messages.Message;
@@ -40,11 +41,7 @@ public class MainChat {
         this.chatListAdapter = new ChatListAdapter(context,this.channelChat);
         ((ListView)((Activity)context).findViewById(R.id.main_panel_chat_message_list)).setAdapter(chatListAdapter);
 
-        try {
             this.channelChat.MessageListModifiedEvent.add(new EventHandler<EventArgs>(this.chatListAdapter,"OnAddItem",EventArgs.class));
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
     }
 
 
@@ -52,9 +49,10 @@ public class MainChat {
         @Override
         public void onClick(View v) {
             String text_to_send = textInput.getText().toString();
+            if ((text_to_send == null) || (text_to_send.isEmpty())) return;
 
             try {
-                new Message(User.getMe(),channelChat,new MessageContent("TEXT",text_to_send),new Date()).SendMessage();
+                new Message(Controller.GetRunningController().getMe(),channelChat,new MessageContent("TEXT",text_to_send),new Date()).SendMessage();
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {

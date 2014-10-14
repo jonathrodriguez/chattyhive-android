@@ -9,17 +9,17 @@ import com.google.gson.JsonPrimitive;
    import java.util.Date;
 import com.chattyhive.backend.util.formatters.TimestampFormatter;
     import java.util.ArrayList;
-         
+        
 
  /*
-  * Automatically generated code by ChattyHive API Manager Code Generator on 18/08/2014.
+  * Automatically generated code by ChattyHive API Manager Code Generator on 28/09/2014.
   * Be careful to not modify this file since your changes will not be included in future
   * versions of this file.
   *
   * ChattyHive API Manager Code Generator was created by Jonathan on 25/06/2014.
  */
 public class PUBLIC_PROFILE extends Format {
-	public String PUBLIC_NAME;
+	public String USER_ID;
     public String LOCATION;
     public String SEX;
     public Date BIRTHDATE;
@@ -27,8 +27,6 @@ public class PUBLIC_PROFILE extends Format {
     public Boolean PUBLIC_SHOW_SEX;
     public Boolean PUBLIC_SHOW_AGE;
     public Boolean PUBLIC_SHOW_LOCATION;
-    public String USER_COLOR;
-    public String IMAGE_URL;
     
 
     public PUBLIC_PROFILE() {
@@ -44,17 +42,22 @@ public class PUBLIC_PROFILE extends Format {
     public JsonElement toJSON() {
         JsonObject jsonObject = new JsonObject();
 
-	    if ((this.PUBLIC_NAME != null) && (!this.PUBLIC_NAME.isEmpty()))
-            jsonObject.addProperty("PUBLIC_NAME",this.PUBLIC_NAME);
-            
+	    if ((this.USER_ID != null) && (!this.USER_ID.isEmpty()))
+            jsonObject.addProperty("USER_ID",this.USER_ID);
+      else
+            jsonObject.add("USER_ID", JsonNull.INSTANCE);            
         if ((this.LOCATION != null) && (!this.LOCATION.isEmpty()))
             jsonObject.addProperty("LOCATION",this.LOCATION);
-            
+      else
+            jsonObject.add("LOCATION", JsonNull.INSTANCE);            
         if ((this.SEX != null) && (!this.SEX.isEmpty()))
             jsonObject.addProperty("SEX",this.SEX);
-            
+      else
+            jsonObject.add("SEX", JsonNull.INSTANCE);            
         if ((this.BIRTHDATE != null) && (!TimestampFormatter.toString(this.BIRTHDATE).isEmpty()))
             jsonObject.addProperty("BIRTHDATE", TimestampFormatter.toString(this.BIRTHDATE));
+      else
+            jsonObject.add("BIRTHDATE", JsonNull.INSTANCE);
             
         if (this.LANGUAGE != null) {
             JsonArray jsonArray = new JsonArray();
@@ -67,24 +70,23 @@ public class PUBLIC_PROFILE extends Format {
 
             if (jsonArray.size() > 0)
                 jsonObject.add("LANGUAGE",jsonArray);
+            else
+                jsonObject.add("LANGUAGE", JsonNull.INSTANCE);
         }
-        
+      else
+            jsonObject.add("LANGUAGE", JsonNull.INSTANCE);        
         if (this.PUBLIC_SHOW_SEX != null)
             jsonObject.addProperty("PUBLIC_SHOW_SEX",this.PUBLIC_SHOW_SEX);
-            
+      else
+            jsonObject.add("PUBLIC_SHOW_SEX", JsonNull.INSTANCE);            
         if (this.PUBLIC_SHOW_AGE != null)
             jsonObject.addProperty("PUBLIC_SHOW_AGE",this.PUBLIC_SHOW_AGE);
-            
+      else
+            jsonObject.add("PUBLIC_SHOW_AGE", JsonNull.INSTANCE);            
         if (this.PUBLIC_SHOW_LOCATION != null)
             jsonObject.addProperty("PUBLIC_SHOW_LOCATION",this.PUBLIC_SHOW_LOCATION);
-            
-        if ((this.USER_COLOR != null) && (!this.USER_COLOR.isEmpty()))
-            jsonObject.addProperty("USER_COLOR",this.USER_COLOR);
-            
-        if ((this.IMAGE_URL != null) && (!this.IMAGE_URL.isEmpty()))
-            jsonObject.addProperty("IMAGE_URL",this.IMAGE_URL);
-            
-      
+      else
+            jsonObject.add("PUBLIC_SHOW_LOCATION", JsonNull.INSTANCE);            
 
         if (jsonObject.entrySet().isEmpty())
             return JsonNull.INSTANCE;
@@ -107,9 +109,9 @@ public class PUBLIC_PROFILE extends Format {
 
         JsonElement property;
 
-	    property = object.get("PUBLIC_NAME");
+	    property = object.get("USER_ID");
         if ((property != null) && (property.isJsonPrimitive()) && (property.getAsString() != null) && (!property.getAsString().isEmpty()))
-            this.PUBLIC_NAME = property.getAsString();
+            this.USER_ID = property.getAsString();
             
         property = object.get("LOCATION");
         if ((property != null) && (property.isJsonPrimitive()) && (property.getAsString() != null) && (!property.getAsString().isEmpty()))
@@ -143,15 +145,6 @@ public class PUBLIC_PROFILE extends Format {
         property = object.get("PUBLIC_SHOW_LOCATION");
         if ((property != null) && (property.isJsonPrimitive()) && (((JsonPrimitive)property).isBoolean()))
             this.PUBLIC_SHOW_LOCATION = property.getAsBoolean();
-            
-        property = object.get("USER_COLOR");
-        if ((property != null) && (property.isJsonPrimitive()) && (property.getAsString() != null) && (!property.getAsString().isEmpty()))
-            this.USER_COLOR = property.getAsString();
-            
-        property = object.get("IMAGE_URL");
-        if ((property != null) && (property.isJsonPrimitive()) && (property.getAsString() != null) && (!property.getAsString().isEmpty()))
-            this.IMAGE_URL = property.getAsString();
-            
       
     }
 }

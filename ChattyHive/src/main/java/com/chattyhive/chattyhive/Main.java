@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
+import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -14,26 +15,26 @@ import android.view.View;
 
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.ImageView;
+import android.widget.ListView;
 
 import com.chattyhive.backend.Controller;
 import com.chattyhive.backend.StaticParameters;
 
+import com.chattyhive.backend.contentprovider.AvailableCommands;
 import com.chattyhive.backend.contentprovider.DataProvider;
-import com.chattyhive.backend.contentprovider.server.ServerCommand;
-import com.chattyhive.chattyhive.OSStorageProvider.CookieStore;
-import com.chattyhive.chattyhive.OSStorageProvider.GroupLocalStorage;
-import com.chattyhive.chattyhive.OSStorageProvider.HiveLocalStorage;
-import com.chattyhive.chattyhive.OSStorageProvider.LoginLocalStorage;
-import com.chattyhive.chattyhive.OSStorageProvider.MessageLocalStorage;
-import com.chattyhive.chattyhive.OSStorageProvider.UserLocalStorage;
+import com.chattyhive.backend.contentprovider.formats.Format;
+import com.chattyhive.chattyhive.framework.OSStorageProvider.CookieStore;
+import com.chattyhive.chattyhive.framework.OSStorageProvider.GroupLocalStorage;
+import com.chattyhive.chattyhive.framework.OSStorageProvider.HiveLocalStorage;
+import com.chattyhive.chattyhive.framework.OSStorageProvider.LoginLocalStorage;
+import com.chattyhive.chattyhive.framework.OSStorageProvider.MessageLocalStorage;
+import com.chattyhive.chattyhive.framework.OSStorageProvider.UserLocalStorage;
 
 import com.chattyhive.chattyhive.backgroundservice.CHService;
 
-import com.chattyhive.chattyhive.framework.FloatingPanel;
-import com.chattyhive.chattyhive.framework.ViewPair;
-
-import java.lang.reflect.Method;
+import com.chattyhive.chattyhive.framework.CustomViews.ViewGroup.FloatingPanel;
+import com.chattyhive.chattyhive.framework.Util.StaticMethods;
+import com.chattyhive.chattyhive.framework.Util.ViewPair;
 
 
 public class Main extends Activity {
@@ -47,42 +48,79 @@ public class Main extends Activity {
 
     int ActiveLayoutID;
 
+    Home home;
+
+    LeftPanel leftPanel;
+
     //TODO: Add main panel view stack
 
-    protected ViewPair ShowLayout(int layoutID, int actionBarID) {
-        FrameLayout mainPanel = ((FrameLayout) findViewById(R.id.mainCenter));
-        FrameLayout mainActionBar = ((FrameLayout) findViewById(R.id.actionCenter));
+    protected ViewPair ShowLayout (int layoutID, int actionBarID) {
+        FrameLayout mainPanel = ((FrameLayout)findViewById(R.id.mainCenter));
+        FrameLayout mainActionBar = ((FrameLayout)findViewById(R.id.actionCenter));
         mainPanel.removeAllViews();
         mainActionBar.removeAllViews();
         ActiveLayoutID = layoutID;
-        View actionBar = LayoutInflater.from(this).inflate(actionBarID, mainActionBar, true);
+        View actionBar = LayoutInflater.from(this).inflate(actionBarID,mainActionBar,true);
         View mainView = LayoutInflater.from(this).inflate(layoutID, mainPanel, true);
-        ViewPair actualView = new ViewPair(mainView, actionBar);
+        ViewPair actualView = new ViewPair(mainView,actionBar);
 
         //TODO: Populate/manage main panel view stack.
 
         return actualView;
     }
 
+    protected void ShowHome() {
+        ViewPair pair = this.ShowLayout(R.layout.home,R.layout.home_action_bar);
+        setPanelBehaviour();
+
+        TypedValue alpha = new TypedValue();
+
+        getResources().getValue(R.color.home_action_bar_app_icon_alpha,alpha,true);
+        StaticMethods.SetAlpha(pair.getActionBarView().findViewById(R.id.appIcon),alpha.getFloat());
+
+        getResources().getValue(R.color.home_action_bar_menu_icon_alpha,alpha,true);
+        StaticMethods.SetAlpha(pair.getActionBarView().findViewById(R.id.menuIcon),alpha.getFloat());
+
+        getResources().getValue(R.color.home_top_bar_image_alpha,alpha,true);
+        StaticMethods.SetAlpha(pair.getMainView().findViewById(R.id.home_chat_button_image),alpha.getFloat());
+        StaticMethods.SetAlpha(pair.getMainView().findViewById(R.id.home_explore_button_image),alpha.getFloat());
+        StaticMethods.SetAlpha(pair.getMainView().findViewById(R.id.home_hive_button_image),alpha.getFloat());
+
+        if (this.home == null)
+            this.home = new Home(this);
+        else {
+            this.home.Reload();
+        }
+    }
+
+    protected void ShowChats() {
+        this.leftPanel.OpenChats();
+        floatingPanel.openLeft();
+    }
+
+    protected void ShowHives() {
+        this.leftPanel.OpenHives();
+        floatingPanel.openLeft();
+    }
+
     @Override
-    protected void onCreate(Bundle savedInstanceState)  {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ActiveLayoutID = R.layout.home;
         setContentView(R.layout.main);
 
-        setPanelBehaviour();
-
         //Log.w("Main","onCreate..."); //DEBUG
         Object[] LocalStorage = {LoginLocalStorage.getLoginLocalStorage(), GroupLocalStorage.getGroupLocalStorage(), HiveLocalStorage.getHiveLocalStorage(), MessageLocalStorage.getMessageLocalStorage(), UserLocalStorage.getUserLocalStorage()};
-        Controller.Initialize(new CookieStore(), LocalStorage);
+        Controller.Initialize(new CookieStore(),LocalStorage);
 
-        this.controller = Controller.GetRunningController(true);
+        this.controller = Controller.GetRunningController(com.chattyhive.chattyhive.framework.OSStorageProvider.LocalStorage.getLocalStorage());
 
-        LeftPanel lp = new LeftPanel(this);
+        this.leftPanel = new LeftPanel(this);
+        this.ShowHome();
         RightPanel2 rp = new RightPanel2(this);
 
         try {
-            Controller.bindApp(this.getClass().getMethod("hasToLogin"), this);
+            Controller.bindApp(this.getClass().getMethod("hasToLogin"),this);
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
@@ -99,17 +137,15 @@ public class Main extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             case OP_CODE_LOGIN:
-                if (resultCode != RESULT_OK) {
-                    Controller.DisposeRunningController();
-                    this.finish();
-                }
+                    if (resultCode != RESULT_OK) {
+                        Controller.DisposeRunningController();
+                        this.finish();
+                    }
                 break;
             case OP_CODE_EXPLORE:
-                if (resultCode == RESULT_OK) {
-                    Log.w("ExploreActionResult", "Has to show hives...");
-                } else {
-                    Log.w("ExploreActionResult", "Don't move from here...");
-                }
+                    if (resultCode == RESULT_OK) {
+                        this.ShowHives();
+                    }
                 break;
         }
     }
@@ -129,7 +165,7 @@ public class Main extends Activity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-
+        
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
@@ -154,8 +190,7 @@ public class Main extends Activity {
                 floatingPanel.close();
             else
                 floatingPanel.openLeft();
-        }
-    };
+    } };
 
     protected View.OnClickListener menuIcon_ClickListener = new View.OnClickListener() {
         @Override
@@ -168,19 +203,19 @@ public class Main extends Activity {
     };
 
     public void setPanelBehaviour() {
-        floatingPanel = ((FloatingPanel) findViewById(R.id.FloatingPanel));
+        floatingPanel = ((FloatingPanel)findViewById(R.id.FloatingPanel));
 
-        ImageButton appIcon = (ImageButton) findViewById(R.id.appIcon);
+        ImageButton appIcon = (ImageButton)findViewById(R.id.appIcon);
         appIcon.setOnClickListener(this.appIcon_ClickListener);
 
-        ImageButton menuIcon = (ImageButton) findViewById(R.id.menuIcon);
+        ImageButton menuIcon = (ImageButton)findViewById(R.id.menuIcon);
         menuIcon.setOnClickListener(this.menuIcon_ClickListener);
     }
 
     protected View.OnClickListener explore_button_click = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Intent intent = new Intent(getApplicationContext(), Explore.class);
+            Intent intent = new Intent(getApplicationContext(),Explore.class);
             startActivityForResult(intent, OP_CODE_EXPLORE);
         }
     };
@@ -204,7 +239,7 @@ public class Main extends Activity {
         @Override
         public void onClick(View v) {
             DataProvider dataProvider = DataProvider.GetDataProvider();
-            dataProvider.InvokeServerCommand(ServerCommand.AvailableCommands.ChatList, null);
+            dataProvider.InvokeServerCommand(AvailableCommands.ChatList, null);
         }
     };
 
@@ -224,7 +259,7 @@ public class Main extends Activity {
                         this.controller.Leave((String) findViewById(R.id.main_panel_chat_name).getTag());
                     }
                     if (ActiveLayoutID != R.layout.home) {
-                        ShowLayout(R.layout.home, R.layout.action_bar_layout);
+                        ShowHome();
                         this.setPanelBehaviour();
                         return true;
                     }
@@ -233,4 +268,8 @@ public class Main extends Activity {
         }
         return super.dispatchKeyEvent(event);
     }
+
+
+
+
 }

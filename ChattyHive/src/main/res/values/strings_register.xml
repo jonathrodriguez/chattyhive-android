@@ -77,10 +77,10 @@
     <string name="register_third_step_email_hint">email</string>
 
     <string name="register_third_step_password_label">Your password:</string>
-    <string name="register_third_step_password_hint">(min. 6 characters)</string>
+    <string name="register_third_step_password_hint">(min. 8 characters)</string>
 
     <string name="register_third_step_repeat_password_label">Repeat your password:</string>
-    <string name="register_third_step_repeat_password_hint">(min. 6 characters)</string>
+    <string name="register_third_step_repeat_password_hint">(min. 8 characters)</string>
 
     <string name="register_third_step_email_confirmation_note">We\'ll send you an email with a link to confirm your account.Do not forget!</string>
 

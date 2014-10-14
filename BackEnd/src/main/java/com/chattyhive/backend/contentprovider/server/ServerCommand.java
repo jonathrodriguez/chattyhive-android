@@ -1,99 +1,255 @@
 package com.chattyhive.backend.contentprovider.server;
 
+import com.chattyhive.backend.contentprovider.AvailableCommands;
 import com.chattyhive.backend.contentprovider.formats.CHAT_ID;
 import com.chattyhive.backend.contentprovider.formats.Format;
 import com.chattyhive.backend.contentprovider.formats.HIVE_ID;
 import com.chattyhive.backend.contentprovider.formats.LOCAL_USER_PROFILE;
+import com.chattyhive.backend.contentprovider.formats.LOGIN;
 import com.chattyhive.backend.contentprovider.formats.MESSAGE;
 import com.chattyhive.backend.contentprovider.formats.MESSAGE_INTERVAL;
 import com.chattyhive.backend.contentprovider.formats.PROFILE_ID;
+import com.chattyhive.backend.contentprovider.formats.USERNAME;
 import com.chattyhive.backend.contentprovider.formats.USER_EMAIL;
-import com.google.gson.JsonObject;
 
 import java.lang.reflect.Field;
+import java.net.CookieHandler;
+import java.net.CookieManager;
+import java.net.CookieStore;
+import java.net.HttpCookie;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 
 /*
  * Created by Jonathan on 11/07/2014.
  */
 public class ServerCommand {
-    public enum AvailableCommands { Register, EmailCheck, Explore, Join, SendMessage, GetMessages, LocalProfile, ChatContext, ChatList, UserProfile, HiveInfo }
-    public enum Method { GET, POST }
+    public enum Method { GET, POST } //Http protocol method.
+
+    public enum CommandType {
+        Session, //Commands used to set up a server session. (In this category there are only two commands, Start_Session and Login).
+        Query, //Commands used to query server. Returned data IS NOT catchable. (Like exploring hives or retrieving a country list, a category list, ...).
+        Pull, //Commands used to get data from server. Returned data IS catchable. (Like retrieving information about chats, hives or users).
+        ForcePush, //Commands used to send data to server. Data HAS TO accepted by server, and no error is acceptable. Response HAS TO be immediate. (Like sending a message).
+        ImmediateResponsePush, //Commands used to send data to server. Data COULD NOT be accepted by server if there is newer data or any error. Response HAS TO be immediate. (Like joining new hives. An error may occur when trying to join already joined hives).
+        DelayedResponsePush //Commands used to send data to server. Data COULD NOT be accepted by server if there is newer data or any error. Response CAN delay for any amount of time. (Like soliciting the change of the description of a hive).
+    }
 
     /*************************************/
     /*     STATIC COMMAND DEFINITION     */
     /*************************************/
 
     private static HashMap<AvailableCommands,ServerCommand> CommandDefinitions;
+    private static HashMap<String,ArrayList<AvailableCommands>> CookieProductionCommands;
 
-    public static void Initialize() {
+    static {
+        ServerCommand.Initialize();
+    }
+
+    private static void Initialize() {
+        final String CSRFTokenCookie = "csrftoken";
+        final String SessionCookie = "sessionid";
+
         ServerCommand.CommandDefinitions = new HashMap<AvailableCommands, ServerCommand>();
+        ServerCommand.CookieProductionCommands = new HashMap<String, ArrayList<AvailableCommands>>();
 
-        ServerCommand serverCommand;
-
+        AvailableCommands command;
+        Method method;
+        CommandType commandType;
+        String url;
         ArrayList<Class<?>> inputFormats;
         ArrayList<Class<?>> paramFormats;
+        ArrayList<String> requiredCookies;
+        ArrayList<String> returningCookies;
 
-        // REGISTER
+        // StartSession
+        command = AvailableCommands.StartSession;
+        method = Method.GET;
+        commandType = CommandType.Session;
+        url = "android.start_session";
+        paramFormats = null;
+        inputFormats = null;
+        requiredCookies = null;
+        returningCookies = new ArrayList<String>() {{add(CSRFTokenCookie);}};
+        ServerCommand.AddServerCommand(command,method,commandType,url,paramFormats,inputFormats,requiredCookies,returningCookies);
+
+
+        // Login
+        command = AvailableCommands.Login;
+        method = Method.POST;
+        commandType = CommandType.Session;
+        url = "android.login/";
+        paramFormats = null;
+        inputFormats = new ArrayList<Class<?>>() {{add(LOGIN.class);}};
+        requiredCookies = new ArrayList<String>() {{add(CSRFTokenCookie);}};
+        returningCookies = new ArrayList<String>() {{add(SessionCookie);}};
+        ServerCommand.AddServerCommand(command,method,commandType,url,paramFormats,inputFormats,requiredCookies,returningCookies);
+
+
+        // Register
+        command = AvailableCommands.Register;
+        method = Method.POST;
+        commandType = CommandType.ImmediateResponsePush;
+        url = "android.register/";
+        paramFormats = null;
         inputFormats = new ArrayList<Class<?>>() {{add(LOCAL_USER_PROFILE.class);}};
-        serverCommand = new ServerCommand(Method.POST,"android.register/", null, inputFormats);
-        ServerCommand.CommandDefinitions.put(AvailableCommands.Register,serverCommand);
+        requiredCookies = new ArrayList<String>() {{add(CSRFTokenCookie);}};
+        returningCookies = new ArrayList<String>() {{add(SessionCookie);}};
+        ServerCommand.AddServerCommand(command,method,commandType,url,paramFormats,inputFormats,requiredCookies,returningCookies);
+
 
         // EmailCheck
-        inputFormats = new ArrayList<Class<?>>() {{add(USER_EMAIL.class);}};
-        serverCommand = new ServerCommand(Method.GET,"android.email_check", null, inputFormats);
-        ServerCommand.CommandDefinitions.put(AvailableCommands.EmailCheck,serverCommand);
+        command = AvailableCommands.EmailCheck;
+        method = Method.GET;
+        commandType = CommandType.Query;
+        url = "android.email_check/[USER_EMAIL.EMAIL_USER_PART]/[USER_EMAIL.EMAIL_SERVER_PART]";
+        paramFormats = new ArrayList<Class<?>>() {{add(USER_EMAIL.class);}};
+        inputFormats = null;
+        requiredCookies = new ArrayList<String>() {{add(CSRFTokenCookie);}};
+        returningCookies = null;
+        ServerCommand.AddServerCommand(command,method,commandType,url,paramFormats,inputFormats,requiredCookies,returningCookies);
+
+        // UsernameCheck
+        command = AvailableCommands.UsernameCheck;
+        method = Method.GET;
+        commandType = CommandType.Query;
+        url = "android.username_check/[USERNAME.PUBLIC_NAME]";
+        paramFormats = new ArrayList<Class<?>>() {{add(USERNAME.class);}};
+        inputFormats = null;
+        requiredCookies = new ArrayList<String>() {{add(CSRFTokenCookie);}};
+        returningCookies = null;
+        ServerCommand.AddServerCommand(command,method,commandType,url,paramFormats,inputFormats,requiredCookies,returningCookies);
 
         // Explore
-        serverCommand = new ServerCommand(Method.GET,"android.explore", null, null);
-        ServerCommand.CommandDefinitions.put(AvailableCommands.Explore,serverCommand);
+        command = AvailableCommands.Explore;
+        method = Method.GET;
+        commandType = CommandType.Query;
+        url = "android.explore/";
+        paramFormats = null;
+        inputFormats = null;
+        requiredCookies = new ArrayList<String>() {{add(CSRFTokenCookie); add(SessionCookie);}};
+        returningCookies = null;
+        ServerCommand.AddServerCommand(command,method,commandType,url,paramFormats,inputFormats,requiredCookies,returningCookies);
+
 
         // Join
+        command = AvailableCommands.Join;
+        method = Method.POST;
+        commandType = CommandType.ImmediateResponsePush;
+        url = "android.join/";
+        paramFormats = null;
         inputFormats = new ArrayList<Class<?>>() {{add(HIVE_ID.class);}};
-        serverCommand = new ServerCommand(Method.POST,"android.join/", null, inputFormats);
-        ServerCommand.CommandDefinitions.put(AvailableCommands.Join,serverCommand);
+        requiredCookies = new ArrayList<String>() {{add(CSRFTokenCookie); add(SessionCookie);}};
+        returningCookies = null;
+        ServerCommand.AddServerCommand(command,method,commandType,url,paramFormats,inputFormats,requiredCookies,returningCookies);
+
 
         // SendMessage
+        command = AvailableCommands.SendMessage;
+        method = Method.POST;
+        commandType = CommandType.ForcePush;
+        url = "android.chat/";
+        paramFormats = null;
         inputFormats = new ArrayList<Class<?>>() {{add(MESSAGE.class);}};
-        serverCommand = new ServerCommand(Method.POST,"android.chat/", null, inputFormats);
-        ServerCommand.CommandDefinitions.put(AvailableCommands.SendMessage,serverCommand);
+        requiredCookies = new ArrayList<String>() {{add(CSRFTokenCookie); add(SessionCookie);}};
+        returningCookies = null;
+        ServerCommand.AddServerCommand(command,method,commandType,url,paramFormats,inputFormats,requiredCookies,returningCookies);
+
 
         // GetMessages
+        command = AvailableCommands.GetMessages;
+        method = Method.GET;
+        commandType = CommandType.Pull;
+        url = "android.messages/[CHAT_ID.CHANNEL_UNICODE]/[MESSAGE_INTERVAL.LAST_MESSAGE_ID]/[MESSAGE_INTERVAL.COUNT]";
         paramFormats = new ArrayList<Class<?>>() {{add(CHAT_ID.class); add(MESSAGE_INTERVAL.class); }};
-        serverCommand = new ServerCommand(Method.GET,"android.messages/[CHAT_ID.CHANNEL_UNICODE]/[MESSAGE_INTERVAL.LAST_MESSAGE_ID]/[MESSAGE_INTERVAL.COUNT]", paramFormats, null);
-        ServerCommand.CommandDefinitions.put(AvailableCommands.GetMessages,serverCommand);
+        inputFormats = null;
+        requiredCookies = new ArrayList<String>() {{add(CSRFTokenCookie); add(SessionCookie);}};
+        returningCookies = null;
+        ServerCommand.AddServerCommand(command,method,commandType,url,paramFormats,inputFormats,requiredCookies,returningCookies);
+
 
         // LocalProfile
-        serverCommand = new ServerCommand(Method.GET,"android.recover_local_user_profile", null, null);
-        ServerCommand.CommandDefinitions.put(AvailableCommands.LocalProfile,serverCommand);
+        command = AvailableCommands.LocalProfile;
+        method = Method.GET;
+        commandType = CommandType.Pull;
+        url = "android.recover_local_user_profile";
+        paramFormats = null;
+        inputFormats = null;
+        requiredCookies = new ArrayList<String>() {{add(CSRFTokenCookie); add(SessionCookie);}};
+        returningCookies = null;
+        ServerCommand.AddServerCommand(command,method,commandType,url,paramFormats,inputFormats,requiredCookies,returningCookies);
 
-        // ChatContext
+
+        // ChatInfo
+        command = AvailableCommands.ChatInfo;
+        method = Method.GET;
+        commandType = CommandType.Pull;
+        url = "android.get_chat_context/[CHAT_ID.CHANNEL_UNICODE]";
         paramFormats = new ArrayList<Class<?>>() {{add(CHAT_ID.class);}};
-        serverCommand = new ServerCommand(Method.GET,"android.get_chat_context/[CHAT_ID.CHANNEL_UNICODE]", paramFormats, null);
-        ServerCommand.CommandDefinitions.put(AvailableCommands.ChatContext,serverCommand);
+        inputFormats = null;
+        requiredCookies = new ArrayList<String>() {{add(CSRFTokenCookie); add(SessionCookie);}};
+        returningCookies = null;
+        ServerCommand.AddServerCommand(command,method,commandType,url,paramFormats,inputFormats,requiredCookies,returningCookies);
+
 
         // ChatList
-        serverCommand = new ServerCommand(Method.GET,"android.get_chat_list", null, null);
-        ServerCommand.CommandDefinitions.put(AvailableCommands.ChatList,serverCommand);
+        command = AvailableCommands.ChatList;
+        method = Method.GET;
+        commandType = CommandType.Pull;
+        url = "android.get_chat_list";
+        paramFormats = null;
+        inputFormats = null;
+        requiredCookies = new ArrayList<String>() {{add(CSRFTokenCookie); add(SessionCookie);}};
+        returningCookies = null;
+        ServerCommand.AddServerCommand(command,method,commandType,url,paramFormats,inputFormats,requiredCookies,returningCookies);
+
 
         // UserProfile
+        command = AvailableCommands.UserProfile;
+        method = Method.POST;
+        commandType = CommandType.Pull;
+        url = "android.???/";
+        paramFormats = null;
         inputFormats = new ArrayList<Class<?>>() {{add(PROFILE_ID.class);}};
-        serverCommand = new ServerCommand(Method.POST,"android.???/", null, inputFormats);
-        ServerCommand.CommandDefinitions.put(AvailableCommands.UserProfile,serverCommand);
+        requiredCookies = new ArrayList<String>() {{add(CSRFTokenCookie); add(SessionCookie);}};
+        returningCookies = null;
+        ServerCommand.AddServerCommand(command,method,commandType,url,paramFormats,inputFormats,requiredCookies,returningCookies);
+
 
         // HiveInfo
+        command = AvailableCommands.HiveInfo;
+        method = Method.GET;
+        commandType = CommandType.Pull;
+        url = "android.get_hive_info/[HIVE_ID.NAME_URL]";
         paramFormats = new ArrayList<Class<?>>() {{add(HIVE_ID.class);}};
-        serverCommand = new ServerCommand(Method.GET,"android.get_hive_info/[HIVE_ID.NAME_URL]", paramFormats, null);
-        ServerCommand.CommandDefinitions.put(AvailableCommands.HiveInfo,serverCommand);
+        inputFormats = null;
+        requiredCookies = new ArrayList<String>() {{add(CSRFTokenCookie); add(SessionCookie);}};
+        returningCookies = null;
+        ServerCommand.AddServerCommand(command,method,commandType,url,paramFormats,inputFormats,requiredCookies,returningCookies);
+    }
+
+    private static void AddServerCommand(AvailableCommands command, Method method, CommandType commandType, String url,ArrayList<Class<?>> paramFormats, ArrayList<Class<?>> inputFormats, ArrayList<String> requiredCookies, ArrayList<String> returningCookies) {
+        ServerCommand serverCommand = new ServerCommand(command, method, commandType, url, paramFormats, inputFormats, requiredCookies, returningCookies);
+        ServerCommand.CommandDefinitions.put(command,serverCommand);
+        if (returningCookies != null)
+            for (String returningCookie : returningCookies) {
+                if (!ServerCommand.CookieProductionCommands.containsKey(returningCookie))
+                    ServerCommand.CookieProductionCommands.put(returningCookie,new ArrayList<AvailableCommands>());
+                ServerCommand.CookieProductionCommands.get(returningCookie).add(command);
+            }
     }
 
     public static ServerCommand GetCommand(AvailableCommands command) {
-        if (ServerCommand.CommandDefinitions == null) throw new NullPointerException("Command definitions not initialized.");
         if (!ServerCommand.CommandDefinitions.containsKey(command)) throw new IllegalArgumentException(String.format("Command (%s) is not defined.",command.toString()));
-
         return ServerCommand.CommandDefinitions.get(command);
+    }
+
+    public static ArrayList<AvailableCommands> GetCommandForCookie(String cookie) {
+        if (!ServerCommand.CookieProductionCommands.containsKey(cookie)) return null;
+        return ServerCommand.CookieProductionCommands.get(cookie);
     }
 
     /*************************************/
@@ -102,18 +258,33 @@ public class ServerCommand {
     /*      SERVER COMMAND CLASS         */
     /*************************************/
 
+    private AvailableCommands command;
     private Method method;
+    private CommandType commandType;
     private String url;
     private ArrayList<Class<?>> inputFormats;
     private ArrayList<Class<?>> paramFormats;
 
-    private ServerCommand (Method method, String url, ArrayList<Class<?>> paramFormats, ArrayList<Class<?>> inputFormats) {
+    private ArrayList<String> requiredCookies;
+    private ArrayList<String> returningCookies;
+
+    private ServerCommand (AvailableCommands command, Method method, CommandType commandType, String url, ArrayList<Class<?>> paramFormats, ArrayList<Class<?>> inputFormats, ArrayList<String> requiredCookies, ArrayList<String> returningCookies) {
+        this.command = command;
         this.method = method;
+        this.commandType = commandType;
         this.url = url;
         this.paramFormats = paramFormats;
         this.inputFormats = inputFormats;
+        this.requiredCookies = requiredCookies;
+        this.returningCookies = returningCookies;
     }
 
+    public AvailableCommands getCommand() {
+        return this.command;
+    }
+    public CommandType getCommandType() {
+        return this.commandType;
+    }
     public String getMethod() {
         return this.method.toString();
     }
@@ -181,15 +352,74 @@ public class ServerCommand {
     public String getBodyData(Format... formats) {
         if ((formats == null) || (formats.length == 0) || (this.inputFormats == null)) return null;
 
-        JsonObject bodyData = new JsonObject();
+        //JsonObject bodyData = new JsonObject();
+
+        String bodyData = "";
 
         for (Format f : formats) {
             if (this.inputFormats.contains(f.getClass())) {
-                bodyData.add(f.getClass().getSimpleName(), f.toJSON());
+                //bodyData.add(f.getClass().getSimpleName(), f.toJSON());
+                String jsonString = f.toJSON().toString();
+                bodyData += ((bodyData.isEmpty())?"{":", ") + jsonString.substring(1,jsonString.length()-1);
             }
         }
 
-        return bodyData.toString();
+        bodyData += "}";
+
+        return (!bodyData.equalsIgnoreCase("}"))?bodyData:"";//.toString();
+    }
+
+    public Boolean checkCookies() {
+        if (this.requiredCookies == null) return true;
+
+        TreeMap<String,Boolean> requiredCookiesCheck = new TreeMap<String, Boolean>();
+        for (String cookie : this.requiredCookies)
+            requiredCookiesCheck.put(cookie,false);
+
+        CookieManager cookieManager = (CookieManager) CookieHandler.getDefault();
+        CookieStore cookieStore = cookieManager.getCookieStore();
+        List<HttpCookie> cookies = cookieStore.getCookies();
+
+        if (cookies != null) {
+            for (HttpCookie cookie : cookies)
+                if (requiredCookiesCheck.containsKey(cookie.getName()))
+                    requiredCookiesCheck.put(cookie.getName(),true);
+        }
+
+        if (requiredCookiesCheck.size() > 0) {
+            for (Boolean value : requiredCookiesCheck.values())
+                if (!value)
+                    return false;
+        }
+
+        return true;
+    }
+    public ArrayList<String> getUnsatisfyingCookies() {
+        ArrayList<String> result = new ArrayList<String>();
+
+        if (this.requiredCookies == null) return null;
+
+        TreeMap<String,Boolean> requiredCookiesCheck = new TreeMap<String, Boolean>();
+        for (String cookie : this.requiredCookies)
+            requiredCookiesCheck.put(cookie,false);
+
+        CookieManager cookieManager = (CookieManager) CookieHandler.getDefault();
+        CookieStore cookieStore = cookieManager.getCookieStore();
+        List<HttpCookie> cookies = cookieStore.getCookies();
+
+        if (cookies != null) {
+            for (HttpCookie cookie : cookies)
+                if (requiredCookiesCheck.containsKey(cookie.getName()))
+                    requiredCookiesCheck.put(cookie.getName(),true);
+        }
+
+        if (requiredCookiesCheck.size() > 0) {
+            for (Map.Entry<String,Boolean> requirement : requiredCookiesCheck.entrySet())
+                if (!requirement.getValue())
+                    result.add(requirement.getKey());
+        }
+
+        return (result.size() > 0)?result:null;
     }
 
     //TODO: Find a way to use this verification in compilation time instead of run time.

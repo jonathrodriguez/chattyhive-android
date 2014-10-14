@@ -11,29 +11,41 @@ import java.util.Date;
  * Created by Jonathan on 08/07/2014.
  */
 public abstract class Profile {
-    String color;
+
+    String userID;
+
     String imageURL;
+
+    String statusMessage;
 
     String location;
     String sex;
     Date birthdate;
     ArrayList<String> language;
 
-    public abstract String getID();
-    public abstract String getShowingName();
+    ProfileLevel loadedProfileLevel;
 
-    public String getColor() {
-        return this.color;
+    public String getID() {
+        return this.userID;
     }
-    public void setColor(String value) {
-        this.color = value;
+    public void setID(String userID) {
+        this.userID = userID;
     }
+
+    public abstract String getShowingName();
 
     public String getImageURL() {
         return this.imageURL;
     }
     public void setImageURL(String value) {
         this.imageURL = value;
+    }
+
+    public String getStatusMessage() {
+        return this.statusMessage;
+    }
+    public void setStatusMessage(String value) {
+        this.statusMessage = value;
     }
 
     public String getLocation() {
@@ -59,6 +71,11 @@ public abstract class Profile {
     public void setBirthdate(Date value) {
         this.birthdate = value;
     }
+
+    public ProfileLevel getLoadedProfileLevel() {
+        return this.loadedProfileLevel;
+    }
+    public abstract void unloadProfile(ProfileLevel profileLevel);
 
     /*****************************************************************/
     /*                          LANGUAGES                            */

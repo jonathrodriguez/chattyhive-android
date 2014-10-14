@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     tools:context=".Register">
 
-<com.chattyhive.chattyhive.framework.SlidingStepsLayout
+<com.chattyhive.chattyhive.framework.CustomViews.ViewGroup.SlidingStepsLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/slidingsteps"
@@ -56,5 +56,5 @@
         custom:stepSubtitle="@string/register_third_step_subtitle"
         />
 
-</com.chattyhive.chattyhive.framework.SlidingStepsLayout>
+</com.chattyhive.chattyhive.framework.CustomViews.ViewGroup.SlidingStepsLayout>
 </FrameLayout>

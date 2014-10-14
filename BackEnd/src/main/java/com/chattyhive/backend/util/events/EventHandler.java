@@ -24,9 +24,13 @@ public class EventHandler<T extends EventArgs> {
      * @param eventArgsClass The class of the event arguments.
      * @throws NoSuchMethodException If the method is not found in the subscriber.
      */
-    public EventHandler (Object Subscriber,String methodName, Class<T> eventArgsClass) throws NoSuchMethodException {
+    public EventHandler (Object Subscriber,String methodName, Class<T> eventArgsClass) {
             this.subscriber = Subscriber;
-            this.method = Subscriber.getClass().getMethod(methodName,Object.class,eventArgsClass);
+            try {
+                this.method = Subscriber.getClass().getMethod(methodName, Object.class, eventArgsClass);
+            } catch (NoSuchMethodException e) {
+                e.printStackTrace();
+            }
     }
 
     /**
@@ -36,9 +40,13 @@ public class EventHandler<T extends EventArgs> {
      * @param eventArgsClass The class of the event arguments.
      * @throws NoSuchMethodException If the method is not found in the subscriber.
      */
-    public EventHandler (Class<?> SubscriberClass,String methodName, Class<T> eventArgsClass) throws NoSuchMethodException {
+    public EventHandler (Class<?> SubscriberClass,String methodName, Class<T> eventArgsClass) {
         this.subscriber = null;
-        this.method = SubscriberClass.getMethod(methodName,Object.class,eventArgsClass);
+        try {
+            this.method = SubscriberClass.getMethod(methodName,Object.class,eventArgsClass);
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -51,6 +59,16 @@ public class EventHandler<T extends EventArgs> {
      */
     public void Invoke(Object sender, T eventArgs) throws InvocationTargetException, IllegalAccessException {
         this.method.invoke(this.subscriber, sender, eventArgs);
+    }
+
+    public void Run(Object sender, T eventArgs) {
+        try {
+            this.method.invoke(this.subscriber, sender, eventArgs);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

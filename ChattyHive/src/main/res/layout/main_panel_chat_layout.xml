@@ -15,7 +15,8 @@
         android:smoothScrollbar="true"
         android:fastScrollEnabled="true"
         android:transcriptMode="normal"
-        android:choiceMode="none" />
+        android:choiceMode="none"
+        android:divider="@null"/>
 
     <LinearLayout
         android:orientation="horizontal"

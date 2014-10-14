@@ -1,8 +1,11 @@
 package com.chattyhive.backend.businessobjects.Chats.Messages;
 
+import com.chattyhive.backend.Controller;
 import com.chattyhive.backend.businessobjects.Chats.Chat;
 import com.chattyhive.backend.businessobjects.Chats.Group;
+import com.chattyhive.backend.businessobjects.Chats.GroupKind;
 import com.chattyhive.backend.businessobjects.Users.User;
+import com.chattyhive.backend.contentprovider.AvailableCommands;
 import com.chattyhive.backend.contentprovider.DataProvider;
 import com.chattyhive.backend.contentprovider.formats.CHAT_ID;
 import com.chattyhive.backend.contentprovider.formats.Format;
@@ -28,6 +31,7 @@ import java.util.Date;
  * Generally a message is sent by a user, in a concrete date and time (timestamp) and it has a content.
  */
 public class Message implements Comparable {
+    private Controller controller;
 
     protected Chat chat;
     protected MessageContent content;
@@ -36,11 +40,11 @@ public class Message implements Comparable {
     protected Date timeStamp;  
 
     protected User user;
-    protected Boolean confirmed;
+    protected Boolean confirmed = false;
 
-    private Boolean isMessageHole;
+    private boolean isMessageHole = false;
     private int holeSize;
-    private Boolean filling;
+    private Boolean filling = false;
     /*
      * Events for class message.
      */
@@ -113,8 +117,16 @@ public class Message implements Comparable {
             return this.timeStamp;
     }
 
+    //EMPTY CONSTRUCTOR
+    public Message() {
+        this.controller = Controller.GetRunningController();
+        this.InitializeEvents();
+    }
+
     //CONSTRUCTOR FOR DATE SEPARATOR
     public Message(Chat chat, Date timeStamp) {
+        this();
+
         this.user = null;
         this.chat = chat;
         this.content = new MessageContent("DATE_SEPARATOR",null);
@@ -125,6 +137,8 @@ public class Message implements Comparable {
 
     //CONSTRUCTOR FOR MESSAGE HOLE
     public Message(Chat chat, Date timeStamp, int holeSize) {
+        this();
+
         this.user = null;
         this.chat = chat;
         this.content = new MessageContent("HOLE_SEPARATOR",String.format("%d",holeSize));
@@ -144,12 +158,12 @@ public class Message implements Comparable {
      * @param timeStamp The timestamp of the message
      */
     public Message(User user, Chat chat, MessageContent content, Date timeStamp) {
+        this();
+
         this.user = user;
         this.content = content;
         this.timeStamp = timeStamp;
         this.chat = chat;
-
-        this.InitializeEvents();
     }
 
     public void FillMessageHole(String nextMessageId) {
@@ -163,13 +177,8 @@ public class Message implements Comparable {
                 message_interval.COUNT = this.holeSize+1;
                 message_interval.LAST_MESSAGE_ID = nextMessageId;
 
-                try {
-                    filling = true;
-                    dataProvider.InvokeServerCommand(ServerCommand.AvailableCommands.GetMessages,new EventHandler<CommandCallbackEventArgs>(this,"onMessageHoleFilledCallback",CommandCallbackEventArgs.class),chat_id,message_interval);
-                } catch (NoSuchMethodException e) {
-                    filling = false;
-                    e.printStackTrace();
-                }
+                dataProvider.InvokeServerCommand(AvailableCommands.GetMessages,new EventHandler<CommandCallbackEventArgs>(this,"onMessageHoleFilledCallback",CommandCallbackEventArgs.class),chat_id,message_interval);
+                filling = true;
             }
         }
     }
@@ -186,10 +195,12 @@ public class Message implements Comparable {
      * @param jsonMessage the JSONElement representing the message.
      */
     public Message(JsonElement jsonMessage) {
+        this();
         this.fromJson(jsonMessage);
     }
 
     public Message(Format format) {
+        this();
         this.fromFormat(format);
     }
 
@@ -204,11 +215,8 @@ public class Message implements Comparable {
 
         this.chat.addMessage(this);
         DataProvider dataProvider = DataProvider.GetDataProvider();
-        try {
-            dataProvider.InvokeServerCommand(ServerCommand.AvailableCommands.SendMessage,new EventHandler<CommandCallbackEventArgs>(this,"onMessageSendCallback",CommandCallbackEventArgs.class),this.toFormat(new MESSAGE()));
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
+
+        dataProvider.InvokeServerCommand(AvailableCommands.SendMessage,new EventHandler<CommandCallbackEventArgs>(this,"onMessageSendCallback",CommandCallbackEventArgs.class),this.toFormat(new MESSAGE()));
     }
 
     public void onMessageSendCallback (Object sender, CommandCallbackEventArgs eventArgs) {
@@ -239,7 +247,7 @@ public class Message implements Comparable {
             ((MESSAGE) format).SERVER_TIMESTAMP = this.serverTimeStamp;
             ((MESSAGE) format).CONFIRMED = this.confirmed;
             ((MESSAGE) format).CONTENT = (MESSAGE_CONTENT)this.content.toFormat(new MESSAGE_CONTENT());
-            ((MESSAGE) format).PROFILE = (PROFILE_ID)this.user.toFormat(new PROFILE_ID());
+            ((MESSAGE) format).USER_ID = this.user.getUserID();
             ((MESSAGE) format).CHANNEL_UNICODE = this.chat.getParent().getChannelUnicode();
         } else if (format instanceof MESSAGE_ACK) {
             ((MESSAGE_ACK) format).ID = this.id;
@@ -265,8 +273,13 @@ public class Message implements Comparable {
 
             this.confirmed = ((MESSAGE) format).CONFIRMED;
             this.content = new MessageContent(((MESSAGE) format).CONTENT);
-            this.user = User.getUser(((MESSAGE) format).PROFILE);
             this.chat = Group.getGroup(((MESSAGE) format).CHANNEL_UNICODE,true).getChat();
+
+            PROFILE_ID profile_id = new PROFILE_ID();
+            profile_id.USER_ID = ((MESSAGE) format).USER_ID;
+            profile_id.PROFILE_TYPE = ((this.chat.getParent().getGroupKind() == GroupKind.PRIVATE_GROUP) || (this.chat.getParent().getGroupKind() == GroupKind.PRIVATE_SINGLE))?"BASIC_PRIVATE":"BASIC_PUBLIC";
+            this.user = controller.getUser(profile_id);
+
 
             return true;
         } else if (format instanceof MESSAGE_ACK) {
@@ -329,7 +342,7 @@ public class Message implements Comparable {
             Boolean result = true;
 
             result = result && (this.getChat().getParent().getChannelUnicode().equalsIgnoreCase(m.getChat().getParent().getChannelUnicode()));
-            result = result && (this.getId().equalsIgnoreCase(m.getId()));
+            result = result && (this.getId() != null) && (m.getId() != null) && (this.getId().equalsIgnoreCase(m.getId()));
             
             return result;
         }

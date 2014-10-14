@@ -33,11 +33,7 @@ public class Chat {
         Chat.controller = controller;
         Chat.localStorage = messageLocalStorageInterface;
 
-        try {
-            DataProvider.GetDataProvider().onMessageReceived.add(new EventHandler<FormatReceivedEventArgs>(Chat.class, "onFormatReceived", FormatReceivedEventArgs.class));
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
+        DataProvider.GetDataProvider().onMessageReceived.add(new EventHandler<FormatReceivedEventArgs>(Chat.class, "onFormatReceived", FormatReceivedEventArgs.class));
     }
 
     /***********************************/
@@ -75,10 +71,10 @@ public class Chat {
         this.chatWindowActive = value;
         if (value) {
             this.showingIndex = this.messages.size() - 100;
-            this.controller.Join(this.parent.pusherChannel);
+            controller.Join(this.parent.pusherChannel);
         }
         else {
-            this.controller.Leave(this.parent.pusherChannel);
+            controller.Leave(this.parent.pusherChannel);
             this.showingIndex = -1;
         }
     }
@@ -117,22 +113,18 @@ public class Chat {
 
     public Event<EventArgs> MessageListModifiedEvent;
 
-    private void onMessageChanged(Object sender,EventArgs eventArgs) {
+    public void onMessageChanged(Object sender,EventArgs eventArgs) {
         if (sender instanceof Message) {
             Message m = (Message)sender;
             boolean idReceived = false;
             boolean confirmationReceived = false;
-            try {
-                if ((m.getId() != null) && (!m.getId().isEmpty())) {
-                    idReceived = m.IdReceived.remove(new EventHandler<EventArgs>(this, "onMessageChanged", EventArgs.class));
-                    if (!this.messagesByID.containsKey(m.getId()))
-                        this.messagesByID.put(m.getId(),m);
-                }
-                if (m.getConfirmed())
-                    confirmationReceived = m.ConfirmationReceived.remove(new EventHandler<EventArgs>(this, "onMessageChanged", EventArgs.class));
-            } catch (NoSuchMethodException e) {
-                e.printStackTrace();
+            if ((m.getId() != null) && (!m.getId().isEmpty())) {
+                idReceived = m.IdReceived.remove(new EventHandler<EventArgs>(this, "onMessageChanged", EventArgs.class));
+                if (!this.messagesByID.containsKey(m.getId()))
+                    this.messagesByID.put(m.getId(),m);
             }
+            if (m.getConfirmed())
+                confirmationReceived = m.ConfirmationReceived.remove(new EventHandler<EventArgs>(this, "onMessageChanged", EventArgs.class));
             if (this.MessageListModifiedEvent != null)
                 this.MessageListModifiedEvent.fire(this, EventArgs.Empty());
 
@@ -183,6 +175,9 @@ public class Chat {
     }
 
     public int getCount() {
+        if (this.messages == null)
+            return 0;
+
         return this.messages.size();
     }
 
@@ -209,14 +204,10 @@ public class Chat {
         if (nextNewDay)
             this.messages.add(new Message(this,DateFormatter.toDate(DateFormatter.toString(next.getTimeStamp()))));
 
-        try {
-            if (message.getId() == null)
-                message.IdReceived.add(new EventHandler<EventArgs>(this, "onMessageChanged", EventArgs.class));
-            if ((this.parent.groupKind == GroupKind.PUBLIC_SINGLE) || (this.parent.groupKind == GroupKind.PRIVATE_SINGLE))
-                message.ConfirmationReceived.add(new EventHandler<EventArgs>(this, "onMessageChanged", EventArgs.class));
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
+        if (message.getId() == null)
+            message.IdReceived.add(new EventHandler<EventArgs>(this, "onMessageChanged", EventArgs.class));
+        if ((this.parent.groupKind == GroupKind.PUBLIC_SINGLE) || (this.parent.groupKind == GroupKind.PRIVATE_SINGLE))
+            message.ConfirmationReceived.add(new EventHandler<EventArgs>(this, "onMessageChanged", EventArgs.class));
 
         Boolean messageListModified = this.messages.add(message);
 
@@ -228,6 +219,9 @@ public class Chat {
         if ((messageListModified) && (this.MessageListModifiedEvent != null))
             this.MessageListModifiedEvent.fire(this, EventArgs.Empty());
 
+        if ((messageListModified) && (this.getParent().groupKind == GroupKind.HIVE))
+            Hive.HiveListChanged.fire(null,EventArgs.Empty());
+
         if ((message.getId() != null) && (!message.getId().isEmpty())) {
             if (StaticParameters.MaxLocalMessages != 0) {
                 Chat.localStorage.StoreMessage(this.parent.pusherChannel,message.getId(), message.toJson(new MESSAGE()).toString());
@@ -237,6 +231,19 @@ public class Chat {
         } else {
             Chat.localStorage.StoreMessage(String.format("Sending-%s",this.parent.pusherChannel),message.getId(),message.toJson(new MESSAGE()).toString());
         }
+    }
+
+    public void addMessageByID(Message message) {
+        if (message == null) throw new NullPointerException("message must not be null.");
+        if ((message.getId() == null) ||(message.getId().isEmpty())) throw new NullPointerException("message must have an ID.");
+
+        Boolean messageListModified = this.messages.add(message);
+
+        if (messageListModified)
+            this.messagesByID.put(message.getId(),message);
+
+        if ((messageListModified) && (this.MessageListModifiedEvent != null))
+            this.MessageListModifiedEvent.fire(this, EventArgs.Empty());
     }
 
     public void removeMessage(String ID) {
