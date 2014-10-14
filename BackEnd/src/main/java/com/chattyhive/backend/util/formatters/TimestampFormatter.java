@@ -65,14 +65,13 @@ public final class TimestampFormatter {
      */
     public static final Date toDate(String timestamp) {
         SimpleDateFormat simpleDateFormat;
-        Iterator<String> formatIterator = Arrays.asList(_formats).iterator();
-        while (formatIterator.hasNext()) {
-            String format = formatIterator.next();
+        for (String format : _formats) {
             simpleDateFormat = new SimpleDateFormat(format);
             simpleDateFormat.setTimeZone(TimeZone.getTimeZone(timeZoneID));
             try {
                 return simpleDateFormat.parse(timestamp);
-            } catch (ParseException e) { }
+            } catch (ParseException e) {
+            }
         }
         return (new Date());
     }

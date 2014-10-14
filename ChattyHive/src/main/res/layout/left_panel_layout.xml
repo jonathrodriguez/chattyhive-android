@@ -87,7 +87,7 @@
             android:layout_height="match_parent"
             android:id="@+id/left_panel_element_list"
             android:background="@drawable/left_panel_list_background"
-            android:visibility="visible" />
+            android:divider="@null"/>
 
         <FrameLayout
             android:layout_width="match_parent"

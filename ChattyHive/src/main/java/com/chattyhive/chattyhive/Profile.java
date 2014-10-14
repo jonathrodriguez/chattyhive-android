@@ -66,7 +66,7 @@ public class Profile {
         if (me != null) {
             ((TextView) profileView.findViewById(R.id.my_profile_full_name)).setText(String.format("%s %s",me.getUserPrivateProfile().getFirstName(),me.getUserPrivateProfile().getLastName()));
 
-            ((TextView) profileView.findViewById(R.id.my_profile_public_name)).setText(me.getUserPublicProfile().getPublicName());
+            ((TextView) profileView.findViewById(R.id.my_profile_public_name)).setText(String.format("@%s",me.getUserPublicProfile().getPublicName()));
             ((TextView) profileView.findViewById(R.id.my_profile_public_name)).setTextColor(Color.parseColor(me.getUserPublicProfile().getColor()));
 
             if (me.getUserPrivateProfile().getSex().equalsIgnoreCase("male"))
