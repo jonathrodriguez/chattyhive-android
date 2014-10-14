@@ -20,10 +20,10 @@ public class Home {
     public Home (final Context context) {
         this.context = context;
         this.homeListAdapter = new HomeListAdapter(context);
-        ((ListView)((Activity)this.context).findViewById(R.id.home_listView)).setAdapter(this.homeListAdapter);
+        this.Reload();
+    }
 
-        ((Main)this.context).controller.RequestHome();
-
+    public void setButtons() {
         ((Activity)this.context).findViewById(R.id.home_chat_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -34,5 +34,12 @@ public class Home {
         ((Activity)this.context).findViewById(R.id.home_explore_button).setOnClickListener(((Main)this.context).explore_button_click);
 
         //((Activity)this.context).findViewById(R.id.home_hive_button).setOnClickListener(); //TODO: Define action.
+    }
+
+    public void Reload() {
+        ((ListView)((Activity)this.context).findViewById(R.id.home_listView)).setAdapter(this.homeListAdapter);
+
+        ((Main)this.context).controller.RequestHome();
+        this.setButtons();
     }
 }

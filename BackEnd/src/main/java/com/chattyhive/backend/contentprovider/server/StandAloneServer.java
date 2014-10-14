@@ -209,7 +209,9 @@ public class StandAloneServer {
                 while (running) {
                     try {
                         if (messageNumber >= initialMessageNumber)
-                            sleep(random.nextInt(6001));
+                            sleep(random.nextInt(600001));
+                        else
+                            sleep(1);
                     } catch (InterruptedException e) {
                         running = false;
                         continue;

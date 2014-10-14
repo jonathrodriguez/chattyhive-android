@@ -89,8 +89,7 @@ public class Main extends Activity {
         if (this.home == null)
             this.home = new Home(this);
         else {
-            ((ListView)pair.getMainView().findViewById(R.id.home_listView)).setAdapter(this.home.homeListAdapter);
-            this.controller.RequestHome();
+            this.home.Reload();
         }
     }
 
@@ -110,12 +109,6 @@ public class Main extends Activity {
         ActiveLayoutID = R.layout.home;
         setContentView(R.layout.main);
 
-        findViewById(R.id.temp_explore_button).setOnClickListener(this.explore_button_click);
-        findViewById(R.id.temp_profile_button).setOnClickListener((new Profile(this)).open_profile);
-        findViewById(R.id.temp_chat_sync_button).setOnClickListener(this.chat_sync_button_click);
-        findViewById(R.id.temp_logout_button).setOnClickListener(this.logout_button_click);
-        findViewById(R.id.temp_clear_chats_button).setOnClickListener(this.clear_chats_button_click);
-
         //Log.w("Main","onCreate..."); //DEBUG
         Object[] LocalStorage = {LoginLocalStorage.getLoginLocalStorage(), GroupLocalStorage.getGroupLocalStorage(), HiveLocalStorage.getHiveLocalStorage(), MessageLocalStorage.getMessageLocalStorage(), UserLocalStorage.getUserLocalStorage()};
         Controller.Initialize(new CookieStore(),LocalStorage);
@@ -124,6 +117,7 @@ public class Main extends Activity {
 
         this.leftPanel = new LeftPanel(this);
         this.ShowHome();
+        RightPanel2 rp = new RightPanel2(this);
 
         try {
             Controller.bindApp(this.getClass().getMethod("hasToLogin"),this);

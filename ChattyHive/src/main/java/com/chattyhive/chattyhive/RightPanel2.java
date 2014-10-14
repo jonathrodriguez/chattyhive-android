@@ -26,6 +26,7 @@ public class RightPanel2{
     public RightPanel2(Context activity){
         this.context = activity ;
         this.InitializeComponent(); //inicializa todas las componentes del panel
+        ((Activity)this.context).findViewById(R.id.right_panel_action_bar).setOnClickListener((new Profile(this.context)).open_profile);
     }
 
     private void InitializeComponent(){

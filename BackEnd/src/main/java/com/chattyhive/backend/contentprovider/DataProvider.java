@@ -380,7 +380,8 @@ public class DataProvider {
                 ChatProfileFormats.add(format);
             }
             if (format instanceof CHAT_LIST) {
-                ChatProfileFormats.addAll(((CHAT_LIST) format).LIST);
+                if (((CHAT_LIST) format).LIST != null)
+                    ChatProfileFormats.addAll(((CHAT_LIST) format).LIST);
             }
         }
 
