@@ -1,38 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal" android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:gravity="right">
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="48dp"
+    android:gravity="right"
+    android:background="@color/my_profile_action_bar_menu_button_background"
+    android:baselineAligned="false"
+    android:weightSum="1">
 
     <LinearLayout
-        android:orientation="vertical"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/menu_profile"
+        android:gravity="center"
+        android:layout_marginLeft="45dp"
+        android:background="@drawable/border_action_bar_dcha_izq">
+
+    <TextView
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="right"
-        android:paddingRight="3dp">
+        android:layout_height="match_parent"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/menu_private_profile_name"
+        android:textStyle="bold"
+        android:id="@+id/menu_public_private_name"
+        android:gravity="center"
+        android:textSize="14dp"
+        android:textColor="#FFFFFF"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="First Name, Last Name"
-            android:id="@+id/textView" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="  -  "
+        android:id="@+id/textView3"
+        android:textColor="#FFFFFF"
+        android:gravity="center"
+        android:textSize="12dp"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="\@username"
-            android:id="@+id/textView2"
-            android:textColor="#ff6e25" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/menu_public_profile_name"
+        android:id="@+id/menu_public_profile_name"
+        android:textColor="#FFFFFF"
+        android:gravity="center"
+        android:textSize="12dp"/>
     </LinearLayout>
 
-    <ImageView
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:id="@+id/imageView"
-        android:src="@drawable/registro_load_picture"
-        android:scaleType="centerCrop"
-        android:padding="2dp" />
+    <RelativeLayout
+        android:layout_width="45dp"
+        android:layout_height="match_parent"
+        android:id="@+id/menu_profile_photo"
+        android:background="@drawable/borde_action_bar_dcha">
+            <ImageView
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:id="@+id/menu_profile_photo_image"
+                android:src="@drawable/registro_load_picture"
+                android:padding="1.5dp" />
+        </RelativeLayout>
 </LinearLayout>
