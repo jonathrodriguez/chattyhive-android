@@ -5,7 +5,7 @@
         android:right="8.5dp">
         <shape android:shape="rectangle">
             <stroke  android:width="2px"
-                android:color="@color/menu_border_color" />
+                android:color="@color/menu_background_color" />
             <solid android:color="@android:color/transparent" />
         </shape>
     </item>

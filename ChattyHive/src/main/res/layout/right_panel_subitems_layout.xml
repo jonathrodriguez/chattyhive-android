@@ -145,8 +145,7 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:gravity="right"
-        android:background="@drawable/borde1px">
+        android:gravity="right">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="48dp"
@@ -208,7 +207,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:gravity="center_vertical"
+                android:gravity="bottom"
                 android:text="Notificaciones"
                 android:textSize="13.5dp"
                 android:textStyle="normal"
@@ -216,6 +215,8 @@
                 android:layout_gravity="center"
                 android:paddingLeft="5dp"
                 android:paddingRight="0dp"
+                android:paddingBottom="3.5dp"
+                android:layout_marginBottom="13.5dp"
                 android:background="@drawable/borde1px"/>
         </LinearLayout>
 

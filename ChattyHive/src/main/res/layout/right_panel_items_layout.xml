@@ -7,7 +7,8 @@
     android:layout_height="wrap_content"
     android:gravity="right"
     android:baselineAligned="false"
-    android:weightSum="1">
+    android:weightSum="1"
+    android:background="@drawable/borde2px">
 
     <LinearLayout
         android:id="@+id/menu_punto_expandible"

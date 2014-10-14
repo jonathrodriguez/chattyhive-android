@@ -13,22 +13,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:groupIndicator="@null"
-        android:divider="@drawable/borde2px"
+        android:divider="@null"
         android:cacheColorHint="@color/menu_background_color">
     </ExpandableListView>
 
     <!--dejar para comprobar que sube lo de abajo-->
-    <LinearLayout
-        android:id="@+id/right_panel_layout_list"
-        android:layout_width="match_parent"
-        android:layout_height="45dp">
-        <TextView
-            android:layout_height="match_parent"
-            android:layout_width="wrap_content"
-            android:id="@+id/right_panel_layout_list_notificaciones"
-            android:text="@string/right_panel_layout_list_notificaciones">
-        </TextView>
-    </LinearLayout>
+
     <!--Aquí iran dos expandable list view mas (en ppio)-->
 
     <!--LOGO CHATTYHIVE-->

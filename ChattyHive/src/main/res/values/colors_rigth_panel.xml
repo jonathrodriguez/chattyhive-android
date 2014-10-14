@@ -4,5 +4,5 @@
     <color name="menu_text_white">#FFFFFF</color>
     <color name="menu_text_yellow">#FFB615</color>
     <color name="menu_shadow">#616161</color>
-    <color name="menu_border_color">#808080</color>
+    <color name="menu_border_color">#606060</color>
 </resources>
