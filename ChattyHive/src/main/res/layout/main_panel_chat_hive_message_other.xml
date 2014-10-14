@@ -3,13 +3,14 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal" android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:background="#ffffff">
+    android:background="#ffffff"
+    android:id="@+id/main_panel_chat_item">
 
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/main_panel_chat_avatarThumbnail"
-        android:layout_gravity="center|left"
+        android:layout_gravity="center|top"
         android:src="@android:drawable/sym_def_app_icon"
         android:contentDescription="others_image"
         android:background="#ffffff" />
