@@ -13,6 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:groupIndicator="@null"
+        android:divider="@drawable/borde2px"
         android:cacheColorHint="@color/menu_background_color">
     </ExpandableListView>
 
@@ -27,16 +28,6 @@
             android:id="@+id/right_panel_layout_list_notificaciones"
             android:text="@string/right_panel_layout_list_notificaciones">
         </TextView>
-        <RelativeLayout
-            android:id="@+id/right_panel_layout_list_notificaciones_bell"
-            android:layout_width="32dp"
-            android:layout_height="match_parent">
-            <ImageView
-                android:id="@+id/right_panel_layout_list_notificaciones_bell_image"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-            </ImageView>
-        </RelativeLayout>
     </LinearLayout>
     <!--Aquí iran dos expandable list view mas (en ppio)-->
 

@@ -36,12 +36,23 @@ public class RightPanel2{
         if(listView.isGroupExpanded(0) == false) { //igual no permite cerrar. vigilar
             listView.expandGroup(0);
         }
-        img =  ((Activity)this.context).findViewById(R.id.menu_notexpanded_explora_img);
+        /*img =  ((Activity)this.context).findViewById(R.id.menu_notexpanded_explora_img);
         LinearLayout lay = (LinearLayout) ((Activity)this.context).findViewById(R.id.right_panel_items_layout);
-        if (lay!=null)
+
+        listView.setOnChildClickListener(new ExpandableListView.OnChildClickListener(){
+            public boolean onChildClick(ExpandableListView parent, View v, int
+                    groupPosition, int childPosition, long id) {
+                ((Activity)context).findViewById(R.id.menu_notexpanded_explora_img).setVisibility(View.INVISIBLE);
+                //Toast.makeText(context, "hijo pulsado de grupo y posicion " +
+                        //groupPosition + childPosition,Toast.LENGTH_LONG).show();
+                return true;
+            }
+        });*/
+
+        /*if (lay!=null)
             lay.setOnClickListener(listener);
         else
-            Log.w("Inizalice componet", "lay is null");
+            Log.w("Inizalice componet", "lay is null");*/
     }
 
         /*@Override

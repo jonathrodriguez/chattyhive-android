@@ -84,6 +84,18 @@ public class RightPanelExpandableListAdapter extends BaseExpandableListAdapter {
         if (convertView == null) {
             convertView = inflater.inflate(R.layout.right_panel_items_layout, null);
         }
+
+        if(isExpanded){
+            convertView.findViewById(R.id.menu_notexpanded_explora_img).setVisibility(View.INVISIBLE);
+            convertView.findViewById(R.id.menu_notexpanded_home_img).setVisibility(View.INVISIBLE);
+            ImageView imgv = (ImageView) convertView.findViewById(R.id.menu_flecha_imagen);
+            imgv.setImageResource(R.drawable.ic_action_next_item_down);
+        }else{
+            convertView.findViewById(R.id.menu_notexpanded_explora_img).setVisibility(View.VISIBLE);
+            convertView.findViewById(R.id.menu_notexpanded_home_img).setVisibility(View.VISIBLE);
+            ImageView imgv = (ImageView) convertView.findViewById(R.id.menu_flecha_imagen);
+            imgv.setImageResource(R.drawable.ic_action_next_item);
+        }
         /*RightPanelListItem grupo = (RightPanelListItem) getGroup(groupPosition);
         ((CheckedTextView)convertView).setText(grupo.string);
         ((CheckedTextView)convertView).setChecked(isExpanded);*/

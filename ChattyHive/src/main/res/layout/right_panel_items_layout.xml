@@ -28,7 +28,7 @@
         android:paddingBottom="2dp">
 
         <ImageView
-            android:id="@+id/menu_menu_flecha_imagen"
+            android:id="@+id/menu_flecha_imagen"
             android:layout_width="18dp"
             android:layout_height="18dp"
             android:src="@drawable/ic_action_next_item"
@@ -41,7 +41,7 @@
         android:text="Menú"
         android:textSize="16dp"
         android:gravity="left"
-        android:paddingTop="15dp"
+        android:paddingTop="12dp"
         android:paddingBottom="2dp"
         android:textColor="@color/menu_text_white"/>
     </LinearLayout>
