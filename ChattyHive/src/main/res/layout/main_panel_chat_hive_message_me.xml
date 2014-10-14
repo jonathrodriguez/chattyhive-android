@@ -3,7 +3,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal" android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:background="#fff0e4">
+    android:background="#fff0e4"
+    android:focusableInTouchMode="false"
+    android:id="@+id/main_panel_chat_item">
 
     <LinearLayout
         android:orientation="vertical"
@@ -63,7 +65,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/main_panel_chat_avatarThumbnail"
-        android:layout_gravity="center|right"
+        android:layout_gravity="right|top"
         android:src="@android:drawable/sym_def_app_icon"
         android:contentDescription="my_image"
         android:background="#fff0e4" />
