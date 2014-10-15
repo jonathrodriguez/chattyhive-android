@@ -35,6 +35,7 @@ public class PrivateProfile extends Profile {
 
 
     public PrivateProfile(Format format) {
+        this();
         if (!this.fromFormat(format)) {
             throw new IllegalArgumentException("Format not valid.");
         }
@@ -94,6 +95,7 @@ public class PrivateProfile extends Profile {
             ((BASIC_PRIVATE_PROFILE) format).LAST_NAME = this.lastName;
             ((BASIC_PRIVATE_PROFILE) format).IMAGE_URL = this.imageURL;
             ((BASIC_PRIVATE_PROFILE) format).STATUS_MESSAGE = this.statusMessage;
+            return format;
         }
 
         throw new IllegalArgumentException("Expected PRIVATE_PROFILE or BASIC_PRIVATE_PROFILE format");

@@ -1,5 +1,7 @@
 package com.chattyhive.chattyhive.framework.OSStorageProvider;
 
+import android.util.Log;
+
 import com.chattyhive.backend.contentprovider.AvailableCommands;
 import com.chattyhive.backend.contentprovider.formats.CHAT;
 import com.chattyhive.backend.contentprovider.formats.COMMON;
@@ -25,6 +27,13 @@ import java.util.Collection;
  * Created by Jonathan on 03/10/2014.
  */
 public class LocalStorage implements LocalStorageInterface {
+    private LocalStorage() {}
+    static LocalStorage instance;
+
+    public static LocalStorage getLocalStorage() {
+        if (instance == null) { instance = new LocalStorage(); }
+        return instance;
+    }
 
     @Override
     public Boolean PreRunCommand(AvailableCommands command, EventHandler<CommandCallbackEventArgs> Callback, Object CallbackAdditionalData, Format... formats) {
@@ -56,7 +65,7 @@ public class LocalStorage implements LocalStorageInterface {
                 if (result)
                     Callback.Run(this,new CommandCallbackEventArgs(command, Arrays.asList((Format)local_user_profile),null,CallbackAdditionalData));
                 break;
-            case ChatContext:   //Pull //TODO
+            case ChatInfo:   //Pull //TODO
                 result = false;
                 break;
             case ChatList:      //Pull //TODO
@@ -135,7 +144,7 @@ public class LocalStorage implements LocalStorageInterface {
                 if ((common == null) || (login == null) || (!common.STATUS.equalsIgnoreCase("OK")))
                     result = false;
                 else {
-                    LoginLocalStorage.getLoginLocalStorage().StoreLoginPassword(local_user_profile.EMAIL,login.PASS);
+                    LoginLocalStorage.getLoginLocalStorage().StoreLoginPassword(login.USER,login.PASS);
                     result = true;
                 }
                 break;
@@ -152,7 +161,7 @@ public class LocalStorage implements LocalStorageInterface {
                     result = false;
                 else {
                     UserLocalStorage.getUserLocalStorage().StoreLocalUserProfile(local_user_profile.toJSON().toString());
-                    LoginLocalStorage.getLoginLocalStorage().StoreLoginPassword(local_user_profile.EMAIL,login.PASS);
+                    LoginLocalStorage.getLoginLocalStorage().StoreLoginPassword(local_user_profile.USER_BASIC_PUBLIC_PROFILE.PUBLIC_NAME,login.PASS);
                     result = true;
                 }
                 break;
@@ -222,7 +231,7 @@ public class LocalStorage implements LocalStorageInterface {
                     result = true;
                 }
                 break;
-            case ChatContext:   //Pull //TODO
+            case ChatInfo:   //Pull //TODO
                 result = false;
                 break;
             case ChatList:      //Pull //TODO

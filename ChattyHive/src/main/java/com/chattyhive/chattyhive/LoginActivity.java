@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -107,37 +108,7 @@ public class LoginActivity extends Activity {
             emailView.setError("This field can not be blank.");
             emailView.requestFocus();
         } else {
-            if (StaticParameters.StandAlone) {
-                simulateWait(false);
-            } else {
-                this.controller.CheckEmail(email,new EventHandler<CommandCallbackEventArgs>(this,"onEmailCheckedCallback",CommandCallbackEventArgs.class));
-            }
-        }
-    }
-
-    private void simulateWait(boolean fromLogin) {
-        Thread t = new Thread() {
-            @Override
-            public void run(){
-                try {
-                    sleep(1500);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        };
-        t.start();
-        try {
-            t.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } finally {
-            if (fromLogin) {
-                setResult(RESULT_OK);
-                finish();
-            } else {
-                openRegister();
-            }
+            this.controller.CheckEmail(email,new EventHandler<CommandCallbackEventArgs>(this,"onEmailCheckedCallback",CommandCallbackEventArgs.class));
         }
     }
 
@@ -179,10 +150,6 @@ public class LoginActivity extends Activity {
             // perform the user login attempt.
             dataProvider.setUser(new ServerUser(username, password));
             dataProvider.Connect();
-
-            if (StaticParameters.StandAlone) {
-                simulateWait(true);
-            }
         }
     }
 

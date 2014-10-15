@@ -29,6 +29,7 @@ import com.chattyhive.chattyhive.Main;
 import com.chattyhive.chattyhive.framework.OSStorageProvider.CookieStore;
 import com.chattyhive.chattyhive.framework.OSStorageProvider.GroupLocalStorage;
 import com.chattyhive.chattyhive.framework.OSStorageProvider.HiveLocalStorage;
+import com.chattyhive.chattyhive.framework.OSStorageProvider.LocalStorage;
 import com.chattyhive.chattyhive.framework.OSStorageProvider.LoginLocalStorage;
 import com.chattyhive.chattyhive.framework.OSStorageProvider.MessageLocalStorage;
 import com.chattyhive.chattyhive.framework.OSStorageProvider.UserLocalStorage;
@@ -61,7 +62,7 @@ public class CHService extends Service {
         pendingMessages = 0;
         handleConnectivity();
         Controller.AppBindingEvent.add(new EventHandler<EventArgs>(this,"onAppBinding",EventArgs.class));
-        Controller.bindSvc();
+        Controller.bindSvc(com.chattyhive.chattyhive.framework.OSStorageProvider.LocalStorage.getLocalStorage());
     }
 
     @Override
@@ -78,14 +79,11 @@ public class CHService extends Service {
         Object[] LocalStorage = {LoginLocalStorage.getLoginLocalStorage(), GroupLocalStorage.getGroupLocalStorage(), HiveLocalStorage.getHiveLocalStorage(), MessageLocalStorage.getMessageLocalStorage(), UserLocalStorage.getUserLocalStorage()};
         Controller.Initialize(new CookieStore(),LocalStorage);
 
-        if ((this.controller == null) || (this.controller != Controller.GetRunningController(true))) {
+        if ((this.controller == null) || (this.controller != Controller.GetRunningController(com.chattyhive.chattyhive.framework.OSStorageProvider.LocalStorage.getLocalStorage()))) {
             this.controller = Controller.GetRunningController();
 
-            if (DataProvider.GetDataProvider() == null)
-                DataProvider.GetDataProvider(true);
-
-            DataProvider.GetDataProvider().onMessageReceived.add(new EventHandler<FormatReceivedEventArgs>(this,"onChannelEvent",FormatReceivedEventArgs.class));
-            DataProvider.GetDataProvider().PubSubConnectionStateChanged.add(new EventHandler<PubSubConnectionEventArgs>(this, "onConnectionEvent", PubSubConnectionEventArgs.class));
+            this.controller.getDataProvider().onMessageReceived.add(new EventHandler<FormatReceivedEventArgs>(this,"onChannelEvent",FormatReceivedEventArgs.class));
+            this.controller.getDataProvider().PubSubConnectionStateChanged.add(new EventHandler<PubSubConnectionEventArgs>(this, "onConnectionEvent", PubSubConnectionEventArgs.class));
         }
     }
 

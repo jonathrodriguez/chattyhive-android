@@ -32,15 +32,28 @@ public class Explore extends Activity {
         this.lastOffset = 0;
 
         this.exploreListAdapter = new ExploreListAdapter(this,this.controller.getExploreHives(),(ListView)this.findViewById(R.id.explore_list_listView));
+        ((ListView) this.findViewById(R.id.explore_list_listView)).setAdapter(this.exploreListAdapter);
 
         this.controller.ExploreHivesListChange.add(new EventHandler<EventArgs>(exploreListAdapter, "OnAddItem", EventArgs.class));
         this.controller.HiveJoined.add(new EventHandler<EventArgs>(this,"onHiveJoined",EventArgs.class));
+
+        this.findViewById(R.id.explore_action_bar_goBack_button).setOnClickListener(this.backButton);
+        this.controller.exploreHives(0,9);
     }
 
     public void GetMoreHives() {
         this.lastOffset += 9;
         this.controller.exploreHives(this.lastOffset,9);
     }
+
+    protected View.OnClickListener backButton = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (joined > 0)
+                setResult(RESULT_OK);
+            finish();
+        }
+    };
 
     protected View.OnClickListener join_button_click = new View.OnClickListener() {
         @Override
@@ -51,10 +64,15 @@ public class Explore extends Activity {
     };
 
     public void onHiveJoined(Object sender,EventArgs eventArgs) {
-        if (joined == 0)
-            ((ImageButton)findViewById(R.id.explore_action_bar_goBack_button)).setBackgroundColor(Color.GREEN);
-        joined++;
-        ((TextView)findViewById(R.id.explore_action_bar_number_text)).setText(String.valueOf(joined));
+        this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (joined == 0)
+                    ((ImageButton)findViewById(R.id.explore_action_bar_goBack_button)).setBackgroundColor(Color.GREEN);
+                joined++;
+                ((TextView)findViewById(R.id.explore_action_bar_number_text)).setText(String.valueOf(joined));
+            }
+        });
     }
 
     @Override

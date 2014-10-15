@@ -55,7 +55,7 @@
             android:layout_height="48dp"
             android:id="@+id/explore_search_text"
             android:hint="@string/explore_search_hint"
-            android:gravity="center" />
+            android:gravity="center|left" />
     </FrameLayout>
 
 

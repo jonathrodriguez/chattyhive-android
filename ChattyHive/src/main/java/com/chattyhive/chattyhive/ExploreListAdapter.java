@@ -45,13 +45,6 @@ public class ExploreListAdapter extends BaseAdapter {
 
         this.listView = listView;
         this.listView.setAdapter(this);
-
-        new Thread() {
-            @Override
-            public void run() {
-                ((Explore)context).GetMoreHives();
-            }
-        }.start();
     }
 
     @Override

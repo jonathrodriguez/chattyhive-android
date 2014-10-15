@@ -2,6 +2,7 @@ package com.chattyhive.backend.util.formatters;
 
 import java.text.SimpleDateFormat;
 import java.text.ParseException;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
@@ -95,7 +96,11 @@ public final class DateFormatter {
     }
 
     public static final String getUserAge(Date birthday) {
-        return (new SimpleDateFormat("y")).format(new Date((new Date()).getTime() - birthday.getTime()));
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis((new Date()).getTime() - birthday.getTime());
+        Calendar ref = Calendar.getInstance();
+        ref.setTimeInMillis(0);
+        return String.valueOf(cal.get(Calendar.YEAR) - ref.get(Calendar.YEAR));
     }
 }
 

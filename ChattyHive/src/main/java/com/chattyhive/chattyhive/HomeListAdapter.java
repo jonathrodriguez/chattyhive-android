@@ -40,7 +40,6 @@ public class HomeListAdapter extends BaseAdapter {
         this.controller = ((Main)this.context).controller;
 
         this.controller.HomeReceived.add(new EventHandler<EventArgs>(this,"onHomeChanged",EventArgs.class));
-        ((ListView)((Activity)this.context).findViewById(R.id.left_panel_element_list)).setAdapter(this);
     }
 
     public void onHomeChanged(Object sender, EventArgs eventArgs) {
@@ -183,8 +182,12 @@ public class HomeListAdapter extends BaseAdapter {
         private void updateUserName(HiveMessageCard hc) {
             if (hc == null) return;
             if (this.UserName != null) {
-                this.UserName.setText(hc.getMessage().getUser().getUserPublicProfile().getShowingName());
-                this.UserName.setTextColor(Color.parseColor(hc.getMessage().getUser().getUserPublicProfile().getColor()));
+                try {
+                    this.UserName.setText(hc.getMessage().getUser().getUserPublicProfile().getShowingName());
+                    this.UserName.setTextColor(Color.parseColor(hc.getMessage().getUser().getUserPublicProfile().getColor()));
+                } catch (Exception e) {
+
+                }
             }
         }
 

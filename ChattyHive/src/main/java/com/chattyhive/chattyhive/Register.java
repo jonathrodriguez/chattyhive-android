@@ -39,12 +39,16 @@ public class Register extends Activity {
 
     private Register thisActivity;
 
+    private Controller controller;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.register);
 
         this.thisActivity = this;
+
+        this.controller = Controller.GetRunningController();
 
         this.layout = ((SlidingStepsLayout)findViewById(R.id.slidingsteps));
         this.layout.setOnInflateLayoutListener(onInflateLayoutListener);
@@ -56,7 +60,7 @@ public class Register extends Activity {
         String email = intent.getStringExtra("email");
         String proposedUsername = intent.getStringExtra("username");
 
-        this.newUser = new User(email);
+        this.newUser = new User(email,this.controller);
         this.newUser.getUserPublicProfile().setPublicName(proposedUsername);
         this.newUser.getUserPrivateProfile().setSex("female"); //Load default value.
     }
@@ -64,16 +68,12 @@ public class Register extends Activity {
     public View.OnClickListener onEnterButtonClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (StaticParameters.StandAlone) {
-                setResult(RESULT_OK);
-                finish();
-            } else {
                 TextView emailView = (TextView)findViewById(R.id.register_third_step_email);
                 TextView passwordView = (TextView)findViewById(R.id.register_third_step_password);
                 TextView repeatPasswordView = (TextView)findViewById(R.id.register_third_step_repeat_password);
 
                 if (!emailView.getText().toString().equalsIgnoreCase(newUser.getEmail())) {
-                    Controller.GetRunningController().CheckEmail(emailView.getText().toString(), new EventHandler<CommandCallbackEventArgs>(this, "onEmailCheckedCallback", CommandCallbackEventArgs.class));
+                    controller.CheckEmail(emailView.getText().toString(), new EventHandler<CommandCallbackEventArgs>(this, "onEmailCheckedCallback", CommandCallbackEventArgs.class));
                 }
 
                 if (passwordIsValid(passwordView)) {
@@ -85,7 +85,6 @@ public class Register extends Activity {
                     }
                 }
             }
-        }
     };
 
     private boolean passwordIsValid(TextView passwordView) {
@@ -232,7 +231,7 @@ public class Register extends Activity {
                     break;
                 case 1:
                     if ((nextStep == 2) && (!usernameValidated) && (!newUser.getUserPublicProfile().getPublicName().equals(((TextView)findViewById(R.id.register_second_step_username)).getText().toString()))) {
-                        Controller.GetRunningController().CheckUsername(((TextView)findViewById(R.id.register_second_step_username)).getText().toString(),new EventHandler<CommandCallbackEventArgs>(thisActivity,"onUsernameCheckedCallback",CommandCallbackEventArgs.class));
+                        controller.CheckUsername(((TextView)findViewById(R.id.register_second_step_username)).getText().toString(),new EventHandler<CommandCallbackEventArgs>(thisActivity,"onUsernameCheckedCallback",CommandCallbackEventArgs.class));
                     }
                     break;
             }
@@ -270,6 +269,7 @@ public class Register extends Activity {
     public void onRegisterCallback(Object sender,CommandCallbackEventArgs eventArgs) {
         for(Format receivedFormat : eventArgs.getReceivedFormats())
             if ((receivedFormat instanceof COMMON) && (((COMMON) receivedFormat).STATUS.equalsIgnoreCase("OK"))) {
+                this.controller.setMe(this.newUser);
                 setResult(RESULT_OK);
                 finish();
             }

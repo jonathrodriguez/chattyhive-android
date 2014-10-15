@@ -3,6 +3,7 @@ package com.chattyhive.chattyhive;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +23,7 @@ import com.chattyhive.backend.contentprovider.server.ServerCommand;
 import com.chattyhive.backend.util.events.EventArgs;
 import com.chattyhive.backend.util.formatters.DateFormatter;
 import com.chattyhive.backend.util.formatters.TimestampFormatter;
+import com.chattyhive.chattyhive.framework.Util.StaticMethods;
 
 import java.util.Date;
 
@@ -58,6 +60,7 @@ public class ChatListAdapter extends BaseAdapter {
     @Override
     public int getItemViewType(int position) {
         Message m = this.channelChat.getMessageByIndex(position);
+
         if (m.getUser() == null) {
             if (m.getMessageContent().getContentType().equalsIgnoreCase("DATE_SEPARATOR"))
                 return context.getResources().getInteger(R.integer.MainPanelChat_ListKind_DateSeparator);
@@ -66,6 +69,7 @@ public class ChatListAdapter extends BaseAdapter {
             else
                 return context.getResources().getInteger(R.integer.MainPanelChat_ListKind_None);
         }
+
         return (((m.getUser() != null) && (m.getUser().isMe()))?context.getResources().getInteger(R.integer.MainPanelChat_ListKind_Me):context.getResources().getInteger(R.integer.MainPanelChat_ListKind_Other));
     }
 
@@ -97,10 +101,12 @@ public class ChatListAdapter extends BaseAdapter {
         Boolean isMessage = false;
         Boolean isHoleMarker = false;
 
-        if(convertView==null){
+        if (convertView==null) {
             holder = new ViewHolder();
             switch (chatKind) {
                 case HIVE:
+                case PUBLIC_GROUP:
+                case PRIVATE_GROUP:
                     if (type == context.getResources().getInteger(R.integer.MainPanelChat_ListKind_Me)) {
                         convertView = this.inflater.inflate(R.layout.main_panel_chat_hive_message_me, parent, false);
                         isMessage = true;
@@ -123,6 +129,7 @@ public class ChatListAdapter extends BaseAdapter {
                         holder.messageText = (TextView) convertView.findViewById(R.id.main_panel_chat_messageText);
                         holder.avatarThumbnail = (ImageView) convertView.findViewById(R.id.main_panel_chat_avatarThumbnail);
                         holder.timeStamp = (TextView) convertView.findViewById(R.id.main_panel_chat_timeStamp);
+                        holder.chatItem = convertView.findViewById(R.id.main_panel_chat_item);
                     }
                     break;
                 case PUBLIC_SINGLE:
@@ -147,6 +154,7 @@ public class ChatListAdapter extends BaseAdapter {
                     if (isMessage) {
                         holder.messageText = (TextView) convertView.findViewById(R.id.main_panel_chat_single_message_messageText);
                         holder.timeStamp = (TextView) convertView.findViewById(R.id.main_panel_chat_single_message_timeStamp);
+                        holder.chatItem = convertView.findViewById(R.id.main_panel_chat_item);
                     }
                     break;
                 default:
@@ -157,6 +165,12 @@ public class ChatListAdapter extends BaseAdapter {
             convertView.setTag(R.id.MainPanelChat_ListViewHolder,holder);
         } else {
             holder = (ViewHolder)convertView.getTag(R.id.MainPanelChat_ListViewHolder);
+            isMessage = ((type == context.getResources().getInteger(R.integer.MainPanelChat_ListKind_Me)) || (type == context.getResources().getInteger(R.integer.MainPanelChat_ListKind_Other)));
+            isHoleMarker = (type == context.getResources().getInteger(R.integer.MainPanelChat_ListKind_HoleSeparator));
+            if ((type != context.getResources().getInteger(R.integer.MainPanelChat_ListKind_DateSeparator)) && (!isMessage) && (!isHoleMarker)) {
+                Log.e("ChatListAdapter.getView()","Incompatible type!");
+                return null;
+            }
         }
 
         Message message = this.channelChat.getMessageByIndex(position);
@@ -179,15 +193,22 @@ public class ChatListAdapter extends BaseAdapter {
             else if (message.getTimeStamp() != null)
                 holder.timeStamp.setText(TimestampFormatter.toLocaleString(message.getTimeStamp()));
             else*/
+            if (message.getOrdinationTimeStamp() != null)
+                holder.timeStamp.setText(TimestampFormatter.toLocaleString(message.getOrdinationTimeStamp()));
+            else
                 holder.timeStamp.setText(TimestampFormatter.toLocaleString(new Date()));
+
             if (message.getUser().isMe()) {
                 if (((this.chatKind == GroupKind.PRIVATE_SINGLE) || (this.chatKind == GroupKind.PUBLIC_SINGLE)) && (message.getConfirmed())) {
+                    StaticMethods.SetAlpha(holder.chatItem,1f);
                     holder.timeStamp.setCompoundDrawablesWithIntrinsicBounds(0,0,R.drawable.abc_ic_cab_done_holo_light,0);
                 } else if (message.getId() != null) {
-                    //holder.timeStamp.setCompoundDrawablesWithIntrinsicBounds(0,0,0,0);
+                    StaticMethods.SetAlpha(holder.chatItem,1f);
                 } else {
-                    holder.timeStamp.setCompoundDrawablesWithIntrinsicBounds(0,0,R.drawable.pestanha_hives_historial,0);
+                    StaticMethods.SetAlpha(holder.chatItem,0.5f);
                 }
+            } else {
+                StaticMethods.SetAlpha(holder.chatItem,1f);
             }
         } else if (!isHoleMarker) {
             if (message.getTimeStamp() != null)
@@ -196,13 +217,13 @@ public class ChatListAdapter extends BaseAdapter {
                 holder.timeStamp.setText(DateFormatter.toHumanReadableString(new Date()));
         } else {
             holder.messageText.setText(String.format("Loading %s messages...",message.getMessageContent().getContent()));
-            holder.messageText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.menu_new_hive_blanco,0,0,0);
             message.FillMessageHole(this.channelChat.getMessageByIndex(position+1).getId());
         }
         return convertView;
     }
 
     private static class ViewHolder {
+        public View chatItem;
         public TextView username;
         public TextView messageText;
         public TextView timeStamp;

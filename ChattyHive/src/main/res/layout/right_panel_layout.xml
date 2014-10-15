@@ -1,48 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+    android:id="@+id/right_panel_linear_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#000000"
-    android:gravity="right"
-    android:layout_gravity="right">
+    android:background="@color/menu_background_color"
+    android:orientation="vertical">
 
-    <Button
-        android:layout_width="wrap_content"
+    <!--menu desplegable-->
+    <ExpandableListView
+        android:id="@+id/right_panel_expandable_list"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="explore"
-        android:id="@+id/temp_explore_button"
-        style="@android:style/Widget.Button" />
+        android:groupIndicator="@null"
+        android:divider="@null"
+        android:cacheColorHint="@color/menu_background_color">
+    </ExpandableListView>
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Profile"
-        android:id="@+id/temp_profile_button"
-        android:layout_gravity="right"
-        style="@android:style/Widget.Button" />
+    <!--dejar para comprobar que sube lo de abajo-->
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Chat Sync"
-        android:id="@+id/temp_chat_sync_button"
-        android:singleLine="false" />
+    <!--Aquí iran dos expandable list view mas (en ppio)-->
 
-    <Button
-        style="@android:style/Widget.Button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Logout"
-        android:id="@+id/temp_logout_button"
-        android:layout_gravity="right" />
+    <!--LOGO CHATTYHIVE-->
 
-    <Button
-        style="@android:style/Widget.Button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Clear chats"
-        android:id="@+id/temp_clear_chats_button"
-        android:layout_gravity="right" />
 </LinearLayout>
