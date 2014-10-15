@@ -67,7 +67,8 @@ public class Profile {
             ((TextView) profileView.findViewById(R.id.my_profile_full_name)).setText(String.format("%s %s",me.getUserPrivateProfile().getFirstName(),me.getUserPrivateProfile().getLastName()));
 
             ((TextView) profileView.findViewById(R.id.my_profile_public_name)).setText(String.format("@%s",me.getUserPublicProfile().getPublicName()));
-            ((TextView) profileView.findViewById(R.id.my_profile_public_name)).setTextColor(Color.parseColor(me.getUserPublicProfile().getColor()));
+            if (me.getUserPublicProfile().getColor() != null)
+                ((TextView) profileView.findViewById(R.id.my_profile_public_name)).setTextColor(Color.parseColor(me.getUserPublicProfile().getColor()));
 
             if (me.getUserPrivateProfile().getSex().equalsIgnoreCase("male"))
                 ((TextView) profileView.findViewById(R.id.my_profile_information_gender)).setText(R.string.my_profile_information_gender_male_value);
@@ -84,11 +85,10 @@ public class Profile {
 
             String Language = "";
             ArrayList<String> Languages = me.getUserPrivateProfile().getLanguages();
-            Iterator<String> iterator = Languages.iterator();
-            if (iterator.hasNext())
-                Language = iterator.next();
-            while (iterator.hasNext())
-                Language = Language.concat("; ").concat(iterator.next());
+            if (Languages != null)
+                for (String lang : Languages)
+                    Language += ((Language.isEmpty())?"":"; ") + lang;
+
             ((TextView) profileView.findViewById(R.id.my_profile_information_languages)).setText(Language);
             ((ImageView)profileView.findViewById(R.id.my_profile_information_languages_show)).setImageResource(getImageResourceToShowInProfile(ShowInProfile.Both));
 

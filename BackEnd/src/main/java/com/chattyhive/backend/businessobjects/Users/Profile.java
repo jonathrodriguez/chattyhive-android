@@ -111,7 +111,7 @@ public abstract class Profile {
         return this.language;
     }
     public void setLanguages(Collection<String> value) {
-        this.language = new ArrayList<String>(value);
+        this.language = (value != null)?new ArrayList<String>(value):null;
     }
     /*****************************************************************/
 

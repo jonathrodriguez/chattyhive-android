@@ -362,7 +362,8 @@ public class StandAloneServer {
         user.getUserPublicProfile().setColor(color);
         user.getUserPublicProfile().setBirthdate(DateFormatter.fromShortHumanReadableString(birthdate));
         user.getUserPublicProfile().setLocation(location);
-        user.getUserPublicProfile().setLanguages(Arrays.asList(languages));
+        if (languages != null)
+            user.getUserPublicProfile().setLanguages(Arrays.asList(languages));
         user.getUserPublicProfile().setSex(sex);
         user.getUserPublicProfile().setID(user.getUserID());
         user.getUserPrivateProfile().setLanguages(user.getUserPublicProfile().getLanguages());
@@ -645,7 +646,11 @@ public class StandAloneServer {
                         common.ERROR = (LoginUser.containsKey(local_user_profile.USER_BASIC_PUBLIC_PROFILE.PUBLIC_NAME))?-3:-4;
                     } else {
                         //Register OK
-                        User user = createUser(local_user_profile.EMAIL,local_user_profile.USER_BASIC_PRIVATE_PROFILE.FIRST_NAME,local_user_profile.USER_BASIC_PRIVATE_PROFILE.LAST_NAME,local_user_profile.USER_BASIC_PUBLIC_PROFILE.PUBLIC_NAME,"#808080",DateFormatter.toShortHumanReadableString(local_user_profile.USER_PRIVATE_PROFILE.BIRTHDATE),local_user_profile.USER_PRIVATE_PROFILE.LOCATION,local_user_profile.USER_PRIVATE_PROFILE.SEX,local_user_profile.USER_PRIVATE_PROFILE.PRIVATE_SHOW_AGE,local_user_profile.USER_PUBLIC_PROFILE.PUBLIC_SHOW_AGE,local_user_profile.USER_PUBLIC_PROFILE.PUBLIC_SHOW_SEX,local_user_profile.USER_PUBLIC_PROFILE.PUBLIC_SHOW_LOCATION,local_user_profile.USER_PRIVATE_PROFILE.LANGUAGE.toArray(new String[local_user_profile.USER_PRIVATE_PROFILE.LANGUAGE.size()]));
+                        String[] languages = null;
+                        if (local_user_profile.USER_PRIVATE_PROFILE.LANGUAGE != null)
+                            languages = local_user_profile.USER_PRIVATE_PROFILE.LANGUAGE.toArray(new String[local_user_profile.USER_PRIVATE_PROFILE.LANGUAGE.size()]);
+
+                        User user = createUser(local_user_profile.EMAIL,local_user_profile.USER_BASIC_PRIVATE_PROFILE.FIRST_NAME,local_user_profile.USER_BASIC_PRIVATE_PROFILE.LAST_NAME,local_user_profile.USER_BASIC_PUBLIC_PROFILE.PUBLIC_NAME,"#808080",DateFormatter.toShortHumanReadableString(local_user_profile.USER_PRIVATE_PROFILE.BIRTHDATE),local_user_profile.USER_PRIVATE_PROFILE.LOCATION,local_user_profile.USER_PRIVATE_PROFILE.SEX,local_user_profile.USER_PRIVATE_PROFILE.PRIVATE_SHOW_AGE,local_user_profile.USER_PUBLIC_PROFILE.PUBLIC_SHOW_AGE,local_user_profile.USER_PUBLIC_PROFILE.PUBLIC_SHOW_SEX,local_user_profile.USER_PUBLIC_PROFILE.PUBLIC_SHOW_LOCATION,languages);
                         LoginUser.put(user.getUserPublicProfile().getPublicName(), user);
                         LoginPassword.put(user.getEmail(), local_user_profile.PASS);
 
@@ -787,7 +792,9 @@ public class StandAloneServer {
                     userHives = UserHiveSubscriptions.get(user.getUserID());
 
                 ArrayList<String> allHives = new ArrayList<String>(Hives.keySet());
-                allHives.removeAll(userHives);
+
+                if (userHives != null)
+                    allHives.removeAll(userHives);
 
                 ArrayList<Hive> resultSet = new ArrayList<Hive>();
                 for (String hiveKey : allHives)

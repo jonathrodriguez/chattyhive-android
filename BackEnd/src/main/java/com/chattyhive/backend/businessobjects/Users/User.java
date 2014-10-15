@@ -139,9 +139,14 @@ public class User {
         LOGIN login = new LOGIN();
         login.USER = this.email;
         login.PASS = password;
+        this.userPrivateProfile.loadedProfileLevel = ProfileLevel.Complete;
+        this.userPublicProfile.loadedProfileLevel = ProfileLevel.Complete;
+        this.userID = this.userPublicProfile.getPublicName();
+        this.userPublicProfile.userID = this.userID;
+        this.userPrivateProfile.userID = this.userID;
         LOCAL_USER_PROFILE lup = (LOCAL_USER_PROFILE)this.toFormat(new LOCAL_USER_PROFILE());
         lup.PASS = password;
-        this.controller.getDataProvider().InvokeServerCommand(AvailableCommands.Register,Callback,lup,login);
+        this.controller.getDataProvider().RunCommand(AvailableCommands.Register,Callback,lup,login);
     }
     public void EditProfile(EventHandler<CommandCallbackEventArgs> Callback) {
         //this.controller.getDataProvider().InvokeServerCommand(ServerCommand.AvailableCommands.UpdateProfile,Callback,this.toFormat(new LOCAL_USER_PROFILE()));
@@ -261,12 +266,12 @@ public class User {
 
             if ((((USER_PROFILE) format).USER_BASIC_PRIVATE_PROFILE != null) && (this.userPrivateProfile == null))
                 this.userPrivateProfile = new PrivateProfile(((USER_PROFILE) format).USER_BASIC_PRIVATE_PROFILE);
-            else if ((((USER_PROFILE) format).USER_BASIC_PRIVATE_PROFILE != null) && (this.userPublicProfile != null))
+            else if ((((USER_PROFILE) format).USER_BASIC_PRIVATE_PROFILE != null) && (this.userPrivateProfile != null))
                 this.userPrivateProfile.fromFormat(((USER_PROFILE) format).USER_BASIC_PRIVATE_PROFILE);
 
             if ((((USER_PROFILE) format).USER_PRIVATE_PROFILE != null) && (this.userPrivateProfile == null))
                 this.userPrivateProfile = new PrivateProfile(((USER_PROFILE) format).USER_PRIVATE_PROFILE);
-            else if ((((USER_PROFILE) format).USER_PRIVATE_PROFILE != null) && (this.userPublicProfile != null))
+            else if ((((USER_PROFILE) format).USER_PRIVATE_PROFILE != null) && (this.userPrivateProfile != null))
                 this.userPrivateProfile.fromFormat(((USER_PROFILE) format).USER_PRIVATE_PROFILE);
 
             if (this.userPublicProfile != null)
