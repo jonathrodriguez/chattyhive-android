@@ -2,9 +2,9 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/right_panel_items_layout"
-    android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:orientation="horizontal"
     android:gravity="right"
     android:baselineAligned="false"
     android:weightSum="1"
@@ -17,7 +17,7 @@
         android:layout_marginLeft="84dp"
         android:gravity="left"
         android:orientation="horizontal">
-        <!--   el margen variará  COMO???? hace falta?  -->
+
     <RelativeLayout
         android:id="@+id/menu_menu_flecha"
         android:layout_height="wrap_content"
@@ -79,13 +79,5 @@
             android:src="@drawable/home"/>
         </RelativeLayout>
         </LinearLayout>
+</LinearLayout>
 
-    </LinearLayout>
-<!--
-
-    android:gravity="left"
-    android:text="Test"
-    android:textSize="32px"
-    android:drawableLeft="@drawable/ic_action_next_item"
-    android:textStyle="normal"
-    android:textColor="@color/menu_text_white"-->

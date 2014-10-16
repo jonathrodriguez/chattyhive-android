@@ -91,6 +91,8 @@ public class Main extends Activity {
         else {
             this.home.Reload();
         }
+        if (floatingPanel.isOpen())
+            floatingPanel.close();
     }
 
     protected void ShowChats() {
