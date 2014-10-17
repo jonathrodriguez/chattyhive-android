@@ -569,6 +569,9 @@ public class DataProvider {
 
             if (Callback.getCommand() == AvailableCommands.Register)
                 this.ProcessRegistration(Callback);
+
+            if (Callback.getCommand() == AvailableCommands.UpdateProfile)
+                this.localStorage.PreRunCommand(AvailableCommands.LocalProfile,new EventHandler<CommandCallbackEventArgs>(this.controller.getMe(),"loadCallback",CommandCallbackEventArgs.class),null,null);
         }
         try {
             if (commandData.getCallback() != null)

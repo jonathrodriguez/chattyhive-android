@@ -148,8 +148,8 @@ public class User {
         lup.PASS = password;
         this.controller.getDataProvider().RunCommand(AvailableCommands.Register,Callback,lup,login);
     }
-    public void EditProfile(EventHandler<CommandCallbackEventArgs> Callback) {
-        //this.controller.getDataProvider().InvokeServerCommand(ServerCommand.AvailableCommands.UpdateProfile,Callback,this.toFormat(new LOCAL_USER_PROFILE()));
+    public void EditProfile(EventHandler<CommandCallbackEventArgs> Callback,User newUser) {
+        this.controller.getDataProvider().RunCommand(AvailableCommands.UpdateProfile,Callback,newUser.toFormat(new LOCAL_USER_PROFILE()));
     }
 
     public void loadProfile(ProfileType profileType, ProfileLevel profileLevel) {
