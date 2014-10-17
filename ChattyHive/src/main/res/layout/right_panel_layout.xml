@@ -17,10 +17,6 @@
         android:cacheColorHint="@color/menu_background_color">
     </ExpandableListView>
 
-    <!--dejar para comprobar que sube lo de abajo-->
-
-    <!--Aquí iran dos expandable list view mas (en ppio)-->
-
     <!--LOGO CHATTYHIVE-->
 
 </LinearLayout>

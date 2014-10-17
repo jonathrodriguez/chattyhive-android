@@ -4,6 +4,7 @@
     <string name="menu_public_profile_name"> \@sandritis86</string>
     <string name="right_panel_layout_list_notificaciones">Notificaciones</string>
     <string name="right_panel_layout_list">Invitar, ajustes y otros</string>
-    <string name="menu_num_request">10</string>
+    <string name="menu_num_request">100</string>
     <string name="menu_num_chats">10</string>
+    <string name="menu_hive_name">Minecraft - A game about building any...</string>
 </resources>
