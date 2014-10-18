@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/right_panel_subitems_hive"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/menu_context_hive">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="85dp"
+        android:orientation="horizontal">
+
+        <RelativeLayout
+            android:layout_width="87.5dp"
+            android:layout_height="match_parent">
+            <ImageView
+                android:layout_width="61.5dp"
+                android:layout_height="61.5dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="10dp"
+                android:src="@drawable/registro_load_picture"/>
+            </RelativeLayout>
+        <TextView
+            android:layout_marginTop="25dp"
+            android:layout_marginRight="45dp"
+            android:layout_width="wrap_content"
+            android:layout_height="55.5dp"
+            android:text="@string/menu_hive_description"
+            android:textColor="@color/menu_text_white"
+            android:textSize="13.5dp"
+            android:lineSpacingExtra="2.5dp"/>
+        </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="47dp"
+        android:orientation="horizontal"
+        android:gravity="right">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="Normas de comportamiento"
+            android:textSize="16dp"
+            android:layout_marginRight="5dp"
+            android:textColor="@color/menu_text_white"/>
+        <RelativeLayout
+            android:layout_width="45dp"
+            android:layout_height="match_parent">
+            <ImageView
+                android:layout_marginTop="7.5dp"
+                android:layout_marginBottom="7.5dp"
+                android:layout_marginRight="13dp"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/contextos_hive_chat_rules_orange"/>
+            </RelativeLayout>
+        
+        </LinearLayout>
+</LinearLayout>

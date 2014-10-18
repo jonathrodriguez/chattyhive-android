@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/menu_subitems_options"
+    android:id="@+id/right_panel_subitems_options"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -12,8 +12,7 @@
         android:id="@+id/options_invite"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:orientation="horizontal"
-        android:background="@drawable/borde1px">
+        android:orientation="horizontal">
         <RelativeLayout
             android:layout_width="54dp"
             android:layout_height="match_parent"
@@ -42,8 +41,7 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:gravity="right"
-        android:background="@drawable/borde1px">
+        android:gravity="right">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="48dp"
@@ -76,8 +74,7 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:gravity="right"
-        android:background="@drawable/borde1px">
+        android:gravity="right">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="48dp"

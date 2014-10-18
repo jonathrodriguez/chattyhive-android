@@ -6,5 +6,6 @@
     <string name="right_panel_layout_list">Invitar, ajustes y otros</string>
     <string name="menu_num_request">100</string>
     <string name="menu_num_chats">10</string>
-    <string name="menu_hive_name">Minecraft - A game about building any...</string>
+    <string name="menu_hive_name">:Minecraft - A game about building any...</string>
+    <string name="menu_hive_description">"This is a topic to discuss about Notch's game. Noew, maps... For support and reporting problems..."</string>
 </resources>

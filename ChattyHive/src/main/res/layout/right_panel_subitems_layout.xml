@@ -203,7 +203,7 @@
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:orientation="horizontal"
-            android:layout_marginLeft="37dp">
+            android:layout_marginLeft="35dp">
 
             <TextView
                 android:layout_width="match_parent"
@@ -218,7 +218,8 @@
                 android:paddingRight="0dp"
                 android:paddingBottom="3.5dp"
                 android:layout_marginBottom="13.5dp"
-                android:background="@drawable/borde1px"/>
+                android:background="@drawable/borde1px"
+                android:layout_marginRight="7dp"/>
         </LinearLayout>
 
         <RelativeLayout
