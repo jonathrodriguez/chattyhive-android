@@ -21,6 +21,14 @@
         <attr name="centerMainPanelRightVisibleWidth" format="dimension" />
         <attr name="centerActionBarRightVisibleWidth" format="dimension" />
 
+        <attr name="fixLeftPanel" format="boolean"/>
+        <attr name="fixedLeftPanelWidth" format="dimension"/>
+
+        <attr name="maxLeftPanelWidth" format="dimension"/>
+        <attr name="maxRightPanelWidth" format="dimension"/>
+
+        <attr name="allowSwipeToMovePanels" format="boolean"/>
+
         <attr name="maxAnimationDuration" format="integer" />
         <attr name="buttonPressedAnimationDuration" format="integer" />
 

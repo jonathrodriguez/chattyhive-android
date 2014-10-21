@@ -133,6 +133,16 @@
     <!-- _____________________________________________________________________ -->
 
     <!-- EDIT PROFILE:  Action Bar dimensions -->
+    <dimen name="edit_profile_action_bar_type_button_top_padding">8.5dp</dimen>
+    <dimen name="edit_profile_action_bar_type_button_bottom_padding">11.5dp</dimen>
+    <dimen name="edit_profile_action_bar_type_button_text_size">18.66sp</dimen>
+    <dimen name="edit_profile_action_bar_type_button_image_text_separation">7.75dp</dimen>
+    <dimen name="edit_profile_action_bar_type_button_selected_marker_thick">4dp</dimen>
+    <dimen name="edit_profile_action_bar_button_border_thick">1px</dimen>
+    <dimen name="edit_profile_action_bar_accept_button_left_padding">0dp</dimen>
+    <dimen name="edit_profile_action_bar_accept_button_top_padding">0dp</dimen>
+    <dimen name="edit_profile_action_bar_accept_button_right_padding">0dp</dimen>
+    <dimen name="edit_profile_action_bar_accept_button_bottom_padding">0dp</dimen>
 
     <!-- _____________________________________________________________________ -->
     <!-- EDIT PROFILE:  Main panel dimensions -->

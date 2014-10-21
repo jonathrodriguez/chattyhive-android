@@ -14,6 +14,7 @@ public enum AvailableCommands {
     SendMessage,
     GetMessages,
     LocalProfile,
+    UpdateProfile,
     ChatInfo,
     ChatList,
     UserProfile,

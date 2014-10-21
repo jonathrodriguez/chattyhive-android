@@ -461,6 +461,7 @@ public class Controller {
 
     private void InitializeUsers() {
         this.knownUsers = new TreeMap<String, User>();
+        this.LocalUserReceived = new Event<EventArgs>();
     }
     private User getUser(String userID,Format format) {
         if (this.knownUsers == null) throw new IllegalStateException("Users must be initialized.");
@@ -529,6 +530,10 @@ public class Controller {
             }
             else
                 this.me = new User(format, this);
+
+            if (LocalUserReceived != null)
+                LocalUserReceived.fire(this,EventArgs.Empty());
+
         } else if (format instanceof USER_PROFILE) {
             if (userID == null) throw new NullPointerException("UserID must not be null.");
             else if (userID.isEmpty()) throw new IllegalArgumentException("UserID must not be empty.");
@@ -549,8 +554,12 @@ public class Controller {
             this.knownUsers.put(((User) sender).getUserID(), (User) sender);
         } else if (sender != this.me) {
             this.me = (User)sender;
+            if (LocalUserReceived != null)
+                LocalUserReceived.fire(this,EventArgs.Empty());
         }
     }
+
+    public Event<EventArgs> LocalUserReceived;
 
     public void unloadUserProfiles() {
         for (User user : this.knownUsers.values())
@@ -558,6 +567,9 @@ public class Controller {
     }
     public User getMe() {
         return this.me;
+    }
+    public void setMe(User me) {
+        this.me = me;
     }
 
     /*******************************************************************************************/

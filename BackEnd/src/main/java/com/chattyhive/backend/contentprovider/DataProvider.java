@@ -566,12 +566,34 @@ public class DataProvider {
                 this.localStorage.PostRunCommand(Callback.getCommand(), formats.toArray(new Format[formats.size()]));
             } else
                 System.out.println("LocalStorage is NULL");
+
+            if (Callback.getCommand() == AvailableCommands.Register)
+                this.ProcessRegistration(Callback);
+
+            if (Callback.getCommand() == AvailableCommands.UpdateProfile)
+                this.localStorage.PreRunCommand(AvailableCommands.LocalProfile,new EventHandler<CommandCallbackEventArgs>(this.controller.getMe(),"loadCallback",CommandCallbackEventArgs.class),null,null);
         }
         try {
             if (commandData.getCallback() != null)
                 commandData.getCallback().Invoke(sender, Callback);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    private void ProcessRegistration(CommandCallbackEventArgs Callback) {
+        COMMON common = null;
+        LOCAL_USER_PROFILE lup = null;
+        for (Format format : Callback.getReceivedFormats())
+            if (format instanceof COMMON)
+                common = (COMMON) format;
+
+        for (Format format : Callback.getSentFormats())
+            if (format instanceof LOCAL_USER_PROFILE)
+                lup = (LOCAL_USER_PROFILE) format;
+
+        if ((common != null) && (lup != null) && (common.STATUS.equalsIgnoreCase("OK"))) {
+            this.setUser(new ServerUser(lup.USER_BASIC_PUBLIC_PROFILE.PUBLIC_NAME,lup.PASS));
         }
     }
 

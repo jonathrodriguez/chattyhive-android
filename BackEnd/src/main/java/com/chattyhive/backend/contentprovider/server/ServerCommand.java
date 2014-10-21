@@ -182,6 +182,16 @@ public class ServerCommand {
         returningCookies = null;
         ServerCommand.AddServerCommand(command,method,commandType,url,paramFormats,inputFormats,requiredCookies,returningCookies);
 
+        // UpdateProfile
+        command = AvailableCommands.UpdateProfile;
+        method = Method.POST;
+        commandType = CommandType.ImmediateResponsePush;
+        url = "android.update_local_user_profile/";
+        paramFormats = null;
+        inputFormats = new ArrayList<Class<?>>() {{add(LOCAL_USER_PROFILE.class);}};
+        requiredCookies = new ArrayList<String>() {{add(CSRFTokenCookie); add(SessionCookie);}};
+        returningCookies = null;
+        ServerCommand.AddServerCommand(command,method,commandType,url,paramFormats,inputFormats,requiredCookies,returningCookies);
 
         // ChatInfo
         command = AvailableCommands.ChatInfo;

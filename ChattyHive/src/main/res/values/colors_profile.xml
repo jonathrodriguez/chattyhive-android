@@ -45,6 +45,13 @@
 
     <!-- EDIT PROFILE:  Action Bar colors -->
 
+    <color name="edit_profile_action_bar_background">#ffffff</color>
+    <color name="edit_profile_action_bar_button_border">#C0C0C0</color>
+    <color name="edit_profile_action_bar_type_button_marker">#404040</color>
+    <color name="edit_profile_action_bar_type_button_text">#000</color>
+    <item name="edit_profile_action_bar_type_button_unselected_alpha" format="float" type="color">0.5</item>
+    <item name="edit_profile_action_bar_type_button_selected_alpha" format="float" type="color">0.2</item>
+
     <!-- _____________________________________________________________________ -->
     <!-- EDIT PROFILE:  Main panel colors -->
 

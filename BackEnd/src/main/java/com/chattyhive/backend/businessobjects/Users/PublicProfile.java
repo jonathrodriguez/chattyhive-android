@@ -24,6 +24,8 @@ public class PublicProfile extends Profile {
     }
 
     public String getColor() {
+        if (this.color == null)
+            this.color = "#808080";
         return this.color;
     }
     public void setColor(String value) {
