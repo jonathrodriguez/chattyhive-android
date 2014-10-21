@@ -147,6 +147,17 @@
     <!-- _____________________________________________________________________ -->
     <!-- EDIT PROFILE:  Main panel dimensions -->
 
+    <dimen name="edit_profile_privacy_note_left_padding">4dp</dimen>
+    <dimen name="edit_profile_privacy_note_top_padding">6.5dp</dimen>
+    <dimen name="edit_profile_privacy_note_right_padding">4dp</dimen>
+    <dimen name="edit_profile_privacy_note_bottom_padding">8.5dp</dimen>
+    <dimen name="edit_profile_privacy_note_text_size">14.66sp</dimen>
+    <dimen name="edit_profile_privacy_note_image_size">15dp</dimen>
+    <dimen name="edit_profile_privacy_note_image_text_separation">6dp</dimen>
+
+    <dimen name="edit_profile_privacy_note_shadow_thick">3px</dimen>
+    <dimen name="edit_profile_privacy_note_shadow_border_thick">2px</dimen>
+
     <!-- _____________________________________________________________________ -->
     <!-- _____________________________________________________________________ -->
     <!-- _____________________________________________________________________ -->

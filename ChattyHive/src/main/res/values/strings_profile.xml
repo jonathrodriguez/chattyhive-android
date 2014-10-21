@@ -31,4 +31,7 @@
 
     <string name="edit_profile_action_bar_private">Private</string>
     <string name="edit_profile_action_bar_public">Public</string>
+
+    <string name="edit_profile_privacy_note_private">This is your private profile as it's seen by your friends</string>
+    <string name="edit_profile_privacy_note_public">This is your public profile as it's seen by everybody</string>
 </resources>

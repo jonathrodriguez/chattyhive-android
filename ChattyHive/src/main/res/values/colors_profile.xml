@@ -55,6 +55,12 @@
     <!-- _____________________________________________________________________ -->
     <!-- EDIT PROFILE:  Main panel colors -->
 
+    <color name="edit_profile_privacy_note_image_tint">#000000</color>
+    <color name="edit_profile_privacy_note_text_color">#333333</color>
+    <color name="edit_profile_privacy_note_background_color">#fffbef</color>
+    <color name="edit_profile_privacy_note_shadow_color">#FF010101</color>
+    <color name="edit_profile_privacy_note_shadow_border_color">#80010101</color>
+
     <!-- _____________________________________________________________________ -->
     <!-- _____________________________________________________________________ -->
     <!-- _____________________________________________________________________ -->
