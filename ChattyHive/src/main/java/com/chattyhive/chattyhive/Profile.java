@@ -13,7 +13,6 @@ import com.chattyhive.chattyhive.framework.Util.StaticMethods;
 import com.chattyhive.chattyhive.framework.Util.ViewPair;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 /**
  * Created by Jonathan on 20/05/2014.
@@ -37,7 +36,7 @@ public class Profile {
                 ((Main)context)._controller.Leave((String)((Activity)context).findViewById(R.id.main_panel_chat_name).getTag());
             }*/
 
-            ViewPair profileViewPair = ((Main)context).ShowLayout(R.layout.main_panel_profile_layout,R.layout.profile_action_bar);
+            ViewPair profileViewPair = ((Main)context).ShowLayout(R.layout.main_panel_my_profile_layout,R.layout.profile_action_bar);
 
             profileView = profileViewPair.getMainView();
             actionBar = profileViewPair.getActionBarView();
@@ -71,9 +70,9 @@ public class Profile {
                 ((TextView) profileView.findViewById(R.id.my_profile_public_name)).setTextColor(Color.parseColor(me.getUserPublicProfile().getColor()));
 
             if (me.getUserPrivateProfile().getSex().equalsIgnoreCase("male"))
-                ((TextView) profileView.findViewById(R.id.my_profile_information_gender)).setText(R.string.my_profile_information_gender_male_value);
+                ((TextView) profileView.findViewById(R.id.my_profile_information_gender)).setText(R.string.profile_information_gender_male_value);
             else
-                ((TextView) profileView.findViewById(R.id.my_profile_information_gender)).setText(R.string.my_profile_information_gender_female_value);
+                ((TextView) profileView.findViewById(R.id.my_profile_information_gender)).setText(R.string.profile_information_gender_female_value);
 
             ((ImageView)profileView.findViewById(R.id.my_profile_information_gender_show)).setImageResource(getImageResourceToShowInProfile(ShowInProfile.Both));
 
@@ -93,7 +92,7 @@ public class Profile {
             ((ImageView)profileView.findViewById(R.id.my_profile_information_languages_show)).setImageResource(getImageResourceToShowInProfile(ShowInProfile.Both));
 
 
-            String age = String.format("%s %s",DateFormatter.getUserAge(me.getUserPrivateProfile().getBirthdate()),context.getString(R.string.my_profile_information_age_append_value_after));
+            String age = String.format("%s %s",DateFormatter.getUserAge(me.getUserPrivateProfile().getBirthdate()),context.getString(R.string.profile_information_age_append_value_after));
             ((TextView)profileView.findViewById(R.id.my_profile_information_age)).setText(age);
 
             showInProfile = ShowInProfile.None;
@@ -124,12 +123,12 @@ public class Profile {
     private void showStatusMessage(ProfileType profileType) {
         switch (profileType) {
             case Private:
-                ((TextView)profileView.findViewById(R.id.my_profile_status_message)).setText(R.string.my_profile_default_private_status_message);
+                ((TextView)profileView.findViewById(R.id.my_profile_status_message)).setText(R.string.profile_default_private_status_message);
                 StaticMethods.SetAlpha(profileView.findViewById(R.id.my_profile_status_private_button),1f);
                 StaticMethods.SetAlpha(profileView.findViewById(R.id.my_profile_status_public_button),0.5f);
                 break;
             case Public:
-                ((TextView)profileView.findViewById(R.id.my_profile_status_message)).setText(R.string.my_profile_default_public_status_message);
+                ((TextView)profileView.findViewById(R.id.my_profile_status_message)).setText(R.string.profile_default_public_status_message);
                 StaticMethods.SetAlpha(profileView.findViewById(R.id.my_profile_status_public_button),1f);
                 StaticMethods.SetAlpha(profileView.findViewById(R.id.my_profile_status_private_button),0.5f);
                 break;

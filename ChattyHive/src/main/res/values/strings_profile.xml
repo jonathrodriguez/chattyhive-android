@@ -1,30 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="my_profile_title">My profile</string>
+    <string name="profile_title">My profile</string>
 
-    <string name="my_profile_edit_button">Edit</string>
+    <string name="profile_edit_button">Edit</string>
 
-    <string name="my_profile_default_full_name">Full Name</string>
-    <string name="my_profile_default_nickname">\@nickname</string>
+    <string name="profile_default_full_name">Full Name</string>
+    <string name="profile_default_nickname">\@nickname</string>
 
-    <string name="my_profile_status">Status</string>
-    <string name="my_profile_status_for_friends">For friends</string>
-    <string name="my_profile_status_for_all">Public</string>
-    <string name="my_profile_default_private_status_message">This is a private status message up to 100 characters and may include smileys.</string>
-    <string name="my_profile_default_public_status_message">This is a public status message up to 100 characters and may include smileys.</string>
+    <string name="profile_status">Status</string>
+    <string name="profile_status_for_friends">For friends</string>
+    <string name="profile_status_for_all">Public</string>
+    <string name="profile_default_private_status_message">This is a private status message up to 100 characters and may include smileys.</string>
+    <string name="profile_default_public_status_message">This is a public status message up to 100 characters and may include smileys.</string>
 
-    <string name="my_profile_information">Information</string>
-    <string name="my_profile_information_location">Location</string>
-    <string name="my_profile_information_age">Age</string>
-    <string name="my_profile_information_gender">Gender</string>
-    <string name="my_profile_information_languages">Languages</string>
+    <string name="profile_information">Information</string>
+    <string name="profile_information_location">Location</string>
+    <string name="profile_information_age">Age</string>
+    <string name="profile_information_gender">Gender</string>
+    <string name="profile_information_languages">Languages</string>
 
-    <string name="my_profile_information_gender_male_value">Man</string>
-    <string name="my_profile_information_gender_female_value">Woman</string>
-    <string name="my_profile_information_age_append_value_after"></string>
+    <string name="profile_information_gender_male_value">Man</string>
+    <string name="profile_information_gender_female_value">Woman</string>
+    <string name="profile_information_age_append_value_after"></string>
 
-    <string name="my_profile_information_default_location">Vigo, Galicia, Spain</string>
-    <string name="my_profile_information_default_age">0</string>
-    <string name="my_profile_information_default_gender">Man</string>
-    <string name="my_profile_information_default_languages">Spanish</string>
+    <string name="profile_information_default_location">Vigo, Galicia, Spain</string>
+    <string name="profile_information_default_age">0</string>
+    <string name="profile_information_default_gender">Man</string>
+    <string name="profile_information_default_languages">Spanish</string>
+
+
+    <string name="edit_profile_action_bar_private">Private</string>
+    <string name="edit_profile_action_bar_public">Public</string>
 </resources>

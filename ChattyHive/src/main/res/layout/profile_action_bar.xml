@@ -34,7 +34,7 @@
         android:background="@color/my_profile_action_bar_title_background"
         android:textColor="@color/my_profile_action_bar_title_text"
         android:textSize="@dimen/my_profile_action_bar_title_text_height"
-        android:text="@string/my_profile_title"
+        android:text="@string/profile_title"
         android:paddingLeft="@dimen/my_profile_action_bar_title_padding_left"
         android:paddingRight="@dimen/my_profile_action_bar_title_padding_right"/>
 
