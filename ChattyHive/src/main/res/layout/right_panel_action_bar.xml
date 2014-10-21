@@ -25,7 +25,7 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="@string/menu_private_profile_name"
         android:textStyle="bold"
-        android:id="@+id/menu_public_private_name"
+        android:id="@+id/menu_private_profile_name"
         android:gravity="center"
         android:textSize="14dp"
         android:textColor="#FFFFFF"/>

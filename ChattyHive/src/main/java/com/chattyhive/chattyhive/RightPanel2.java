@@ -5,6 +5,7 @@ import android.content.Context;
 import android.util.SparseArray;
 import android.view.View;
 import android.widget.ExpandableListView;
+import android.widget.TextView;
 
 /**
  * Created by J.Guzmán on 24/09/2014.
@@ -20,6 +21,10 @@ public class RightPanel2{
         this.context = activity ;
         this.InitializeComponent(); //inicializa todas las componentes del panel
         ((Activity)this.context).findViewById(R.id.right_panel_action_bar).setOnClickListener((new Profile(this.context)).open_profile);
+        String name = ((Main) this.context).controller.getMe().getUserPrivateProfile().getShowingName().toString();
+        ((TextView)((Activity)this.context).findViewById(R.id.menu_private_profile_name)).setText(name);
+        name = ((Main) this.context).controller.getMe().getUserPublicProfile().getShowingName().toString();
+        ((TextView)((Activity)this.context).findViewById(R.id.menu_public_profile_name)).setText(name);
     }
 
     private void InitializeComponent(){
@@ -27,9 +32,22 @@ public class RightPanel2{
         listView = (ExpandableListView) ((Activity)this.context).findViewById(R.id.right_panel_expandable_list);
         RightPanelExpandableListAdapter adapter = new RightPanelExpandableListAdapter((Activity)this.context, grupos);
         listView.setAdapter(adapter);
-        //if(listView.isGroupExpanded(0) == false) {
-        //    listView.expandGroup(0);
-        //}
+
+        View footer = ((Activity)this.context).findViewById(R.id.footer);
+        listView.addFooterView(footer);
+
+        /*if(listView.isGroupExpanded(0) == true) {
+            listView.collapseGroup(1);
+            listView.collapseGroup(2);
+        }
+        if(listView.isGroupExpanded(1) == true) {
+            listView.collapseGroup(0);
+            listView.collapseGroup(2);
+        }
+        if(listView.isGroupExpanded(2) == true) {
+            listView.collapseGroup(0);
+            listView.collapseGroup(1);
+        }*/
     }
 
     public void crearDatos()  {
