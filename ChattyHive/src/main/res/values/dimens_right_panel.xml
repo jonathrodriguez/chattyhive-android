@@ -121,7 +121,7 @@
     <dimen name="options_children_img_layout_padding_bottom">7.5dp</dimen>
     <dimen name="options_children_img_dimens">32dp</dimen>
     <dimen name="options_children_text_size">20dp</dimen>
-
+ 
 </resources>
 
 
