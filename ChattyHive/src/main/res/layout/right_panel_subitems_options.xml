@@ -5,32 +5,32 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:paddingLeft="12.5dp"
-    android:paddingRight="12.5dp">
+    android:paddingLeft="@dimen/options_children_pading_left"
+    android:paddingRight="@dimen/options_children_pading_right">
 
     <LinearLayout
         android:id="@+id/options_invite"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
+        android:layout_height="@dimen/options_children_height"
         android:orientation="horizontal">
         <RelativeLayout
-            android:layout_width="54dp"
+            android:layout_width="@dimen/options_children_img_layout_width"
             android:layout_height="match_parent"
-            android:paddingLeft="5dp"
-            android:paddingRight="17dp"
-            android:paddingTop="8dp"
-            android:paddingBottom="7.5dp">
+            android:paddingLeft="@dimen/options_children_img_layout_padding_left"
+            android:paddingRight="@dimen/options_children_img_layout_padding_right"
+            android:paddingTop="@dimen/options_children_img_layout_padding_top"
+            android:paddingBottom="@dimen/options_children_img_layout_padding_bottom">
             <ImageView
-                android:layout_width="32dp"
-                android:layout_height="32dp"
+                android:layout_width="@dimen/options_children_img_dimens"
+                android:layout_height="@dimen/options_children_img_dimens"
                 android:src="@drawable/contextos_invitar_a_hive_blanco"/>
         </RelativeLayout>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center_vertical"
-            android:text="Invitar amigos/hivemates"
-            android:textSize="24dp"
+            android:text="@string/options_invite"
+            android:textSize="@dimen/options_children_text_size"
             android:textStyle="normal"
             android:textColor="@color/menu_text_white"
             android:layout_gravity="center"/>
@@ -40,30 +40,30 @@
         android:id="@+id/options_empty"
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
+        android:layout_height="@dimen/options_children_height"
         android:gravity="right">
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="48dp"
+            android:layout_height="@dimen/options_children_height"
             android:orientation="horizontal">
             <RelativeLayout
-                android:layout_width="54dp"
+                android:layout_width="@dimen/options_children_img_layout_width"
                 android:layout_height="match_parent"
-                android:paddingLeft="5dp"
-                android:paddingRight="17dp"
-                android:paddingTop="8dp"
-                android:paddingBottom="7.5dp">
+                android:paddingLeft="@dimen/options_children_img_layout_padding_left"
+                android:paddingRight="@dimen/options_children_img_layout_padding_right"
+                android:paddingTop="@dimen/options_children_img_layout_padding_top"
+                android:paddingBottom="@dimen/options_children_img_layout_padding_bottom">
                 <ImageView
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
+                    android:layout_width="@dimen/options_children_img_dimens"
+                    android:layout_height="@dimen/options_children_img_dimens"
                     android:src="@drawable/contextos_vaciar_chat"/>
             </RelativeLayout>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
-                android:text="Eliminar chat"
-                android:textSize="24dp"
+                android:text="@string/options_clear"
+                android:textSize="@dimen/options_children_text_size"
                 android:layout_gravity="center"
                 android:textColor="@color/menu_text_white"/>
         </LinearLayout>
@@ -73,30 +73,30 @@
         android:id="@+id/options_leave_delete"
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
+        android:layout_height="@dimen/options_children_height"
         android:gravity="right">
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="48dp"
+            android:layout_height="@dimen/options_children_height"
             android:orientation="horizontal">
             <RelativeLayout
-                android:layout_width="54dp"
+                android:layout_width="@dimen/options_children_img_layout_width"
                 android:layout_height="match_parent"
-                android:paddingLeft="5dp"
-                android:paddingRight="17dp"
-                android:paddingTop="8dp"
-                android:paddingBottom="7.5dp">
+                android:paddingLeft="@dimen/options_children_img_layout_padding_left"
+                android:paddingRight="@dimen/options_children_img_layout_padding_right"
+                android:paddingTop="@dimen/options_children_img_layout_padding_top"
+                android:paddingBottom="@dimen/options_children_img_layout_padding_bottom">
                 <ImageView
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
+                    android:layout_width="@dimen/options_children_img_dimens"
+                    android:layout_height="@dimen/options_children_img_dimens"
                     android:src="@drawable/contextos_leave_hive_blanco"/>
             </RelativeLayout>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
-                android:text="Abandonar y eliminar hive"
-                android:textSize="24dp"
+                android:text="@string/options_leave"
+                android:textSize="@dimen/options_children_text_size"
                 android:textStyle="normal"
                 android:textColor="@color/menu_text_white"
                 android:layout_gravity="center"/>
@@ -108,30 +108,30 @@
         android:id="@+id/options_report"
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
+        android:layout_height="@dimen/options_children_height"
         android:gravity="right">
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="48dp"
+            android:layout_height="@dimen/options_children_height"
             android:orientation="horizontal">
             <RelativeLayout
-                android:layout_width="54dp"
+                android:layout_width="@dimen/options_children_img_layout_width"
                 android:layout_height="match_parent"
-                android:paddingLeft="5dp"
-                android:paddingRight="17dp"
-                android:paddingTop="8dp"
-                android:paddingBottom="7.5dp">
+                android:paddingLeft="@dimen/options_children_img_layout_padding_left"
+                android:paddingRight="@dimen/options_children_img_layout_padding_right"
+                android:paddingTop="@dimen/options_children_img_layout_padding_top"
+                android:paddingBottom="@dimen/options_children_img_layout_padding_bottom">
                 <ImageView
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
+                    android:layout_width="@dimen/options_children_img_dimens"
+                    android:layout_height="@dimen/options_children_img_dimens"
                     android:src="@drawable/contextos_reportar_usuario_blanco"/>
             </RelativeLayout>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
-                android:text="Denunciar hive"
-                android:textSize="24dp"
+                android:text="@string/options_report"
+                android:textSize="@dimen/options_children_text_size"
                 android:textStyle="normal"
                 android:textColor="@color/menu_text_white"
                 android:layout_gravity="center"/>
