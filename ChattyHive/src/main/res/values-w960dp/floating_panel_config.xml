@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <bool name="fix_left_panel">true</bool>
+    <dimen name="fixed_left_panel_width">300dp</dimen>
+    <dimen name="left_panel_max_width">320dp</dimen>
+    <dimen name="right_panel_max_width">320dp</dimen>
+
+</resources>

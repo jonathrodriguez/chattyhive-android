@@ -11,7 +11,11 @@
     android:layout_height="match_parent"
     custom:centerActionBarRightVisibleWidth="48dp"
     custom:centerMainPanelRightVisibleWidth="48dp"
-    custom:touchActionMoveDistanceThreshold="10dp">
+    custom:touchActionMoveDistanceThreshold="10dp"
+    custom:fixLeftPanel="@bool/fix_left_panel"
+    custom:fixedLeftPanelWidth="@dimen/fixed_left_panel_width"
+    custom:maxLeftPanelWidth="@dimen/left_panel_max_width"
+    custom:maxRightPanelWidth="@dimen/right_panel_max_width">
 
     <FrameLayout
         android:layout_width="match_parent"

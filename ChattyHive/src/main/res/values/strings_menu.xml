@@ -1,10 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="menu_private_profile_name">Sandra Aguirre</string>
+    <string name="menu_private_profile_name">Sandra María Fernadez Núñez</string>
     <string name="menu_public_profile_name"> \@sandritis86</string>
-    <string name="right_panel_layout_list_notificaciones">Notificaciones</string>
-    <string name="right_panel_layout_list">Invitar, ajustes y otros</string>
+    <string name="menu_notifications">Notifications</string>
+    <string name="menu_others">Invite, adjusts and others</string>
     <string name="menu_num_request">100</string>
     <string name="menu_num_chats">10</string>
-    <string name="menu_hive_name">Minecraft - A game about building any...</string>
+    <string name="menu_hive_name">:Minecraft - A game about building any...</string>
+    <string name="menu_hive_description">"This is a topic to discuss about Notch's game. News, maps... For support and reporting problems..."</string>
+    <string name="menu_home">Home</string>
+    <string name="menu_explore">Explore</string>
+    <string name="menu_chats">Chats</string>
+    <string name="menu_request">Request</string>
+    <string name="menu_friends">Friends</string>
+    <string name="menu_hivemates">Hivemates</string>
+    <string name="menu_adjusts">Adjusts</string>
+    <string name="menu_feedback">¡Give us your feedback!</string>
+    <string name="menu_invite">Invite</string>
+    <string name="menu_help">Help</string>
+    <string name="menu_logout">Logout</string>
+    <string name="menu_menu">Menu</string>
+    <string name="options_options">Conversation options</string>
+    <string name="options_clear">Clear chat</string>
+    <string name="options_leave">Leave hive</string>
+    <string name="options_report">Report hive</string>
+    <string name="options_invite">Invite friends/hivemates</string>
+    <string name="hive_rules">Rules of behaviour</string>
 </resources>

@@ -32,6 +32,18 @@ public class FloatingPanel extends ViewGroup {
     private static float defaultCenterMainPanelVisibleWidth = 0;
     private static float defaultCenterActionBarVisibleWidth = 0;
 
+    private static boolean defaultFixLeftPanel = false;
+    private static float defaultFixedLeftPanelWidthDP = 300;
+    private static float defaultFixedLeftPanelWidth = 0;
+
+    private static float defaultMaxLeftPanelWidthDP = 320;
+    private static float defaultMaxLeftPanelWidth = 0;
+
+    private static float defaultMaxRightPanelWidthDP = 320;
+    private static float defaultMaxRightPanelWidth = 0;
+
+    private static boolean defaultAllowSwipeToMovePanels = true;
+
     private static DisplayMetrics displayMetrics = null;
 
     private TreeMap<String,View> actionBars = new TreeMap<String, View>();
@@ -42,6 +54,14 @@ public class FloatingPanel extends ViewGroup {
 
     private float centerMainPanelRightVisibleWidth;
     private float centerActionBarRightVisibleWidth;
+
+    private float maxLeftPanelWidth;
+    private float maxRightPanelWidth;
+
+    private boolean fixLeftPanel;
+    private float fixedLeftPanelWidth;
+
+    private boolean allowSwipeToMovePanels;
 
     private TreeMap<String,Integer> actionBarsHeight = new TreeMap<String, Integer>();
     private TreeMap<String,Integer> actionBarsWidth = new TreeMap<String, Integer>();
@@ -106,7 +126,12 @@ public class FloatingPanel extends ViewGroup {
             defaultCenterActionBarVisibleWidth = defaultCenterActionBarVisibleWidthDP * displayMetrics.scaledDensity;
             defaultCenterMainPanelVisibleWidth = defaultCenterMainPanelVisibleWidthDP * displayMetrics.scaledDensity;
 
+            defaultFixedLeftPanelWidth = defaultFixedLeftPanelWidthDP * displayMetrics.scaledDensity;
+
             defaultActionMoveThreshold = defaultActionMoveThresholdDP * displayMetrics.scaledDensity;
+
+            defaultMaxLeftPanelWidth = defaultMaxLeftPanelWidthDP * displayMetrics.scaledDensity;
+            defaultMaxRightPanelWidth = defaultMaxRightPanelWidthDP * displayMetrics.scaledDensity;
         }
 
         this.centerMainPanelLeftVisibleWidth = a.getDimension(R.styleable.FloatingPanel_centerMainPanelLeftVisibleWidth, defaultCenterMainPanelVisibleWidth);
@@ -114,6 +139,14 @@ public class FloatingPanel extends ViewGroup {
 
         this.centerMainPanelRightVisibleWidth = a.getDimension(R.styleable.FloatingPanel_centerMainPanelRightVisibleWidth, defaultCenterMainPanelVisibleWidth);
         this.centerActionBarRightVisibleWidth = a.getDimension(R.styleable.FloatingPanel_centerActionBarRightVisibleWidth, defaultCenterActionBarVisibleWidth);
+
+        this.maxLeftPanelWidth = a.getDimension(R.styleable.FloatingPanel_maxLeftPanelWidth,defaultMaxLeftPanelWidth);
+        this.maxRightPanelWidth = a.getDimension(R.styleable.FloatingPanel_maxRightPanelWidth,defaultMaxRightPanelWidth);
+
+        this.fixLeftPanel = a.getBoolean(R.styleable.FloatingPanel_fixLeftPanel,defaultFixLeftPanel);
+        this.fixedLeftPanelWidth = a.getDimension(R.styleable.FloatingPanel_fixedLeftPanelWidth,defaultFixedLeftPanelWidth);
+
+        this.allowSwipeToMovePanels = a.getBoolean(R.styleable.FloatingPanel_allowSwipeToMovePanels,defaultAllowSwipeToMovePanels);
 
         this.actionMoveThreshold = a.getDimension(R.styleable.FloatingPanel_touchActionMoveDistanceThreshold,defaultActionMoveThreshold);
 
@@ -132,10 +165,12 @@ public class FloatingPanel extends ViewGroup {
     }
 
     public void openLeft() {
+        if (this.fixLeftPanel) return;
         openLeft(this.buttonPressedAnimationDuration);
     }
 
     public void openLeft(int animationDuration) {
+        if (this.fixLeftPanel) return;
         float leftWidth = mainPanels.get("left").getMeasuredWidth();
         int leftMargin = ((LayoutParams)mainPanels.get("left").getLayoutParams()).leftMargin;
         int rightMargin = ((LayoutParams)mainPanels.get("left").getLayoutParams()).rightMargin;
@@ -169,13 +204,15 @@ public class FloatingPanel extends ViewGroup {
 
     @Override
     public void addView(View child, int index, android.view.ViewGroup.LayoutParams params) {
+        if (isInEditMode()) return;
+
         if (!(params instanceof LayoutParams)) {
             throw new IllegalArgumentException("The parameter params must a instance of com.chattyhive.chattyhive.slidingpanels.FloatingPanel$LayoutParams");
         }
 
-        if (null == params) { // Skip the view without LayoutParams
+/*        if (null == params) { // Skip the view without LayoutParams
             return;
-        }
+        }*/
 
         LayoutParams layoutParams = (LayoutParams) params;
 
@@ -220,7 +257,7 @@ public class FloatingPanel extends ViewGroup {
                     if (actualPosition > 0) {
                         close();
                         return true;
-                    } else if (!isOpen) {
+                    } else if ((!isOpen) && (this.allowSwipeToMovePanels)) {
                         openLeft();
                         return true;
                     }
@@ -229,7 +266,7 @@ public class FloatingPanel extends ViewGroup {
                     if (actualPosition < 0) {
                         close();
                         return true;
-                    } else if (!isOpen) {
+                    } else if ((!isOpen) && (this.allowSwipeToMovePanels)) {
                         openRight();
                         return true;
                     }
@@ -242,64 +279,64 @@ public class FloatingPanel extends ViewGroup {
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
+        if (!this.allowSwipeToMovePanels) return false;
+
         final float x = ev.getX();
         final float y = ev.getY();
-
-        //Log.w("onInterceptTouchEvent",String.format("Event X: %f\tEvent Y: %f\tAction: %s\tStatus moving: %b",x,y,ev.getAction(),moving));
 
         Boolean result = false;
 
         if (moving) {
-            result = true;
+            result=true;
         } else {
-                switch (ev.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        if (actualPosition == 0) {
+            switch (ev.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    if (actualPosition == 0) {
+                        this.StartEventX = this.LastEventX = x;
+                        this.StartEventY = y;
+                    } else if (actualPosition > 0) {
+                        if (x >= (mainPanelsWidth.get("left") + ((LayoutParams) mainPanels.get("left").getLayoutParams()).leftMargin + ((LayoutParams) mainPanels.get("left").getLayoutParams()).rightMargin)) {
                             this.StartEventX = this.LastEventX = x;
                             this.StartEventY = y;
+                        }
+
+                    } else if (actualPosition < 0) {
+                        if (x <= (mainPanelsWidth.get("center") + ((LayoutParams) mainPanels.get("center").getLayoutParams()).leftMargin + ((LayoutParams) mainPanels.get("center").getLayoutParams()).rightMargin - (mainPanelsWidth.get("right") + ((LayoutParams) mainPanels.get("right").getLayoutParams()).leftMargin + ((LayoutParams) mainPanels.get("right").getLayoutParams()).rightMargin))) {
+                            this.StartEventX = this.LastEventX = x;
+                            this.StartEventY = y;
+                        }
+                    }
+                    break;
+                case MotionEvent.ACTION_MOVE:
+                    if ((this.StartEventX < 0) || (this.StartEventY < 0) || (this.LastEventX < 0)) {
+                        result = false;
+                    } else {
+                        float deltaX = x - this.StartEventX;
+                        float deltaY = y - this.StartEventY;
+
+                        if (actualPosition == 0) {
+                            result = true;
                         } else if (actualPosition > 0) {
-                            if (x >= (mainPanelsWidth.get("left") + ((LayoutParams) mainPanels.get("left").getLayoutParams()).leftMargin + ((LayoutParams) mainPanels.get("left").getLayoutParams()).rightMargin)) {
-                                this.StartEventX = this.LastEventX = x;
-                                this.StartEventY = y;
-                            }
-
+                            result = (this.StartEventX >= (mainPanels.get("left").getMeasuredWidth() + ((LayoutParams) mainPanels.get("left").getLayoutParams()).leftMargin + ((LayoutParams) mainPanels.get("left").getLayoutParams()).rightMargin));
                         } else if (actualPosition < 0) {
-                            if (x <= (mainPanelsWidth.get("center") + ((LayoutParams) mainPanels.get("center").getLayoutParams()).leftMargin + ((LayoutParams) mainPanels.get("center").getLayoutParams()).rightMargin - (mainPanelsWidth.get("right") + ((LayoutParams) mainPanels.get("right").getLayoutParams()).leftMargin + ((LayoutParams) mainPanels.get("right").getLayoutParams()).rightMargin))) {
-                                this.StartEventX = this.LastEventX = x;
-                                this.StartEventY = y;
-                            }
+                            result = (this.StartEventX <= (mainPanels.get("center").getMeasuredWidth() + ((LayoutParams) mainPanels.get("center").getLayoutParams()).leftMargin + ((LayoutParams) mainPanels.get("center").getLayoutParams()).rightMargin - (mainPanels.get("right").getMeasuredWidth() + ((LayoutParams) mainPanels.get("right").getLayoutParams()).leftMargin + ((LayoutParams) mainPanels.get("right").getLayoutParams()).rightMargin)));
                         }
-                        break;
-                    case MotionEvent.ACTION_MOVE:
-                        if ((this.StartEventX < 0) || (this.StartEventY < 0) || (this.LastEventX < 0)) {
+                        if ((Math.abs(deltaX) < Math.abs(deltaY)) || (Math.abs(deltaX) < this.actionMoveThreshold))
                             result = false;
-                        } else {
-                            float deltaX = x - this.StartEventX;
-                            float deltaY = y - this.StartEventY;
-
-                            if (actualPosition == 0) {
-                                result = true;
-                            } else if (actualPosition > 0) {
-                                result = (this.StartEventX >= (mainPanels.get("left").getMeasuredWidth() + ((LayoutParams) mainPanels.get("left").getLayoutParams()).leftMargin + ((LayoutParams) mainPanels.get("left").getLayoutParams()).rightMargin));
-                            } else if (actualPosition < 0) {
-                                result = (this.StartEventX <= (mainPanels.get("center").getMeasuredWidth() + ((LayoutParams) mainPanels.get("center").getLayoutParams()).leftMargin + ((LayoutParams) mainPanels.get("center").getLayoutParams()).rightMargin - (mainPanels.get("right").getMeasuredWidth() + ((LayoutParams) mainPanels.get("right").getLayoutParams()).leftMargin + ((LayoutParams) mainPanels.get("right").getLayoutParams()).rightMargin)));
-                            }
-                            if ((Math.abs(deltaX) < Math.abs(deltaY)) || (Math.abs(deltaX) < this.actionMoveThreshold))
-                                result = false;
-                        }
-                        break;
-                }
+                    }
+                    break;
             }
+        }
         return result;
     }
 
 
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
+        if (!this.allowSwipeToMovePanels) return false;
+
         final float x = ev.getX();
         final float y = ev.getY();
-
-        //Log.w("onTouchEvent",String.format("Event X: %f\tEvent Y: %f\tAction: %s",x,y,ev.getAction()));
 
         if ((this.StartEventX < 0) || (this.StartEventY < 0) || (this.LastEventX < 0)) return false;
 
@@ -365,7 +402,7 @@ public class FloatingPanel extends ViewGroup {
 
                 float destination = 0;
 
-                int finalPosition = 0; //center = 0, left = 1, right = 2;
+                int finalPosition; //center = 0, left = 1, right = 2;
 
                 if ((Math.abs(velocityTracker.getXVelocity()) > Math.abs(velocityTracker.getYVelocity())) && (Math.abs(velocityTracker.getXVelocity()) > this.flingSpeedThreshold)) {
                     //It's a valid fling
@@ -436,6 +473,7 @@ public class FloatingPanel extends ViewGroup {
             mainPanels.get("right").setVisibility(GONE);
             actionBars.get("right").setVisibility(GONE);
         }
+
     }
 
     protected void correctPosition() {
@@ -475,6 +513,8 @@ public class FloatingPanel extends ViewGroup {
     protected float saturateNewPosition(float newPosition) {
         float leftBound = mainPanels.get("left").getMeasuredWidth() + ((LayoutParams)mainPanels.get("left").getLayoutParams()).leftMargin + ((LayoutParams)mainPanels.get("left").getLayoutParams()).rightMargin;
         float rightBound = -(mainPanels.get("right").getMeasuredWidth() + ((LayoutParams)mainPanels.get("right").getLayoutParams()).leftMargin + ((LayoutParams)mainPanels.get("right").getLayoutParams()).rightMargin);
+        if (this.fixLeftPanel)
+            leftBound = 0;
         return Math.max(Math.min(newPosition,leftBound),rightBound);
     }
 
@@ -497,8 +537,15 @@ public class FloatingPanel extends ViewGroup {
 
         int actionBarHeightMeasureSpec = MeasureSpec.makeMeasureSpec(Math.round(MeasureSpec.getSize(heightMeasureSpec) / 2),MeasureSpec.AT_MOST);
 
-        int leftPageMaxWidth = MeasureSpec.getSize(widthMeasureSpec) - Math.round(this.centerActionBarLeftVisibleWidth);
+        int leftPageMaxWidth = (this.fixLeftPanel)?Math.round(this.fixedLeftPanelWidth):(MeasureSpec.getSize(widthMeasureSpec) - Math.round(this.centerActionBarLeftVisibleWidth));
         int rightPageMaxWidth = MeasureSpec.getSize(widthMeasureSpec) - Math.round(this.centerActionBarRightVisibleWidth);
+        int centerPageMaxWidth = MeasureSpec.getSize(widthMeasureSpec) - ((this.fixLeftPanel)?Math.round(this.fixedLeftPanelWidth):0);
+
+        if ((!this.fixLeftPanel) && (leftPageMaxWidth > Math.round(this.maxLeftPanelWidth)))
+            leftPageMaxWidth = Math.round(this.maxLeftPanelWidth);
+
+        if (rightPageMaxWidth > Math.round(this.maxRightPanelWidth))
+            rightPageMaxWidth = Math.round(this.maxRightPanelWidth);
 
         int leftPageWidthMeasureSpec;
         int rightPageWidthMeasureSpec;
@@ -509,7 +556,7 @@ public class FloatingPanel extends ViewGroup {
             child = actionBar.getValue();
 
             if (actionBar.getKey().equalsIgnoreCase("center"))
-                measureChild(child,widthMeasureSpec,actionBarHeightMeasureSpec);
+                measureChild(child,MeasureSpec.makeMeasureSpec(centerPageMaxWidth,MeasureSpec.getMode(widthMeasureSpec)),actionBarHeightMeasureSpec);
             else if (actionBar.getKey().equalsIgnoreCase("left")) {
                 if (child.getLayoutParams().width == LayoutParams.WRAP_CONTENT)
                     leftPageWidthMeasureSpec = MeasureSpec.makeMeasureSpec(leftPageMaxWidth,MeasureSpec.AT_MOST);
@@ -537,8 +584,14 @@ public class FloatingPanel extends ViewGroup {
 
         int panelHeightMeasureSpec;
 
-        leftPageMaxWidth = MeasureSpec.getSize(widthMeasureSpec) - Math.round(this.centerMainPanelLeftVisibleWidth);
+        leftPageMaxWidth = (this.fixLeftPanel)?Math.round(this.fixedLeftPanelWidth):(MeasureSpec.getSize(widthMeasureSpec) - Math.round(this.centerMainPanelLeftVisibleWidth));
         rightPageMaxWidth = MeasureSpec.getSize(widthMeasureSpec) - Math.round(this.centerMainPanelRightVisibleWidth);
+
+        if ((!this.fixLeftPanel) && (leftPageMaxWidth > Math.round(this.maxLeftPanelWidth)))
+            leftPageMaxWidth = Math.round(this.maxLeftPanelWidth);
+
+        if (rightPageMaxWidth > Math.round(this.maxRightPanelWidth))
+            rightPageMaxWidth = Math.round(this.maxRightPanelWidth);
 
         for (Map.Entry<String,View> mainPanel : this.mainPanels.entrySet()) {
             child = mainPanel.getValue();
@@ -562,7 +615,7 @@ public class FloatingPanel extends ViewGroup {
             }
 
             if (mainPanel.getKey().equalsIgnoreCase("center"))
-                measureChild(child, widthMeasureSpec, panelHeightMeasureSpec);
+                measureChild(child, MeasureSpec.makeMeasureSpec(centerPageMaxWidth,MeasureSpec.getMode(widthMeasureSpec)), panelHeightMeasureSpec);
             else if (mainPanel.getKey().equalsIgnoreCase("left")) {
                 if (child.getLayoutParams().width == LayoutParams.WRAP_CONTENT)
                     leftPageWidthMeasureSpec = MeasureSpec.makeMeasureSpec(leftPageMaxWidth, MeasureSpec.AT_MOST);
@@ -607,6 +660,12 @@ public class FloatingPanel extends ViewGroup {
             if (pageHeight > maxChildHeight)
                 maxChildHeight = pageHeight;
         }
+
+        if ((this.fixLeftPanel) && (actionBarsWidth.containsKey("left")) && (actionBarsWidth.containsKey("center")) && ((actionBarsWidth.get("left") + actionBarsWidth.get("center") > maxChildWidth)))
+            maxChildWidth = actionBarsWidth.get("left") + actionBarsWidth.get("center");
+
+        if ((this.fixLeftPanel) && (mainPanelsWidth.containsKey("left")) && (mainPanelsWidth.containsKey("center")) && ((mainPanelsWidth.get("left") + mainPanelsWidth.get("center") > maxChildWidth)))
+            maxChildWidth = mainPanelsWidth.get("left") + mainPanelsWidth.get("center");
 
         maxChildWidth += getPaddingLeft() + getPaddingRight();
         maxChildHeight += getPaddingTop() + getPaddingBottom();
@@ -660,11 +719,18 @@ public class FloatingPanel extends ViewGroup {
                                 childLeft += (actualPosition + this.centerActionBarRightVisibleWidth - this.centerMainPanelRightVisibleWidth);
                                 childRight += (actualPosition + this.centerActionBarRightVisibleWidth - this.centerMainPanelRightVisibleWidth);
                             }
+                            if (this.fixLeftPanel)
+                                childLeft += this.fixedLeftPanelWidth;
+
                             childBottom -= mainPanels.get("center").getMeasuredHeight() + ((LayoutParams)mainPanels.get("center").getLayoutParams()).topMargin + ((LayoutParams)mainPanels.get("center").getLayoutParams()).bottomMargin;
                             break;
                         case mainPanel:
                             childLeft += actualPosition;
                             childRight += actualPosition;
+
+                            if (this.fixLeftPanel)
+                                childLeft += this.fixedLeftPanelWidth;
+
                             childTop += actionBars.get("center").getMeasuredHeight() + ((LayoutParams)actionBars.get("center").getLayoutParams()).topMargin + ((LayoutParams)actionBars.get("center").getLayoutParams()).bottomMargin;
                             break;
                         default:
@@ -682,11 +748,20 @@ public class FloatingPanel extends ViewGroup {
                             } else {
                                 childRight -= (measureWidth+(2*this.centerActionBarLeftVisibleWidth)-this.centerMainPanelLeftVisibleWidth);
                             }
+                            if (this.fixLeftPanel) {
+                                childLeft = Math.min(Math.round(this.actualPosition),0);
+                                childRight += measureWidth-(2*this.centerActionBarLeftVisibleWidth)+this.centerMainPanelLeftVisibleWidth;
+                            }
+
                             childBottom -= mainPanels.get("left").getMeasuredHeight() + ((LayoutParams)mainPanels.get("left").getLayoutParams()).topMargin + ((LayoutParams)mainPanels.get("left").getLayoutParams()).bottomMargin;
                             break;
                         case mainPanel:
                             childTop += actionBars.get("left").getMeasuredHeight() + ((LayoutParams)actionBars.get("left").getLayoutParams()).topMargin + ((LayoutParams)actionBars.get("left").getLayoutParams()).bottomMargin;
                             childRight -= (measureWidth-actualPosition+this.centerMainPanelLeftVisibleWidth);
+                            if (this.fixLeftPanel) {
+                                childLeft = Math.min(Math.round(this.actualPosition),0);
+                                childRight += measureWidth-this.centerMainPanelLeftVisibleWidth;
+                            }
                             break;
                         default:
                             continue;
@@ -695,11 +770,11 @@ public class FloatingPanel extends ViewGroup {
                 case right:
                     switch (layoutParams.getType()) {
                         case actionBar:
-                            childLeft += this.centerActionBarRightVisibleWidth;
+                            childLeft = childRight - actionBars.get("right").getMeasuredWidth();
                             childBottom -= mainPanels.get("right").getMeasuredHeight() + ((LayoutParams)mainPanels.get("right").getLayoutParams()).topMargin + ((LayoutParams)mainPanels.get("right").getLayoutParams()).bottomMargin;
                             break;
                         case mainPanel:
-                            childLeft += this.centerMainPanelRightVisibleWidth;
+                            childLeft = childRight - mainPanels.get("right").getMeasuredWidth();
                             childTop += actionBars.get("right").getMeasuredHeight() + ((LayoutParams)actionBars.get("right").getLayoutParams()).topMargin + ((LayoutParams)actionBars.get("right").getLayoutParams()).bottomMargin;
                             break;
                         default:
@@ -723,8 +798,7 @@ public class FloatingPanel extends ViewGroup {
 
     @Override
     public android.view.ViewGroup.LayoutParams generateLayoutParams(AttributeSet attrs) {
-        LayoutParams layoutParams = new LayoutParams(getContext(), attrs);
-        return layoutParams;
+        return new LayoutParams(getContext(), attrs);
     }
 
     public static class LayoutParams extends ViewGroup.MarginLayoutParams {
@@ -828,12 +902,6 @@ public class FloatingPanel extends ViewGroup {
     protected Parcelable onSaveInstanceState() {
         SavedState savedState = new SavedState(super.onSaveInstanceState());
 
-        savedState.centerActionBarLeftVisibleWidth = centerActionBarLeftVisibleWidth;
-        savedState.centerActionBarRightVisibleWidth = centerActionBarRightVisibleWidth;
-
-        savedState.centerMainPanelLeftVisibleWidth = centerMainPanelLeftVisibleWidth;
-        savedState.centerMainPanelRightVisibleWidth = centerMainPanelRightVisibleWidth;
-
         savedState.actualState = actualState;
 
         return savedState;
@@ -844,12 +912,6 @@ public class FloatingPanel extends ViewGroup {
         SavedState savedState = (SavedState) state;
         super.onRestoreInstanceState(savedState.getSuperState());
 
-        centerActionBarLeftVisibleWidth = savedState.centerActionBarLeftVisibleWidth;
-        centerActionBarRightVisibleWidth = savedState.centerActionBarRightVisibleWidth;
-
-        centerMainPanelLeftVisibleWidth = savedState.centerMainPanelLeftVisibleWidth;
-        centerMainPanelRightVisibleWidth = savedState.centerMainPanelRightVisibleWidth;
-
         actualState = savedState.actualState;
         restored = true;
 
@@ -858,12 +920,6 @@ public class FloatingPanel extends ViewGroup {
     }
 
     public static class SavedState extends BaseSavedState {
-        private float centerMainPanelLeftVisibleWidth;
-        private float centerActionBarLeftVisibleWidth;
-
-        private float centerMainPanelRightVisibleWidth;
-        private float centerActionBarRightVisibleWidth;
-
         private int actualState;
 
         SavedState(Parcelable superState) {
@@ -873,24 +929,12 @@ public class FloatingPanel extends ViewGroup {
         private SavedState(Parcel in) {
             super(in);
 
-            centerActionBarLeftVisibleWidth = in.readFloat();
-            centerActionBarRightVisibleWidth = in.readFloat();
-
-            centerMainPanelLeftVisibleWidth = in.readFloat();
-            centerMainPanelRightVisibleWidth = in.readFloat();
-
             actualState = in.readInt();
         }
 
         @Override
         public void writeToParcel(Parcel out, int flags) {
             super.writeToParcel(out, flags);
-
-            out.writeFloat(centerActionBarLeftVisibleWidth);
-            out.writeFloat(centerActionBarRightVisibleWidth);
-
-            out.writeFloat(centerMainPanelLeftVisibleWidth);
-            out.writeFloat(centerMainPanelRightVisibleWidth);
 
             out.writeInt(actualState);
         }

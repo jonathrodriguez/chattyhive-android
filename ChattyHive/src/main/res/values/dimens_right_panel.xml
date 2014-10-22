@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- right_panel_action_bar -->
+    <dimen name="action_bar_height">48dp</dimen>
+    <dimen name="action_bar_margin_left">45dp</dimen>
+    <dimen name="action_bar_private_name_size">14dp</dimen>
+    <dimen name="action_bar_public_name_size">12dp</dimen>
+    <dimen name="action_bar_relative_width">45dp</dimen>
+    <dimen name="action_bar_image_dimens">44dp</dimen>
+    <dimen name="action_bar_image_padding">1.5dp</dimen>
+
+    <!--right_panel_hive-->
+    <dimen name="hive_description_padding_left">12dp</dimen>
+    <dimen name="hive_description_padding_right">5dp</dimen>
+    <dimen name="hive_description_padding_top">14dp</dimen>
+    <dimen name="hive_description_padding_bottom">17dp</dimen>
+    <dimen name="hive_description_image">18dp</dimen>
+    <dimen name="hive_description_text_height">18dp</dimen>
+    <dimen name="hive_description_text_size">16dp</dimen>
+    <dimen name="hive_description_text_padding_top">12dp</dimen>
+
+    <!--right_panel_items_layout-->
+    <dimen name="menu_parent_margin_left">84dp</dimen>
+    <dimen name="menu_parent_arrow_padding_left">12dp</dimen>
+    <dimen name="menu_parent_arrow_padding_right">5dp</dimen>
+    <dimen name="menu_parent_arrow_padding_top">14dp</dimen>
+    <dimen name="menu_parent_arrow_padding_bottom">2dp</dimen>
+    <dimen name="menu_parent_arrow_img">18dp</dimen>
+    <dimen name="menu_parent_text_height">33dp</dimen>
+    <dimen name="menu_parent_text_size">16dp</dimen>
+    <dimen name="menu_parent_padding_top">12dp</dimen>
+    <dimen name="menu_parent_padding_bottom">2dp</dimen>
+    <dimen name="menu_parent_images_width">84dp</dimen>
+    <dimen name="menu_parent_img_padding_left">0dp</dimen>
+    <dimen name="menu_parent_explore_padding_right">16dp</dimen>
+    <dimen name="menu_parent_home_padding_right">11dp</dimen>
+    <dimen name="menu_parent_img_padding_top">11dp</dimen>
+    <dimen name="menu_parent_img_dimens">28dp</dimen>
+
+    <!--right_panel_options-->
+    <dimen name="options_parent_arrow_padding_left">12dp</dimen>
+    <dimen name="options_parent_arrow_padding_right">5dp</dimen>
+    <dimen name="options_parent_arrow_padding_top">14dp</dimen>
+    <dimen name="options_parent_arrow_padding_bottom">2dp</dimen>
+    <dimen name="options_parent_arrow_img">18dp</dimen>
+    <dimen name="options_parent_text_height">33dp</dimen>
+    <dimen name="options_parent_text_size">16dp</dimen>
+    <dimen name="options_parent_text_padding_top">12dp</dimen>
+    <dimen name="options_parent_text_padding_bottom">2dp</dimen>
+
+    <!--right_panel_subitems_hive-->
+    <dimen name="hive_children_description_block_height">85dp</dimen>
+    <dimen name="hive_children_description_block_img_height">87.5dp</dimen>
+    <dimen name="hive_children_description_block_img_dimen">61.5dp</dimen>
+    <dimen name="hive_children_description_block_img_margin_top">16dp</dimen>
+    <dimen name="hive_children_description_block_img_margin_left">16dp</dimen>
+    <dimen name="hive_children_description_block_img_margin_right">10dp</dimen>
+    <dimen name="hive_children_description_block_text_margin_top">25dp</dimen>
+    <dimen name="hive_children_description_block_text_margin_right">45dp</dimen>
+    <dimen name="hive_children_description_block_text_layout_height">55.5dp</dimen>
+    <dimen name="hive_children_description_block_text_size">13.5dp</dimen>
+    <dimen name="hive_children_description_block_text_line_spacing">2.5dp</dimen>
+    <dimen name="hive_children_behaviour_block_height">47dp</dimen>
+    <dimen name="hive_children_behaviour_text_size">16dp</dimen>
+    <dimen name="hive_children_behaviour_text_margin_right">5dp</dimen>
+    <dimen name="hive_children_behaviour_img_layout_width">45dp</dimen>
+    <dimen name="hive_children_behaviour_img_margin_top">7.5dp</dimen>
+    <dimen name="hive_children_behaviour_img_margin_bottom">7.5dp</dimen>
+    <dimen name="hive_children_behaviour_img_margin_right">13dp</dimen>
+    <dimen name="hive_children_behaviour_img_dimens">32dp</dimen>
+
+    <!--right_panel_subitems_layout-->
+    <!--one image-->
+    <dimen name="menu_children_paddin_left_right">12.5dp</dimen>
+    <dimen name="menu_children_base_element_height">48dp</dimen>
+    <dimen name="menu_children_base_element_img_layout_width">54dp</dimen>
+    <dimen name="menu_children_base_element_img_padding_left">5dp</dimen>
+    <dimen name="menu_children_base_element_img_padding_right">17dp</dimen>
+    <dimen name="menu_children_base_element_img_padding_top">8dp</dimen>
+    <dimen name="menu_children_base_element_img_padding_bottom">7.5dp</dimen>
+    <dimen name="menu_children_base_element_img_dimens">32dp</dimen>
+    <dimen name="menu_children_base_element_text_size">24dp</dimen>
+    <!--two image-->
+    <dimen name="menu_children_2img_layout_margin_left">37dp</dimen>
+    <dimen name="menu_children_2img_layout_width">37dp</dimen>
+    <dimen name="menu_children_2img_layout_padding_right">5dp</dimen>
+    <dimen name="menu_children_2img_layout_padding_left">0dp</dimen>
+    <dimen name="menu_children_2img_layout_padding_top">8dp</dimen>
+    <dimen name="menu_children_2img_layout_padding_bottom">7.5dp</dimen>
+    <!--title-->
+    <dimen name="menu_children_title_margin_left">35dp</dimen>
+    <dimen name="menu_children_title_size">13.5dp</dimen>
+    <dimen name="menu_children_title_padding_left">5dp</dimen>
+    <dimen name="menu_children_title_padding_right">0dp</dimen>
+    <dimen name="menu_children_title_padding_bottom">3.5dp</dimen>
+    <dimen name="menu_children_title_marging_bottom">13.5dp</dimen>
+    <dimen name="menu_children_title_marging_right">7dp</dimen>
+    <!--others-->
+    <dimen name="menu_children_title_others_padding_top">13dp</dimen>
+    <dimen name="menu_children_title_others_padding_bottom">7dp</dimen>
+    <!--check-->
+    <dimen name="menu_children_check_height">40dp</dimen>
+    <dimen name="menu_children_check_layout_width">30dp</dimen>
+    <dimen name="menu_children_check_layout_padding_left">0dp</dimen>
+    <dimen name="menu_children_check_layout_padding_right">8dp</dimen>
+    <dimen name="menu_children_check_layout_paddding_bottom">9dp</dimen>
+    <dimen name="menu_children_check_layout_padding_top">9dp</dimen>
+    <dimen name="menu_children_check_img_dimens">22dp</dimen>
+    <dimen name="menu_children_check_text_size">14.5dp</dimen>
+    <dimen name="menu_children_check_2layout_padding_left">51dp</dimen>
+    <dimen name="menu_children_check_2layout_padding_right">30dp</dimen>
+
+    <!--right_panel_subitems_options-->
+    <dimen name="options_children_pading_left">12.5dp</dimen>
+    <dimen name="options_children_pading_right">12.5dp</dimen>
+    <dimen name="options_children_height">48dp</dimen>
+    <dimen name="options_children_img_layout_width">54dp</dimen>
+    <dimen name="options_children_img_layout_padding_left">5dp</dimen>
+    <dimen name="options_children_img_layout_padding_right">17dp</dimen>
+    <dimen name="options_children_img_layout_padding_top">8dp</dimen>
+    <dimen name="options_children_img_layout_padding_bottom">7.5dp</dimen>
+    <dimen name="options_children_img_dimens">32dp</dimen>
+    <dimen name="options_children_text_size">20dp</dimen>
+ 
+</resources>
+
+
+
+
+
+

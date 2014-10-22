@@ -12,7 +12,9 @@ import com.chattyhive.backend.contentprovider.formats.LOGIN;
 import com.chattyhive.backend.contentprovider.formats.MESSAGE;
 import com.chattyhive.backend.contentprovider.formats.MESSAGE_ACK;
 import com.chattyhive.backend.contentprovider.formats.MESSAGE_LIST;
+import com.chattyhive.backend.contentprovider.formats.PRIVATE_PROFILE;
 import com.chattyhive.backend.contentprovider.formats.PROFILE_ID;
+import com.chattyhive.backend.contentprovider.formats.PUBLIC_PROFILE;
 import com.chattyhive.backend.contentprovider.formats.USER_PROFILE;
 import com.chattyhive.backend.contentprovider.local.LocalStorageInterface;
 import com.chattyhive.backend.util.events.CommandCallbackEventArgs;
@@ -64,6 +66,9 @@ public class LocalStorage implements LocalStorageInterface {
                 result = (local_user_profile != null);
                 if (result)
                     Callback.Run(this,new CommandCallbackEventArgs(command, Arrays.asList((Format)local_user_profile),null,CallbackAdditionalData));
+                break;
+            case UpdateProfile:
+                result = false;
                 break;
             case ChatInfo:   //Pull //TODO
                 result = false;
@@ -231,6 +236,26 @@ public class LocalStorage implements LocalStorageInterface {
                     result = true;
                 }
                 break;
+            case UpdateProfile: //ImmediateResponsePush
+                LOCAL_USER_PROFILE new_data = null;
+                for(Format format : formats)
+                    if (format instanceof COMMON)
+                        common = (COMMON) format;
+                    else if (format instanceof LOCAL_USER_PROFILE)
+                        new_data = (LOCAL_USER_PROFILE) format;
+
+                String local_profile = UserLocalStorage.getUserLocalStorage().RecoverLocalUserProfile();
+                if ((local_profile != null) && (!local_profile.isEmpty()))
+                    local_user_profile = new LOCAL_USER_PROFILE(new JsonParser().parse(local_profile));
+
+                if ((common == null) || (new_data == null) || (local_user_profile == null) || (!common.STATUS.equalsIgnoreCase("OK")))
+                    result = false;
+                else {
+                    result = true;
+
+                    UserLocalStorage.getUserLocalStorage().StoreLocalUserProfile(UpdateProfile(local_user_profile,new_data).toJSON().toString());
+                }
+                break;
             case ChatInfo:   //Pull //TODO
                 result = false;
                 break;
@@ -274,6 +299,93 @@ public class LocalStorage implements LocalStorageInterface {
                 break;
         }
         return result;
+    }
+
+    private LOCAL_USER_PROFILE UpdateProfile(LOCAL_USER_PROFILE old_profile, LOCAL_USER_PROFILE new_profile) {
+
+        if (new_profile.EMAIL == null)
+            new_profile.EMAIL = old_profile.EMAIL;
+
+        if (new_profile.PASS != null)
+            LoginLocalStorage.getLoginLocalStorage().StoreLoginPassword(old_profile.USER_BASIC_PUBLIC_PROFILE.PUBLIC_NAME,new_profile.PASS);
+
+        if (new_profile.USER_BASIC_PUBLIC_PROFILE != null) {
+            if (new_profile.USER_BASIC_PUBLIC_PROFILE.USER_COLOR == null)
+                new_profile.USER_BASIC_PUBLIC_PROFILE.USER_COLOR = old_profile.USER_BASIC_PUBLIC_PROFILE.USER_COLOR;
+            if (new_profile.USER_BASIC_PUBLIC_PROFILE.STATUS_MESSAGE == null)
+                new_profile.USER_BASIC_PUBLIC_PROFILE.STATUS_MESSAGE = old_profile.USER_BASIC_PUBLIC_PROFILE.STATUS_MESSAGE;
+        } else
+            new_profile.USER_BASIC_PUBLIC_PROFILE = old_profile.USER_BASIC_PUBLIC_PROFILE;
+
+        if (new_profile.USER_BASIC_PRIVATE_PROFILE != null) {
+            if (new_profile.USER_BASIC_PRIVATE_PROFILE.FIRST_NAME == null)
+                new_profile.USER_BASIC_PRIVATE_PROFILE.FIRST_NAME = old_profile.USER_BASIC_PRIVATE_PROFILE.FIRST_NAME;
+            if (new_profile.USER_BASIC_PRIVATE_PROFILE.LAST_NAME == null)
+                new_profile.USER_BASIC_PRIVATE_PROFILE.LAST_NAME = old_profile.USER_BASIC_PRIVATE_PROFILE.LAST_NAME;
+            if (new_profile.USER_BASIC_PRIVATE_PROFILE.STATUS_MESSAGE == null)
+                new_profile.USER_BASIC_PRIVATE_PROFILE.STATUS_MESSAGE = old_profile.USER_BASIC_PRIVATE_PROFILE.STATUS_MESSAGE;
+        } else
+            new_profile.USER_BASIC_PRIVATE_PROFILE = old_profile.USER_BASIC_PRIVATE_PROFILE;
+
+        if (new_profile.USER_PUBLIC_PROFILE == null)
+            new_profile.USER_PUBLIC_PROFILE = new PUBLIC_PROFILE();
+        if (new_profile.USER_PRIVATE_PROFILE == null)
+            new_profile.USER_PRIVATE_PROFILE = new PRIVATE_PROFILE();
+
+        if (new_profile.USER_PUBLIC_PROFILE != null) {
+            if (new_profile.USER_PUBLIC_PROFILE.PUBLIC_SHOW_SEX == null)
+                new_profile.USER_PUBLIC_PROFILE.PUBLIC_SHOW_SEX = old_profile.USER_PUBLIC_PROFILE.PUBLIC_SHOW_SEX;
+            if (new_profile.USER_PUBLIC_PROFILE.PUBLIC_SHOW_AGE == null)
+                new_profile.USER_PUBLIC_PROFILE.PUBLIC_SHOW_AGE = old_profile.USER_PUBLIC_PROFILE.PUBLIC_SHOW_AGE;
+            if (new_profile.USER_PUBLIC_PROFILE.PUBLIC_SHOW_LOCATION == null)
+                new_profile.USER_PUBLIC_PROFILE.PUBLIC_SHOW_LOCATION = old_profile.USER_PUBLIC_PROFILE.PUBLIC_SHOW_LOCATION;
+            if (new_profile.USER_PUBLIC_PROFILE.BIRTHDATE == null)
+                new_profile.USER_PUBLIC_PROFILE.BIRTHDATE = old_profile.USER_PUBLIC_PROFILE.BIRTHDATE;
+            else
+                new_profile.USER_PRIVATE_PROFILE.BIRTHDATE = new_profile.USER_PUBLIC_PROFILE.BIRTHDATE;
+
+            if (new_profile.USER_PUBLIC_PROFILE.SEX == null)
+                new_profile.USER_PUBLIC_PROFILE.SEX = old_profile.USER_PUBLIC_PROFILE.SEX;
+            else
+                new_profile.USER_PRIVATE_PROFILE.SEX = new_profile.USER_PUBLIC_PROFILE.SEX;
+
+            if (new_profile.USER_PUBLIC_PROFILE.LOCATION == null)
+                new_profile.USER_PUBLIC_PROFILE.LOCATION = old_profile.USER_PUBLIC_PROFILE.LOCATION;
+            else
+                new_profile.USER_PRIVATE_PROFILE.LOCATION = new_profile.USER_PUBLIC_PROFILE.LOCATION;
+
+            if (new_profile.USER_PUBLIC_PROFILE.LANGUAGE == null)
+                new_profile.USER_PUBLIC_PROFILE.LANGUAGE = old_profile.USER_PUBLIC_PROFILE.LANGUAGE;
+            else
+                new_profile.USER_PRIVATE_PROFILE.LANGUAGE = new_profile.USER_PUBLIC_PROFILE.LANGUAGE;
+
+        }
+
+        if (new_profile.USER_PRIVATE_PROFILE != null) {
+            if (new_profile.USER_PRIVATE_PROFILE.PRIVATE_SHOW_AGE == null)
+                new_profile.USER_PRIVATE_PROFILE.PRIVATE_SHOW_AGE = old_profile.USER_PRIVATE_PROFILE.PRIVATE_SHOW_AGE;
+            if (new_profile.USER_PRIVATE_PROFILE.BIRTHDATE == null)
+                new_profile.USER_PRIVATE_PROFILE.BIRTHDATE = old_profile.USER_PRIVATE_PROFILE.BIRTHDATE;
+            else
+                new_profile.USER_PUBLIC_PROFILE.BIRTHDATE = new_profile.USER_PRIVATE_PROFILE.BIRTHDATE;
+
+            if (new_profile.USER_PRIVATE_PROFILE.SEX == null)
+                new_profile.USER_PRIVATE_PROFILE.SEX = old_profile.USER_PRIVATE_PROFILE.SEX;
+            else
+                new_profile.USER_PUBLIC_PROFILE.SEX = new_profile.USER_PRIVATE_PROFILE.SEX;
+
+            if (new_profile.USER_PRIVATE_PROFILE.LOCATION == null)
+                new_profile.USER_PRIVATE_PROFILE.LOCATION = old_profile.USER_PRIVATE_PROFILE.LOCATION;
+            else
+                new_profile.USER_PUBLIC_PROFILE.LOCATION = new_profile.USER_PRIVATE_PROFILE.LOCATION;
+
+            if (new_profile.USER_PRIVATE_PROFILE.LANGUAGE == null)
+                new_profile.USER_PRIVATE_PROFILE.LANGUAGE = old_profile.USER_PRIVATE_PROFILE.LANGUAGE;
+            else
+                new_profile.USER_PUBLIC_PROFILE.LANGUAGE = new_profile.USER_PRIVATE_PROFILE.LANGUAGE;
+        }
+
+        return new_profile;
     }
 
     @Override

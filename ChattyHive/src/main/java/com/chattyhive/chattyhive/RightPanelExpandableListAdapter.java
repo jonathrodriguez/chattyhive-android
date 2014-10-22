@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 /**
  * Created by J.Guzmán on 24/09/2014.
@@ -109,11 +108,11 @@ public class RightPanelExpandableListAdapter extends BaseExpandableListAdapter {
             if (isExpanded){
                 ImageView imgv = (ImageView) convertView.findViewById(R.id.menu_flecha_imagen3);
                 imgv.setImageResource(R.drawable.ic_action_next_item_down);
-                convertView.findViewById(R.id.right_panel_hive).setBackgroundResource(R.drawable.borde2px);
+                //convertView.findViewById(R.id.right_panel_hive).setBackgroundResource(R.drawable.borde2px);
             }else{
                 ImageView imgv = (ImageView) convertView.findViewById(R.id.menu_flecha_imagen3);
                 imgv.setImageResource(R.drawable.ic_action_next_item);
-                convertView.findViewById(R.id.right_panel_hive).setBackgroundResource(R.drawable.borde2pxhide);
+                //convertView.findViewById(R.id.right_panel_hive).setBackgroundResource(R.drawable.borde2pxhide);
             }
 
         }
@@ -124,9 +123,9 @@ public class RightPanelExpandableListAdapter extends BaseExpandableListAdapter {
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
         final String children = (String) getChild(groupPosition, childPosition);
         if(groupPosition==0) {
-            if (convertView == null) {
+            //if (convertView == null) {
                 convertView = inflater.inflate(R.layout.right_panel_subitems_layout, null);
-            }
+            //}
 
             convertView.findViewById(R.id.menu_layout_inicio).setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
@@ -145,14 +144,14 @@ public class RightPanelExpandableListAdapter extends BaseExpandableListAdapter {
             convertView.findViewById(R.id.menu_layout_logout).setOnClickListener(((Main) activity).logout_button_click);
         }
         if (groupPosition == 1){
-            if (convertView==null){
-                convertView = inflater.inflate(R.layout.right_panel_subitems_layout, null);
-            }
+            //if (convertView==null){
+                convertView = inflater.inflate(R.layout.right_panel_subitems_options, null);
+            //}
         }
         if (groupPosition == 2){
-            if (convertView==null){
-                convertView = inflater.inflate(R.layout.right_panel_subitems_layout, null);
-            }
+            //if (convertView==null){
+                convertView = inflater.inflate(R.layout.right_panel_subitems_hive, null);
+            //}
         }
         return convertView;
     }

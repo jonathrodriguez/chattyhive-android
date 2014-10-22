@@ -44,6 +44,7 @@ import com.chattyhive.backend.util.events.EventHandler;
 import com.chattyhive.backend.util.events.FormatReceivedEventArgs;
 import com.chattyhive.backend.util.events.PubSubChannelEventArgs;
 import com.chattyhive.backend.util.formatters.DateFormatter;
+import com.chattyhive.backend.util.formatters.TimestampFormatter;
 import com.google.gson.JsonParser;
 
 import java.lang.reflect.InvocationTargetException;
@@ -423,6 +424,9 @@ public class StandAloneServer {
                     break;
                 case LocalProfile:
                     response = LocalProfile(server, formats);
+                    break;
+                case UpdateProfile:
+                    response = UpdateProfile(server, formats);
                     break;
                 case ChatInfo:
                     response = ChatInfo(server, formats);
@@ -1069,6 +1073,323 @@ public class StandAloneServer {
             }
         }
         //}
+
+        if ((responseCode != null) && (responseCode == 200) && (responseFormats.size() > 0)) {
+            responseBody = "";
+            for (Format format : responseFormats)
+                responseBody += ((responseBody.isEmpty())?"{":", ")+format.toJSON().toString().substring(1,format.toJSON().toString().length()-1);
+            responseBody += "}";
+        }
+
+        return new AbstractMap.SimpleEntry<Integer,String>((responseCode != null)?responseCode:-1,(responseBody != null)?responseBody:"");
+    }
+
+    private static AbstractMap.SimpleEntry<Integer, String> UpdateProfile(Server server, Format... formats) {
+        Integer responseCode = null;
+        String responseBody = null;
+
+        LOCAL_USER_PROFILE local_user_profile = null;
+        if (formats != null)
+            for (Format format : formats)
+                if (format instanceof LOCAL_USER_PROFILE)
+                    local_user_profile = (LOCAL_USER_PROFILE)format;
+
+        COMMON common = new COMMON();
+
+        ArrayList<Format> responseFormats = new ArrayList<Format>();
+        responseFormats.add(common);
+
+        if (local_user_profile == null) {
+            common.STATUS = "ERROR";
+            common.ERROR = -1;
+        } else {
+            HttpCookie csrfCookie = checkCSRFCookie(server.getAppName());
+
+            if ((csrfCookie == null) || (csrfCookie.hasExpired()) || (!CSRFTokens.contains(csrfCookie.getValue())))
+                responseCode = 403;
+            else {
+                responseCode = 200;
+                User user = checkSessionCookie(csrfCookie,server.getAppName());
+
+                if ((user != null) && (user.getUserPublicProfile().getPublicName().equalsIgnoreCase(local_user_profile.USER_BASIC_PUBLIC_PROFILE.PUBLIC_NAME))) {
+                    //Lets update profile. Compare field by field user with received format and update fields. EMPTY is to clear field. NULL is to not modify.
+                    //PUBLIC_NAME can't be changed. EMAIL and PASSWORD can be changed, but can not be cleared. BIRTHDAY, SEX, and COLOR can't be cleared.
+                    //FIRST_NAME and LAST_NAME can't be cleared simultaneously.
+
+                    try {
+                        boolean anyUpdate = false;
+                        boolean emailChanged = false;
+                        boolean passwordChanged = false;
+
+                        boolean birthdayChanged = false;
+                        boolean languagesChanged = false;
+                        boolean sexChanged = false;
+                        boolean locationChanged = false;
+
+                        boolean colorChanged = false;
+                        boolean statusMsgPublicChanged = false;
+
+                        boolean showSexPublicChanged = false;
+                        boolean showAgePublicChanged = false;
+                        boolean showLocationPublicChanged = false;
+
+                        boolean statusMsgPrivateChanged = false;
+                        boolean firstNameChanged = false;
+                        boolean lastNameChanged = false;
+
+                        boolean showAgePrivateChanged = false;
+
+                        if ((local_user_profile.EMAIL != null) && (!user.getEmail().equalsIgnoreCase(local_user_profile.EMAIL)) && (!LoginPassword.containsKey(local_user_profile.EMAIL))) {
+                            if (local_user_profile.EMAIL.isEmpty())
+                                throw new IllegalArgumentException();
+                            emailChanged = true;
+                            anyUpdate = true;
+                        }
+
+                        if ((local_user_profile.PASS != null) && (!LoginPassword.get(user.getEmail()).equalsIgnoreCase(local_user_profile.PASS))) {
+                            if (local_user_profile.PASS.isEmpty())
+                                throw new IllegalArgumentException();
+                            passwordChanged = true;
+                            anyUpdate = true;
+                        }
+
+                        if (local_user_profile.USER_PRIVATE_PROFILE != null) {
+                            if ((local_user_profile.USER_PRIVATE_PROFILE.BIRTHDATE != null) && (user.getUserPrivateProfile().getBirthdate() != local_user_profile.USER_PRIVATE_PROFILE.BIRTHDATE)) {
+                                if (local_user_profile.USER_PRIVATE_PROFILE.BIRTHDATE.compareTo(TimestampFormatter.toDate("1970-01-01T00:00:00.000")) == 0)
+                                    throw new IllegalArgumentException();
+
+                                birthdayChanged = true;
+                                anyUpdate = true;
+                            }
+
+                            if ((local_user_profile.USER_PRIVATE_PROFILE.LOCATION != null) && (!user.getUserPrivateProfile().getLocation().equalsIgnoreCase(local_user_profile.USER_PRIVATE_PROFILE.LOCATION))) {
+                                locationChanged = true;
+                                anyUpdate = true;
+                            }
+
+                            if ((local_user_profile.USER_PRIVATE_PROFILE.SEX != null) && (!user.getUserPrivateProfile().getSex().equalsIgnoreCase(local_user_profile.USER_PRIVATE_PROFILE.SEX))) {
+                                if (local_user_profile.USER_PRIVATE_PROFILE.SEX.isEmpty())
+                                    throw new IllegalArgumentException();
+
+                                sexChanged = true;
+                                anyUpdate = true;
+                            }
+
+                            if ((local_user_profile.USER_PRIVATE_PROFILE.PRIVATE_SHOW_AGE != null) && (user.getUserPrivateProfile().getShowAge() != local_user_profile.USER_PRIVATE_PROFILE.PRIVATE_SHOW_AGE)) {
+                                showAgePrivateChanged = true;
+                                anyUpdate = true;
+                            }
+
+                            if ((local_user_profile.USER_PRIVATE_PROFILE.LANGUAGE != null) && ((!user.getUserPrivateProfile().getLanguages().containsAll(local_user_profile.USER_PRIVATE_PROFILE.LANGUAGE)) || (local_user_profile.USER_PRIVATE_PROFILE.LANGUAGE.containsAll(user.getUserPrivateProfile().getLanguages())))) {
+                                languagesChanged = true;
+                                anyUpdate = true;
+                            }
+                        }
+
+                        if (local_user_profile.USER_BASIC_PRIVATE_PROFILE != null) {
+                            if ((local_user_profile.USER_BASIC_PRIVATE_PROFILE.STATUS_MESSAGE != null) && (!user.getUserPrivateProfile().getStatusMessage().equalsIgnoreCase(local_user_profile.USER_BASIC_PRIVATE_PROFILE.STATUS_MESSAGE))) {
+                                statusMsgPrivateChanged = true;
+                                anyUpdate = true;
+                            }
+
+                            if ((local_user_profile.USER_BASIC_PRIVATE_PROFILE.LAST_NAME != null) && (!user.getUserPrivateProfile().getLastName().equalsIgnoreCase(local_user_profile.USER_BASIC_PRIVATE_PROFILE.LAST_NAME))) {
+                                lastNameChanged = true;
+                                anyUpdate = true;
+                            }
+
+                            if ((local_user_profile.USER_BASIC_PRIVATE_PROFILE.FIRST_NAME != null) && (!user.getUserPrivateProfile().getFirstName().equalsIgnoreCase(local_user_profile.USER_BASIC_PRIVATE_PROFILE.FIRST_NAME))) {
+                                firstNameChanged = true;
+                                anyUpdate = true;
+                            }
+                        }
+
+                        if (local_user_profile.USER_BASIC_PUBLIC_PROFILE != null) {
+                            if ((local_user_profile.USER_BASIC_PUBLIC_PROFILE.STATUS_MESSAGE != null) && (!user.getUserPublicProfile().getStatusMessage().equalsIgnoreCase(local_user_profile.USER_BASIC_PUBLIC_PROFILE.STATUS_MESSAGE))) {
+                                statusMsgPublicChanged = true;
+                                anyUpdate = true;
+                            }
+
+                            if ((local_user_profile.USER_BASIC_PUBLIC_PROFILE.USER_COLOR != null) && (!user.getUserPublicProfile().getColor().equalsIgnoreCase(local_user_profile.USER_BASIC_PUBLIC_PROFILE.USER_COLOR))) {
+                                if (local_user_profile.USER_BASIC_PUBLIC_PROFILE.USER_COLOR.isEmpty())
+                                    throw new IllegalArgumentException();
+                                colorChanged = true;
+                                anyUpdate = true;
+                            }
+                        }
+
+                        if (local_user_profile.USER_PUBLIC_PROFILE != null) {
+                            if ((local_user_profile.USER_PUBLIC_PROFILE.BIRTHDATE != null) && (user.getUserPublicProfile().getBirthdate() != local_user_profile.USER_PUBLIC_PROFILE.BIRTHDATE)) {
+                                if (local_user_profile.USER_PUBLIC_PROFILE.BIRTHDATE.compareTo(TimestampFormatter.toDate("1970-01-01T00:00:00.000")) == 0)
+                                    throw new IllegalArgumentException();
+                                birthdayChanged = true;
+                                anyUpdate = true;
+                            }
+
+                            if ((local_user_profile.USER_PUBLIC_PROFILE.LOCATION != null) && (!user.getUserPublicProfile().getLocation().equalsIgnoreCase(local_user_profile.USER_PUBLIC_PROFILE.LOCATION))) {
+                                locationChanged = true;
+                                anyUpdate = true;
+                            }
+
+                            if ((local_user_profile.USER_PUBLIC_PROFILE.SEX != null) && (!user.getUserPublicProfile().getSex().equalsIgnoreCase(local_user_profile.USER_PUBLIC_PROFILE.SEX))) {
+                                if (local_user_profile.USER_PUBLIC_PROFILE.SEX.isEmpty())
+                                    throw new IllegalArgumentException();
+
+                                sexChanged = true;
+                                anyUpdate = true;
+                            }
+
+                            if ((local_user_profile.USER_PUBLIC_PROFILE.PUBLIC_SHOW_AGE != null) && (user.getUserPublicProfile().getShowAge() != local_user_profile.USER_PUBLIC_PROFILE.PUBLIC_SHOW_AGE)) {
+                                showAgePublicChanged = true;
+                                anyUpdate = true;
+                            }
+
+                            if ((local_user_profile.USER_PUBLIC_PROFILE.PUBLIC_SHOW_LOCATION != null) && (user.getUserPublicProfile().getShowLocation() != local_user_profile.USER_PUBLIC_PROFILE.PUBLIC_SHOW_LOCATION)) {
+                                showLocationPublicChanged = true;
+                                anyUpdate = true;
+                            }
+
+                            if ((local_user_profile.USER_PUBLIC_PROFILE.PUBLIC_SHOW_SEX != null) && (user.getUserPublicProfile().getShowSex() != local_user_profile.USER_PUBLIC_PROFILE.PUBLIC_SHOW_SEX)) {
+                                showSexPublicChanged = true;
+                                anyUpdate = true;
+                            }
+
+                            if ((local_user_profile.USER_PUBLIC_PROFILE.LANGUAGE != null) && ((!user.getUserPublicProfile().getLanguages().containsAll(local_user_profile.USER_PUBLIC_PROFILE.LANGUAGE)) || (local_user_profile.USER_PRIVATE_PROFILE.LANGUAGE.containsAll(user.getUserPrivateProfile().getLanguages())))) {
+                                languagesChanged = true;
+                                anyUpdate = true;
+                            }
+                        }
+
+                        if ((firstNameChanged && lastNameChanged && local_user_profile.USER_BASIC_PRIVATE_PROFILE.FIRST_NAME.isEmpty() && local_user_profile.USER_BASIC_PRIVATE_PROFILE.LAST_NAME.isEmpty()) ||
+                            (firstNameChanged && local_user_profile.USER_BASIC_PRIVATE_PROFILE.FIRST_NAME.isEmpty() && !lastNameChanged && user.getUserPrivateProfile().getLastName().isEmpty()) ||
+                            (lastNameChanged && local_user_profile.USER_BASIC_PRIVATE_PROFILE.LAST_NAME.isEmpty() && !firstNameChanged && user.getUserPrivateProfile().getFirstName().isEmpty())) {
+                            throw new IllegalArgumentException();
+                        }
+
+                        if (!anyUpdate) {
+                            common.STATUS = "ERROR";
+                            common.ERROR = -16;
+                        } else {
+                            //Lets update profile. Compare field by field user with received format and update fields. EMPTY is to clear field. NULL is to not modify.
+                            //PUBLIC_NAME can't be changed. EMAIL and PASSWORD can be changed, but can not be cleared. BIRTHDAY, SEX, and COLOR can't be cleared.
+                            //FIRST_NAME and LAST_NAME can't be cleared simultaneously.
+
+                            if (emailChanged) {
+                                String actualPass = LoginPassword.get(user.getEmail());
+                                LoginPassword.remove(user.getEmail());
+                                user.setEmail(local_user_profile.EMAIL);
+                                LoginPassword.put(user.getEmail(),actualPass);
+                            }
+
+                            if (passwordChanged) {
+                                LoginPassword.put(user.getEmail(),local_user_profile.PASS);
+                            }
+
+                            if (colorChanged) {
+                                user.getUserPublicProfile().setColor(local_user_profile.USER_BASIC_PUBLIC_PROFILE.USER_COLOR);
+                            }
+
+                            if (statusMsgPublicChanged) {
+                                user.getUserPublicProfile().setStatusMessage(local_user_profile.USER_BASIC_PUBLIC_PROFILE.STATUS_MESSAGE);
+                            }
+
+                            if (showAgePublicChanged) {
+                                user.getUserPublicProfile().setShowAge(local_user_profile.USER_PUBLIC_PROFILE.PUBLIC_SHOW_AGE);
+                            }
+
+                            if (showSexPublicChanged) {
+                                user.getUserPublicProfile().setShowSex(local_user_profile.USER_PUBLIC_PROFILE.PUBLIC_SHOW_SEX);
+                            }
+
+                            if (showLocationPublicChanged) {
+                                user.getUserPublicProfile().setShowLocation(local_user_profile.USER_PUBLIC_PROFILE.PUBLIC_SHOW_LOCATION);
+                            }
+
+                            if (firstNameChanged) {
+                                user.getUserPrivateProfile().setFirstName(local_user_profile.USER_BASIC_PRIVATE_PROFILE.FIRST_NAME);
+                            }
+
+                            if (lastNameChanged) {
+                                user.getUserPrivateProfile().setLastName(local_user_profile.USER_BASIC_PRIVATE_PROFILE.LAST_NAME);
+                            }
+
+                            if (statusMsgPrivateChanged) {
+                                user.getUserPrivateProfile().setStatusMessage(local_user_profile.USER_BASIC_PRIVATE_PROFILE.STATUS_MESSAGE);
+                            }
+
+                            if (showAgePrivateChanged) {
+                                user.getUserPrivateProfile().setShowAge(local_user_profile.USER_PRIVATE_PROFILE.PRIVATE_SHOW_AGE);
+                            }
+
+                            if (sexChanged) {
+                                if (local_user_profile.USER_PRIVATE_PROFILE == null) {
+                                    user.getUserPublicProfile().setSex(local_user_profile.USER_PUBLIC_PROFILE.SEX);
+                                    user.getUserPrivateProfile().setSex(local_user_profile.USER_PUBLIC_PROFILE.SEX);
+                                } else if (local_user_profile.USER_PUBLIC_PROFILE == null) {
+                                    user.getUserPublicProfile().setSex(local_user_profile.USER_PRIVATE_PROFILE.SEX);
+                                    user.getUserPrivateProfile().setSex(local_user_profile.USER_PRIVATE_PROFILE.SEX);
+                                } else if (local_user_profile.USER_PRIVATE_PROFILE.SEX.equalsIgnoreCase(local_user_profile.USER_PUBLIC_PROFILE.SEX)) {
+                                    user.getUserPublicProfile().setSex(local_user_profile.USER_PRIVATE_PROFILE.SEX);
+                                    user.getUserPrivateProfile().setSex(local_user_profile.USER_PRIVATE_PROFILE.SEX);
+                                } else
+                                    throw new IllegalArgumentException();
+                            }
+
+                            if (locationChanged) {
+                                if (local_user_profile.USER_PRIVATE_PROFILE == null) {
+                                    user.getUserPublicProfile().setLocation(local_user_profile.USER_PUBLIC_PROFILE.LOCATION);
+                                    user.getUserPrivateProfile().setLocation(local_user_profile.USER_PUBLIC_PROFILE.LOCATION);
+                                } else if (local_user_profile.USER_PUBLIC_PROFILE == null) {
+                                    user.getUserPublicProfile().setLocation(local_user_profile.USER_PRIVATE_PROFILE.LOCATION);
+                                    user.getUserPrivateProfile().setLocation(local_user_profile.USER_PRIVATE_PROFILE.LOCATION);
+                                } else if (local_user_profile.USER_PRIVATE_PROFILE.LOCATION.equalsIgnoreCase(local_user_profile.USER_PUBLIC_PROFILE.LOCATION)) {
+                                    user.getUserPublicProfile().setLocation(local_user_profile.USER_PRIVATE_PROFILE.LOCATION);
+                                    user.getUserPrivateProfile().setLocation(local_user_profile.USER_PRIVATE_PROFILE.LOCATION);
+                                } else
+                                    throw new IllegalArgumentException();
+                            }
+
+                            if (birthdayChanged) {
+                                if (local_user_profile.USER_PRIVATE_PROFILE == null) {
+                                    user.getUserPublicProfile().setBirthdate(local_user_profile.USER_PUBLIC_PROFILE.BIRTHDATE);
+                                    user.getUserPrivateProfile().setBirthdate(local_user_profile.USER_PUBLIC_PROFILE.BIRTHDATE);
+                                } else if (local_user_profile.USER_PUBLIC_PROFILE == null) {
+                                    user.getUserPublicProfile().setBirthdate(local_user_profile.USER_PRIVATE_PROFILE.BIRTHDATE);
+                                    user.getUserPrivateProfile().setBirthdate(local_user_profile.USER_PRIVATE_PROFILE.BIRTHDATE);
+                                } else if (local_user_profile.USER_PRIVATE_PROFILE.BIRTHDATE == local_user_profile.USER_PUBLIC_PROFILE.BIRTHDATE) {
+                                    user.getUserPublicProfile().setBirthdate(local_user_profile.USER_PRIVATE_PROFILE.BIRTHDATE);
+                                    user.getUserPrivateProfile().setBirthdate(local_user_profile.USER_PRIVATE_PROFILE.BIRTHDATE);
+                                } else
+                                    throw new IllegalArgumentException();
+                            }
+
+                            if (languagesChanged) {
+                                if (local_user_profile.USER_PRIVATE_PROFILE == null) {
+                                    user.getUserPublicProfile().setLanguages(local_user_profile.USER_PUBLIC_PROFILE.LANGUAGE);
+                                    user.getUserPrivateProfile().setLanguages(local_user_profile.USER_PUBLIC_PROFILE.LANGUAGE);
+                                } else if (local_user_profile.USER_PUBLIC_PROFILE == null) {
+                                    user.getUserPublicProfile().setLanguages(local_user_profile.USER_PRIVATE_PROFILE.LANGUAGE);
+                                    user.getUserPrivateProfile().setLanguages(local_user_profile.USER_PRIVATE_PROFILE.LANGUAGE);
+                                } else if ((local_user_profile.USER_PRIVATE_PROFILE.LANGUAGE.containsAll(local_user_profile.USER_PUBLIC_PROFILE.LANGUAGE)) && (local_user_profile.USER_PUBLIC_PROFILE.LANGUAGE.containsAll(local_user_profile.USER_PRIVATE_PROFILE.LANGUAGE))) {
+                                    user.getUserPublicProfile().setLanguages(local_user_profile.USER_PRIVATE_PROFILE.LANGUAGE);
+                                    user.getUserPrivateProfile().setLanguages(local_user_profile.USER_PRIVATE_PROFILE.LANGUAGE);
+                                } else
+                                    throw new IllegalArgumentException();
+                            }
+                        }
+                    } catch (Exception e) {
+                        common.STATUS = "ERROR";
+                        common.ERROR = -15;
+                    }
+
+                    common.STATUS = "OK";
+                } else if (user != null) {
+                    common.STATUS = "ERROR";
+                    common.ERROR = -14;
+                } else {
+                    common.STATUS = "SESSION EXPIRED";
+                }
+            }
+        }
 
         if ((responseCode != null) && (responseCode == 200) && (responseFormats.size() > 0)) {
             responseBody = "";
