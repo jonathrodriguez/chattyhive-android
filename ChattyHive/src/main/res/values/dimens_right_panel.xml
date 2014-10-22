@@ -17,7 +17,7 @@
     <dimen name="hive_description_image">18dp</dimen>
     <dimen name="hive_description_text_height">18dp</dimen>
     <dimen name="hive_description_text_size">16dp</dimen>
-    <dimen name="hive_description_text_padding_top">12dp</dimen>
+    <dimen name="hive_description_text_padding_top">13dp</dimen>
 
     <!--right_panel_items_layout-->
     <dimen name="menu_parent_margin_left">84dp</dimen>

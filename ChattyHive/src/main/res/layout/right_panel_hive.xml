@@ -38,7 +38,7 @@
         <TextView
             android:id="@+id/right_panel_hive_name"
             android:layout_width="wrap_content"
-            android:layout_height="@dimen/hive_description_text_height"
+            android:layout_height="fill_parent"
             android:text="@string/menu_hive_name"
             android:textSize="@dimen/hive_description_text_size"
             android:gravity="left"
