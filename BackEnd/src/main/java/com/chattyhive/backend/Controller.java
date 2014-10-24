@@ -555,7 +555,7 @@ public class Controller {
         } else if (sender != this.me) {
             this.me = (User)sender;
             if (LocalUserReceived != null)
-                LocalUserReceived.fire(this,EventArgs.Empty());
+                LocalUserReceived.fire(sender,EventArgs.Empty());
         }
     }
 

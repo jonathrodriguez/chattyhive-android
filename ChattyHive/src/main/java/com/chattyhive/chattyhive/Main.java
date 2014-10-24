@@ -69,6 +69,14 @@ public class Main extends Activity {
         return actualView;
     }
 
+    protected View ChangeActionBar (int actionBarID) {
+        FrameLayout mainActionBar = ((FrameLayout)findViewById(R.id.actionCenter));
+        mainActionBar.removeAllViews();
+        View actionBar = LayoutInflater.from(this).inflate(actionBarID,mainActionBar,true);
+
+        return actionBar;
+    }
+
     protected void ShowHome() {
         ViewPair pair = this.ShowLayout(R.layout.home,R.layout.home_action_bar);
         setPanelBehaviour();
