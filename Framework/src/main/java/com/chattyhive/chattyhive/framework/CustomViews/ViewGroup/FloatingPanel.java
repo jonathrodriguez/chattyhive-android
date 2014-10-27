@@ -513,9 +513,30 @@ public class FloatingPanel extends ViewGroup {
             if (scroller.computeScrollOffset()) {
                 setCurrentPosition(scroller.getCurrX());
             } else {
+                setStaticPosition();
                 scrolling = false;
             }
         }
+    }
+
+    protected void setStaticPosition() {
+        float leftBound = mainPanels.get("left").getMeasuredWidth() + ((LayoutParams)mainPanels.get("left").getLayoutParams()).leftMargin + ((LayoutParams)mainPanels.get("left").getLayoutParams()).rightMargin;
+        float rightBound = -(mainPanels.get("right").getMeasuredWidth() + ((LayoutParams)mainPanels.get("right").getLayoutParams()).leftMargin + ((LayoutParams)mainPanels.get("right").getLayoutParams()).rightMargin);
+
+        switch (actualState) {
+            case 0:
+                actualPosition = 0;
+                break;
+            case 1:
+                actualPosition = leftBound;
+                break;
+            case 2:
+                actualPosition = rightBound;
+                break;
+        }
+
+        invalidate();
+        requestLayout();
     }
 
     protected void setCurrentPosition(float newPosition) {
