@@ -69,9 +69,9 @@ public class ExploreListAdapter extends BaseAdapter {
             holder = new ViewHolder();
 
             convertView = this.inflater.inflate(R.layout.explore_list_item,parent,false);
-            holder.scoreAndImage = (TextView)convertView.findViewById(R.id.explore_list_item_image_and_score_textview);
-            holder.mainTitle = (TextView)convertView.findViewById(R.id.explore_list_item_name);
-            holder.mainText = (TextView)convertView.findViewById(R.id.explore_list_item_text);
+            //holder.scoreAndImage = (TextView)convertView.findViewById(R.id.explore_list_item_image_and_score_textview);
+            //holder.mainTitle = (TextView)convertView.findViewById(R.id.explore_list_item_name);
+            //holder.mainText = (TextView)convertView.findViewById(R.id.explore_list_item_text);
             holder.categoryText = (TextView)convertView.findViewById(R.id.explore_list_item_category_textview);
             holder.categoryImage = (ImageView)convertView.findViewById(R.id.explore_list_item_category_imageview);
             holder.usersText = (TextView)convertView.findViewById(R.id.explore_list_item_users_textview);
@@ -89,13 +89,13 @@ public class ExploreListAdapter extends BaseAdapter {
         convertView.setTag(R.id.BO_Hive,hive);
 
         if (hive.getName() != null) {
-            holder.mainTitle.setText(hive.getName());
-            holder.mainTitle.setTag(hive.getNameUrl());
+//            holder.mainTitle.setText(hive.getName());
+//            holder.mainTitle.setTag(hive.getNameUrl());
         }
 
 
 
-        holder.mainText.setText(hive.getDescription());
+/*        holder.mainText.setText(hive.getDescription());
         String category = hive.getCategory();
         holder.categoryText.setText(category);
         holder.usersText.setText("0");
@@ -116,7 +116,7 @@ public class ExploreListAdapter extends BaseAdapter {
 
         if ((position == (this.getCount()-1)) && (this.moreItems)) {
             ((Explore)this.context).GetMoreHives();
-        }
+        }*/
 
         return convertView;
     }

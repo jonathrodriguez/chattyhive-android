@@ -1,114 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal" android:layout_width="match_parent"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#ededed"
-    android:padding="2dp">
+    android:background="#ededed">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#ffffff"
+        android:layout_marginLeft="8.5dp"
+        android:layout_marginRight="8.5dp"
+        android:layout_marginBottom="20dp"
+        android:layout_marginTop="3.5dp">
 
-
-        <TextView
-            android:layout_width="76dp"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="100/100"
-            android:id="@+id/explore_list_item_image_and_score_textview"
-            android:textColor="#333"
-            android:textSize="12sp"
-            android:layout_gravity="center"
-            android:drawableTop="@drawable/pestanha_chats_mas_opciones"
-            android:drawablePadding="9dp"
-            android:gravity="center"
-            android:background="#fff"
-            android:padding="9dp" />
+    <RelativeLayout
+        android:layout_width="79.5dp"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:layout_width="58dp"
+            android:layout_height="58dp"
+            android:src="@drawable/launcher_launcher_b"
+            android:layout_marginTop="9.5dp"
+            android:layout_marginLeft="9.5dp"
+            android:layout_marginRight="12dp"/>
+    </RelativeLayout>
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:background="#ffffff">
-
+        android:layout_height="wrap_content">
         <LinearLayout
-            android:orientation="horizontal"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_weight="1"
-            android:background="#fff">
-
-            <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:layout_weight="1"
-                android:background="#fff">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="Medium Text"
-                    android:id="@+id/explore_list_item_name"
-                    android:layout_marginTop="9dp"
-                    android:layout_marginBottom="4dp"
-                    android:layout_marginRight="9dp"
-                    android:layout_marginLeft="2dp"
-                    android:autoText="false"
-                    android:background="#ffffff"
-                    android:textColor="#000" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:text="Small Text"
-                    android:id="@+id/explore_list_item_text"
-                    android:layout_marginLeft="2dp"
-                    android:layout_marginRight="9dp"
-                    android:layout_marginBottom="9dp"
-                    android:background="#ffffff"
-                    android:textColor="#000" />
-            </LinearLayout>
-
-            <ImageButton
-                android:layout_width="10dp"
-                android:layout_height="20dp"
-                android:id="@+id/explore_list_item_menu_image"
-                android:src="@drawable/abc_ic_menu_moreoverflow_normal_holo_light"
-                android:scaleType="centerCrop"
-                android:background="#ffffff"
-                android:layout_marginTop="5dp"
-                android:layout_marginRight="5dp" />
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginRight="14dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=":What to do when you are very"
+                android:textSize="16dp"
+                android:textColor="#202020"
+                android:layout_marginTop="14dp"
+                android:layout_marginBottom="8.5dp"
+                android:textStyle="bold"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Share your best thoughts on how to kill time when you have nothing else to do!"
+                android:textSize="12.5dp"
+                android:maxLines="2"
+                android:layout_marginBottom="0dp"
+                android:textColor="#333333"/>
         </LinearLayout>
 
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="fill_parent"
-            android:layout_height="16dp"
-            android:layout_marginBottom="9dp"
-            android:layout_marginLeft="2dp"
-            android:layout_weight="0"
-            android:layout_marginRight="5dp"
-            android:layout_gravity="right"
-            android:gravity="right"
-            android:background="#fff">
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:layout_marginBottom="10dp">
 
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="wrap_content"
-                android:layout_height="fill_parent"
-                android:layout_marginLeft="20dp"
-                android:background="#fff">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:text="users"
-                    android:id="@+id/explore_list_item_users_textview"
-                    android:background="#ffffff"
-                    android:textColor="#000"
-                    android:gravity="center_vertical|center_horizontal" />
+                android:layout_height="fill_parent">
 
                 <ImageView
                     android:layout_width="12dp"
@@ -117,39 +74,45 @@
                     android:src="@drawable/pestanha_chats_arroba"
                     android:scaleType="fitCenter"
                     android:layout_gravity="center"
-                    android:background="#ffffff" />
+                    android:alpha="0.5"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:text="Moods"
+                    android:textSize="12dp"
+                    android:layout_gravity="bottom"
+                    android:id="@+id/explore_list_item_users_textview"
+                    android:textColor="#808080"
+                    android:gravity="center_vertical|center_horizontal"
+                    android:layout_marginLeft="7dp"
+                    android:layout_marginRight="17dp"/>
             </LinearLayout>
 
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="wrap_content"
-                android:layout_height="fill_parent"
-                android:gravity="right"
-                android:layout_marginLeft="20dp"
-                android:background="#fff">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:text="category"
-                    android:id="@+id/explore_list_item_category_textview"
-                    android:background="#ffffff"
-                    android:textColor="#000"
-                    android:gravity="center_vertical|center_horizontal" />
-
+                android:layout_height="fill_parent">
                 <ImageView
                     android:layout_width="12dp"
                     android:layout_height="12dp"
                     android:id="@+id/explore_list_item_category_imageview"
-                    android:src="@drawable/pestanha_hives_location"
+                    android:src="@drawable/pestanha_chats_arroba"
                     android:layout_gravity="center"
                     android:scaleType="fitCenter"
-                    android:background="#ffffff" />
+                    android:alpha="0.5"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:text="143"
+                    android:textSize="12dp"
+                    android:id="@+id/explore_list_item_category_textview"
+                    android:textColor="#808080"
+                    android:gravity="center_vertical|center_horizontal"
+                    android:layout_marginLeft="5dp"/>
             </LinearLayout>
-
         </LinearLayout>
-
     </LinearLayout>
-
+</LinearLayout>
 </LinearLayout>

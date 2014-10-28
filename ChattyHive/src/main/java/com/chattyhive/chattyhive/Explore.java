@@ -58,8 +58,8 @@ public class Explore extends Activity {
     protected View.OnClickListener join_button_click = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            String hiveNameURL =((String) ((TextView)v.findViewById(R.id.explore_list_item_name)).getTag());
-            controller.JoinHive(hiveNameURL);
+            //String hiveNameURL =((String) ((TextView)v.findViewById(R.id.explore_list_item_name)).getTag());
+            //controller.JoinHive(hiveNameURL);
         }
     };
 
@@ -68,7 +68,7 @@ public class Explore extends Activity {
             @Override
             public void run() {
                 if (joined == 0)
-                    ((ImageButton)findViewById(R.id.explore_action_bar_goBack_button)).setBackgroundColor(Color.GREEN);
+                    //((ImageButton)findViewById(R.id.explore_action_bar_goBack_button)).setBackgroundColor(Color.GREEN);
                 joined++;
                 ((TextView)findViewById(R.id.explore_action_bar_number_text)).setText(String.valueOf(joined));
             }

@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#ededed">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="#ffffff"
+        android:paddingTop="12dp"
+        android:paddingBottom="2dp"
+        android:paddingLeft="11dp"
+        android:paddingRight="11dp"
+        android:layout_marginLeft="8.5dp"
+        android:layout_marginRight="8.5dp"
+        android:layout_marginBottom="20dp"
+        android:layout_marginTop="3.5dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text=":Minecraft - A game about build anything you can imagine"
+        android:textColor="#111111"
+        android:textSize="18dp"
+        android:maxLines="2"
+        android:textStyle="bold"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="14.5dp">
+        <ImageView
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:src="@drawable/launcher_launcher_b"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingTop="5dp"
+            android:paddingRight="0dp"
+            android:paddingLeft="9.5dp">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingBottom="5.5dp">
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_marginRight="4dp"
+                    android:src="@drawable/pestanha_chats_arroba"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="12dp"
+                    android:text="Videojuegos"
+                    android:textColor="#111111"
+                    android:textSize="12dp"
+                    android:layout_gravity="center"/>
+                </LinearLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingBottom="5.5dp">
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_marginRight="4dp"
+                    android:src="@drawable/pestanha_chats_arroba"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="12dp"
+                    android:text="1522 mates se unieron al hive"
+                    android:textColor="#111111"
+                    android:textSize="12dp"
+                    android:layout_gravity="center"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_marginRight="4dp"
+                    android:src="@drawable/pestanha_chats_arroba"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="12dp"
+                    android:text="Idiomas hive chat: Inglés"
+                    android:textColor="#111111"
+                    android:textSize="12dp"
+                    android:layout_gravity="center"/>
+            </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="This is a topic to discuss about Notch's game. News, maps, experiences... For suport and reporting problems join :Minecraft - Support"
+        android:textSize="13.25sp"
+        android:textColor="#111111"
+        android:maxLines="3"
+        android:paddingTop="13dp"
+        android:paddingRight="30dp"
+        android:paddingLeft="0dp"
+        android:lineSpacingExtra="4.25sp"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginLeft="2dp"
+        android:layout_marginTop="12dp">
+        <ImageView
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:src="@drawable/my_profile_edit"
+            android:alpha="0.75"
+            android:layout_gravity="center"/>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="3">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12dp"
+            android:text="sandbox"
+            android:gravity="top"
+            android:layout_marginLeft="5.5dp"
+            android:textColor="#333333"
+            android:background="@drawable/explore_tags_border"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12dp"
+                android:text="sandbox"
+                android:gravity="top"
+                android:layout_marginLeft="5.5dp"
+                android:textColor="#333333"
+                android:background="@drawable/explore_tags_border"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12dp"
+                android:text="sandbox"
+                android:gravity="top"
+                android:layout_marginLeft="5.5dp"
+                android:textColor="#333333"
+                android:background="@drawable/explore_tags_border"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12dp"
+            android:text="survival"
+            android:layout_marginLeft="5.5dp"
+            android:textColor="#333333"
+            android:background="@drawable/explore_tags_border"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12dp"
+            android:text="notch"
+            android:layout_marginLeft="5.5dp"
+            android:textColor="#333333"
+            android:background="@drawable/explore_tags_border"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12dp"
+            android:text="indie"
+            android:layout_marginLeft="5.5dp"
+            android:textColor="#333333"
+            android:background="@drawable/explore_tags_border"/>
+        </LinearLayout>
+    </LinearLayout>
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:layout_marginTop="19dp">
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+    <ImageView
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:src="@drawable/pestanha_hives_share"
+        android:layout_marginRight="10dp"/>
+        <TextView
+            android:layout_width="1px"
+            android:layout_height="16.5dp"
+            android:background="#c0c0c0"
+            android:layout_gravity="center"/>
+    <ImageView
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:src="@drawable/pestanha_hives_report"
+        android:layout_marginLeft="10dp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="right">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:background="@drawable/explore_button_border">
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/launcher_launcher_b"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:gravity="center"
+            android:text="Join hive"
+            android:textSize="16dp"
+            android:textColor="#333333"
+            android:layout_marginLeft="7dp"/>
+        </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>
+</LinearLayout>
+
+
+
+
+
+
+
+
+
+
+
+
