@@ -280,11 +280,11 @@ public class FloatingPanel extends ViewGroup {
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
-        Log.w("onInterceptTouchEvent_1",String.format("ev.x: %f\tev.y: %f\tev.action: %d\tmoving: %b\tallowSwipeToMovePanels: %b",ev.getX(),ev.getY(),ev.getAction(),moving,allowSwipeToMovePanels));
-        Log.w("onInterceptTouchEvent_2",String.format("StartX: %f\tStartY: %f\tLastX: %f\tactualPosition: %f\tactionMoveThreshold: %f",StartEventX,StartEventY,LastEventX,actualPosition,actionMoveThreshold));
-        Log.w("onInterceptTouchEvent_3",String.format("LeftMainWidth: %d\tLeftMain_leftMargin: %d\tLeftMain_rightMargin: %d",mainPanelsWidth.get("left"),((LayoutParams) mainPanels.get("left").getLayoutParams()).leftMargin,((LayoutParams) mainPanels.get("left").getLayoutParams()).rightMargin));
-        Log.w("onInterceptTouchEvent_4",String.format("CenterMainWidth: %d\tCenterMain_leftMargin: %d\tCenterMain_rightMargin: %d",mainPanelsWidth.get("center"),((LayoutParams) mainPanels.get("center").getLayoutParams()).leftMargin,((LayoutParams) mainPanels.get("center").getLayoutParams()).rightMargin));
-        Log.w("onInterceptTouchEvent_5",String.format("RightMainWidth: %d\tRightMain_leftMargin: %d\tRightMain_rightMargin: %d",mainPanelsWidth.get("right"),((LayoutParams) mainPanels.get("right").getLayoutParams()).leftMargin,((LayoutParams) mainPanels.get("right").getLayoutParams()).rightMargin));
+        //Log.w("onInterceptTouchEvent_1",String.format("ev.x: %f\tev.y: %f\tev.action: %d\tmoving: %b\tallowSwipeToMovePanels: %b",ev.getX(),ev.getY(),ev.getAction(),moving,allowSwipeToMovePanels));
+        //Log.w("onInterceptTouchEvent_2",String.format("StartX: %f\tStartY: %f\tLastX: %f\tactualPosition: %f\tactionMoveThreshold: %f",StartEventX,StartEventY,LastEventX,actualPosition,actionMoveThreshold));
+        //Log.w("onInterceptTouchEvent_3",String.format("LeftMainWidth: %d\tLeftMain_leftMargin: %d\tLeftMain_rightMargin: %d",mainPanelsWidth.get("left"),((LayoutParams) mainPanels.get("left").getLayoutParams()).leftMargin,((LayoutParams) mainPanels.get("left").getLayoutParams()).rightMargin));
+        //Log.w("onInterceptTouchEvent_4",String.format("CenterMainWidth: %d\tCenterMain_leftMargin: %d\tCenterMain_rightMargin: %d",mainPanelsWidth.get("center"),((LayoutParams) mainPanels.get("center").getLayoutParams()).leftMargin,((LayoutParams) mainPanels.get("center").getLayoutParams()).rightMargin));
+        //Log.w("onInterceptTouchEvent_5",String.format("RightMainWidth: %d\tRightMain_leftMargin: %d\tRightMain_rightMargin: %d",mainPanelsWidth.get("right"),((LayoutParams) mainPanels.get("right").getLayoutParams()).leftMargin,((LayoutParams) mainPanels.get("right").getLayoutParams()).rightMargin));
 
         if (!this.allowSwipeToMovePanels) return false;
 
@@ -335,7 +335,7 @@ public class FloatingPanel extends ViewGroup {
             }
         }
 
-        Log.w("onInterceptTouchEvent_6",String.format("Result: %b",result));
+        //Log.w("onInterceptTouchEvent_6",String.format("Result: %b",result));
 
         return result;
     }
@@ -343,11 +343,11 @@ public class FloatingPanel extends ViewGroup {
 
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
-        Log.w("onTouchEvent_1",String.format("ev.x: %f\tev.y: %f\tev.action: %d\tmoving: %b\tallowSwipeToMovePanels: %b",ev.getX(),ev.getY(),ev.getAction(),moving,allowSwipeToMovePanels));
-        Log.w("onTouchEvent_2",String.format("StartX: %f\tStartY: %f\tLastX: %f\tactualPosition: %f\tactionMoveThreshold: %f",StartEventX,StartEventY,LastEventX,actualPosition,actionMoveThreshold));
-        Log.w("onTouchEvent_3",String.format("LeftMainWidth: %d\tLeftMain_leftMargin: %d\tLeftMain_rightMargin: %d",mainPanelsWidth.get("left"),((LayoutParams) mainPanels.get("left").getLayoutParams()).leftMargin,((LayoutParams) mainPanels.get("left").getLayoutParams()).rightMargin));
-        Log.w("onTouchEvent_4",String.format("CenterMainWidth: %d\tCenterMain_leftMargin: %d\tCenterMain_rightMargin: %d",mainPanelsWidth.get("center"),((LayoutParams) mainPanels.get("center").getLayoutParams()).leftMargin,((LayoutParams) mainPanels.get("center").getLayoutParams()).rightMargin));
-        Log.w("onTouchEvent_5",String.format("RightMainWidth: %d\tRightMain_leftMargin: %d\tRightMain_rightMargin: %d",mainPanelsWidth.get("right"),((LayoutParams) mainPanels.get("right").getLayoutParams()).leftMargin,((LayoutParams) mainPanels.get("right").getLayoutParams()).rightMargin));
+        //Log.w("onTouchEvent_1",String.format("ev.x: %f\tev.y: %f\tev.action: %d\tmoving: %b\tallowSwipeToMovePanels: %b",ev.getX(),ev.getY(),ev.getAction(),moving,allowSwipeToMovePanels));
+        //Log.w("onTouchEvent_2",String.format("StartX: %f\tStartY: %f\tLastX: %f\tactualPosition: %f\tactionMoveThreshold: %f",StartEventX,StartEventY,LastEventX,actualPosition,actionMoveThreshold));
+        //Log.w("onTouchEvent_3",String.format("LeftMainWidth: %d\tLeftMain_leftMargin: %d\tLeftMain_rightMargin: %d",mainPanelsWidth.get("left"),((LayoutParams) mainPanels.get("left").getLayoutParams()).leftMargin,((LayoutParams) mainPanels.get("left").getLayoutParams()).rightMargin));
+        //Log.w("onTouchEvent_4",String.format("CenterMainWidth: %d\tCenterMain_leftMargin: %d\tCenterMain_rightMargin: %d",mainPanelsWidth.get("center"),((LayoutParams) mainPanels.get("center").getLayoutParams()).leftMargin,((LayoutParams) mainPanels.get("center").getLayoutParams()).rightMargin));
+        //Log.w("onTouchEvent_5",String.format("RightMainWidth: %d\tRightMain_leftMargin: %d\tRightMain_rightMargin: %d",mainPanelsWidth.get("right"),((LayoutParams) mainPanels.get("right").getLayoutParams()).leftMargin,((LayoutParams) mainPanels.get("right").getLayoutParams()).rightMargin));
 
         if (!this.allowSwipeToMovePanels) return false;
 
@@ -420,7 +420,7 @@ public class FloatingPanel extends ViewGroup {
 
                 int finalPosition; //center = 0, left = 1, right = 2;
 
-                Log.w("onTouchEvent_6",String.format("XVelocity: %f\tYVelocity: %f\tflingSpeedThreshold: %d",velocityTracker.getXVelocity(),velocityTracker.getYVelocity(),this.flingSpeedThreshold));
+                //Log.w("onTouchEvent_6",String.format("XVelocity: %f\tYVelocity: %f\tflingSpeedThreshold: %d",velocityTracker.getXVelocity(),velocityTracker.getYVelocity(),this.flingSpeedThreshold));
 
                 if ((Math.abs(velocityTracker.getXVelocity()) > Math.abs(velocityTracker.getYVelocity())) && (Math.abs(velocityTracker.getXVelocity()) > this.flingSpeedThreshold)) {
                     //It's a valid fling
@@ -449,7 +449,7 @@ public class FloatingPanel extends ViewGroup {
                 }
 
                 int animationDuration = Math.round(3 * Math.round(1000 * Math.abs((destination-actualPosition) / velocityTracker.getXVelocity())));
-                Log.w("onTouchEvent_7",String.format("finalPosition: %d\tanimationDuration: %d",finalPosition,animationDuration));
+                //Log.w("onTouchEvent_7",String.format("finalPosition: %d\tanimationDuration: %d",finalPosition,animationDuration));
                 switch (finalPosition) {
                     case 0: //center
                         close(animationDuration);

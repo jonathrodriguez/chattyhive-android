@@ -23,7 +23,7 @@
     <string name="profile_information_gender_female_value">Woman</string>
     <string name="profile_information_age_append_value_after"></string>
 
-    <string name="profile_information_default_location">Vigo, Galicia, Spain</string>
+    <string name="profile_information_default_location">Vigo, Galicia, España</string>
     <string name="profile_information_default_age">0</string>
     <string name="profile_information_default_gender">Man</string>
     <string name="profile_information_default_languages">Spanish</string>
