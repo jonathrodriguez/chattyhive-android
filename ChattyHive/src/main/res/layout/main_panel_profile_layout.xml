@@ -104,7 +104,7 @@
                         android:layout_centerHorizontal="true" />
 
                     <ImageView
-                        android:layout_width="wrap_content"
+                        android:layout_width="@dimen/edit_profile_full_name_pencil_size"
                         android:layout_height="@dimen/edit_profile_full_name_pencil_size"
                         android:id="@+id/profile_edit_full_name"
                         android:src="@drawable/my_profile_pencil_orange"
@@ -112,7 +112,8 @@
                         android:layout_toRightOf="@+id/profile_full_name_value"
                         android:layout_marginLeft="@dimen/edit_profile_full_name_pencil_separation"
                         android:background="#00000000"
-                        android:visibility="gone" />
+                        android:visibility="visible"
+                        android:scaleType="centerInside" />
                 </RelativeLayout>
 
                 <TextView
@@ -504,8 +505,7 @@
                                 android:adjustViewBounds="true"
                                 android:src="@drawable/my_profile_pencil_orange"
                                 android:visibility="gone"
-                                android:layout_gravity="center_vertical|right"
-                                android:scaleType="fitCenter" />
+                                android:layout_gravity="center_vertical|right" />
 
                             <com.chattyhive.chattyhive.framework.CustomViews.View.WrapWidthTextView
                                 android:layout_width="wrap_content"
@@ -519,7 +519,7 @@
                                 android:textColor="@color/my_profile_information_param_value_text"
                                 android:textSize="@dimen/my_profile_information_element_value_text_size"
                                 android:background="#00000000"
-                                android:maxLines="2"
+                                android:maxLines="3"
                                 android:minLines="1"
                                 android:layout_gravity="right"
                                 android:gravity="right"
@@ -595,7 +595,8 @@
                             android:id="@+id/profile_edit_information_gender"
                             android:adjustViewBounds="true"
                             android:src="@drawable/my_profile_pencil_orange"
-                            android:visibility="gone" />
+                            android:visibility="gone"
+                            android:layout_gravity="center_vertical|right" />
 
                         <com.chattyhive.chattyhive.framework.CustomViews.View.WrapWidthTextView
                                 android:layout_width="wrap_content"
@@ -609,7 +610,7 @@
                                 android:textColor="@color/my_profile_information_param_value_text"
                                 android:textSize="@dimen/my_profile_information_element_value_text_size"
                                 android:background="#00000000"
-                                android:maxLines="2"
+                                android:maxLines="3"
                                 android:minLines="1"
                                 android:layout_gravity="right"
                                 android:gravity="right"
@@ -627,7 +628,8 @@
                             android:src="@drawable/user_profile_show_profile_element_only_private"
                             android:background="@color/my_profile_information_background"
                             android:visibility="gone"
-                            android:adjustViewBounds="true" />
+                            android:adjustViewBounds="true"
+                            android:layout_gravity="center_vertical|right" />
                     </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
@@ -652,23 +654,23 @@
                         android:background="@color/my_profile_information_background"
                         android:gravity="center_vertical">
 
-                        <com.chattyhive.chattyhive.framework.CustomViews.View.WrapWidthTextView
+                        <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/profile_information_languages"
                             android:id="@+id/profile_information_languages"
-                            android:paddingLeft="@dimen/my_profile_information_element_value_padding_left"
-                            android:paddingTop="@dimen/my_profile_information_element_value_padding_top"
-                            android:paddingRight="@dimen/my_profile_information_element_value_padding_right"
-                            android:paddingBottom="@dimen/my_profile_information_element_value_padding_bottom"
-                            android:textColor="@color/my_profile_information_param_value_text"
-                            android:textSize="@dimen/my_profile_information_element_value_text_size"
-                            android:background="#00000000"
-                            android:maxLines="2"
+                            android:text="@string/profile_information_languages"
+                            android:textColor="@color/my_profile_information_param_name_text"
+                            android:textSize="@dimen/my_profile_information_element_name_text_size"
+                            android:paddingLeft="@dimen/my_profile_information_element_name_padding_left"
+                            android:paddingTop="@dimen/my_profile_information_element_name_padding_top"
+                            android:paddingRight="@dimen/my_profile_information_element_name_padding_right"
+                            android:paddingBottom="@dimen/my_profile_information_element_name_padding_bottom"
+                            android:background="@color/my_profile_information_background"
+                            android:lines="1"
+                            android:maxLines="1"
                             android:minLines="1"
-                            android:layout_gravity="right"
-                            android:gravity="right"
-                            android:layout_weight="1"/>
+                            android:singleLine="true"
+                            android:layout_gravity="center_vertical|left" />
 
                         <LinearLayout
                             android:orientation="horizontal"
@@ -683,22 +685,26 @@
                             android:id="@+id/profile_edit_information_languages"
                             android:adjustViewBounds="true"
                             android:src="@drawable/my_profile_pencil_orange"
-                            android:visibility="gone" />
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/profile_information_default_languages"
-                            android:id="@+id/profile_information_languages_value"
-                            android:paddingLeft="@dimen/my_profile_information_element_value_padding_left"
-                            android:paddingTop="@dimen/my_profile_information_element_value_padding_top"
-                            android:paddingRight="@dimen/my_profile_information_element_value_padding_right"
-                            android:paddingBottom="@dimen/my_profile_information_element_value_padding_bottom"
-                            android:textColor="@color/my_profile_information_param_value_text"
-                            android:textSize="@dimen/my_profile_information_element_value_text_size"
-                            android:background="@color/my_profile_information_background"
-                            android:minLines="1"
-                            android:maxLines="2"
-                            android:layout_weight="1" />
+                            android:visibility="gone"
+                            android:layout_gravity="center_vertical|right" />
+
+                            <com.chattyhive.chattyhive.framework.CustomViews.View.WrapWidthTextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/profile_information_default_languages"
+                                android:id="@+id/profile_information_languages_value"
+                                android:paddingLeft="@dimen/my_profile_information_element_value_padding_left"
+                                android:paddingTop="@dimen/my_profile_information_element_value_padding_top"
+                                android:paddingRight="@dimen/my_profile_information_element_value_padding_right"
+                                android:paddingBottom="@dimen/my_profile_information_element_value_padding_bottom"
+                                android:textColor="@color/my_profile_information_param_value_text"
+                                android:textSize="@dimen/my_profile_information_element_value_text_size"
+                                android:background="#00000000"
+                                android:maxLines="3"
+                                android:minLines="1"
+                                android:layout_gravity="right"
+                                android:gravity="right"
+                                android:layout_weight="1"/>
 
                         <ImageView
                             android:layout_width="wrap_content"
@@ -712,7 +718,8 @@
                             android:src="@drawable/user_profile_show_profile_element_only_public"
                             android:background="@color/my_profile_information_background"
                             android:visibility="gone"
-                            android:adjustViewBounds="true" />
+                            android:adjustViewBounds="true"
+                            android:layout_gravity="center_vertical|right" />
                     </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>

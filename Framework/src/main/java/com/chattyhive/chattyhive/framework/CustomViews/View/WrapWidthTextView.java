@@ -28,7 +28,7 @@ public class WrapWidthTextView extends TextView {
 
         Layout layout = getLayout();
         if (layout != null) {
-            int width = (int) FloatMath.ceil(getMaxLineWidth(layout));
+            int width = (int) FloatMath.ceil(getMaxLineWidth(layout)) + getPaddingLeft() + getPaddingRight();
             int height = getMeasuredHeight();
             if (width < getMeasuredWidth()) {
                 super.onMeasure(MeasureSpec.makeMeasureSpec(width, MeasureSpec.getMode(widthMeasureSpec)), heightMeasureSpec);
