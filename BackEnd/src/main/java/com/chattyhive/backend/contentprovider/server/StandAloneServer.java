@@ -163,7 +163,7 @@ public class StandAloneServer {
         /********************************************************************/
         /*                HIVES                                             */
         /********************************************************************/
-        hive = createHive("Minecraft - Unofficial chat","Videogames: PC","This is the best unofficial hive for minecraft's fans, join us and share the lates news, pictures and experiences of your favourite game.");
+        hive = createHive("Minecraft - Unofficial chat","Videojuegos PC","This is the best unofficial hive for minecraft's fans, join us and share the lates news, pictures and experiences of your favourite game.");
         subscribeHive("jonathan",hive.getNameUrl());
         subscribeHive("cassini91",hive.getNameUrl());
         subscribeHive("trabuco",hive.getNameUrl());
@@ -179,7 +179,7 @@ public class StandAloneServer {
         createChat(hive,"01/01/2000","jonathan","trabuco");
         createChat(hive,"01/05/2001","coolest_thing_21","serezy");
 
-        hive = createHive("Chattyhive","Technology & Computer: Software development","Official chattyhive's chat for internal communication.");
+        hive = createHive("Chattyhive","Desarrollo de software","Official chattyhive's chat for internal communication.");
         subscribeHive("jonathan",hive.getNameUrl());
         subscribeHive("cassini91",hive.getNameUrl());
         subscribeHive("trabuco",hive.getNameUrl());
@@ -192,7 +192,7 @@ public class StandAloneServer {
         createChat(hive,"01/01/2010","jonathan","serezy");
         createChat(hive,"08/11/1955","cassini91","coolest_thing_21");
 
-        hive = createHive("The sweetest thing ever!","Free Time: Free Time - General","Just talk about what you believe its the sweetest thing that could happen to you... and I am not (just) talking about food");
+        hive = createHive("The sweetest thing ever!","Estilo de vida - General","Just talk about what you believe its the sweetest thing that could happen to you... and I am not (just) talking about food");
         subscribeHive("jonathan",hive.getNameUrl());
         subscribeHive("trabuco",hive.getNameUrl());
         subscribeHive("serezy",hive.getNameUrl());
@@ -203,15 +203,15 @@ public class StandAloneServer {
         createChat(hive,"01/01/2010","jonathan","homer_ou");
         createChat(hive,"08/11/1955","homer_ou","trabuco");
 
-        hive = createHive("¡Lugares donde te gustaría perderte!","Free Time: Free Time - General","Hablemos y compartamos fotos sobre aquellos rincones donde no te importaría perder, y pasar una vida entera o al menos un buen cacho de tiempo. ¿Qué lugares te inspiran más paz?");
+        hive = createHive("¡Lugares donde te gustaría perderte!","Viajes - destinos","Hablemos y compartamos fotos sobre aquellos rincones donde no te importaría perder, y pasar una vida entera o al menos un buen cacho de tiempo. ¿Qué lugares te inspiran más paz?");
         subscribeHive("cassini91",hive.getNameUrl());
 
-        hive = createHive("Lets play guitar!","Free Time: Free Time - General","Are you a pro? still learning? doesn't matter, join this hive to learn and share about your favourite musical instrument");
+        hive = createHive("Lets play guitar!","Producción musical e instrumentos","Are you a pro? still learning? doesn't matter, join this hive to learn and share about your favourite musical instrument");
         subscribeHive("cassini91",hive.getNameUrl());
         subscribeHive("trabuco",hive.getNameUrl());
         createChat(hive,"25/02/2013","cassini91","trabuco");
 
-        hive = createHive("The most beautiful planet?","Free Time: Free Time - General","You like astronomy so I ask you the following: do you think it would be possible to find a planet as beautiful and complex as our is?");
+        hive = createHive("The most beautiful planet?","Astronomía","You like astronomy so I ask you the following: do you think it would be possible to find a planet as beautiful and complex as our is?");
         subscribeHive("jonathan",hive.getNameUrl());
         subscribeHive("cassini91",hive.getNameUrl());
         subscribeHive("trabuco",hive.getNameUrl());
@@ -227,7 +227,7 @@ public class StandAloneServer {
         createChat(hive,"01/01/2000","jonathan","trabuco");
         createChat(hive,"01/05/2001","coolest_thing_21","serezy");
 
-        hive = createHive("PC general news and thoughts","Free Time: Free Time - General","This is a general hive for PC lovers. Mac users are not welcome here (nah I am kidding)");
+        hive = createHive("PC general news and thoughts","Tecnología e informática - General","This is a general hive for PC lovers. Mac users are not welcome here (nah I am kidding)");
         subscribeHive("jonathan",hive.getNameUrl());
         subscribeHive("trabuco",hive.getNameUrl());
         subscribeHive("serezy",hive.getNameUrl());
@@ -238,7 +238,7 @@ public class StandAloneServer {
         createChat(hive,"01/01/2010","jonathan","homer_ou");
         createChat(hive,"08/11/1955","homer_ou","trabuco");
 
-        hive = createHive("Sustos y sorpresas","Free Time: Free Time - General","Comparte todos esos momentos que han hecho que se te quedasen los ojos cómo platos");
+        hive = createHive("Sustos y sorpresas","Estados de ánimo","Comparte todos esos momentos que han hecho que se te quedasen los ojos cómo platos");
         subscribeHive("jonathan",hive.getNameUrl());
         subscribeHive("cassini91",hive.getNameUrl());
         subscribeHive("trabuco",hive.getNameUrl());
@@ -254,7 +254,7 @@ public class StandAloneServer {
         createChat(hive,"01/01/2000","jonathan","trabuco");
         createChat(hive,"01/05/2001","coolest_thing_21","serezy");
 
-        hive = createHive("Cities are not for me, sorry","Free Time: Free Time - General","For those who can't live in a big city and enjoy life in small towns. Why can't you stand the big cities?");
+        hive = createHive("Cities are not for me, sorry","Estilo de vida - General","For those who can't live in a big city and enjoy life in small towns. Why can't you stand the big cities?");
         subscribeHive("jonathan",hive.getNameUrl());
         subscribeHive("cassini91",hive.getNameUrl());
         subscribeHive("trabuco",hive.getNameUrl());
@@ -267,7 +267,7 @@ public class StandAloneServer {
         createChat(hive,"01/01/2010","jonathan","serezy");
         createChat(hive,"08/11/1955","cassini91","coolest_thing_21");
 
-        hive = createHive("The funny hive","Free Time: Free Time - General","Only funny stuff is allowed");
+        hive = createHive("The funny hive","Humor","Only funny stuff is allowed");
         subscribeHive("jonathan",hive.getNameUrl());
         subscribeHive("trabuco",hive.getNameUrl());
         subscribeHive("serezy",hive.getNameUrl());
@@ -278,12 +278,12 @@ public class StandAloneServer {
         createChat(hive,"01/01/2010","jonathan","homer_ou");
         createChat(hive,"08/11/1955","homer_ou","trabuco");
 
-        hive = createHive("Biraz daha kalabilir misin?","Free Time: Free Time - General","Seni çok özledim.");
+        hive = createHive("Biraz daha kalabilir misin?","Amor","Seni çok özledim.");
         subscribeHive("cassini91",hive.getNameUrl());
         subscribeHive("serezy",hive.getNameUrl());
         createChat(hive,"25/02/2013","cassini91","serezy");
 
-        hive = createHive("¡Así es imposible estar a dieta!","Free Time: Free Time - General","Cuando estás a dieta y el mundo se vuelve en tu contra...");
+        hive = createHive("¡Así es imposible estar a dieta!","Dietas y nutrición","Cuando estás a dieta y el mundo se vuelve en tu contra...");
         subscribeHive("jonathan",hive.getNameUrl());
         subscribeHive("cassini91",hive.getNameUrl());
         subscribeHive("trabuco",hive.getNameUrl());
