@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item >
+        <shape android:shape="rectangle">
+            <stroke android:width="@dimen/edit_profile_privacy_note_shadow_border_thick" android:color="@color/edit_profile_privacy_note_shadow_border_color" />
+            <solid android:color="@color/edit_profile_privacy_note_shadow_color" />
+        </shape>
+    </item>
+    <item android:bottom="@dimen/edit_profile_privacy_note_shadow_thick">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/edit_profile_privacy_note_background_color" />
+        </shape>
+    </item>
+</layer-list>

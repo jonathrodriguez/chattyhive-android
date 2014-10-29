@@ -143,7 +143,7 @@ public class StandAloneServer {
         /********************************************************************/
         /*                HIVES                                             */
         /********************************************************************/
-        hive = createHive("Minecraft - Unofficial chat","Video games - PC","Unofficial chat for minecraft's fans.");
+        hive = createHive("Minecraft - Unofficial chat","Videogames: PC","Unofficial chat for minecraft's fans.");
         subscribeHive("jonathan",hive.getNameUrl());
         subscribeHive("cassini91",hive.getNameUrl());
 
@@ -151,7 +151,7 @@ public class StandAloneServer {
 
         createChat(hive,"01/05/2001","jonathan","serezy");
 
-        hive = createHive("Chattyhive","Technology & Computers - Software development","Official chattyhive's chat for internal communication.");
+        hive = createHive("Chattyhive","Technology & Computer: Software development","Official chattyhive's chat for internal communication.");
         subscribeHive("jonathan",hive.getNameUrl());
         subscribeHive("cassini91",hive.getNameUrl());
         subscribeHive("trabuco",hive.getNameUrl());
@@ -162,21 +162,21 @@ public class StandAloneServer {
 
         createChat(hive,"08/11/1955","jonathan","trabuco");
 
-        hive = createHive("Test3","Free Time - General","");
+        hive = createHive("Test3","Free Time: Free Time - General","");
         subscribeHive("jonathan",hive.getNameUrl());
 
         createChat(hive,"08/11/1900","jonathan");
 
-        hive = createHive("Test4","Free Time - General","");
+        hive = createHive("Test4","Free Time: Free Time - General","");
         subscribeHive("cassini91",hive.getNameUrl());
 
-        hive = createHive("Test5","Free Time - General","");
+        hive = createHive("Test5","Free Time: Free Time - General","");
         subscribeHive("cassini91",hive.getNameUrl());
         subscribeHive("trabuco",hive.getNameUrl());
 
         createChat(hive,"25/02/2013","cassini91","trabuco");
 
-        hive = createHive("Test6","Free Time - General","Empty hive.");
+        hive = createHive("Test6","Free Time: Free Time - General","Empty hive.");
 
         /********************************************************************/
         /*                OTHER PRIVATE CHATS                               */
