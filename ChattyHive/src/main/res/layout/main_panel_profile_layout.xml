@@ -13,7 +13,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:background="@color/my_profile_general_background">
+            android:background="@color/my_profile_general_background"
+            android:id="@+id/edit_profile_view_root">
 
             <LinearLayout
                 android:orientation="horizontal"
@@ -62,7 +63,8 @@
                     android:layout_gravity="center_horizontal|bottom"
                     android:scaleType="fitXY"
                     android:src="@drawable/my_profile_private_profile_simple"
-                    android:background="@color/my_profile_general_background" />
+                    android:background="@color/profile_photo_background_color"
+                    android:padding="@dimen/edit_profile_photo_border_thick" />
 
                 <ImageView
                     android:layout_width="@dimen/my_profile_photo_public_size"
@@ -71,9 +73,10 @@
                     android:layout_gravity="center_horizontal|bottom"
                     android:scaleType="fitXY"
                     android:src="@drawable/my_profile_public_profile_simple"
-                    android:background="@color/my_profile_general_background"
+                    android:background="@color/profile_photo_background_color"
                     android:visibility="visible"
-                    android:layout_marginLeft="@dimen/my_profile_photo_separation" />
+                    android:layout_marginLeft="@dimen/my_profile_photo_separation"
+                    android:padding="@dimen/edit_profile_photo_border_thick" />
             </LinearLayout>
 
             <LinearLayout
@@ -84,11 +87,47 @@
                 android:layout_marginTop="@dimen/my_profile_full_name_margin_top"
                 android:background="#00000000">
 
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:layout_marginBottom="@dimen/my_profile_nickname_margin_top"
+                    android:id="@+id/edit_profile_full_name"
+                    android:visibility="gone"
+                    android:layout_gravity="center"
+                    android:gravity="center_vertical|center_horizontal">
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/edit_profile_first_name"
+                        android:layout_weight="1"
+                        android:layout_marginRight="@dimen/edit_profile_full_name_separation_half"
+                        android:visibility="visible"
+                        android:textColor="@color/edit_profile_full_name_text_color"
+                        android:gravity="center_vertical|right"
+                        android:textColorHint="@color/edit_profile_full_name_hint_color"
+                        android:layout_marginLeft="@dimen/edit_profile_full_name_margin_left" />
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/edit_profile_last_name"
+                        android:layout_weight="1"
+                        android:visibility="visible"
+                        android:textColor="@color/edit_profile_full_name_text_color"
+                        android:gravity="center_vertical"
+                        android:layout_marginLeft="@dimen/edit_profile_full_name_separation_half"
+                        android:textColorHint="@color/edit_profile_full_name_hint_color"
+                        android:layout_marginRight="@dimen/edit_profile_full_name_margin_right" />
+                </LinearLayout>
+
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="#00000000"
-                    android:id="@+id/profile_full_name">
+                    android:id="@+id/profile_full_name"
+                    android:layout_marginBottom="@dimen/my_profile_nickname_margin_top">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -99,9 +138,9 @@
                         android:textSize="@dimen/my_profile_full_name_text_size"
                         android:textColor="@color/my_profile_full_name_text"
                         android:background="@color/my_profile_general_background"
-                        android:layout_marginBottom="@dimen/my_profile_nickname_margin_top"
                         android:layout_alignWithParentIfMissing="false"
-                        android:layout_centerHorizontal="true" />
+                        android:layout_centerHorizontal="true"
+                        android:singleLine="true" />
 
                     <ImageView
                         android:layout_width="@dimen/edit_profile_full_name_pencil_size"
@@ -112,7 +151,7 @@
                         android:layout_toRightOf="@+id/profile_full_name_value"
                         android:layout_marginLeft="@dimen/edit_profile_full_name_pencil_separation"
                         android:background="#00000000"
-                        android:visibility="visible"
+                        android:visibility="gone"
                         android:scaleType="centerInside" />
                 </RelativeLayout>
 
@@ -337,6 +376,43 @@
                     android:paddingTop="@dimen/my_profile_status_message_text_padding_top"
                     android:paddingBottom="@dimen/my_profile_status_message_text_padding_bottom"
                     android:background="@color/my_profile_status_background" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#00000000"
+                    android:id="@+id/edit_profile_status"
+                    android:visibility="gone">
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/edit_profile_status_message"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginLeft="@dimen/my_profile_status_message_text_padding_left"
+                        android:layout_marginTop="@dimen/my_profile_status_message_text_padding_top"
+                        android:layout_marginRight="@dimen/my_profile_status_message_text_padding_right"
+                        android:layout_marginBottom="@dimen/my_profile_status_message_text_padding_bottom"
+                        android:visibility="visible"
+                        android:maxLength="100"
+                        android:textColor="@color/edit_profile_status_text_color"
+                        android:textColorHint="@color/edit_profile_status_hint_color" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="100 / 100"
+                        android:id="@+id/edit_profile_status_length"
+                        android:layout_alignRight="@+id/edit_profile_status_message"
+                        android:layout_alignTop="@+id/edit_profile_status_message"
+                        android:gravity="right"
+                        android:layout_marginTop="@dimen/edit_profile_status_message_length_margin_top"
+                        android:layout_marginRight="@dimen/edit_profile_status_message_length_margin_right"
+                        android:textSize="@dimen/edit_profile_status_message_length_text_size"
+                        android:background="#00000000"
+                        android:textColor="@color/edit_profile_status_length_text_color" />
+
+                </RelativeLayout>
 
             </LinearLayout>
 

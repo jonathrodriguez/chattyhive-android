@@ -149,6 +149,7 @@ public class User {
         this.controller.getDataProvider().RunCommand(AvailableCommands.Register,Callback,lup,login);
     }
     public void EditProfile(EventHandler<CommandCallbackEventArgs> Callback,User newUser) {
+        // TODO: compare newUser with this and send only fields which differ.
         this.controller.getDataProvider().RunCommand(AvailableCommands.UpdateProfile,Callback,newUser.toFormat(new LOCAL_USER_PROFILE()));
     }
 

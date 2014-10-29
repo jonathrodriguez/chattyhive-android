@@ -1,17 +1,23 @@
 package com.chattyhive.chattyhive;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
-import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.chattyhive.backend.Controller;
 import com.chattyhive.backend.businessobjects.Users.User;
+import com.chattyhive.backend.contentprovider.formats.COMMON;
+import com.chattyhive.backend.contentprovider.formats.Format;
 import com.chattyhive.backend.contentprovider.formats.LOCAL_USER_PROFILE;
+import com.chattyhive.backend.util.events.CommandCallbackEventArgs;
+import com.chattyhive.backend.util.events.EventHandler;
 import com.chattyhive.backend.util.formatters.DateFormatter;
 import com.chattyhive.chattyhive.framework.Util.StaticMethods;
 import com.chattyhive.chattyhive.framework.Util.ViewPair;
@@ -26,16 +32,14 @@ public class Profile {
     View profileView;
     View actionBar;
 
-    private enum ProfileType {Private, Public};
-    private enum ProfileView {Private, Public, Own, Edit};
-    private enum ShowInProfile { None, Private, Public, Both};
-    private enum EditProfileField { None, FullName, StatusMessage };
+    private enum ProfileType {Private, Public}
+    private enum ProfileView {Private, Public, Own, Edit}
+    private enum ShowInProfile { None, Private, Public, Both}
 
     private User user;
     private User modifiedUser; //This is for profile edition.
     private ProfileType profileType;
     private ProfileView profileViewType;
-    private EditProfileField editProfileField;
 
     public Profile(Context context) {
         this.context = context;
@@ -81,15 +85,25 @@ public class Profile {
                 //Images
                 profileView.findViewById(R.id.profile_big_photo_thumbnail).setVisibility(View.VISIBLE);
                 profileView.findViewById(R.id.profile_small_photo_thumbnail).setVisibility(View.VISIBLE);
+                profileView.findViewById(R.id.profile_big_photo_thumbnail).setBackgroundResource(R.color.profile_photo_background_color);
+                profileView.findViewById(R.id.profile_small_photo_thumbnail).setBackgroundResource(R.color.profile_photo_background_color);
                 //Full name and public name
                 profileView.findViewById(R.id.profile_full_name).setVisibility(View.VISIBLE);
                 profileView.findViewById(R.id.profile_full_name_value).setVisibility(View.VISIBLE);
+                profileView.findViewById(R.id.profile_full_name_value).setOnClickListener(null);
+                profileView.findViewById(R.id.profile_full_name_value).setClickable(false);
                 profileView.findViewById(R.id.profile_edit_full_name).setVisibility(View.GONE);
+                profileView.findViewById(R.id.profile_edit_full_name).setOnClickListener(null);
+                profileView.findViewById(R.id.profile_edit_full_name).setClickable(false);
                 profileView.findViewById(R.id.profile_public_name).setVisibility(View.VISIBLE);
                 profileView.findViewById(R.id.profile_edit_color).setVisibility(View.GONE);
                 //Status
                 profileView.findViewById(R.id.profile_status_message_header).setVisibility(View.GONE);
                 profileView.findViewById(R.id.profile_status_message).setVisibility(View.VISIBLE);
+                profileView.findViewById(R.id.profile_status_message).setOnClickListener(null);
+                profileView.findViewById(R.id.profile_edit_status_message).setOnClickListener(null);
+                profileView.findViewById(R.id.profile_status_message).setClickable(false);
+                profileView.findViewById(R.id.profile_edit_status_message).setClickable(false);
                 //Information
                 profileView.findViewById(R.id.profile_information_location).setVisibility(View.VISIBLE);
                 profileView.findViewById(R.id.profile_edit_information_location).setVisibility(View.GONE);
@@ -127,13 +141,22 @@ public class Profile {
                 //Images
                 profileView.findViewById(R.id.profile_big_photo_thumbnail).setVisibility(View.VISIBLE);
                 profileView.findViewById(R.id.profile_small_photo_thumbnail).setVisibility(View.GONE);
+                profileView.findViewById(R.id.profile_big_photo_thumbnail).setBackgroundResource(R.color.profile_photo_background_color);
                 //Full name and public name
                 profileView.findViewById(R.id.profile_full_name).setVisibility(View.GONE);
+                profileView.findViewById(R.id.profile_full_name_value).setOnClickListener(null);
+                profileView.findViewById(R.id.profile_full_name_value).setClickable(false);
+                profileView.findViewById(R.id.profile_edit_full_name).setOnClickListener(null);
+                profileView.findViewById(R.id.profile_edit_full_name).setClickable(false);
                 profileView.findViewById(R.id.profile_public_name).setVisibility(View.VISIBLE);
                 profileView.findViewById(R.id.profile_edit_color).setVisibility(View.GONE);
                 //Status
                 profileView.findViewById(R.id.profile_status_message_header).setVisibility(View.GONE);
                 profileView.findViewById(R.id.profile_status_message).setVisibility(View.VISIBLE);
+                profileView.findViewById(R.id.profile_status_message).setOnClickListener(null);
+                profileView.findViewById(R.id.profile_edit_status_message).setOnClickListener(null);
+                profileView.findViewById(R.id.profile_status_message).setClickable(false);
+                profileView.findViewById(R.id.profile_edit_status_message).setClickable(false);
                 //Information
                 profileView.findViewById(R.id.profile_information_location).setVisibility(View.VISIBLE);
                 profileView.findViewById(R.id.profile_edit_information_location).setVisibility(View.GONE);
@@ -171,10 +194,16 @@ public class Profile {
                 //Images
                 profileView.findViewById(R.id.profile_big_photo_thumbnail).setVisibility(View.VISIBLE);
                 profileView.findViewById(R.id.profile_small_photo_thumbnail).setVisibility(View.VISIBLE);
+                profileView.findViewById(R.id.profile_big_photo_thumbnail).setBackgroundResource(R.color.profile_photo_background_color);
+                profileView.findViewById(R.id.profile_small_photo_thumbnail).setBackgroundResource(R.color.profile_photo_background_color);
                 //Full name and public name
                 profileView.findViewById(R.id.profile_full_name).setVisibility(View.VISIBLE);
                 profileView.findViewById(R.id.profile_full_name_value).setVisibility(View.VISIBLE);
+                profileView.findViewById(R.id.profile_full_name_value).setOnClickListener(null);
+                profileView.findViewById(R.id.profile_full_name_value).setClickable(false);
                 profileView.findViewById(R.id.profile_edit_full_name).setVisibility(View.GONE);
+                profileView.findViewById(R.id.profile_edit_full_name).setOnClickListener(null);
+                profileView.findViewById(R.id.profile_edit_full_name).setClickable(false);
                 profileView.findViewById(R.id.profile_public_name).setVisibility(View.VISIBLE);
                 profileView.findViewById(R.id.profile_edit_color).setVisibility(View.GONE);
                 //Status
@@ -183,6 +212,10 @@ public class Profile {
                 profileView.findViewById(R.id.profile_status).setVisibility(View.VISIBLE);
                 profileView.findViewById(R.id.my_profile_status_buttons).setVisibility(View.VISIBLE);
                 profileView.findViewById(R.id.profile_status_message).setVisibility(View.VISIBLE);
+                profileView.findViewById(R.id.profile_status_message).setOnClickListener(null);
+                profileView.findViewById(R.id.profile_edit_status_message).setOnClickListener(null);
+                profileView.findViewById(R.id.profile_status_message).setClickable(false);
+                profileView.findViewById(R.id.profile_edit_status_message).setClickable(false);
                 //Information
                 profileView.findViewById(R.id.profile_information_location).setVisibility(View.VISIBLE);
                 profileView.findViewById(R.id.profile_edit_information_location).setVisibility(View.GONE);
@@ -218,9 +251,9 @@ public class Profile {
                 //Edit button
                 profileView.findViewById(R.id.my_profile_edit_button).setVisibility(View.VISIBLE);
                 break;
-            case Edit: //TODO: set click listeners
-                float selected_alpha = 0;
-                float unselected_alpha = 0;
+            case Edit:
+                float selected_alpha;
+                float unselected_alpha;
 
                 TypedValue alpha = new TypedValue();
                 this.context.getResources().getValue(R.color.edit_profile_action_bar_type_button_selected_alpha,alpha,true);
@@ -241,10 +274,14 @@ public class Profile {
                         //Images
                         profileView.findViewById(R.id.profile_big_photo_thumbnail).setVisibility(View.VISIBLE);
                         profileView.findViewById(R.id.profile_small_photo_thumbnail).setVisibility(View.VISIBLE);
+                        profileView.findViewById(R.id.profile_big_photo_thumbnail).setBackgroundResource(R.drawable.edit_profile_photo_background);
+                        profileView.findViewById(R.id.profile_small_photo_thumbnail).setBackgroundResource(R.drawable.edit_profile_photo_background);
                         //Full name and public name
                         profileView.findViewById(R.id.profile_full_name).setVisibility(View.VISIBLE);
                         profileView.findViewById(R.id.profile_full_name_value).setVisibility(View.VISIBLE);
+                        profileView.findViewById(R.id.profile_full_name_value).setOnClickListener(edit_name_click_listener);
                         profileView.findViewById(R.id.profile_edit_full_name).setVisibility(View.VISIBLE);
+                        profileView.findViewById(R.id.profile_edit_full_name).setOnClickListener(edit_name_click_listener);
                         profileView.findViewById(R.id.profile_public_name).setVisibility(View.VISIBLE);
                         profileView.findViewById(R.id.profile_edit_color).setVisibility(View.GONE);
                         //Status
@@ -254,6 +291,8 @@ public class Profile {
                         profileView.findViewById(R.id.profile_status).setVisibility(View.GONE);
                         profileView.findViewById(R.id.my_profile_status_buttons).setVisibility(View.GONE);
                         profileView.findViewById(R.id.profile_status_message).setVisibility(View.VISIBLE);
+                        profileView.findViewById(R.id.profile_status_message).setOnClickListener(edit_status_click_listener);
+                        profileView.findViewById(R.id.profile_edit_status_message).setOnClickListener(edit_status_click_listener);
                         //Information
                         profileView.findViewById(R.id.profile_information_location).setVisibility(View.VISIBLE);
                         profileView.findViewById(R.id.profile_edit_information_location).setVisibility(View.VISIBLE);
@@ -302,8 +341,13 @@ public class Profile {
                         //Images
                         profileView.findViewById(R.id.profile_big_photo_thumbnail).setVisibility(View.VISIBLE);
                         profileView.findViewById(R.id.profile_small_photo_thumbnail).setVisibility(View.GONE);
+                        profileView.findViewById(R.id.profile_big_photo_thumbnail).setBackgroundResource(R.drawable.edit_profile_photo_background);
                         //Full name and public name
                         profileView.findViewById(R.id.profile_full_name).setVisibility(View.GONE);
+                        profileView.findViewById(R.id.profile_full_name_value).setOnClickListener(null);
+                        profileView.findViewById(R.id.profile_full_name_value).setClickable(false);
+                        profileView.findViewById(R.id.profile_edit_full_name).setOnClickListener(null);
+                        profileView.findViewById(R.id.profile_edit_full_name).setClickable(false);
                         profileView.findViewById(R.id.profile_public_name).setVisibility(View.VISIBLE);
                         profileView.findViewById(R.id.profile_edit_color).setVisibility(View.VISIBLE);
                         //Status
@@ -313,6 +357,8 @@ public class Profile {
                         profileView.findViewById(R.id.profile_status).setVisibility(View.GONE);
                         profileView.findViewById(R.id.my_profile_status_buttons).setVisibility(View.GONE);
                         profileView.findViewById(R.id.profile_status_message).setVisibility(View.VISIBLE);
+                        profileView.findViewById(R.id.profile_status_message).setOnClickListener(edit_status_click_listener);
+                        profileView.findViewById(R.id.profile_edit_status_message).setOnClickListener(edit_status_click_listener);
                         //Information
                         profileView.findViewById(R.id.profile_information_location).setVisibility(View.VISIBLE);
                         profileView.findViewById(R.id.profile_edit_information_location).setVisibility(View.VISIBLE);
@@ -556,8 +602,8 @@ public class Profile {
                     ((TextView) profileView.findViewById(R.id.profile_information_languages_value)).setText(Language);
                 }
 
-                float visible_alpha = 0;
-                float hidden_alpha = 0;
+                float visible_alpha;
+                float hidden_alpha;
 
                 TypedValue alpha = new TypedValue();
                 this.context.getResources().getValue(R.color.edit_profile_information_item_visible_alpha, alpha, true);
@@ -632,10 +678,10 @@ public class Profile {
     }
 
     private void showStatusMessage() {
-        String statusMessage = "";
+        String statusMessage;
 
-        float active_alpha = 0;
-        float inactive_alpha = 0;
+        float active_alpha;
+        float inactive_alpha;
 
         TypedValue alpha = new TypedValue();
         this.context.getResources().getValue(R.color.my_profile_status_active_alpha,alpha,true);
@@ -683,7 +729,6 @@ public class Profile {
         this.modifiedUser = new User(user.toFormat(new LOCAL_USER_PROFILE()));
         this.profileType = ProfileType.Private;
         this.profileViewType = ProfileView.Edit;
-        this.editProfileField = EditProfileField.None;
 
         this.actionBar = ((Main)this.context).ChangeActionBar(R.layout.profile_edit_action_bar);
 
@@ -705,32 +750,48 @@ public class Profile {
     protected View.OnClickListener accept_profile_changes = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            //TODO: save values
-
-            //Exit edit mode
-            modifiedUser = null;
-            profileType = ProfileType.Private;
-            profileViewType = ProfileView.Own;
-            editProfileField = null;
-
-            actionBar = ((Main)context).ChangeActionBar(R.layout.profile_action_bar);
-            actionBar.findViewById(R.id.profile_action_bar_menu_clickable).setOnClickListener(((Main)context).menuIcon_ClickListener);
-            actionBar.findViewById(R.id.profile_action_bar_myPhoto_button).setOnClickListener(((Main)context).appIcon_ClickListener);
-
-            adjustView();
-            setData();
+            saveProfile();
         }
     };
+
+    protected void saveProfile() {
+
+        user.EditProfile(new EventHandler<CommandCallbackEventArgs>(this,"onUpdatedProfile",CommandCallbackEventArgs.class),modifiedUser);
+        //Exit edit mode
+        modifiedUser = null;
+        profileType = ProfileType.Private;
+        profileViewType = ProfileView.Own;
+
+        actionBar = ((Main)context).ChangeActionBar(R.layout.profile_action_bar);
+        actionBar.findViewById(R.id.profile_action_bar_menu_clickable).setOnClickListener(((Main)context).menuIcon_ClickListener);
+        actionBar.findViewById(R.id.profile_action_bar_myPhoto_button).setOnClickListener(((Main)context).appIcon_ClickListener);
+
+        adjustView();
+        setData();
+    }
+
+    public void onUpdatedProfile(Object sender,CommandCallbackEventArgs eventArgs) {
+        COMMON common = null;
+        for (Format format : eventArgs.getReceivedFormats())
+            if (format instanceof COMMON)
+                common = (COMMON)format;
+
+        if ((common != null) && (common.STATUS != null) && (common.STATUS.equalsIgnoreCase("OK"))) {
+            ((Activity)this.context).runOnUiThread(new Runnable(){
+                public void run() {
+                    setData();
+                }
+            });
+        }
+    }
 
     protected View.OnClickListener change_edit_type = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             if (v.getId() == R.id.private_profile_tab_button) {
                 profileType = ProfileType.Private;
-                editProfileField = EditProfileField.None;
             } else {
                 profileType = ProfileType.Public;
-                editProfileField = EditProfileField.None;
             }
             adjustView();
             setData();
@@ -750,7 +811,7 @@ public class Profile {
         }
     };
 
-    //TODO: click listeners must modify the modifiedUser profile info
+
     protected View.OnClickListener edit_visibility_click_listener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -783,6 +844,187 @@ public class Profile {
                     }
                     break;
             }
+        }
+    };
+
+    protected View.OnClickListener edit_status_click_listener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            TextView statusMessageView = (TextView)profileView.findViewById(R.id.profile_status_message);
+            EditText statusMessageEdit = (EditText)profileView.findViewById(R.id.edit_profile_status_message);
+            statusMessageEdit.setHint(statusMessageView.getText());
+            statusMessageEdit.setText("");
+            statusMessageView.setVisibility(View.GONE);
+            profileView.findViewById(R.id.edit_profile_status).setVisibility(View.VISIBLE);
+            ((TextView)profileView.findViewById(R.id.edit_profile_status_length)).setText(String.format("%d / 100",statusMessageView.getText().length()));
+            statusMessageEdit.requestFocus();
+            statusMessageEdit.addTextChangedListener(edit_status_changed);
+            profileView.findViewById(R.id.edit_profile_view_root).setOnClickListener(finishEditStatus);
+            actionBar.findViewById(R.id.edit_profile_action_bar_root).setOnClickListener(finishEditStatus);
+
+            //Disable action Bar click listeners
+            actionBar.findViewById(R.id.private_profile_tab_button).setClickable(false);
+            actionBar.findViewById(R.id.public_profile_tab_button).setClickable(false);
+            actionBar.findViewById(R.id.save_button).setClickable(false);
+
+            //Disable profile View click listeners
+            profileView.findViewById(R.id.profile_full_name_value).setClickable(false);
+            profileView.findViewById(R.id.profile_edit_full_name).setClickable(false);
+
+            profileView.findViewById(R.id.profile_status_message).setClickable(false);
+            profileView.findViewById(R.id.profile_edit_status_message).setClickable(false);
+
+            profileView.findViewById(R.id.my_profile_information_location_show).setClickable(false);
+            profileView.findViewById(R.id.my_profile_information_age_show).setClickable(false);
+            profileView.findViewById(R.id.my_profile_information_gender_show).setClickable(false);
+            profileView.findViewById(R.id.my_profile_information_languages_show).setClickable(false);
+        }
+    };
+
+    protected TextWatcher edit_status_changed = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) { }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            if (s.length() > 0)
+                ((TextView)profileView.findViewById(R.id.edit_profile_status_length)).setText(String.format("%d / 100",s.length()));
+            else
+                ((TextView)profileView.findViewById(R.id.edit_profile_status_length)).setText(String.format("%d / 100", ((TextView) profileView.findViewById(R.id.profile_status_message)).getText().length()));
+        }
+    };
+
+    protected View.OnClickListener finishEditStatus = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            TextView statusMessageView = (TextView)profileView.findViewById(R.id.profile_status_message);
+            EditText statusMessageEdit = (EditText)profileView.findViewById(R.id.edit_profile_status_message);
+
+            if (statusMessageEdit.getText().length() > 0) {
+                statusMessageView.setText(statusMessageEdit.getText());
+                switch (profileType) {
+                    case Private:
+                        modifiedUser.getUserPrivateProfile().setStatusMessage(statusMessageView.getText().toString());
+                        break;
+                    case Public:
+                        modifiedUser.getUserPublicProfile().setStatusMessage(statusMessageView.getText().toString());
+                        break;
+                }
+            }
+
+            profileView.findViewById(R.id.edit_profile_status).setVisibility(View.GONE);
+            statusMessageView.setVisibility(View.VISIBLE);
+            statusMessageEdit.removeTextChangedListener(edit_status_changed);
+
+            profileView.findViewById(R.id.edit_profile_view_root).setOnClickListener(null);
+            profileView.findViewById(R.id.edit_profile_view_root).setClickable(false);
+            actionBar.findViewById(R.id.edit_profile_action_bar_root).setOnClickListener(null);
+            actionBar.findViewById(R.id.edit_profile_action_bar_root).setClickable(false);
+
+            //Enable action Bar click listeners
+            actionBar.findViewById(R.id.private_profile_tab_button).setClickable(true);
+            actionBar.findViewById(R.id.public_profile_tab_button).setClickable(true);
+            actionBar.findViewById(R.id.save_button).setClickable(true);
+
+            //Enable profile View click listeners
+            profileView.findViewById(R.id.profile_full_name_value).setClickable(true);
+            profileView.findViewById(R.id.profile_edit_full_name).setClickable(true);
+
+            profileView.findViewById(R.id.profile_status_message).setClickable(true);
+            profileView.findViewById(R.id.profile_edit_status_message).setClickable(true);
+
+            profileView.findViewById(R.id.my_profile_information_location_show).setClickable(true);
+            profileView.findViewById(R.id.my_profile_information_age_show).setClickable(true);
+            profileView.findViewById(R.id.my_profile_information_gender_show).setClickable(true);
+            profileView.findViewById(R.id.my_profile_information_languages_show).setClickable(true);
+        }
+    };
+
+    protected View.OnClickListener edit_name_click_listener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (modifiedUser.getUserPrivateProfile().getFirstName() != null)
+                ((EditText)profileView.findViewById(R.id.edit_profile_first_name)).setHint(modifiedUser.getUserPrivateProfile().getFirstName());
+            else
+                ((EditText)profileView.findViewById(R.id.edit_profile_first_name)).setHint(context.getResources().getString(R.string.register_first_step_name_hint));
+            ((EditText)profileView.findViewById(R.id.edit_profile_first_name)).setText("");
+
+            if (modifiedUser.getUserPrivateProfile().getLastName() != null)
+                ((EditText)profileView.findViewById(R.id.edit_profile_last_name)).setHint(modifiedUser.getUserPrivateProfile().getLastName());
+            else
+                ((EditText)profileView.findViewById(R.id.edit_profile_last_name)).setHint(context.getResources().getString(R.string.register_first_step_surname_hint));
+            ((EditText)profileView.findViewById(R.id.edit_profile_last_name)).setText("");
+
+            profileView.findViewById(R.id.profile_full_name).setVisibility(View.GONE);
+            profileView.findViewById(R.id.edit_profile_full_name).setVisibility(View.VISIBLE);
+
+            profileView.findViewById(R.id.edit_profile_first_name).requestFocus();
+
+            profileView.findViewById(R.id.edit_profile_view_root).setOnClickListener(finishEditName);
+            actionBar.findViewById(R.id.edit_profile_action_bar_root).setOnClickListener(finishEditName);
+
+            //Disable action Bar click listeners
+            actionBar.findViewById(R.id.private_profile_tab_button).setClickable(false);
+            actionBar.findViewById(R.id.public_profile_tab_button).setClickable(false);
+            actionBar.findViewById(R.id.save_button).setClickable(false);
+
+            //Disable profile View click listeners
+            profileView.findViewById(R.id.profile_full_name_value).setClickable(false);
+            profileView.findViewById(R.id.profile_edit_full_name).setClickable(false);
+
+            profileView.findViewById(R.id.profile_status_message).setClickable(false);
+            profileView.findViewById(R.id.profile_edit_status_message).setClickable(false);
+
+            profileView.findViewById(R.id.my_profile_information_location_show).setClickable(false);
+            profileView.findViewById(R.id.my_profile_information_age_show).setClickable(false);
+            profileView.findViewById(R.id.my_profile_information_gender_show).setClickable(false);
+            profileView.findViewById(R.id.my_profile_information_languages_show).setClickable(false);
+        }
+    };
+
+    protected View.OnClickListener finishEditName = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            EditText firstName = (EditText)profileView.findViewById(R.id.edit_profile_first_name);
+            EditText lastName = (EditText)profileView.findViewById(R.id.edit_profile_last_name);
+
+            if (firstName.getText().length() > 0) {
+                modifiedUser.getUserPrivateProfile().setFirstName(firstName.getText().toString());
+            }
+
+            if (lastName.getText().length() > 0) {
+                modifiedUser.getUserPrivateProfile().setLastName(lastName.getText().toString());
+            }
+
+            ((TextView)profileView.findViewById(R.id.profile_full_name_value)).setText(String.format("%s %s", modifiedUser.getUserPrivateProfile().getFirstName(), modifiedUser.getUserPrivateProfile().getLastName()));
+
+            profileView.findViewById(R.id.edit_profile_full_name).setVisibility(View.GONE);
+            profileView.findViewById(R.id.profile_full_name).setVisibility(View.VISIBLE);
+
+            profileView.findViewById(R.id.edit_profile_view_root).setOnClickListener(null);
+            profileView.findViewById(R.id.edit_profile_view_root).setClickable(false);
+            actionBar.findViewById(R.id.edit_profile_action_bar_root).setOnClickListener(null);
+            actionBar.findViewById(R.id.edit_profile_action_bar_root).setClickable(false);
+
+            //Enable action Bar click listeners
+            actionBar.findViewById(R.id.private_profile_tab_button).setClickable(true);
+            actionBar.findViewById(R.id.public_profile_tab_button).setClickable(true);
+            actionBar.findViewById(R.id.save_button).setClickable(true);
+
+            //Enable profile View click listeners
+            profileView.findViewById(R.id.profile_full_name_value).setClickable(true);
+            profileView.findViewById(R.id.profile_edit_full_name).setClickable(true);
+
+            profileView.findViewById(R.id.profile_status_message).setClickable(true);
+            profileView.findViewById(R.id.profile_edit_status_message).setClickable(true);
+
+            profileView.findViewById(R.id.my_profile_information_location_show).setClickable(true);
+            profileView.findViewById(R.id.my_profile_information_age_show).setClickable(true);
+            profileView.findViewById(R.id.my_profile_information_gender_show).setClickable(true);
+            profileView.findViewById(R.id.my_profile_information_languages_show).setClickable(true);
         }
     };
 }
