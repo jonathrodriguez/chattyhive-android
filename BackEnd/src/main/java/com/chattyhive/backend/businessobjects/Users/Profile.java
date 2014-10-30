@@ -3,6 +3,7 @@ package com.chattyhive.backend.businessobjects.Users;
 import com.chattyhive.backend.contentprovider.formats.Format;
 import com.google.gson.JsonElement;
 
+import java.awt.Image;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -24,6 +25,40 @@ public abstract class Profile {
     ArrayList<String> language;
 
     ProfileLevel loadedProfileLevel;
+
+    Image smallProfileImage;
+    Image mediumProfileImage;
+    Image largeProfileImage;
+    Image xlargeProfileImage;
+    Image fileProfileImage;
+
+    public enum ImageSize { small, medium, large, xlarge, file }
+
+    public Image getProfileImage(ImageSize imageSize) {
+        switch (imageSize) {
+            case small:
+                if (smallProfileImage != null)
+                    return smallProfileImage;
+                break;
+            case medium:
+                if (mediumProfileImage != null)
+                    return mediumProfileImage;
+                break;
+            case large:
+                if (largeProfileImage != null)
+                    return largeProfileImage;
+                break;
+            case xlarge:
+                if (xlargeProfileImage != null)
+                    return xlargeProfileImage;
+                break;
+            case file:
+                if (fileProfileImage != null)
+                    return fileProfileImage;
+                break;
+        }
+        return null;
+    }
 
     public String getID() {
         return this.userID;
