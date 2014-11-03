@@ -35,14 +35,20 @@ public class RightPanel2{
     }
 
     public void onLocalUserLoaded(Object sender, EventArgs args){
-        String name = ((Main) this.context).controller.getMe().getUserPrivateProfile().getShowingName().toString();
-        ((TextView)((Activity)this.context).findViewById(R.id.menu_private_profile_name)).setText(name);
-        name = this.context.getResources().getString(R.string.public_username_identifier_character).concat(((Main) this.context).controller.getMe().getUserPublicProfile().getShowingName().toString());
-        ((TextView)((Activity)this.context).findViewById(R.id.menu_public_profile_name)).setText(name);
-        ((ImageView)((Activity)this.context).findViewById(R.id.menu_profile_photo_image)).setImageResource(R.drawable.pestanha_chats_user);
-        ((ImageView)((Activity)this.context).findViewById(R.id.menu_profile_photo_image)).setColorFilter(Color.parseColor("#ffffff"));
-        ((Main) this.context).controller.getMe().getUserPrivateProfile().getProfileImage().OnImageLoaded.add(new EventHandler<EventArgs>(this,"loadImage",EventArgs.class));
-        ((Main) this.context).controller.getMe().getUserPrivateProfile().getProfileImage().loadImage(Image.ImageSize.medium,0);
+        final RightPanel2 thisPanel = this;
+        ((Activity)context).runOnUiThread( new Runnable() {
+            @Override
+            public void run() {
+                String name = ((Main) context).controller.getMe().getUserPrivateProfile().getShowingName().toString();
+                ((TextView)((Activity)context).findViewById(R.id.menu_private_profile_name)).setText(name);
+                name = context.getResources().getString(R.string.public_username_identifier_character).concat(((Main) context).controller.getMe().getUserPublicProfile().getShowingName().toString());
+                ((TextView)((Activity)context).findViewById(R.id.menu_public_profile_name)).setText(name);
+                ((ImageView)((Activity)context).findViewById(R.id.menu_profile_photo_image)).setImageResource(R.drawable.pestanha_chats_user);
+                ((ImageView)((Activity)context).findViewById(R.id.menu_profile_photo_image)).setColorFilter(Color.parseColor("#ffffff"));
+                ((Main) context).controller.getMe().getUserPrivateProfile().getProfileImage().OnImageLoaded.add(new EventHandler<EventArgs>(thisPanel,"loadImage",EventArgs.class));
+                ((Main) context).controller.getMe().getUserPrivateProfile().getProfileImage().loadImage(Image.ImageSize.medium,0);
+            }
+        });
     }
 
     public void loadImage(Object sender, EventArgs eventArgs) {
