@@ -46,6 +46,7 @@ import com.chattyhive.backend.util.events.PubSubConnectionEventArgs;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
+import java.io.InputStream;
 import java.lang.reflect.Array;
 import java.net.CookieHandler;
 import java.net.CookieManager;
@@ -671,6 +672,11 @@ public class DataProvider {
         ExecutorLevel getLevel() {
             return this.level;
         }
+    }
+
+    //IMAGE MANAGEMENT
+    public InputStream getImage(String url) {
+        return localStorage.getImage(url);
     }
 }
 

@@ -45,10 +45,7 @@ public class Event<T extends EventArgs> {
      * @return true if list has changed; else returns false.
      */
     public boolean remove(EventHandler<T> eventHandler) {
-        if (this.eventHandlers.contains(eventHandler))
-            return this.eventHandlers.remove(eventHandler);
-        else
-            return false;
+        return this.eventHandlers.remove(eventHandler);
     }
 
     /**

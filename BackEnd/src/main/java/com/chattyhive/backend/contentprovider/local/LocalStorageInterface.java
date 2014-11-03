@@ -14,4 +14,6 @@ public interface LocalStorageInterface {
     public Boolean PreRunCommand(AvailableCommands command,EventHandler<CommandCallbackEventArgs> Callback, Object CallbackAdditionalData, Format... formats);
     public Boolean PostRunCommand(AvailableCommands command, Format... formats);
     public Boolean FormatsReceived(Collection<Format> receivedFormats);
+
+    public java.io.InputStream getImage(String url);
 }

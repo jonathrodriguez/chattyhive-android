@@ -1,6 +1,8 @@
 package com.chattyhive.chattyhive;
 
+import android.app.Activity;
 import android.content.Context;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.util.Log;
 import android.util.TypedValue;
@@ -10,12 +12,17 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.chattyhive.backend.Controller;
+import com.chattyhive.backend.businessobjects.Image;
 import com.chattyhive.backend.businessobjects.Users.User;
 import com.chattyhive.backend.contentprovider.formats.LOCAL_USER_PROFILE;
+import com.chattyhive.backend.util.events.EventArgs;
+import com.chattyhive.backend.util.events.EventHandler;
 import com.chattyhive.backend.util.formatters.DateFormatter;
 import com.chattyhive.chattyhive.framework.Util.StaticMethods;
 import com.chattyhive.chattyhive.framework.Util.ViewPair;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 /**
@@ -73,6 +80,62 @@ public class Profile {
         }
     }
 
+    public void loadBigPhoto(Object sender, EventArgs eventArgs) {
+        if (!(sender instanceof Image)) return;
+
+        final Image image = (Image)sender;
+        final Profile thisProfile = this;
+
+        ((Activity)this.context).runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                InputStream is = image.getImage(Image.ImageSize.xlarge, 0);
+                if (is != null) {
+                    ((ImageView) profileView.findViewById(R.id.profile_big_photo_thumbnail)).setImageBitmap(BitmapFactory.decodeStream(is));
+                    try {
+                        is.reset();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    if (profileViewType != ProfileView.Edit)
+                        ((ImageView)actionBar.findViewById(R.id.profile_action_bar_myPhoto_button)).setImageBitmap(BitmapFactory.decodeStream(is));
+                    try {
+                        is.reset();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                image.OnImageLoaded.remove(new EventHandler<EventArgs>(thisProfile, "loadBigPhoto", EventArgs.class));
+                image.freeMemory();
+            }
+        });
+
+    }
+    public void loadSmallPhoto (Object sender, EventArgs eventArgs) {
+        if (!(sender instanceof Image)) return;
+
+        final Image image = (Image)sender;
+        final Profile thisProfile = this;
+
+        ((Activity)this.context).runOnUiThread( new Runnable() {
+            @Override
+            public void run() {
+                InputStream is = image.getImage(Image.ImageSize.medium,0);
+                if (is != null) {
+                    ((ImageView) profileView.findViewById(R.id.profile_small_photo_thumbnail)).setImageBitmap(BitmapFactory.decodeStream(is));
+                    try {
+                        is.reset();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                image.OnImageLoaded.remove(new EventHandler<EventArgs>(thisProfile,"loadSmallPhoto",EventArgs.class));
+                image.freeMemory();
+            }
+        });
+    }
+
     private void adjustView() {
         switch (profileViewType) {
             case Private:
@@ -81,6 +144,8 @@ public class Profile {
                 //Images
                 profileView.findViewById(R.id.profile_big_photo_thumbnail).setVisibility(View.VISIBLE);
                 profileView.findViewById(R.id.profile_small_photo_thumbnail).setVisibility(View.VISIBLE);
+                ((ImageView)profileView.findViewById(R.id.profile_big_photo_thumbnail)).setImageResource(R.drawable.my_profile_private_profile_simple);
+                ((ImageView)profileView.findViewById(R.id.profile_small_photo_thumbnail)).setImageResource(R.drawable.my_profile_public_profile_simple);
                 //Full name and public name
                 profileView.findViewById(R.id.profile_full_name).setVisibility(View.VISIBLE);
                 profileView.findViewById(R.id.profile_full_name_value).setVisibility(View.VISIBLE);
@@ -127,6 +192,7 @@ public class Profile {
                 //Images
                 profileView.findViewById(R.id.profile_big_photo_thumbnail).setVisibility(View.VISIBLE);
                 profileView.findViewById(R.id.profile_small_photo_thumbnail).setVisibility(View.GONE);
+                ((ImageView)profileView.findViewById(R.id.profile_big_photo_thumbnail)).setImageResource(R.drawable.my_profile_public_profile_simple);
                 //Full name and public name
                 profileView.findViewById(R.id.profile_full_name).setVisibility(View.GONE);
                 profileView.findViewById(R.id.profile_public_name).setVisibility(View.VISIBLE);
@@ -171,6 +237,8 @@ public class Profile {
                 //Images
                 profileView.findViewById(R.id.profile_big_photo_thumbnail).setVisibility(View.VISIBLE);
                 profileView.findViewById(R.id.profile_small_photo_thumbnail).setVisibility(View.VISIBLE);
+                ((ImageView)profileView.findViewById(R.id.profile_big_photo_thumbnail)).setImageResource(R.drawable.my_profile_private_profile_simple);
+                ((ImageView)profileView.findViewById(R.id.profile_small_photo_thumbnail)).setImageResource(R.drawable.my_profile_public_profile_simple);
                 //Full name and public name
                 profileView.findViewById(R.id.profile_full_name).setVisibility(View.VISIBLE);
                 profileView.findViewById(R.id.profile_full_name_value).setVisibility(View.VISIBLE);
@@ -241,6 +309,8 @@ public class Profile {
                         //Images
                         profileView.findViewById(R.id.profile_big_photo_thumbnail).setVisibility(View.VISIBLE);
                         profileView.findViewById(R.id.profile_small_photo_thumbnail).setVisibility(View.VISIBLE);
+                        ((ImageView)profileView.findViewById(R.id.profile_big_photo_thumbnail)).setImageResource(R.drawable.my_profile_private_profile_simple);
+                        ((ImageView)profileView.findViewById(R.id.profile_small_photo_thumbnail)).setImageResource(R.drawable.my_profile_public_profile_simple);
                         //Full name and public name
                         profileView.findViewById(R.id.profile_full_name).setVisibility(View.VISIBLE);
                         profileView.findViewById(R.id.profile_full_name_value).setVisibility(View.VISIBLE);
@@ -302,6 +372,7 @@ public class Profile {
                         //Images
                         profileView.findViewById(R.id.profile_big_photo_thumbnail).setVisibility(View.VISIBLE);
                         profileView.findViewById(R.id.profile_small_photo_thumbnail).setVisibility(View.GONE);
+                        ((ImageView)profileView.findViewById(R.id.profile_big_photo_thumbnail)).setImageResource(R.drawable.my_profile_public_profile_simple);
                         //Full name and public name
                         profileView.findViewById(R.id.profile_full_name).setVisibility(View.GONE);
                         profileView.findViewById(R.id.profile_public_name).setVisibility(View.VISIBLE);
@@ -365,6 +436,16 @@ public class Profile {
                 if (user.getUserPublicProfile().getColor() != null)
                     ((TextView) profileView.findViewById(R.id.profile_public_name)).setTextColor(Color.parseColor(user.getUserPublicProfile().getColor()));
 
+                if (user.getUserPrivateProfile().getImageURL() != null) {
+                    user.getUserPrivateProfile().getProfileImage().OnImageLoaded.add(new EventHandler<EventArgs>(this,"loadBigPhoto",EventArgs.class));
+                    user.getUserPrivateProfile().getProfileImage().loadImage(Image.ImageSize.xlarge,0);
+                }
+
+                if (user.getUserPublicProfile().getImageURL() != null) {
+                    user.getUserPublicProfile().getProfileImage().OnImageLoaded.add(new EventHandler<EventArgs>(this,"loadSmallPhoto",EventArgs.class));
+                    user.getUserPublicProfile().getProfileImage().loadImage(Image.ImageSize.medium,0);
+                }
+
                 if ((user.getUserPrivateProfile().getLocation() == null) || (user.getUserPrivateProfile().getLocation().isEmpty()))
                     profileView.findViewById(R.id.profile_information_location).setVisibility(View.GONE);
                 else {
@@ -406,6 +487,11 @@ public class Profile {
                 ((TextView) profileView.findViewById(R.id.profile_public_name)).setText(String.format("%s%s", this.context.getResources().getString(R.string.public_username_identifier_character), user.getUserPublicProfile().getPublicName()));
                 if (user.getUserPublicProfile().getColor() != null)
                     ((TextView) profileView.findViewById(R.id.profile_public_name)).setTextColor(Color.parseColor(user.getUserPublicProfile().getColor()));
+
+                if (user.getUserPublicProfile().getImageURL() != null) {
+                    user.getUserPublicProfile().getProfileImage().OnImageLoaded.add(new EventHandler<EventArgs>(this,"loadBigPhoto",EventArgs.class));
+                    user.getUserPublicProfile().getProfileImage().loadImage(Image.ImageSize.xlarge,0);
+                }
 
                 if ((user.getUserPublicProfile().getLocation() == null) || (user.getUserPublicProfile().getLocation().isEmpty()) || (!user.getUserPublicProfile().getShowLocation()))
                     profileView.findViewById(R.id.profile_information_location).setVisibility(View.GONE);
@@ -449,6 +535,16 @@ public class Profile {
                 ((TextView) profileView.findViewById(R.id.profile_public_name)).setText(String.format("%s%s", this.context.getResources().getString(R.string.public_username_identifier_character), user.getUserPublicProfile().getPublicName()));
                 if (user.getUserPublicProfile().getColor() != null)
                     ((TextView) profileView.findViewById(R.id.profile_public_name)).setTextColor(Color.parseColor(user.getUserPublicProfile().getColor()));
+
+                if (user.getUserPrivateProfile().getImageURL() != null) {
+                    user.getUserPrivateProfile().getProfileImage().OnImageLoaded.add(new EventHandler<EventArgs>(this,"loadBigPhoto",EventArgs.class));
+                    user.getUserPrivateProfile().getProfileImage().loadImage(Image.ImageSize.xlarge,0);
+                }
+
+                if (user.getUserPublicProfile().getImageURL() != null) {
+                    user.getUserPublicProfile().getProfileImage().OnImageLoaded.add(new EventHandler<EventArgs>(this,"loadSmallPhoto",EventArgs.class));
+                    user.getUserPublicProfile().getProfileImage().loadImage(Image.ImageSize.medium,0);
+                }
 
                 if ((user.getUserPrivateProfile().getLocation() == null) || (user.getUserPrivateProfile().getLocation().isEmpty())) {
                     profileView.findViewById(R.id.profile_information_location).setVisibility(View.VISIBLE);
@@ -515,6 +611,21 @@ public class Profile {
                 ((TextView) profileView.findViewById(R.id.profile_public_name)).setText(String.format("%s%s", this.context.getResources().getString(R.string.public_username_identifier_character), modifiedUser.getUserPublicProfile().getPublicName()));
                 if (modifiedUser.getUserPublicProfile().getColor() != null)
                     ((TextView) profileView.findViewById(R.id.profile_public_name)).setTextColor(Color.parseColor(modifiedUser.getUserPublicProfile().getColor()));
+
+                if ((profileType == ProfileType.Private) && (user.getUserPrivateProfile().getImageURL() != null)) {
+                    user.getUserPrivateProfile().getProfileImage().OnImageLoaded.add(new EventHandler<EventArgs>(this,"loadBigPhoto",EventArgs.class));
+                    user.getUserPrivateProfile().getProfileImage().loadImage(Image.ImageSize.xlarge,0);
+                }
+
+                if (user.getUserPublicProfile().getImageURL() != null) {
+                    if (profileType == ProfileType.Private) {
+                        user.getUserPublicProfile().getProfileImage().OnImageLoaded.add(new EventHandler<EventArgs>(this, "loadSmallPhoto", EventArgs.class));
+                        user.getUserPublicProfile().getProfileImage().loadImage(Image.ImageSize.medium, 0);
+                    } else {
+                        user.getUserPublicProfile().getProfileImage().OnImageLoaded.add(new EventHandler<EventArgs>(this, "loadBigPhoto", EventArgs.class));
+                        user.getUserPublicProfile().getProfileImage().loadImage(Image.ImageSize.xlarge, 0);
+                    }
+                }
 
                 if ((modifiedUser.getUserPrivateProfile().getLocation() == null) || (modifiedUser.getUserPrivateProfile().getLocation().isEmpty())) {
                     profileView.findViewById(R.id.profile_information_location).setVisibility(View.VISIBLE);

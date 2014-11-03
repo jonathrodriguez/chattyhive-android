@@ -84,7 +84,7 @@ public class PublicProfile extends Profile {
 
         if (profileLevel.ordinal() <= ProfileLevel.None.ordinal()) {
             this.publicName = null;
-            this.imageURL = null;
+            this.setImageURL(null);
             this.statusMessage = null;
             this.color = null;
         }
@@ -137,7 +137,7 @@ public class PublicProfile extends Profile {
             this.userID = ((BASIC_PUBLIC_PROFILE) format).USER_ID;
             this.publicName = ((BASIC_PUBLIC_PROFILE) format).PUBLIC_NAME;
             this.color = ((BASIC_PUBLIC_PROFILE) format).USER_COLOR;
-            this.imageURL = ((BASIC_PUBLIC_PROFILE) format).IMAGE_URL;
+            this.setImageURL(((BASIC_PUBLIC_PROFILE) format).IMAGE_URL);
             this.statusMessage = ((BASIC_PUBLIC_PROFILE) format).STATUS_MESSAGE;
             if (this.loadedProfileLevel.ordinal() < ProfileLevel.Basic.ordinal())
                 this.loadedProfileLevel = ProfileLevel.Basic;

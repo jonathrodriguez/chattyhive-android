@@ -1,6 +1,7 @@
 package com.chattyhive.backend.businessobjects.Chats;
 
 import com.chattyhive.backend.Controller;
+import com.chattyhive.backend.businessobjects.Image;
 import com.chattyhive.backend.contentprovider.AvailableCommands;
 import com.chattyhive.backend.contentprovider.DataProvider;
 import com.chattyhive.backend.contentprovider.OSStorageProvider.HiveLocalStorageInterface;
@@ -201,7 +202,20 @@ public class Hive {
     protected String nameUrl;
     protected Group publicChat;
 
-
+    protected String imageURL;
+    protected Image hiveImage;
+    public void setImageURL(String value) {
+        this.imageURL = value;
+        if (this.hiveImage != null)
+            this.hiveImage.freeMemory();
+        if (value != null)
+            this.hiveImage = new Image(value);
+        else
+            this.hiveImage = null;
+    }
+    public Image getHiveImage() {
+        return this.hiveImage;
+    }
 
     public void setCategory (String value) { this.category = value; }
     public String getCategory() { return this.category; }
@@ -228,6 +242,7 @@ public class Hive {
             ((HIVE) format).CATEGORY = this.category;
             ((HIVE) format).CREATION_DATE = this.creationDate;
             ((HIVE) format).DESCRIPTION = this.description;
+            ((HIVE) format).IMAGE_URL = this.imageURL;
             if (this.publicChat != null)
                 ((HIVE) format).PUBLIC_CHAT = (CHAT)this.publicChat.toFormat(new CHAT());
             else
@@ -245,6 +260,7 @@ public class Hive {
             this.category = ((HIVE) format).CATEGORY;
             this.description = ((HIVE) format).DESCRIPTION;
             this.creationDate = ((HIVE) format).CREATION_DATE;
+            this.setImageURL(((HIVE) format).IMAGE_URL);
             this.publicChat = null;
 
             if (((HIVE) format).PUBLIC_CHAT != null) {
