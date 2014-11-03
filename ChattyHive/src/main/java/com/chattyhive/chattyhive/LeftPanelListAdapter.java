@@ -191,8 +191,11 @@ public class LeftPanelListAdapter extends BaseAdapter {
             ((HiveViewHolder)holder).hiveCategoryName.setText(((Hive) item).getCategory());
             ((HiveViewHolder)holder).hiveSubscribedUsers.setText("Unknown");
             ((HiveViewHolder)holder).hiveItem.setTag(R.id.BO_Hive,item);
-            ((Hive) item).getHiveImage().OnImageLoaded.add(new EventHandler<EventArgs>(holder,"loadHiveImage",EventArgs.class));
-            ((Hive) item).getHiveImage().loadImage(Image.ImageSize.medium,0);
+            ((HiveViewHolder)holder).hiveImage.setImageResource(R.drawable.pestanha_chats_public_chat);
+            try {
+                ((Hive) item).getHiveImage().OnImageLoaded.add(new EventHandler<EventArgs>(holder, "loadHiveImage", EventArgs.class));
+                ((Hive) item).getHiveImage().loadImage(Image.ImageSize.medium, 0);
+            } catch (Exception e) { }
         } else if (type == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Chats)) {
             String GroupName = "";
             SpannableString LastMessage = new SpannableString("");
@@ -414,7 +417,7 @@ public class LeftPanelListAdapter extends BaseAdapter {
                     }
 
                     image.OnImageLoaded.remove(new EventHandler<EventArgs>(thisViewHolder,"loadHiveImage",EventArgs.class));
-                    image.freeMemory();
+                    //image.freeMemory();
                 }
             });
         }
@@ -450,7 +453,7 @@ public class LeftPanelListAdapter extends BaseAdapter {
                     }
 
                     image.OnImageLoaded.remove(new EventHandler<EventArgs>(thisViewHolder,"loadHiveImage",EventArgs.class));
-                    image.freeMemory();
+                    //image.freeMemory();
                 }
             });
         }
@@ -475,7 +478,7 @@ public class LeftPanelListAdapter extends BaseAdapter {
                     }
 
                     image.OnImageLoaded.remove(new EventHandler<EventArgs>(thisViewHolder,"loadChatImage",EventArgs.class));
-                    image.freeMemory();
+                    //image.freeMemory();
                 }
             });
         }

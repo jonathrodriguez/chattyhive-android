@@ -36,16 +36,52 @@ public class Image {
 
     public Event<EventArgs> OnImageLoaded;
 
-    public void loadImage(ImageSize imageSize, int imageDensity) {
+    public void loadImage(final ImageSize imageSize, final int imageDensity) {
         if ((imageDensity < 0) || (imageDensity > 1)) throw new InvalidParameterException("imageDensity must be 0 for normal density version or 1 for light version.");
 
+        Boolean alreadyLoaded = false;
+
+        switch (imageSize) {
+            case small:
+                alreadyLoaded = (smallThumbnail != null);
+                break;
+            case medium:
+                alreadyLoaded = (mediumThumbnail != null);
+                break;
+            case large:
+                alreadyLoaded = (largeThumbnail != null);
+                break;
+            case xlarge:
+                alreadyLoaded = (xlargeThumbnail != null);
+                break;
+            case file:
+                alreadyLoaded = (fileImage != null);
+                break;
+        }
+
+
+        if (alreadyLoaded) {
+            if (this.OnImageLoaded != null)
+                this.OnImageLoaded.fire(this, EventArgs.Empty());
+            return;
+        }
+
+        new Thread(){
+            @Override
+            public void run() {
+                internalLoadImage(imageSize,imageDensity);
+            }
+        }.start();
+    }
+
+    private void internalLoadImage (ImageSize imageSize, int imageDensity) {
         switch (imageSize) {
             case small:
                 if (smallThumbnail != null) {
                     // TODO: think about checking updates
                 } else {
-                    //String url = this.fileURL.replace("file","small");
-                    String url = this.fileURL;
+                    String url = this.fileURL.replace("file_","small_");
+                    //String url = this.fileURL;
                     smallThumbnail = dataProvider.getImage(url);
                 }
                 break;
@@ -53,8 +89,8 @@ public class Image {
                 if (mediumThumbnail != null) {
                     // TODO: think about checking updates
                 } else {
-                    //String url = this.fileURL.replace("file","medium");
-                    String url = this.fileURL;
+                    String url = this.fileURL.replace("file_","medium_");
+                    //String url = this.fileURL;
                     mediumThumbnail = dataProvider.getImage(url);
                 }
                 break;
@@ -62,8 +98,8 @@ public class Image {
                 if (largeThumbnail != null) {
                     // TODO: think about checking updates
                 } else {
-                    //String url = this.fileURL.replace("file","large");
-                    String url = this.fileURL;
+                    String url = this.fileURL.replace("file_","large_");
+                    //String url = this.fileURL;
                     largeThumbnail = dataProvider.getImage(url);
                 }
                 break;
@@ -71,8 +107,8 @@ public class Image {
                 if (xlargeThumbnail != null) {
                     // TODO: think about checking updates
                 } else {
-                    //String url = this.fileURL.replace("file","xlarge");
-                    String url = this.fileURL;
+                    String url = this.fileURL.replace("file_","xlarge_");
+                    //String url = this.fileURL;
                     xlargeThumbnail = dataProvider.getImage(url);
                 }
                 break;
@@ -85,6 +121,9 @@ public class Image {
                 }
                 break;
         }
+
+        String url = this.fileURL;
+        fileImage = dataProvider.getImage(url);
 
         if (this.OnImageLoaded != null)
             this.OnImageLoaded.fire(this,EventArgs.Empty());
@@ -119,7 +158,7 @@ public class Image {
         new Thread(){
             @Override
             public void run() {
-                loadImage(imageSize,imageDensity);
+                internalLoadImage(imageSize,imageDensity);
             }
         }.start();
 
