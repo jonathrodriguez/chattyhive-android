@@ -8,29 +8,29 @@
     android:gravity="right"
     android:baselineAligned="false"
     android:weightSum="1"
-    android:divider="@null"
-    android:background="@drawable/borde2px">
+    android:divider="@null">
 
     <LinearLayout
         android:id="@+id/menu_punto_expandible3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="left"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        >
         <RelativeLayout
             android:id="@+id/menu_menu_flecha3"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:gravity="left"
-            android:paddingLeft="12dp"
-            android:paddingRight="5dp"
-            android:paddingTop="14dp"
-            android:paddingBottom="2dp">
+            android:paddingLeft="@dimen/hive_description_padding_left"
+            android:paddingRight="@dimen/hive_description_padding_right"
+            android:paddingTop="@dimen/hive_description_padding_top"
+            android:paddingBottom="@dimen/hive_description_padding_bottom">
 
             <ImageView
                 android:id="@+id/menu_flecha_imagen3"
-                android:layout_width="18dp"
-                android:layout_height="18dp"
+                android:layout_width="@dimen/hive_description_image"
+                android:layout_height="@dimen/hive_description_image"
                 android:src="@drawable/ic_action_next_item"
                 android:tint="@color/menu_text_white"
                 />
@@ -38,12 +38,12 @@
         <TextView
             android:id="@+id/right_panel_hive_name"
             android:layout_width="wrap_content"
-            android:layout_height="33dp"
+            android:layout_height="fill_parent"
             android:text="@string/menu_hive_name"
-            android:textSize="16dp"
+            android:textSize="@dimen/hive_description_text_size"
             android:gravity="left"
-            android:paddingTop="12dp"
-            android:paddingBottom="2dp"
+            android:paddingTop="@dimen/hive_description_text_padding_top"
+
             android:textColor="@color/menu_text_white"/>
     </LinearLayout>
 </LinearLayout>

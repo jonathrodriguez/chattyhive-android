@@ -17,7 +17,6 @@
     <string name="title_activity_explore">Explore</string>
     <string name="title_activity_profile">Profile</string>
     <string name="title_activity_register">Register</string>
-
     <string name="public_username_identifier_character">\@</string>
     <string name="hivename_identifier_character">:</string>
 </resources>

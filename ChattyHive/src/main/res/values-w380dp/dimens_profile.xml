@@ -55,8 +55,10 @@
     <dimen name="my_profile_status_margin_bottom">9dp</dimen>
     <dimen name="my_profile_status_for_friends_text_size">15sp</dimen>
     <dimen name="my_profile_status_for_all_text_size">15sp</dimen>
+
     <string name="my_profile_status_for_friends_text_visibility">0</string> <!-- VISIBLE -->
     <string name="my_profile_status_for_all_text_visibility">0</string> <!-- VISIBLE -->
+
     <dimen name="my_profile_status_for_friends_image_size">20sp</dimen>
     <dimen name="my_profile_status_for_all_image_size">20sp</dimen>
     <dimen name="my_profile_status_message_text_size">13.5sp</dimen>
@@ -134,6 +136,7 @@
     <dimen name="edit_profile_action_bar_type_button_top_padding">8.5dp</dimen>
     <dimen name="edit_profile_action_bar_type_button_bottom_padding">11.5dp</dimen>
     <dimen name="edit_profile_action_bar_type_button_text_size">18.66sp</dimen>
+    <dimen name="edit_profile_action_bar_type_button_image_size">28dp</dimen>
     <dimen name="edit_profile_action_bar_type_button_image_text_separation">7.75dp</dimen>
     <dimen name="edit_profile_action_bar_type_button_selected_marker_thick">4dp</dimen>
     <dimen name="edit_profile_action_bar_button_border_thick">1px</dimen>
@@ -153,8 +156,15 @@
     <dimen name="edit_profile_privacy_note_shadow_thick">3px</dimen>
     <dimen name="edit_profile_privacy_note_shadow_border_thick">2px</dimen>
 
+    <dimen name="edit_profile_photo_border_thick">1px</dimen>
+
     <dimen name="edit_profile_full_name_pencil_separation">10dp</dimen>
     <dimen name="edit_profile_full_name_pencil_size">20.5dp</dimen>
+
+    <dimen name="edit_profile_full_name_text_size">16sp</dimen>
+    <dimen name="edit_profile_full_name_margin_left">40dp</dimen>
+    <dimen name="edit_profile_full_name_margin_right">40dp</dimen>
+    <dimen name="edit_profile_full_name_separation_half">2.5dp</dimen>
 
     <dimen name="edit_profile_color_pencil_size">20.5dp</dimen>
     <dimen name="edit_profile_color_pencil_separation">5dp</dimen>
@@ -166,6 +176,12 @@
     <dimen name="edit_profile_status_message_text_size">13.33sp</dimen>
     <dimen name="edit_profile_status_message_padding_top">10dp</dimen>
     <dimen name="edit_profile_status_message_padding_bottom">1.5dp</dimen>
+
+    <dimen name="edit_profile_status_text_size">13.5sp</dimen>
+
+    <dimen name="edit_profile_status_message_length_margin_top">-8dp</dimen>
+    <dimen name="edit_profile_status_message_length_margin_right">-8dp</dimen>
+    <dimen name="edit_profile_status_message_length_text_size">12sp</dimen>
 
     <dimen name="edit_profile_information_eye_size">25dp</dimen>
     <dimen name="edit_profile_information_pencil_size">14.5dp</dimen>

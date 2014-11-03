@@ -62,8 +62,17 @@
     <color name="edit_profile_privacy_note_shadow_border_color">#80010101</color>
 
     <color name="edit_profile_edit_messages_text_color">#ff8000</color>
+    <color name="edit_profile_edit_photo_border_color">#ff8000</color>
+    <color name="edit_profile_edit_photo_background_color">#00000000</color>
 
     <color name="edit_profile_edit_images_tint_color">#ffa041</color>
+
+    <color name="edit_profile_full_name_text_color">#111111</color>
+    <color name="edit_profile_full_name_hint_color">#808080</color>
+
+    <color name="edit_profile_status_text_color">#111111</color>
+    <color name="edit_profile_status_hint_color">#808080</color>
+    <color name="edit_profile_status_length_text_color">#404040</color>
 
     <item name="edit_profile_information_item_visible_alpha" format="float" type="color">1</item>
     <item name="edit_profile_information_item_hidden_alpha" format="float" type="color">0.5</item>
@@ -76,4 +85,6 @@
 
     <!-- _____________________________________________________________________ -->
     <!-- USER PROFILE:  Main panel colors -->
+
+    <color name="profile_photo_background_color">#00000000</color>
 </resources>

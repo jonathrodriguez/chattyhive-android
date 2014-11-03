@@ -5,4 +5,5 @@
     <color name="menu_text_yellow">#FFB615</color>
     <color name="menu_shadow">#616161</color>
     <color name="menu_border_color">#606060</color>
+    <color name="menu_context_hive">#282828</color>
 </resources>

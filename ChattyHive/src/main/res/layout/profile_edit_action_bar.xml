@@ -3,7 +3,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal" android:layout_width="match_parent"
     android:layout_height="@dimen/my_profile_action_bar_height"
-    android:background="#ffffff">
+    android:background="#ffffff"
+    android:id="@+id/edit_profile_action_bar_root">
 
     <LinearLayout
         android:orientation="horizontal"
@@ -18,16 +19,15 @@
 
         <ImageView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/imageView"
+            android:layout_height="@dimen/edit_profile_action_bar_type_button_image_size"
             android:src="@drawable/my_profile_private_profile"
-            android:adjustViewBounds="true" />
+            android:adjustViewBounds="true"
+            android:scaleType="centerInside" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/edit_profile_action_bar_private"
-            android:id="@+id/textView"
             android:layout_marginLeft="@dimen/edit_profile_action_bar_type_button_image_text_separation"
             android:textSize="@dimen/edit_profile_action_bar_type_button_text_size"
             android:textColor="@color/edit_profile_action_bar_type_button_text" />
@@ -46,16 +46,15 @@
 
         <ImageView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/imageView2"
+            android:layout_height="@dimen/edit_profile_action_bar_type_button_image_size"
             android:src="@drawable/my_profile_public_profile"
-            android:adjustViewBounds="true" />
+            android:adjustViewBounds="true"
+            android:scaleType="centerInside" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/edit_profile_action_bar_public"
-            android:id="@+id/textView2"
             android:layout_marginLeft="@dimen/edit_profile_action_bar_type_button_image_text_separation"
             android:textSize="@dimen/edit_profile_action_bar_type_button_text_size"
             android:textColor="@color/edit_profile_action_bar_type_button_text" />
@@ -76,10 +75,10 @@
 
         <ImageView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/imageView3"
+            android:layout_height="match_parent"
             android:src="@drawable/explore_new_hive_accept_new_hive"
-            android:adjustViewBounds="true" />
+            android:adjustViewBounds="true"
+            android:scaleType="centerInside" />
 
     </LinearLayout>
 </LinearLayout>
