@@ -11,7 +11,8 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#ededed">
+    android:background="#ededed"
+        android:visibility="gone">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -25,8 +26,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#ffffff"
->
+        android:background="@drawable/home_card_background">
 
     <RelativeLayout
         android:layout_width="79.5dp"
@@ -128,11 +128,6 @@
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="5dip"
-                android:background="@drawable/shadow">
-            </View>
 </LinearLayout>
 
     </LinearLayout>
@@ -142,13 +137,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#ededed"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:background="#ffffff"
+            android:background="@drawable/home_card_background"
             android:layout_marginLeft="8.5dp"
             android:layout_marginRight="8.5dp"
             android:layout_marginBottom="20dp"
@@ -163,9 +158,10 @@
                 android:paddingRight="11dp">
 
                 <TextView
+                    android:id="@+id/explore_list_item_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text=":Minecraft - A game about build anything you can imagine"
+                    android:text="@string/explore_hive_name"
                     android:textColor="#111111"
                     android:textSize="18dp"
                     android:maxLines="2"
@@ -185,7 +181,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:paddingTop="5dp"
+                        android:paddingTop="6dp"
                         android:paddingRight="0dp"
                         android:paddingLeft="9.5dp">
                         <LinearLayout
@@ -200,7 +196,7 @@
                                 android:src="@drawable/pestanha_chats_arroba"/>
                             <TextView
                                 android:layout_width="wrap_content"
-                                android:layout_height="12dp"
+                                android:layout_height="16dp"
                                 android:text="Videojuegos"
                                 android:textColor="#111111"
                                 android:textSize="12dp"
@@ -218,7 +214,7 @@
                                 android:src="@drawable/pestanha_chats_arroba"/>
                             <TextView
                                 android:layout_width="wrap_content"
-                                android:layout_height="12dp"
+                                android:layout_height="16dp"
                                 android:text="1522 mates se unieron al hive"
                                 android:textColor="#111111"
                                 android:textSize="12dp"
@@ -235,7 +231,7 @@
                                 android:src="@drawable/pestanha_chats_arroba"/>
                             <TextView
                                 android:layout_width="wrap_content"
-                                android:layout_height="12dp"
+                                android:layout_height="16dp"
                                 android:text="Idiomas hive chat: Inglés"
                                 android:textColor="#111111"
                                 android:textSize="12dp"
@@ -251,7 +247,7 @@
                     android:textColor="#111111"
                     android:maxLines="3"
                     android:paddingTop="13dp"
-                    android:paddingRight="30dp"
+                    android:paddingRight="25dp"
                     android:paddingLeft="0dp"
                     android:lineSpacingExtra="4.25sp"/>
 
@@ -271,7 +267,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:weightSum="3">
+                        android:layout_weight="3">
+
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -281,7 +278,6 @@
                             android:layout_marginLeft="5.5dp"
                             android:textColor="#333333"
                             android:background="@drawable/explore_tags_border"/>
-
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -330,7 +326,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:layout_marginTop="19dp">
+                    android:layout_marginTop="19dp"
+                    android:layout_marginBottom="12dp">
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -359,9 +356,17 @@
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:orientation="vertical">
+                            <LinearLayout
+                            android:id="@+id/explore_join_button"
+                            android:visibility="visible"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
                             android:orientation="horizontal"
                             android:gravity="center"
-                            android:background="@drawable/explore_button_border">
+                            android:background="@drawable/explore_button_border"
+                            android:paddingLeft="10dp"
+                            android:paddingRight="10dp">
                             <ImageView
                                 android:layout_width="20dp"
                                 android:layout_height="20dp"
@@ -375,14 +380,33 @@
                                 android:textColor="#333333"
                                 android:layout_marginLeft="7dp"/>
                         </LinearLayout>
+                            <LinearLayout
+                                android:id="@+id/explore_chat_button2"
+                                android:visibility="gone"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:gravity="center"
+                                android:background="@drawable/explore_button_border"
+                                android:paddingLeft="10dp"
+                                android:paddingRight="10dp">
+                                <ImageView
+                                    android:layout_width="20dp"
+                                    android:layout_height="20dp"
+                                    android:src="@drawable/launcher_launcher_a"/>
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="30dp"
+                                    android:gravity="center"
+                                    android:text="Public Chat"
+                                    android:textSize="16dp"
+                                    android:textColor="#333333"
+                                    android:layout_marginLeft="7dp"/>
+                            </LinearLayout>
+                        </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="5dip"
-                android:background="@drawable/shadow">
-            </View>
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

@@ -13,6 +13,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.chattyhive.backend.Controller;
+import com.chattyhive.backend.businessobjects.Chats.GroupKind;
 import com.chattyhive.backend.util.events.EventArgs;
 import com.chattyhive.backend.util.events.EventHandler;
 
@@ -70,12 +71,23 @@ public class Explore extends Activity {
         }
     };
 
-    protected View.OnClickListener join_button_click = new View.OnClickListener() {
+    /*protected View.OnClickListener join_button_click = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            System.out.println("join!!!!");
             //String hiveNameURL =((String) ((TextView)v.findViewById(R.id.explore_list_item_name)).getTag());
             //controller.JoinHive(hiveNameURL);
-            System.out.println("join!!!!");
+            if(v.findViewById(R.id.explore_chat_button).getVisibility() == View.GONE){
+                v.findViewById(R.id.explore_chat_button).setVisibility(View.VISIBLE);
+                v.findViewById(R.id.explore_join_button).setVisibility(View.GONE);
+        }
+        }
+    };*/
+
+    protected View.OnClickListener expand_hive = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            //System.out.println("expanded!!!!");
             if(v.findViewById(R.id.explore_hive_card).getVisibility() == View.GONE) {
                 v.findViewById(R.id.explore_list_item_short).setVisibility(View.GONE);
                 v.findViewById(R.id.explore_hive_card).setVisibility(View.VISIBLE);
@@ -84,7 +96,6 @@ public class Explore extends Activity {
                 v.findViewById(R.id.explore_hive_card).setVisibility(View.GONE);
                 v.findViewById(R.id.explore_list_item_short).setVisibility(View.VISIBLE);
             }
-
         }
     };
 

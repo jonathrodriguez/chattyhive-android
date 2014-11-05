@@ -3,10 +3,16 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:layout_height="49dp"
+    android:layout_height="50dp"
     android:background="#ffffff"
     android:baselineAligned="false"
     android:layout_gravity="top">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:background="@drawable/home_top_bar_background">
 
     <ImageButton
         android:layout_width="match_parent"
@@ -55,4 +61,5 @@
         android:background="@drawable/explore_tab_list_no_selected_border"
         android:id="@+id/explore_tab_list_trending_button"
         android:alpha="0.75"/>
+    </LinearLayout>
 </LinearLayout>
