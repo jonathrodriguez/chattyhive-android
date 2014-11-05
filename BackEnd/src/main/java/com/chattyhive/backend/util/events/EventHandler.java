@@ -75,4 +75,15 @@ public class EventHandler<T extends EventArgs> {
     public boolean equals(Object o) {
         return ((o instanceof EventHandler) && (this.subscriber == (((EventHandler) o).subscriber)) && (this.method.getName().equalsIgnoreCase(((EventHandler) o).method.getName())));
     }
+
+    @Override
+    public int hashCode() {
+        int res = 0;
+        if (this.subscriber != null)
+            res += this.subscriber.hashCode();
+        if (this.method != null)
+            res += this.method.hashCode();
+
+        return res;
+    }
 }

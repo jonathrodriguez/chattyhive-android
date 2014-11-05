@@ -41,11 +41,11 @@ android {
 }
 
 dependencies {
-    compile project(':BackEnd')
     compile project(':Framework')
-    compile 'com.android.support:appcompat-v7:19.0.0'
+    compile project(':BackEnd')
     compile 'com.android.support:support-v4:19.0.0'
     compile 'com.pusher:pusher-java-client:0.2.0'
+    compile 'com.android.support:appcompat-v7:19.0.0'
 }
 
 task getPasswords << {

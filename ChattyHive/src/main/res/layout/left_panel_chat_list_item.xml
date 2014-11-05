@@ -42,7 +42,9 @@
         android:layout_marginTop="@dimen/left_panel_chat_list_item_little_img_margin_top"
         android:layout_alignLeft="@+id/left_panel_chat_list_item_big_img"
         android:layout_alignParentTop="false"
-        android:layout_alignTop="@+id/left_panel_chat_list_item_big_img" />
+        android:layout_alignTop="@+id/left_panel_chat_list_item_big_img"
+        android:paddingBottom="@dimen/left_panel_chat_list_item_little_img_padding_bottom"
+        android:paddingRight="@dimen/left_panel_chat_list_item_little_img_padding_right" />
 
     <TextView
         android:layout_width="fill_parent"

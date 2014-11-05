@@ -1,8 +1,10 @@
 package com.chattyhive.backend.util.events;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 /**
  * Created by Jonathan on 15/12/13.
@@ -19,14 +21,14 @@ import java.util.Iterator;
  */
 
 public class Event<T extends EventArgs> {
-    private HashSet<EventHandler<T>> eventHandlers;
+    private Set<EventHandler<T>> eventHandlers;
 
     /**
      * Public constructor. Initialises the ArrayList which will contain the eventHandlers
      * to the methods to be invoked.
      */
     public Event () {
-        this.eventHandlers = new HashSet<EventHandler<T>>();
+        this.eventHandlers = Collections.synchronizedSet(new HashSet<EventHandler<T>>());
     }
 
 
@@ -45,10 +47,7 @@ public class Event<T extends EventArgs> {
      * @return true if list has changed; else returns false.
      */
     public boolean remove(EventHandler<T> eventHandler) {
-        if (this.eventHandlers.contains(eventHandler))
-            return this.eventHandlers.remove(eventHandler);
-        else
-            return false;
+        return this.eventHandlers.remove(eventHandler);
     }
 
     /**
@@ -71,25 +70,27 @@ public class Event<T extends EventArgs> {
      * @param eventArgs The event arguments. They CAN be of any class but HAVE TO extend EventArgs.
      */
     public void fire(Object sender,T eventArgs) {
-        Iterator<EventHandler<T>> iterator = this.eventHandlers.iterator();
-        while (iterator.hasNext()) {
-            EventHandler<T> eventHandler = iterator.next();
-            try {
-                eventHandler.Invoke(sender,eventArgs);
-            } catch (InvocationTargetException invocationTargetException) {
-                iterator.remove();
-                System.out.println("InvocationTargetException.");
-                invocationTargetException.printStackTrace();
-                continue;
-            } catch (IllegalAccessException illegalAccessException) {
-                iterator.remove();
-                System.out.println("IllegalAccessException.");
-                illegalAccessException.printStackTrace();
-                continue;
-            }
-            if (eventArgs instanceof CancelableEventArgs) {
-                if (((CancelableEventArgs) eventArgs).isCanceled())
-                    return;
+        synchronized (this.eventHandlers) {
+            Iterator<EventHandler<T>> iterator = this.eventHandlers.iterator();
+            while (iterator.hasNext()) {
+                EventHandler<T> eventHandler = iterator.next();
+                try {
+                    eventHandler.Invoke(sender, eventArgs);
+                } catch (InvocationTargetException invocationTargetException) {
+                    iterator.remove();
+                    System.out.println("InvocationTargetException.");
+                    invocationTargetException.printStackTrace();
+                    continue;
+                } catch (IllegalAccessException illegalAccessException) {
+                    iterator.remove();
+                    System.out.println("IllegalAccessException.");
+                    illegalAccessException.printStackTrace();
+                    continue;
+                }
+                if (eventArgs instanceof CancelableEventArgs) {
+                    if (((CancelableEventArgs) eventArgs).isCanceled())
+                        return;
+                }
             }
         }
     }

@@ -1,6 +1,6 @@
 package com.chattyhive.chattyhive.framework.OSStorageProvider;
 
-import android.util.Log;
+import android.content.res.Resources;
 
 import com.chattyhive.backend.contentprovider.AvailableCommands;
 import com.chattyhive.backend.contentprovider.formats.CHAT;
@@ -20,8 +20,10 @@ import com.chattyhive.backend.contentprovider.local.LocalStorageInterface;
 import com.chattyhive.backend.util.events.CommandCallbackEventArgs;
 import com.chattyhive.backend.util.events.EventHandler;
 import com.chattyhive.backend.util.formatters.TimestampFormatter;
+import com.chattyhive.chattyhive.framework.Util.ApplicationContextProvider;
 import com.google.gson.JsonParser;
 
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -391,5 +393,19 @@ public class LocalStorage implements LocalStorageInterface {
     @Override
     public Boolean FormatsReceived(Collection<Format> receivedFormats) {
         return null;
+    }
+
+    @Override
+    public InputStream getImage(String url) {
+        String name = url.substring(0,url.lastIndexOf("."));
+        Resources resources = ApplicationContextProvider.getContext().getResources();
+        int resID = resources.getIdentifier(name,"drawable","com.chattyhive.chattyhive");
+
+        try {
+            return resources.openRawResource(resID);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

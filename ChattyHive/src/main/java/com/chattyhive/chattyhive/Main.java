@@ -3,6 +3,7 @@ package com.chattyhive.chattyhive;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -67,6 +68,14 @@ public class Main extends Activity {
         //TODO: Populate/manage main panel view stack.
 
         return actualView;
+    }
+
+    protected View ChangeActionBar (int actionBarID) {
+        FrameLayout mainActionBar = ((FrameLayout)findViewById(R.id.actionCenter));
+        mainActionBar.removeAllViews();
+        View actionBar = LayoutInflater.from(this).inflate(actionBarID,mainActionBar,true);
+
+        return actionBar;
     }
 
     protected void ShowHome() {

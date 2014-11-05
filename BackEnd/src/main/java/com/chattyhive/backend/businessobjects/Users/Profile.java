@@ -1,5 +1,6 @@
 package com.chattyhive.backend.businessobjects.Users;
 
+import com.chattyhive.backend.businessobjects.Image;
 import com.chattyhive.backend.contentprovider.formats.Format;
 import com.google.gson.JsonElement;
 
@@ -25,6 +26,12 @@ public abstract class Profile {
 
     ProfileLevel loadedProfileLevel;
 
+    Image profileImage;
+
+    public Image getProfileImage() {
+        return this.profileImage;
+    }
+
     public String getID() {
         return this.userID;
     }
@@ -39,6 +46,12 @@ public abstract class Profile {
     }
     public void setImageURL(String value) {
         this.imageURL = value;
+        if (this.profileImage != null)
+            this.profileImage.freeMemory();
+        if (value != null)
+            this.profileImage = new Image(value);
+        else
+            this.profileImage = null;
     }
 
     public String getStatusMessage() {

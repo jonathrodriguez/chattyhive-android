@@ -24,6 +24,7 @@ public class HIVE extends Format {
     public String NAME;
     public String CATEGORY;
     public String DESCRIPTION;
+    public String IMAGE_URL;
     public Date CREATION_DATE;
     public CHAT PUBLIC_CHAT;
     public ArrayList<String> TAGS;
@@ -57,7 +58,11 @@ public class HIVE extends Format {
         if ((this.DESCRIPTION != null) && (!this.DESCRIPTION.isEmpty()))
             jsonObject.addProperty("DESCRIPTION",this.DESCRIPTION);
       else
-            jsonObject.add("DESCRIPTION", JsonNull.INSTANCE);            
+            jsonObject.add("DESCRIPTION", JsonNull.INSTANCE);
+        if ((this.IMAGE_URL != null) && (!this.IMAGE_URL.isEmpty()))
+            jsonObject.addProperty("IMAGE_URL",this.IMAGE_URL);
+        else
+            jsonObject.add("IMAGE_URL", JsonNull.INSTANCE);
         if ((this.CREATION_DATE != null) && (!TimestampFormatter.toString(this.CREATION_DATE).isEmpty()))
             jsonObject.addProperty("CREATION_DATE", TimestampFormatter.toString(this.CREATION_DATE));
       else
@@ -124,7 +129,11 @@ public class HIVE extends Format {
         property = object.get("DESCRIPTION");
         if ((property != null) && (property.isJsonPrimitive()) && (property.getAsString() != null) && (!property.getAsString().isEmpty()))
             this.DESCRIPTION = property.getAsString();
-            
+
+        property = object.get("IMAGE_URL");
+        if ((property != null) && (property.isJsonPrimitive()) && (property.getAsString() != null) && (!property.getAsString().isEmpty()))
+            this.IMAGE_URL = property.getAsString();
+
         property = object.get("CREATION_DATE");
         if ((property != null) && (property.isJsonPrimitive()) && (property.getAsString() != null) && (!property.getAsString().isEmpty()))
             this.CREATION_DATE = TimestampFormatter.toDate(property.getAsString());

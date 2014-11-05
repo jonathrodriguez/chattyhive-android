@@ -2,13 +2,20 @@ package com.chattyhive.chattyhive;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.util.SparseArray;
 import android.view.View;
 import android.widget.ExpandableListView;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.chattyhive.backend.businessobjects.Image;
 import com.chattyhive.backend.util.events.EventArgs;
 import com.chattyhive.backend.util.events.EventHandler;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Created by J.Guzmán on 24/09/2014.
@@ -28,12 +35,48 @@ public class RightPanel2{
     }
 
     public void onLocalUserLoaded(Object sender, EventArgs args){
-        String name = ((Main) this.context).controller.getMe().getUserPrivateProfile().getShowingName().toString();
-        ((TextView)((Activity)this.context).findViewById(R.id.menu_private_profile_name)).setText(name);
-        name = this.context.getResources().getString(R.string.public_username_identifier_character).concat(((Main) this.context).controller.getMe().getUserPublicProfile().getShowingName().toString());
-        ((TextView)((Activity)this.context).findViewById(R.id.menu_public_profile_name)).setText(name);
+        final RightPanel2 thisPanel = this;
+        ((Activity)context).runOnUiThread( new Runnable() {
+            @Override
+            public void run() {
+                String name = ((Main) context).controller.getMe().getUserPrivateProfile().getShowingName().toString();
+                ((TextView)((Activity)context).findViewById(R.id.menu_private_profile_name)).setText(name);
+                name = context.getResources().getString(R.string.public_username_identifier_character).concat(((Main) context).controller.getMe().getUserPublicProfile().getShowingName().toString());
+                ((TextView)((Activity)context).findViewById(R.id.menu_public_profile_name)).setText(name);
+                ((ImageView)((Activity)context).findViewById(R.id.menu_profile_photo_image)).setImageResource(R.drawable.pestanha_chats_user);
+                ((ImageView)((Activity)context).findViewById(R.id.menu_profile_photo_image)).setColorFilter(Color.parseColor("#ffffff"));
+                ((Main) context).controller.getMe().getUserPrivateProfile().getProfileImage().OnImageLoaded.add(new EventHandler<EventArgs>(thisPanel,"loadImage",EventArgs.class));
+                ((Main) context).controller.getMe().getUserPrivateProfile().getProfileImage().loadImage(Image.ImageSize.medium,0);
+            }
+        });
     }
 
+    public void loadImage(Object sender, EventArgs eventArgs) {
+        if (!(sender instanceof Image)) return;
+
+        final ImageView imageView = ((ImageView)((Activity)this.context).findViewById(R.id.menu_profile_photo_image));
+        final Image image = (Image)sender;
+        final RightPanel2 thisPanel = this;
+
+        ((Activity)context).runOnUiThread( new Runnable() {
+            @Override
+            public void run() {
+                InputStream is = image.getImage(Image.ImageSize.medium,0);
+                if (is != null) {
+                    imageView.setImageBitmap(BitmapFactory.decodeStream(is));
+                    imageView.clearColorFilter();
+                    try {
+                        is.reset();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                image.OnImageLoaded.remove(new EventHandler<EventArgs>(thisPanel,"loadImage",EventArgs.class));
+                image.freeMemory();
+            }
+        });
+    }
 
     private void InitializeComponent(){
         crearDatos();

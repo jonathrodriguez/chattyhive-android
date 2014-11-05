@@ -88,7 +88,7 @@ public class StandAloneServer {
     private static HashMap<String, ArrayList<String>> UserChatSubscriptions;
 
     private static HashMap<String, ArrayList<String>> UserFriendList;
-
+    private static String[] Words = new String[]{"Lorem","ipsum","dolor","sit","amet","consectetuer","adipiscing","elit. Aenean","commodo","ligula","eget","dolor. Aenean","massa. Cum","sociis","natoque","penatibus","et","magnis","dis","parturient","montes,","nascetur","ridiculus","mus. Donec","quam","felis,","ultricies","nec,","pellentesque","eu,","pretium","quis,","sem. Nulla","consequat","massa","quis","enim. Donec","pede","justo","fringilla","vel,","aliquet","nec","vulputate","eget,","arcu. In","enim","justo","rhoncus","ut,","imperdiet","a","venenatis","vitae","justo","nullam","dictum","felis","eu","pede","mollis","pretium. Integer","tincidunt. Cras","dapibus","vivamus","elementum","semper","nisi. Aenean","vulputate","eleifend","tellus. Aenean","leo","ligula,","porttitor","eu,","consequat","vitae","eleifend","ac","enim. Aliquam","lorem","ante","dapibus","in,","viverra","quis,","feugiat","a,","tellus. Phasellus","viverra","nulla","ut","metus","varius","laoreet. Quisque","rutrum","aenean","imperdiet","etiam","ultricies","nisi","vel","augue. Curabitur","ullamcorper","ultricies","nisi","nam","eget","dui. Etiam","rhoncus","maecenas","tempus,","tellus","eget","condimentum","rhoncus","sem","quam","semper","libero,","sit","amet","adipiscing","sem","neque","sed","ipsum. Nam","quam","nunc,","blandit","vel","luctus","pulvinar","hendrerit","id","lorem. Maecenas","nec","odio","et","ante","tincidunt","tempus. Donec","vitae","sapien","ut","libero","venenatis","faucibus. Nullam","quis,","ante. Etiam","sit","amet","orci","eget","eros","faucibus","tincidunt","duis","leo","sed","fringilla","mauris","sit","amet","nibh. Donec","sodales","sagittis","magna. Sed","consequat","leo","eget","bibendum","sodales,","augue","velit","cursus","nunc"};
     static {
         if (StaticParameters.StandAlone) {
             CSRFTokens = new ArrayList<String>();
@@ -116,76 +116,200 @@ public class StandAloneServer {
         User user;
         Hive hive;
 
-        /********************************************************************/
-        /*                            USERS                                 */
-        /********************************************************************/
-        /*              Login: jonathan    Pass: 12345678                   */
-        /*              Login: cassini91   Pass: huygens                    */
-        /*              Login: trabuco     Pass: 15081968                   */
-        /*              Login: serezy      Pass: Istiklâl Marsi             */
-        /********************************************************************/
-        user = createUser("jonathan@chattyhive.com", "Jonathan", "Rodriguez", "jonathan", "#AA22AA", "08/12/1987", "Vigo, Pontevedra, Spain", "MALE", true, false, true, true, "es-ES", "fr-FR", "en-UK", "en-US", "ga-ES", "pt-PT");
+        /************************************************************************/
+        /*                            USERS                                     */
+        /************************************************************************/
+        /*              Login: jonathan         Pass: 12345678                  */
+        /*              Login: cassini91        Pass: huygens                   */
+        /*              Login: trabuco          Pass: 15081968                  */
+        /*              Login: serezy           Pass: Istiklâl Marsi            */
+        /*              Login: homer_ou         Pass: bartsimpson               */
+        /*              Login: weirdalien       Pass: AFD45ADE                  */
+        /*              Login: coolest_thing_21 Pass: 87654321                  */
+        /*              Login: akamatsu         Pass: Shizue_86                 */
+        /************************************************************************/
+        user = createUser("jonathan@chattyhive.com", "Jonathan", "Rodriguez", "jonathan", "#AA22AA", "file_avatar_jonathan.jpg", "file_private_jonathan.jpg", "08/12/1987", "Vigo, Pontevedra, España", "MALE", true, false, true, true, "Español", "Francés", "Inglés", "Gallego", "Portugués");
         LoginUser.put(user.getUserPublicProfile().getPublicName(), user);
         LoginPassword.put(user.getEmail(), "12345678");
 
-        user = createUser("cassini91@hotmail.com", "Cassandra", "Prieto", "cassini91", "#55dd9f", "31/03/1991", "Vigo, Pontevedra, Spain", "FEMALE", false, false, false, false, "es-ES", "ga-ES");
+        user = createUser("cassini91@hotmail.com", "Cassandra", "Prieto", "cassini91", "#55dd9f", "file_avatar_cassini91.jpg", "file_private_cassini91.jpg", "31/03/1991", "Vigo, Pontevedra, España", "FEMALE", false, false, false, false, "Español", "Gallego");
         LoginUser.put(user.getUserPublicProfile().getPublicName(), user);
         LoginPassword.put(user.getEmail(), "huygens");
 
-        user = createUser("monchuco@yahoo.es", "Ramon", "Araujo", "trabuco", "#dfada0", "15/08/1968", "Andorra", "MALE", true, true, true, true, "es-ES", "fr-FR", "en-US", "ca-ES");
+        user = createUser("monchuco@yahoo.es", "Ramon", "Araujo", "trabuco", "#dfada0", "file_avatar_trabuco.jpg", "file_private_trabuco.jpg", "15/08/1968", "Andorra", "MALE", true, true, true, true, "Español", "Francés", "Inglés", "Catalán");
         LoginUser.put(user.getUserPublicProfile().getPublicName(), user);
         LoginPassword.put(user.getEmail(), "15081968");
 
-        user = createUser("serpalina@gmail.com", "Serezade", "Agthëãçykn", "serezy", "#16a46a", "04/07/1302", "Ankara, Ankara, Turkey", "FEMALE", true, true, false, false, "en-US", "tr-TR");
+        user = createUser("serpalina@gmail.com", "Serezade", "Agthëãçykn", "serezy", "#16a46a", "file_avatar_serezy.jpg", "file_private_serezy.jpg", "04/07/1302", "Ankara, Ankara, Turquía", "FEMALE", true, true, false, false, "Inglés", "Turco");
         LoginUser.put(user.getUserPublicProfile().getPublicName(), user);
         LoginPassword.put(user.getEmail(), "Istiklâl Marsi");
+
+        user = createUser("ramoncete_1985@gmail.com", "Ramón Fernández", "Guitiérrez Ibáñez", "homer_ou", "#5D00FF", "file_avatar_homer_ou.jpg", "file_private_homer_ou.jpg", "22/10/1985", "Orense, Orense, España", "MALE", false, true, false, true, "Español", "Gallego");
+        LoginUser.put(user.getUserPublicProfile().getPublicName(), user);
+        LoginPassword.put(user.getEmail(), "bartsimpson");
+
+        user = createUser("laura.gaza5@gmail.com", "Laura", "Gaza Moya", "weirdalien", "#00AF98", "file_avatar_weirdalien.jpg", "file_private_weirdalien.jpg", "04/07/1982", "Valladolid, Valladolid, España", "FEMALE", true, true, true, true, "Español", "Alemán", "Francés");
+        LoginUser.put(user.getUserPublicProfile().getPublicName(), user);
+        LoginPassword.put(user.getEmail(), "AFD45ADE");
+
+        user = createUser("cool_cooper@gmail.com", "Charles L.", "Cooper", "coolest_thing_21", "#586000", "file_avatar_coolest_thing_21.jpg", "file_private_coolest_thing_21.jpg", "04/07/1990", "Big Thicket Creekmore Village, Texas, EEUU", "MALE", true, false, false, true, "Inglés");
+        LoginUser.put(user.getUserPublicProfile().getPublicName(), user);
+        LoginPassword.put(user.getEmail(), "87654321");
+
+        user = createUser("akamatsu@gmail.com", "Clair", "Moreau", "akamatsu", "#820600", "file_avatar_akamatsu.jpg", "file_private_akamatsu.jpg", "04/07/1998", "París, Isla de Francia, Francia", "FEMALE", false, true, true, true, "Francés", "Inglés");
+        LoginUser.put(user.getUserPublicProfile().getPublicName(), user);
+        LoginPassword.put(user.getEmail(), "Shizue_86");
 
         /********************************************************************/
         /*                HIVES                                             */
         /********************************************************************/
-        hive = createHive("Minecraft - Unofficial chat","Video games - PC","Unofficial chat for minecraft's fans.");
+        hive = createHive("Minecraft - Unofficial chat","file_hive_minecraft_unofficial_hive.jpg","Videojuegos PC","This is the best unofficial hive for minecraft's fans, join us and share the lates news, pictures and experiences of your favourite game.");
         subscribeHive("jonathan",hive.getNameUrl());
         subscribeHive("cassini91",hive.getNameUrl());
-
+        subscribeHive("trabuco",hive.getNameUrl());
+        subscribeHive("serezy",hive.getNameUrl());
+        subscribeHive("homer_ou",hive.getNameUrl());
+        subscribeHive("weirdalien",hive.getNameUrl());
+        subscribeHive("coolest_thing_21",hive.getNameUrl());
+        subscribeHive("akamatsu",hive.getNameUrl());
         createChat(hive,"01/01/2000","jonathan","cassini91");
-
         createChat(hive,"01/05/2001","jonathan","serezy");
+        createChat(hive,"01/01/1998","coolest_thing_21","cassini91");
+        createChat(hive,"07/12/2001","homer_ou","serezy");
+        createChat(hive,"01/01/2000","jonathan","trabuco");
+        createChat(hive,"01/05/2001","coolest_thing_21","serezy");
 
-        hive = createHive("Chattyhive","Technology & Computers - Software development","Official chattyhive's chat for internal communication.");
+        hive = createHive("Chattyhive","file_hive_chattyhive.jpg","Desarrollo de software","Official chattyhive's chat for internal communication.");
         subscribeHive("jonathan",hive.getNameUrl());
         subscribeHive("cassini91",hive.getNameUrl());
         subscribeHive("trabuco",hive.getNameUrl());
-
-        createChat(hive,"15/12/2014","jonathan","cassini91","serezy");
-
+        subscribeHive("weirdalien",hive.getNameUrl());
+        subscribeHive("coolest_thing_21",hive.getNameUrl());
+        subscribeHive("akamatsu",hive.getNameUrl());
+        createChat(hive,"15/12/2014","weirdalien","cassini91");
+        createChat(hive,"01/01/2010","jonathan","coolest_thing_21");
+        createChat(hive,"08/11/1955","trabuco","cassini91");
         createChat(hive,"01/01/2010","jonathan","serezy");
+        createChat(hive,"08/11/1955","cassini91","coolest_thing_21");
 
-        createChat(hive,"08/11/1955","jonathan","trabuco");
-
-        hive = createHive("Test3","Free Time - General","");
+        hive = createHive("The sweetest thing ever!","file_hive_the_sweetest_thing_ever.jpg","Estilo de vida - General","Just talk about what you believe its the sweetest thing that could happen to you... and I am not (just) talking about food");
         subscribeHive("jonathan",hive.getNameUrl());
+        subscribeHive("trabuco",hive.getNameUrl());
+        subscribeHive("serezy",hive.getNameUrl());
+        subscribeHive("homer_ou",hive.getNameUrl());
+        createChat(hive,"15/12/2014","jonathan","trabuco");
+        createChat(hive,"01/01/2010","jonathan","serezy");
+        createChat(hive,"08/11/1955","trabuco","serezy");
+        createChat(hive,"01/01/2010","jonathan","homer_ou");
+        createChat(hive,"08/11/1955","homer_ou","trabuco");
 
-        createChat(hive,"08/11/1900","jonathan");
-
-        hive = createHive("Test4","Free Time - General","");
+        hive = createHive("¡Lugares donde te gustaría perderte!","file_hive_lugares_donde_te_gustaria_perderte.jpg","Viajes - destinos","Hablemos y compartamos fotos sobre aquellos rincones donde no te importaría perder, y pasar una vida entera o al menos un buen cacho de tiempo. ¿Qué lugares te inspiran más paz?");
         subscribeHive("cassini91",hive.getNameUrl());
 
-        hive = createHive("Test5","Free Time - General","");
+        hive = createHive("Lets play guitar!","file_hive_lets_play_guitar.jpg","Producción musical e instrumentos","Are you a pro? still learning? doesn't matter, join this hive to learn and share about your favourite musical instrument");
         subscribeHive("cassini91",hive.getNameUrl());
         subscribeHive("trabuco",hive.getNameUrl());
-
         createChat(hive,"25/02/2013","cassini91","trabuco");
 
-        hive = createHive("Test6","Free Time - General","Empty hive.");
+        hive = createHive("The most beautiful planet?","file_hive_the_most_beautiful_planet.jpg","Astronomía","You like astronomy so I ask you the following: do you think it would be possible to find a planet as beautiful and complex as our is?");
+        subscribeHive("jonathan",hive.getNameUrl());
+        subscribeHive("cassini91",hive.getNameUrl());
+        subscribeHive("trabuco",hive.getNameUrl());
+        subscribeHive("serezy",hive.getNameUrl());
+        subscribeHive("homer_ou",hive.getNameUrl());
+        subscribeHive("weirdalien",hive.getNameUrl());
+        subscribeHive("coolest_thing_21",hive.getNameUrl());
+        subscribeHive("akamatsu",hive.getNameUrl());
+        createChat(hive,"01/01/2000","jonathan","cassini91");
+        createChat(hive,"01/05/2001","jonathan","serezy");
+        createChat(hive,"01/01/1998","coolest_thing_21","cassini91");
+        createChat(hive,"07/12/2001","homer_ou","serezy");
+        createChat(hive,"01/01/2000","jonathan","trabuco");
+        createChat(hive,"01/05/2001","coolest_thing_21","serezy");
+
+        hive = createHive("PC general news and thoughts","file_hive_pc_general_news_and_thoughts.jpg","Tecnología e informática - General","This is a general hive for PC lovers. Mac users are not welcome here (nah I am kidding)");
+        subscribeHive("jonathan",hive.getNameUrl());
+        subscribeHive("trabuco",hive.getNameUrl());
+        subscribeHive("serezy",hive.getNameUrl());
+        subscribeHive("homer_ou",hive.getNameUrl());
+        createChat(hive,"15/12/2014","jonathan","trabuco");
+        createChat(hive,"01/01/2010","jonathan","serezy");
+        createChat(hive,"08/11/1955","trabuco","serezy");
+        createChat(hive,"01/01/2010","jonathan","homer_ou");
+        createChat(hive,"08/11/1955","homer_ou","trabuco");
+
+        hive = createHive("Sustos y sorpresas","file_hive_sustos_y_sorpresas.jpg","Estados de ánimo","Comparte todos esos momentos que han hecho que se te quedasen los ojos cómo platos");
+        subscribeHive("jonathan",hive.getNameUrl());
+        subscribeHive("cassini91",hive.getNameUrl());
+        subscribeHive("trabuco",hive.getNameUrl());
+        subscribeHive("serezy",hive.getNameUrl());
+        subscribeHive("homer_ou",hive.getNameUrl());
+        subscribeHive("weirdalien",hive.getNameUrl());
+        subscribeHive("coolest_thing_21",hive.getNameUrl());
+        subscribeHive("akamatsu",hive.getNameUrl());
+        createChat(hive,"01/01/2000","jonathan","cassini91");
+        createChat(hive,"01/05/2001","jonathan","serezy");
+        createChat(hive,"01/01/1998","coolest_thing_21","cassini91");
+        createChat(hive,"07/12/2001","homer_ou","serezy");
+        createChat(hive,"01/01/2000","jonathan","trabuco");
+        createChat(hive,"01/05/2001","coolest_thing_21","serezy");
+
+        hive = createHive("Cities are not for me, sorry","file_hive_cities_are_not_for_me.jpg","Estilo de vida - General","For those who can't live in a big city and enjoy life in small towns. Why can't you stand the big cities?");
+        subscribeHive("jonathan",hive.getNameUrl());
+        subscribeHive("cassini91",hive.getNameUrl());
+        subscribeHive("trabuco",hive.getNameUrl());
+        subscribeHive("weirdalien",hive.getNameUrl());
+        subscribeHive("coolest_thing_21",hive.getNameUrl());
+        subscribeHive("akamatsu",hive.getNameUrl());
+        createChat(hive,"15/12/2014","weirdalien","cassini91");
+        createChat(hive,"01/01/2010","jonathan","coolest_thing_21");
+        createChat(hive,"08/11/1955","trabuco","cassini91");
+        createChat(hive,"01/01/2010","jonathan","serezy");
+        createChat(hive,"08/11/1955","cassini91","coolest_thing_21");
+
+        hive = createHive("The funny hive","file_hive_the_funny_hive.jpg","Humor","Only funny stuff is allowed");
+        subscribeHive("jonathan",hive.getNameUrl());
+        subscribeHive("trabuco",hive.getNameUrl());
+        subscribeHive("serezy",hive.getNameUrl());
+        subscribeHive("homer_ou",hive.getNameUrl());
+        createChat(hive,"15/12/2014","jonathan","trabuco");
+        createChat(hive,"01/01/2010","jonathan","serezy");
+        createChat(hive,"08/11/1955","trabuco","serezy");
+        createChat(hive,"01/01/2010","jonathan","homer_ou");
+        createChat(hive,"08/11/1955","homer_ou","trabuco");
+
+        hive = createHive("Biraz daha kalabilir misin?","file_hive_biraz_daha_kalabilir_misin.jpg","Amor","Seni çok özledim.");
+        subscribeHive("cassini91",hive.getNameUrl());
+        subscribeHive("serezy",hive.getNameUrl());
+        createChat(hive,"25/02/2013","cassini91","serezy");
+
+        hive = createHive("¡Así es imposible estar a dieta!","file_hive_asi_es_imposible_estar_a_dieta.jpg","Dietas y nutrición","Cuando estás a dieta y el mundo se vuelve en tu contra...");
+        subscribeHive("jonathan",hive.getNameUrl());
+        subscribeHive("cassini91",hive.getNameUrl());
+        subscribeHive("trabuco",hive.getNameUrl());
+        subscribeHive("serezy",hive.getNameUrl());
+        subscribeHive("homer_ou",hive.getNameUrl());
+        subscribeHive("weirdalien",hive.getNameUrl());
+        subscribeHive("coolest_thing_21",hive.getNameUrl());
+        subscribeHive("akamatsu",hive.getNameUrl());
+        createChat(hive,"01/01/2000","weirdalien","coolest_thing_21");
+        createChat(hive,"01/05/2001","coolest_thing_21","akamatsu");
+        createChat(hive,"01/01/1998","homer_ou","akamatsu");
+        createChat(hive,"07/12/2001","trabuco","weirdalien");
+        createChat(hive,"01/01/2000","weirdalien","jonathan");
+        createChat(hive,"01/05/2001","jonathan","akamatsu");
 
         /********************************************************************/
-        /*                OTHER PRIVATE CHATS                               */
+        /*                OTHER PRIVATE CHATS (entre amigos)                */
         /********************************************************************/
         createChat(null,"06/02/2014","cassini91","jonathan");
-
         createChat(null,"16/08/2004","cassini91","serezy");
-
-        createChat(null,"16/08/2014","cassini91","serezy","jonathan");
+        createChat(null,"16/05/2013","jonathan","serezy");
+        createChat(null,"06/02/2014","coolest_thing_21","jonathan");
+        createChat(null,"16/08/2001","coolest_thing_21","serezy");
+        createChat(null,"06/02/2014","weirdalien","akamatsu");
+        createChat(null,"21/08/2004","weirdalien","serezy");
+        createChat(null,"16/12/2014","homer_ou","akamatsu");
 
         /********************************************************************/
         /*                USER FRIEND LIST                                  */
@@ -195,6 +319,11 @@ public class StandAloneServer {
         subscribeUser("cassini91","serezy");
         subscribeUser("jonathan","serezy");
         subscribeUser("jonathan","trabuco");
+        subscribeUser("coolest_thing_21","jonathan");
+        subscribeUser("coolest_thing_21","serezy");
+        subscribeUser("weirdalien","serezy");
+        subscribeUser("weirdalien","akamatsu");
+        subscribeUser("homer_ou","akamatsu");
 
         /********************************************************************/
         /*                RANDOM MESSAGE TIMER                              */
@@ -334,10 +463,11 @@ public class StandAloneServer {
         ChatUserSubscriptions.get(chatChannelUnicode).add(userLogin);
         UserChatSubscriptions.get(userLogin).add(chatChannelUnicode);
     }
-    private static Hive createHive(String name, String category, String description) {
+    private static Hive createHive(String name, String hiveImage,String category, String description) {
         Hive hive = new Hive(name,randomString.nextString());
         Group publicChat = new Group(GroupKind.HIVE,hive);
 
+        hive.setImageURL(hiveImage);
         hive.setCategory(category);
         hive.setDescription(description);
         hive.setPublicChat(publicChat);
@@ -350,16 +480,18 @@ public class StandAloneServer {
 
         return hive;
     }
-    private static User createUser(String email, String firstName, String lastName, String publicName, String color, String birthdate, String location, String sex, Boolean privateShowAge, Boolean publicShowAge, Boolean publicShowSex, Boolean publicShowLocation, String... languages) {
+    private static User createUser(String email, String firstName, String lastName, String publicName, String color, String avatarURL, String profileURL, String birthdate, String location, String sex, Boolean privateShowAge, Boolean publicShowAge, Boolean publicShowSex, Boolean publicShowLocation, String... languages) {
         User user = new User(email);
         user.setUserID(publicName);
         user.getUserPrivateProfile().setFirstName(firstName);
         user.getUserPrivateProfile().setLastName(lastName);
+        user.getUserPrivateProfile().setImageURL(profileURL);
         user.getUserPrivateProfile().setShowAge(privateShowAge);
         user.getUserPublicProfile().setShowSex(publicShowSex);
         user.getUserPublicProfile().setShowLocation(publicShowLocation);
         user.getUserPublicProfile().setShowAge(publicShowAge);
         user.getUserPublicProfile().setPublicName(publicName);
+        user.getUserPublicProfile().setImageURL(avatarURL);
         user.getUserPublicProfile().setColor(color);
         user.getUserPublicProfile().setBirthdate(DateFormatter.fromShortHumanReadableString(birthdate));
         user.getUserPublicProfile().setLocation(location);
@@ -654,7 +786,7 @@ public class StandAloneServer {
                         if (local_user_profile.USER_PRIVATE_PROFILE.LANGUAGE != null)
                             languages = local_user_profile.USER_PRIVATE_PROFILE.LANGUAGE.toArray(new String[local_user_profile.USER_PRIVATE_PROFILE.LANGUAGE.size()]);
 
-                        User user = createUser(local_user_profile.EMAIL,local_user_profile.USER_BASIC_PRIVATE_PROFILE.FIRST_NAME,local_user_profile.USER_BASIC_PRIVATE_PROFILE.LAST_NAME,local_user_profile.USER_BASIC_PUBLIC_PROFILE.PUBLIC_NAME,"#808080",DateFormatter.toShortHumanReadableString(local_user_profile.USER_PRIVATE_PROFILE.BIRTHDATE),local_user_profile.USER_PRIVATE_PROFILE.LOCATION,local_user_profile.USER_PRIVATE_PROFILE.SEX,local_user_profile.USER_PRIVATE_PROFILE.PRIVATE_SHOW_AGE,local_user_profile.USER_PUBLIC_PROFILE.PUBLIC_SHOW_AGE,local_user_profile.USER_PUBLIC_PROFILE.PUBLIC_SHOW_SEX,local_user_profile.USER_PUBLIC_PROFILE.PUBLIC_SHOW_LOCATION,languages);
+                        User user = createUser(local_user_profile.EMAIL,local_user_profile.USER_BASIC_PRIVATE_PROFILE.FIRST_NAME,local_user_profile.USER_BASIC_PRIVATE_PROFILE.LAST_NAME,local_user_profile.USER_BASIC_PUBLIC_PROFILE.PUBLIC_NAME,"#808080",null,null,DateFormatter.toShortHumanReadableString(local_user_profile.USER_PRIVATE_PROFILE.BIRTHDATE),local_user_profile.USER_PRIVATE_PROFILE.LOCATION,local_user_profile.USER_PRIVATE_PROFILE.SEX,local_user_profile.USER_PRIVATE_PROFILE.PRIVATE_SHOW_AGE,local_user_profile.USER_PUBLIC_PROFILE.PUBLIC_SHOW_AGE,local_user_profile.USER_PUBLIC_PROFILE.PUBLIC_SHOW_SEX,local_user_profile.USER_PUBLIC_PROFILE.PUBLIC_SHOW_LOCATION,languages);
                         LoginUser.put(user.getUserPublicProfile().getPublicName(), user);
                         LoginPassword.put(user.getEmail(), local_user_profile.PASS);
 
