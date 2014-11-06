@@ -82,7 +82,7 @@ public class ExploreListAdapter extends BaseAdapter {
             btn1 = (LinearLayout) convertView.findViewById(R.id.explore_chat_button2);
             btn2 = (LinearLayout) convertView.findViewById(R.id.explore_join_button);
 
-            View.OnClickListener join_button_click = new View.OnClickListener() {
+            /*View.OnClickListener join_button_click = new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     System.out.println("join!!!!");
@@ -94,11 +94,11 @@ public class ExploreListAdapter extends BaseAdapter {
                         btn2.setVisibility(View.GONE);
                     }
                 }
-            };
+            };*/
 
 
 
-            convertView.findViewById(R.id.explore_join_button).setOnClickListener(join_button_click);
+            //convertView.findViewById(R.id.explore_join_button).setOnClickListener(join_button_click);
             convertView.setTag(R.id.Explore_ListViewHolder, holder);
         } else {
             holder = (ViewHolder)convertView.getTag(R.id.Explore_ListViewHolder);
@@ -137,7 +137,7 @@ public class ExploreListAdapter extends BaseAdapter {
             ((Explore)this.context).GetMoreHives();
         }
 
-       inflater.inflate(R.layout.explore_hive_card, parent);
+      // inflater.inflate(R.layout.explore_hive_card, parent);
         return convertView;
     }
 

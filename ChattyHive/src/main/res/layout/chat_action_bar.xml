@@ -7,9 +7,9 @@
     android:background="#111111">
 
         <ImageButton
+            android:id="@+id/main_panel_chat_icon"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:id="@+id/main_panel_chat_icon"
             android:background="#111111"
             android:src="@drawable/registro_load_picture"
             android:scaleType="fitCenter"

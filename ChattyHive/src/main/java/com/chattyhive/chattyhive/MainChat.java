@@ -37,13 +37,17 @@ public class MainChat {
         this.textInput = ((TextView)((Activity)context).findViewById(R.id.main_panel_chat_textBox));
 
         this.channelChat.setChatWindowActive(true);
-
+        this.InicializeChatWindow();
         this.chatListAdapter = new ChatListAdapter(context,this.channelChat);
         ((ListView)((Activity)context).findViewById(R.id.main_panel_chat_message_list)).setAdapter(chatListAdapter);
 
             this.channelChat.MessageListModifiedEvent.add(new EventHandler<EventArgs>(this.chatListAdapter,"OnAddItem",EventArgs.class));
     }
 
+    private void InicializeChatWindow(){
+        //TextView txt = (TextView) channelGroup.getName();
+        ((TextView)((Activity)context).findViewById(R.id.main_panel_chat_name)).setText("HOLA");
+    }
 
     protected View.OnClickListener send_button_click = new View.OnClickListener() {
         @Override

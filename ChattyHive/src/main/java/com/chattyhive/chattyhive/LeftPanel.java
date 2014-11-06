@@ -188,24 +188,23 @@ public class LeftPanel {
             chatView = viewPair.getMainView();
             int visibleList = leftPanelListAdapter.GetVisibleList();
 
-            if (visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Hives)) {
+            if (visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Hives)) {                                                                                                                 //SI ES UN HIVE
                 /*if (((Main)context).ActiveLayoutID == R.layout.main_panel_chat_layout) {
                         ((Main)context).controller.Leave((String)((Activity)context).findViewById(R.id.main_panel_chat_name).getTag());
                     }*/
 
-                Hive h = ((Hive)v.getTag(R.id.BO_Hive));
+                Hive h = ((Hive)v.getTag(R.id.BO_Hive));     //investigar
 
-
-                ((TextView)actionBarView.findViewById(R.id.main_panel_chat_name)).setText(h.getName());
+                ((TextView)actionBarView.findViewById(R.id.main_panel_chat_name)).setText(h.getName());//nombre del chat
                 actionBarView.findViewById(R.id.main_panel_chat_name).setTag(h.getPublicChat().getChannelUnicode());
 
-                actionBarView.findViewById(R.id.main_panel_chat_menu_icon).setOnClickListener(((Main)context).menuIcon_ClickListener);
+                actionBarView.findViewById(R.id.main_panel_chat_menu_icon).setOnClickListener(((Main)context).menuIcon_ClickListener);//imagen
                 actionBarView.findViewById(R.id.main_panel_chat_icon).setOnClickListener(((Main)context).appIcon_ClickListener);
                 ((Main)context).appIcon_ClickListener.onClick(actionBarView.findViewById(R.id.main_panel_chat_icon));
 
-                mainChat = new MainChat(context,h.getPublicChat().getChannelUnicode());
-                chatView.findViewById(R.id.main_panel_chat_send_icon).setOnClickListener(mainChat.send_button_click);
-            } else if (visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Chats)) {
+                mainChat = new MainChat(context,h.getPublicChat().getChannelUnicode());//crea el chat
+                chatView.findViewById(R.id.main_panel_chat_send_icon).setOnClickListener(mainChat.send_button_click);//setListener enviar mensaje
+            } else if (visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Chats)) {                                                                                                          //SI ES UN CHAT
                 Group g = ((Group)v.getTag(R.id.BO_Chat));
 
                 ((TextView)actionBarView.findViewById(R.id.main_panel_chat_name)).setText(g.getName());
