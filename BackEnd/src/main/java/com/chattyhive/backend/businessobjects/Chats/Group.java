@@ -2,6 +2,8 @@ package com.chattyhive.backend.businessobjects.Chats;
 
 import com.chattyhive.backend.Controller;
 import com.chattyhive.backend.businessobjects.Chats.Messages.Message;
+import com.chattyhive.backend.businessobjects.Users.ProfileLevel;
+import com.chattyhive.backend.businessobjects.Users.ProfileType;
 import com.chattyhive.backend.businessobjects.Users.User;
 import com.chattyhive.backend.contentprovider.AvailableCommands;
 import com.chattyhive.backend.contentprovider.DataProvider;
@@ -37,9 +39,13 @@ public class Group {
 
     public static Event<EventArgs> GroupListChanged;
 
+    private static TreeMap<String,Group> UnloadedGroups;
     private static TreeMap<String,Group> Groups;
     public static void Initialize(Controller controller, GroupLocalStorageInterface groupLocalStorageInterface) {
         GroupListChanged = new Event<EventArgs>();
+        if (Group.UnloadedGroups == null) {
+            Group.UnloadedGroups = new TreeMap<String, Group>();
+        }
         if (Group.Groups == null) {
             Group.Groups = new TreeMap<String, Group>();
         }
@@ -48,7 +54,6 @@ public class Group {
         Group.localStorage = groupLocalStorageInterface;
 
         DataProvider.GetDataProvider().onChatProfileReceived.add(new EventHandler<FormatReceivedEventArgs>(Group.class, "onFormatReceived", FormatReceivedEventArgs.class));
-
 
 
         //Remote recovering of groups -> Recovered when binding app or service.
@@ -67,10 +72,75 @@ public class Group {
                 Format[] formats = Format.getFormat((new JsonParser()).parse(group));
                 for (Format format : formats) {
                     if (format instanceof CHAT) {
-                        Group.Groups.put(((CHAT) format).CHANNEL_UNICODE, new Group((CHAT) format,null));
+                        Group g = new Group((CHAT) format, null);
+                        if (g.isLoaded()) {
+                            Group.Groups.put(g.channelUnicode, g);
+                            if (GroupListChanged != null)
+                                GroupListChanged.fire(g, EventArgs.Empty());
+                        }
+                        else
+                            Group.UnloadedGroups.put(g.channelUnicode,g);
                     }
                 }
             }
+        }
+    }
+
+    public Boolean isLoaded() {
+        Boolean result = false;
+        switch (this.getGroupKind()) {
+            case HIVE:
+                result = ((this.parentHive != null) && (Hive.HiveIsLoaded(this.parentHive)) && (this.getChat() != null));
+                break;
+            case PUBLIC_SINGLE:
+                result = ((this.getChat() != null) && (this.parentHive != null) && (Hive.HiveIsLoaded(this.parentHive)) && (this.members != null));
+                if (result) {
+                    Boolean anotherUser = false;
+                    for (User user : this.members.values())
+                        if (!user.isMe())
+                            if ((!user.isLoading()) && (user.getUserPublicProfile() != null) && (user.getUserPublicProfile().getPublicName() != null)) {
+                                anotherUser = true;
+                            } else {
+                                user.UserLoaded.add(new EventHandler<EventArgs>(this,"testLoaded",EventArgs.class));
+                                if (!user.isLoading())
+                                    user.loadProfile(ProfileType.PUBLIC, ProfileLevel.Basic);
+                            }
+                    if (!anotherUser)
+                        result = false;
+                }
+                break;
+            case PRIVATE_SINGLE:
+                result = ((this.getChat() != null) && (this.members != null));
+                if (result) {
+                    Boolean anotherUser = false;
+                    for (User user : this.members.values())
+                        if (!user.isMe())
+                            if ((!user.isLoading()) && (user.getUserPrivateProfile() != null) && (user.getUserPrivateProfile().getShowingName() != null)) {
+                                anotherUser = true;
+                            } else {
+                                user.UserLoaded.add(new EventHandler<EventArgs>(this,"testLoaded",EventArgs.class));
+                                if (!user.isLoading())
+                                    user.loadProfile(ProfileType.PRIVATE, ProfileLevel.Basic);
+                            }
+                    if (!anotherUser)
+                        result = false;
+                }
+                break;
+        }
+        //TODO: before returning correct result it's needed to define corresponding load methods and events, else, unloaded groups will remain in unloaded group list.
+        //return result;
+        return true;
+    }
+
+    public void testLoaded(Object sender, EventArgs eventArgs) {
+        if (sender instanceof User)
+            ((User)sender).UserLoaded.remove(new EventHandler<EventArgs>(this,"testLoaded",EventArgs.class));
+
+        if (this.isLoaded()) {
+            UnloadedGroups.remove(this.channelUnicode);
+            Groups.put(this.channelUnicode,this);
+            if (GroupListChanged != null)
+                GroupListChanged.fire(this, EventArgs.Empty());
         }
     }
 
@@ -142,17 +212,23 @@ public class Group {
     }
 
     public static Group getGroup(String channelUnicode, Boolean addToList) {
-        if (Group.Groups == null) throw new IllegalStateException("Groups must be initialized.");
+        if ((Group.UnloadedGroups == null) || (Group.Groups == null)) throw new IllegalStateException("Groups must be initialized.");
         else if (channelUnicode == null) throw new NullPointerException("ChannelUnicode must not be null.");
         else if (channelUnicode.isEmpty()) throw  new IllegalArgumentException("ChannelUnicode must not be empty.");
 
-        if (Group.Groups.containsKey(channelUnicode))
+        if (Group.UnloadedGroups.containsKey(channelUnicode))
+            return Group.UnloadedGroups.get(channelUnicode);
+        else if (Group.Groups.containsKey(channelUnicode))
             return Group.Groups.get(channelUnicode);
         else if (addToList) {
             Group g = new Group(channelUnicode);
-            Group.Groups.put(channelUnicode,g);
-            if (GroupListChanged != null)
-                GroupListChanged.fire(g,EventArgs.Empty());
+            if (g.isLoaded()) {
+                Group.Groups.put(g.channelUnicode, g);
+                if (GroupListChanged != null)
+                    GroupListChanged.fire(g,EventArgs.Empty());
+            }
+            else
+                Group.UnloadedGroups.put(g.channelUnicode,g);
             return g;
         } else {
             return null;
@@ -164,7 +240,12 @@ public class Group {
         if ((g.channelUnicode != null) && (!g.channelUnicode.isEmpty())) {
             Group existent = Group.getGroup(g.channelUnicode,false);
             if (existent == null) {
-                Group.Groups.put(g.channelUnicode,g);
+                if (g.isLoaded()) {
+                    Group.Groups.put(g.channelUnicode, g);
+                    if (GroupListChanged != null)
+                        GroupListChanged.fire(g,EventArgs.Empty());
+                } else
+                    Group.UnloadedGroups.put(g.channelUnicode, g);
                 if (GroupListChanged != null)
                     GroupListChanged.fire(g,EventArgs.Empty());
                 return g;
@@ -178,22 +259,29 @@ public class Group {
 
     public static Group createGroup(Collection<User> users,String parentGroup) {
         //TODO: implement server communication
-        String groupName = ""; //Recovered from server.
+        String groupChannelUnicode = ""; //Recovered from server.
         //TODO: implement local storage
 
-        Group g = new Group(groupName);
-        Group.Groups.put(groupName,g);
-        if (GroupListChanged != null)
-            GroupListChanged.fire(g,EventArgs.Empty());
+        Group g = new Group(groupChannelUnicode);
+        if (g.isLoaded()) {
+            Group.Groups.put(groupChannelUnicode, g);
+            if (GroupListChanged != null)
+                GroupListChanged.fire(g,EventArgs.Empty());
+        } else
+            Group.UnloadedGroups.put(groupChannelUnicode, g);
         return g;
     }
 
     public static void removeGroup(String channelUnicode) {
-        if (Group.Groups == null) throw new IllegalStateException("Groups must be initialized.");
+        if ((Group.UnloadedGroups == null) || (Group.Groups == null)) throw new IllegalStateException("Groups must be initialized.");
         else if (channelUnicode == null) throw new NullPointerException("ChannelUnicode must not be null.");
         else if (channelUnicode.isEmpty()) throw  new IllegalArgumentException("ChannelUnicode must not be empty.");
 
-        if (Group.Groups.containsKey(channelUnicode)) {
+        if (Group.UnloadedGroups.containsKey(channelUnicode)) {
+            Group g = Group.UnloadedGroups.get(channelUnicode);
+            g.chat.clearAllMessages();
+            Group.UnloadedGroups.remove(channelUnicode);
+        } else if (Group.Groups.containsKey(channelUnicode)) {
             Group g = Group.Groups.get(channelUnicode);
             g.chat.clearAllMessages();
             Group.Groups.remove(channelUnicode);
@@ -204,13 +292,18 @@ public class Group {
         Group.localStorage.RemoveGroup(channelUnicode);
     }
     public static void clearGroups() {
-        if (Group.Groups == null) throw new IllegalStateException("Groups must be initialized.");
+        if ((Group.UnloadedGroups == null) || (Group.Groups == null)) throw new IllegalStateException("Groups must be initialized.");
+
+        for (Group group : Group.UnloadedGroups.values())
+            if (group.chat != null)
+                group.chat.clearAllMessages();
+        Group.UnloadedGroups.clear();
 
         for (Group group : Group.Groups.values())
             if (group.chat != null)
                 group.chat.clearAllMessages();
-
         Group.Groups.clear();
+
         Group.localStorage.ClearGroups();
 
         if (GroupListChanged != null)

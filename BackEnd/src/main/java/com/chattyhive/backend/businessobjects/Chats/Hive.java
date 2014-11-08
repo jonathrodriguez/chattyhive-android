@@ -64,6 +64,10 @@ public class Hive {
         /* This will be recovered with local user profile.*/
     }
 
+    public static Boolean HiveIsLoaded (Hive hive) {
+        return ((hive.category != null) && (hive.creationDate != null) && (hive.nameUrl != null) && (hive.name != null));
+    }
+
     /***********************************/
     /*        STATIC LIST SUPPORT      */
     /***********************************/
@@ -203,6 +207,9 @@ public class Hive {
     protected Group publicChat;
 
     protected String imageURL;
+    public String getImageURL() {
+        return this.imageURL;
+    }
     protected Image hiveImage;
     public void setImageURL(String value) {
         this.imageURL = value;

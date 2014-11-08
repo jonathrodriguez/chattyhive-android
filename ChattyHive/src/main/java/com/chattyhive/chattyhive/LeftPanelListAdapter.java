@@ -193,6 +193,7 @@ public class LeftPanelListAdapter extends BaseAdapter {
             ((HiveViewHolder)holder).hiveItem.setTag(R.id.BO_Hive,item);
             ((HiveViewHolder)holder).hiveImage.setImageResource(R.drawable.pestanha_chats_public_chat);
             try {
+                Log.w("Showing Hive item",String.format("Image URL: %s",((Hive)item).getImageURL()));
                 ((Hive) item).getHiveImage().OnImageLoaded.add(new EventHandler<EventArgs>(holder, "loadHiveImage", EventArgs.class));
                 ((Hive) item).getHiveImage().loadImage(Image.ImageSize.medium, 0);
             } catch (Exception e) { }

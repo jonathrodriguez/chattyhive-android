@@ -21,14 +21,14 @@ import java.util.Set;
  */
 
 public class Event<T extends EventArgs> {
-    private Set<EventHandler<T>> eventHandlers;
+    private HashSet<EventHandler<T>> eventHandlers;
 
     /**
      * Public constructor. Initialises the ArrayList which will contain the eventHandlers
      * to the methods to be invoked.
      */
     public Event () {
-        this.eventHandlers = Collections.synchronizedSet(new HashSet<EventHandler<T>>());
+        this.eventHandlers = new HashSet<EventHandler<T>>();
     }
 
 
@@ -70,27 +70,24 @@ public class Event<T extends EventArgs> {
      * @param eventArgs The event arguments. They CAN be of any class but HAVE TO extend EventArgs.
      */
     public void fire(Object sender,T eventArgs) {
-        synchronized (this.eventHandlers) {
-            Iterator<EventHandler<T>> iterator = this.eventHandlers.iterator();
-            while (iterator.hasNext()) {
-                EventHandler<T> eventHandler = iterator.next();
-                try {
-                    eventHandler.Invoke(sender, eventArgs);
-                } catch (InvocationTargetException invocationTargetException) {
-                    iterator.remove();
-                    System.out.println("InvocationTargetException.");
-                    invocationTargetException.printStackTrace();
-                    continue;
-                } catch (IllegalAccessException illegalAccessException) {
-                    iterator.remove();
-                    System.out.println("IllegalAccessException.");
-                    illegalAccessException.printStackTrace();
-                    continue;
-                }
-                if (eventArgs instanceof CancelableEventArgs) {
-                    if (((CancelableEventArgs) eventArgs).isCanceled())
-                        return;
-                }
+        HashSet<EventHandler<T>> copy = new HashSet<EventHandler<T>>(this.eventHandlers);
+        for (EventHandler<T> eventHandler : copy) {
+            try {
+                eventHandler.Invoke(sender, eventArgs);
+            } catch (InvocationTargetException invocationTargetException) {
+                this.eventHandlers.remove(eventHandler);
+                System.out.println("InvocationTargetException.");
+                invocationTargetException.printStackTrace();
+                continue;
+            } catch (IllegalAccessException illegalAccessException) {
+                this.eventHandlers.remove(eventHandler);
+                System.out.println("IllegalAccessException.");
+                illegalAccessException.printStackTrace();
+                continue;
+            }
+            if (eventArgs instanceof CancelableEventArgs) {
+                if (((CancelableEventArgs) eventArgs).isCanceled())
+                    break;
             }
         }
     }
