@@ -1,20 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal" android:layout_width="fill_parent"
+    android:orientation="horizontal"
+    android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:background="#fff0e4"
+    android:background="@drawable/border_hive_message_me"
     android:focusableInTouchMode="false"
-    android:id="@+id/main_panel_chat_item">
+    android:id="@+id/main_panel_chat_item"
+    android:paddingTop="10dp"
+    android:paddingRight="7dp"
+    android:paddingLeft="7dp"
+    android:paddingBottom="15dp">
 
     <LinearLayout
-        android:orientation="vertical"
+        android:orientation="horizontal"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:layout_gravity="center_horizontal|top"
-        android:gravity="center_vertical"
-        android:background="#fff0e4">
+        android:gravity="center_vertical">
+
+        <TextView
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left|top"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="99:99"
+            android:id="@+id/main_panel_chat_timeStamp"
+            android:layout_marginRight="9dp"
+            android:textColor="#808080"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="5dp"
+            android:layout_gravity="right|top"
+            android:gravity="right|top">
 
         <TextView
             android:layout_width="wrap_content"
@@ -26,8 +48,8 @@
             android:gravity="right"
             android:textAlignment="gravity"
             android:singleLine="true"
-            android:background="#fff0e4"
-            android:textColor="#000000" />
+            android:textColor="#808040"
+            android:layout_marginBottom="8dp"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -35,13 +57,10 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:id="@+id/main_panel_chat_messageText"
             android:text='"Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est.'
-            android:layout_gravity="center_vertical|right"
             android:textAlignment="gravity"
-            android:gravity="center_vertical|fill_horizontal"
-            android:textColor="#333333"
-            android:background="#fff0e4" />
-
-        <TextView
+            android:textColor="#333333"/>
+        </LinearLayout>
+        <!--<TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
@@ -56,18 +75,17 @@
             android:layout_alignParentLeft="false"
             android:layout_alignParentEnd="false"
             android:layout_alignParentStart="false"
-            android:textColor="#808080"
-            android:background="#fff0e4" />
-
+            android:textColor="#808080" />-->
     </LinearLayout>
 
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:id="@+id/main_panel_chat_avatarThumbnail"
         android:layout_gravity="right|top"
-        android:src="@android:drawable/sym_def_app_icon"
+        android:src="@drawable/my_profile_private_profile_simple"
         android:contentDescription="my_image"
-        android:background="#fff0e4" />
+        android:background="#fff0e4"
+        android:layout_marginLeft="7dp"/>
 
 </LinearLayout>

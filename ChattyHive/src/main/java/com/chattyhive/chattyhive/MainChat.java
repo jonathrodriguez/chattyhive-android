@@ -27,7 +27,6 @@ public class MainChat {
     TextView textInput;
     Group channelGroup;
     Chat channelChat;
-
     ChatListAdapter chatListAdapter;
 
     public MainChat (Context context, String channelUnicode) {
@@ -45,8 +44,10 @@ public class MainChat {
     }
 
     private void InicializeChatWindow(){
-        //TextView txt = (TextView) channelGroup.getName();
-        ((TextView)((Activity)context).findViewById(R.id.main_panel_chat_name)).setText("HOLA");
+        String txt = channelGroup.getName();
+        System.out.println("HIVE NAME:"+txt+"  !!!!-----------------------------------------------------------------------------");
+
+        ((TextView)((Activity)context).findViewById(R.id.main_panel_chat_name)).setText(txt);
     }
 
     protected View.OnClickListener send_button_click = new View.OnClickListener() {

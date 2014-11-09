@@ -52,6 +52,7 @@ public class Explore extends Activity {
         this.controller.HiveJoined.add(new EventHandler<EventArgs>(this,"onHiveJoined", EventArgs.class));
 
         this.findViewById(R.id.explore_action_bar_goBack_button).setOnClickListener(this.backButton);
+        this.findViewById(R.id.explore_button_categories).setOnClickListener(this.categoriesButton);
         this.controller.exploreHives(0,9);
 
 
@@ -68,6 +69,20 @@ public class Explore extends Activity {
             if (joined > 0)
                 setResult(RESULT_OK);
             finish();
+        }
+    };
+
+    protected View.OnClickListener categoriesButton = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (v.findViewById(R.id.explore_categories_list).getVisibility() == View.GONE){
+                v.findViewById(R.id.explore_categories_list).setVisibility(View.VISIBLE);
+                if (v.findViewById(R.id.explore_list_item_short).getVisibility() == View.VISIBLE){
+                    v.findViewById(R.id.explore_list_item_short).setVisibility(View.GONE);
+                }else if (v.findViewById(R.id.explore_hive_card).getVisibility() == View.VISIBLE){
+                    v.findViewById(R.id.explore_hive_card).setVisibility(View.GONE);
+                }
+            }
         }
     };
 

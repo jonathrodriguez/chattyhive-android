@@ -195,6 +195,8 @@ public class LeftPanel {
 
                 Hive h = ((Hive)v.getTag(R.id.BO_Hive));     //investigar
 
+                System.out.println("HIVE NAME:"+h.getName()+"  !!!!-----------------------------------------------------------------------------");
+
                 ((TextView)actionBarView.findViewById(R.id.main_panel_chat_name)).setText(h.getName());//nombre del chat
                 actionBarView.findViewById(R.id.main_panel_chat_name).setTag(h.getPublicChat().getChannelUnicode());
 
@@ -202,7 +204,7 @@ public class LeftPanel {
                 actionBarView.findViewById(R.id.main_panel_chat_icon).setOnClickListener(((Main)context).appIcon_ClickListener);
                 ((Main)context).appIcon_ClickListener.onClick(actionBarView.findViewById(R.id.main_panel_chat_icon));
 
-                mainChat = new MainChat(context,h.getPublicChat().getChannelUnicode());//crea el chat
+                mainChat = new MainChat(context,h.getPublicChat().getChannelUnicode()); //crea el chat
                 chatView.findViewById(R.id.main_panel_chat_send_icon).setOnClickListener(mainChat.send_button_click);//setListener enviar mensaje
             } else if (visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Chats)) {                                                                                                          //SI ES UN CHAT
                 Group g = ((Group)v.getTag(R.id.BO_Chat));
