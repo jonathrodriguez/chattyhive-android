@@ -31,6 +31,7 @@ import com.chattyhive.backend.util.events.EventHandler;
 import com.chattyhive.backend.util.formatters.DateFormatter;
 import com.chattyhive.backend.util.formatters.TimestampFormatter;
 import com.chattyhive.chattyhive.framework.Util.StaticMethods;
+import com.chattyhive.chattyhive.util.Category;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -188,7 +189,7 @@ public class LeftPanelListAdapter extends BaseAdapter {
         if (type == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Hives)) {
             ((HiveViewHolder)holder).hiveName.setText(((Hive)item).getName());
             ((HiveViewHolder)holder).hiveDescription.setText(((Hive)item).getDescription());
-            ((HiveViewHolder)holder).hiveCategoryName.setText(((Hive) item).getCategory());
+            Category.setCategory(((Hive) item).getCategory(),((HiveViewHolder)holder).hiveCategoryImage,((HiveViewHolder)holder).hiveCategoryName);
             ((HiveViewHolder)holder).hiveSubscribedUsers.setText("Unknown");
             ((HiveViewHolder)holder).hiveItem.setTag(R.id.BO_Hive,item);
             ((HiveViewHolder)holder).hiveImage.setImageResource(R.drawable.pestanha_chats_public_chat);
