@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
 import com.chattyhive.backend.businessobjects.Chats.Group;
+import com.chattyhive.backend.businessobjects.Chats.GroupKind;
 import com.chattyhive.backend.businessobjects.Chats.Hive;
 import com.chattyhive.backend.util.events.EventArgs;
 import com.chattyhive.backend.util.events.EventHandler;
@@ -178,49 +179,30 @@ public class LeftPanel {
     protected View.OnClickListener OpenChat = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            View chatView;
-            View actionBarView;
             MainChat mainChat;
 
-            ViewPair viewPair = ((Main)context).ShowLayout(R.layout.main_panel_chat_layout,R.layout.chat_action_bar);
-
-            actionBarView = viewPair.getActionBarView();
-            chatView = viewPair.getMainView();
             int visibleList = leftPanelListAdapter.GetVisibleList();
 
-            if (visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Hives)) {                                                                                                                 //SI ES UN HIVE
-                /*if (((Main)context).ActiveLayoutID == R.layout.main_panel_chat_layout) {
-                        ((Main)context).controller.Leave((String)((Activity)context).findViewById(R.id.main_panel_chat_name).getTag());
-                    }*/
+            Group chatGroup = null;
 
-                Hive h = ((Hive)v.getTag(R.id.BO_Hive));     //investigar
+            /*if (((Main)context).ActiveLayoutID == R.layout.main_panel_chat_layout) {
+                ((Main)context).controller.Leave((String)((Activity)context).findViewById(R.id.main_panel_chat_name).getTag());
+            }*/
 
-                System.out.println("HIVE NAME:"+h.getName()+"  !!!!-----------------------------------------------------------------------------");
 
-                ((TextView)actionBarView.findViewById(R.id.main_panel_chat_name)).setText(h.getName());//nombre del chat
-                actionBarView.findViewById(R.id.main_panel_chat_name).setTag(h.getPublicChat().getChannelUnicode());
-
-                actionBarView.findViewById(R.id.main_panel_chat_menu_icon).setOnClickListener(((Main)context).menuIcon_ClickListener);//imagen
-                actionBarView.findViewById(R.id.main_panel_chat_icon).setOnClickListener(((Main)context).appIcon_ClickListener);
-                ((Main)context).appIcon_ClickListener.onClick(actionBarView.findViewById(R.id.main_panel_chat_icon));
-
-                mainChat = new MainChat(context,h.getPublicChat().getChannelUnicode()); //crea el chat
-                chatView.findViewById(R.id.main_panel_chat_send_icon).setOnClickListener(mainChat.send_button_click);//setListener enviar mensaje
-            } else if (visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Chats)) {                                                                                                          //SI ES UN CHAT
-                Group g = ((Group)v.getTag(R.id.BO_Chat));
-
-                ((TextView)actionBarView.findViewById(R.id.main_panel_chat_name)).setText(g.getName());
-                actionBarView.findViewById(R.id.main_panel_chat_name).setTag(g.getChannelUnicode());
-
-                actionBarView.findViewById(R.id.main_panel_chat_menu_icon).setOnClickListener(((Main)context).menuIcon_ClickListener);
-                actionBarView.findViewById(R.id.main_panel_chat_icon).setOnClickListener(((Main)context).appIcon_ClickListener);
-                ((Main)context).appIcon_ClickListener.onClick(actionBarView.findViewById(R.id.main_panel_chat_icon));
-
-                mainChat = new MainChat(context,g.getChannelUnicode());
-                chatView.findViewById(R.id.main_panel_chat_send_icon).setOnClickListener(mainChat.send_button_click);
+            if (visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Hives)) {
+                chatGroup = ((Hive)v.getTag(R.id.BO_Hive)).getPublicChat();
+            } else if (visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Chats)) {
+                chatGroup = ((Group)v.getTag(R.id.BO_Chat));
             } /*else if (visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Mates)) {
 
             }*/
+            if (chatGroup != null) {
+                mainChat = new MainChat(context, chatGroup);
+            }
         }
     };
+
+
+
 }

@@ -81,6 +81,7 @@ public class Image {
                     // TODO: think about checking updates
                 } else {
                     String url = this.fileURL.replace("file_","small_");
+                    System.out.println(String.format("Loading image: %s",url));
                     //String url = this.fileURL;
                     smallThumbnail = dataProvider.getImage(url);
                 }
@@ -90,6 +91,7 @@ public class Image {
                     // TODO: think about checking updates
                 } else {
                     String url = this.fileURL.replace("file_","medium_");
+                    System.out.println(String.format("Loading image: %s",url));
                     //String url = this.fileURL;
                     mediumThumbnail = dataProvider.getImage(url);
                 }
@@ -99,6 +101,7 @@ public class Image {
                     // TODO: think about checking updates
                 } else {
                     String url = this.fileURL.replace("file_","large_");
+                    System.out.println(String.format("Loading image: %s",url));
                     //String url = this.fileURL;
                     largeThumbnail = dataProvider.getImage(url);
                 }
@@ -108,6 +111,7 @@ public class Image {
                     // TODO: think about checking updates
                 } else {
                     String url = this.fileURL.replace("file_","xlarge_");
+                    System.out.println(String.format("Loading image: %s",url));
                     //String url = this.fileURL;
                     xlargeThumbnail = dataProvider.getImage(url);
                 }
@@ -117,13 +121,14 @@ public class Image {
                     // TODO: think about checking updates
                 } else {
                     String url = this.fileURL;
+                    System.out.println(String.format("Loading image: %s",url));
                     fileImage = dataProvider.getImage(url);
                 }
                 break;
         }
 
-        String url = this.fileURL;
-        fileImage = dataProvider.getImage(url);
+        //String url = this.fileURL;
+        //fileImage = dataProvider.getImage(url);
 
         if (this.OnImageLoaded != null)
             this.OnImageLoaded.fire(this,EventArgs.Empty());

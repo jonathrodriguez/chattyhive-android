@@ -69,6 +69,8 @@ import java.util.Set;
  */
 public class StandAloneServer {
 
+    private static Boolean StandAloneServerOutput = false;
+
     private static RandomString randomString = new RandomString(10);
 
     private static String CSRFTokenCookie = "csrftoken";
@@ -325,6 +327,19 @@ public class StandAloneServer {
         subscribeUser("weirdalien","akamatsu");
         subscribeUser("homer_ou","akamatsu");
 
+        randomMessageSender(false);
+    }
+
+    private static void randomMessageSender(Boolean continuous) {
+
+        final Random random = new Random();
+        int initialMessageNumber = random.nextInt(1000)+2000;
+
+        for (int messageNumber = 0; messageNumber < initialMessageNumber; messageNumber++)
+            sendRandomMessage(random,true,false);
+
+        if (!continuous) return;
+
         /********************************************************************/
         /*                RANDOM MESSAGE TIMER                              */
         /********************************************************************/
@@ -333,80 +348,85 @@ public class StandAloneServer {
             @Override
             public void run() {
                 Boolean running = true;
-                Random random = new Random();
-                Integer messageNumber = 0;
-                Integer initialMessageNumber = random.nextInt(990)+10;
+
                 while (running) {
                     try {
-                        if (messageNumber >= initialMessageNumber)
-                            sleep(random.nextInt(600001));
-                        else
-                            sleep(500);
+                        sleep(random.nextInt(599500)+500);
                     } catch (InterruptedException e) {
                         running = false;
                         continue;
                     }
-                    Group group = Chats.values().toArray(new Group[Chats.size()])[random.nextInt(Chats.size())];
-                    User sender = null;
-                    if (group.getGroupKind() != GroupKind.HIVE)
-                        sender = group.getMembers().get(random.nextInt(group.getMembers().size()));
-                    else {
-                        if ((HiveUserSubscriptions.containsKey(group.getParentHive().getNameUrl())) && (HiveUserSubscriptions.get(group.getParentHive().getNameUrl()) != null) && (HiveUserSubscriptions.get(group.getParentHive().getNameUrl()).size() > 0))
-                            sender = LoginUser.get(HiveUserSubscriptions.get(group.getParentHive().getNameUrl()).get(random.nextInt(HiveUserSubscriptions.get(group.getParentHive().getNameUrl()).size())));
-                    }
-                    if (sender != null) {
-                        //System.out.println(String.format("New message to group. GroupID: %s\tGroupKind: %s", group.getChannelUnicode(), group.getGroupKind().toString()));
-                        //System.out.println(String.format("Sender userName: %s",sender.getUserID()));
-                        MESSAGE message = new MESSAGE();
-                        message.CHANNEL_UNICODE = group.getChannelUnicode();
-                        message.CONFIRMED = (messageNumber < initialMessageNumber);
-                        message.TIMESTAMP = new Date();
-                        message.USER_ID = sender.getUserID();
-                        message.CONTENT = new MESSAGE_CONTENT();
-                        message.CONTENT.CONTENT_TYPE = "Text";
-                        message.CONTENT.CONTENT = String.format("Message #%d",messageNumber++);
-                        sendMessage(sender,group,message);
-                    }
+                    sendRandomMessage(random,false,true);
                 }
             }
         };
 
         timer.start();
+
     }
 
-    private static MESSAGE_ACK sendMessage(User sender, Group destination, MESSAGE message) {
+    private static void sendRandomMessage(Random random, Boolean confirmed, Boolean notify) {
+        Group group = Chats.values().toArray(new Group[Chats.size()])[random.nextInt(Chats.size())];
+        User sender = null;
+        if (group.getGroupKind() != GroupKind.HIVE)
+            sender = group.getMembers().get(random.nextInt(group.getMembers().size()));
+        else {
+            if ((HiveUserSubscriptions.containsKey(group.getParentHive().getNameUrl())) && (HiveUserSubscriptions.get(group.getParentHive().getNameUrl()) != null) && (HiveUserSubscriptions.get(group.getParentHive().getNameUrl()).size() > 0))
+                sender = LoginUser.get(HiveUserSubscriptions.get(group.getParentHive().getNameUrl()).get(random.nextInt(HiveUserSubscriptions.get(group.getParentHive().getNameUrl()).size())));
+        }
+        if (sender != null) {
+
+            int messageLength = random.nextInt(30) + 1;
+            String messageContent = "";
+            for (int wordCount = 0; wordCount < messageLength; wordCount++)
+                messageContent = messageContent.concat(((messageContent.isEmpty())?"":" ")).concat(Words[random.nextInt(Words.length)]);
+
+            MESSAGE message = new MESSAGE();
+            message.CHANNEL_UNICODE = group.getChannelUnicode();
+            message.CONFIRMED = confirmed;
+            message.TIMESTAMP = new Date();
+            message.USER_ID = sender.getUserID();
+            message.CONTENT = new MESSAGE_CONTENT();
+            message.CONTENT.CONTENT_TYPE = "TEXT";
+            message.CONTENT.CONTENT = messageContent;
+            sendMessage(sender,group,message,notify);
+        }
+    }
+
+    private static MESSAGE_ACK sendMessage(User sender, Group destination, MESSAGE message, Boolean notify) {
         Message msg = new Message();
         msg.setUser(sender);
         msg.setChat(destination.getChat());
         msg.setConfirmed(message.CONFIRMED);
-        msg.setId(String.format("%d",destination.getChat().getCount()));
+        msg.setId(String.format("%d", destination.getChat().getCount()));
         msg.setServerTimeStamp(new Date());
         msg.setTimeStamp(message.TIMESTAMP);
-        msg.setMessageContent(new MessageContent(message.CONTENT.CONTENT_TYPE,message.CONTENT.CONTENT));
+        msg.setMessageContent(new MessageContent(message.CONTENT.CONTENT_TYPE, message.CONTENT.CONTENT));
 
         destination.getChat().addMessageByID(msg);
-
-        ArrayList<User> members;
-        if (destination.getGroupKind() != GroupKind.HIVE)
-            members = destination.getMembers();
-        else {
-            members = new ArrayList<User>();
-            if ((ChatUserSubscriptions.containsKey(destination.getChannelUnicode())) && (ChatUserSubscriptions.get(destination.getChannelUnicode()) != null))
-                for (String uName : ChatUserSubscriptions.get(destination.getChannelUnicode()))
-                    if ((LoginUser.containsKey(uName)) && (LoginUser.get(uName) != null))
-                        members.add(LoginUser.get(uName));
-        }
-        for (User receiver : members) {
-            if (receiver == sender) continue;
-            if (SessionIDUser.containsValue(receiver)) {
-                DataProvider dataProvider = DataProvider.GetDataProvider();
-                if (dataProvider != null) {
-                    Server server = dataProvider.getServer();
-                    if ((server != null) && (server.getServerUser() != null)) {
-                        String login = server.getServerUser().getLogin();
-                        if ((login != null) && (!login.isEmpty())) {
-                            if ((login.equalsIgnoreCase(receiver.getEmail())) || (login.equalsIgnoreCase(receiver.getUserID()))) {
-                                dataProvider.onChannelEvent(null, new PubSubChannelEventArgs(destination.getChannelUnicode(), "msg", msg.toJson(new MESSAGE()).toString()));
+        if (notify) {
+            ArrayList<User> members;
+            if (destination.getGroupKind() != GroupKind.HIVE)
+                members = destination.getMembers();
+            else {
+                members = new ArrayList<User>();
+                if ((ChatUserSubscriptions.containsKey(destination.getChannelUnicode())) && (ChatUserSubscriptions.get(destination.getChannelUnicode()) != null))
+                    for (String uName : ChatUserSubscriptions.get(destination.getChannelUnicode()))
+                        if ((LoginUser.containsKey(uName)) && (LoginUser.get(uName) != null))
+                            members.add(LoginUser.get(uName));
+            }
+            for (User receiver : members) {
+                if (receiver == sender) continue;
+                if (SessionIDUser.containsValue(receiver)) {
+                    DataProvider dataProvider = DataProvider.GetDataProvider();
+                    if (dataProvider != null) {
+                        Server server = dataProvider.getServer();
+                        if ((server != null) && (server.getServerUser() != null)) {
+                            String login = server.getServerUser().getLogin();
+                            if ((login != null) && (!login.isEmpty())) {
+                                if ((login.equalsIgnoreCase(receiver.getEmail())) || (login.equalsIgnoreCase(receiver.getUserID()))) {
+                                    dataProvider.onChannelEvent(null, new PubSubChannelEventArgs(destination.getChannelUnicode(), "msg", msg.toJson(new MESSAGE()).toString()));
+                                }
                             }
                         }
                     }
@@ -577,7 +597,8 @@ public class StandAloneServer {
             int responseCode = (response != null)?response.getKey():500;
             String responseBody = (response != null)?response.getValue():"";
 
-            System.out.println(String.format("StandAloneServer -> Request: %s\nCode: %d\n%s", command.toString(), responseCode, responseBody));
+            if (StandAloneServerOutput)
+                System.out.println(String.format("StandAloneServer -> Request: %s\nCode: %d\n%s", command.toString(), responseCode, responseBody));
 
             Format[] receivedFormats = null;
 
@@ -1048,7 +1069,7 @@ public class StandAloneServer {
                         common.ERROR = -8;
                     } else {
                         Group chat = Chats.get(message.CHANNEL_UNICODE);
-                        responseFormats.add(sendMessage(user,chat,message));
+                        responseFormats.add(sendMessage(user,chat,message,true));
                         common.STATUS = "OK";
                     }
 
@@ -1198,6 +1219,17 @@ public class StandAloneServer {
                 if (user.getUserPrivateProfile() != null) {
                     result.USER_BASIC_PRIVATE_PROFILE = ((BASIC_PRIVATE_PROFILE) user.getUserPrivateProfile().toFormat(new BASIC_PRIVATE_PROFILE()));
                     result.USER_PRIVATE_PROFILE = ((PRIVATE_PROFILE) user.getUserPrivateProfile().toFormat(new PRIVATE_PROFILE()));
+                }
+                if ((UserHiveSubscriptions != null) && (UserHiveSubscriptions.containsKey(user.getUserID()))) {
+                    ArrayList<String> subscriptions = UserHiveSubscriptions.get(user.getUserID());
+                    if ((subscriptions != null) && (subscriptions.size() > 0)) {
+                        result.HIVES_SUBSCRIBED = new ArrayList<HIVE_ID>();
+                        for (String hive : subscriptions) {
+                            HIVE_ID hive_id = new HIVE_ID();
+                            hive_id.NAME_URL = hive;
+                            result.HIVES_SUBSCRIBED.add(hive_id);
+                        }
+                    }
                 }
                 common.STATUS = "OK";
             } else {
