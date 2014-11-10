@@ -187,7 +187,7 @@ public class LeftPanelListAdapter extends BaseAdapter {
         }
 
         if (type == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Hives)) {
-            ((HiveViewHolder)holder).hiveName.setText(((Hive)item).getName());
+            ((HiveViewHolder)holder).hiveName.setText(context.getResources().getString(R.string.hivename_identifier_character).concat(((Hive)item).getName()));
             ((HiveViewHolder)holder).hiveDescription.setText(((Hive)item).getDescription());
             Category.setCategory(((Hive) item).getCategory(),((HiveViewHolder)holder).hiveCategoryImage,((HiveViewHolder)holder).hiveCategoryName);
             ((HiveViewHolder)holder).hiveSubscribedUsers.setText("Unknown");
@@ -237,7 +237,7 @@ public class LeftPanelListAdapter extends BaseAdapter {
                     for (User user : ((Group) item).getMembers())
                         if (!user.isMe()) {
                             if ((user.getUserPublicProfile() != null) && (user.getUserPublicProfile().getShowingName() != null)) {
-                                GroupName = "@" + user.getUserPublicProfile().getShowingName();
+                                GroupName = context.getResources().getString(R.string.public_username_identifier_character).concat(user.getUserPublicProfile().getShowingName());
                                 try {
                                     user.getUserPublicProfile().getProfileImage().OnImageLoaded.add(new EventHandler<EventArgs>(holder,"loadChatImage",EventArgs.class));
                                     user.getUserPublicProfile().getProfileImage().loadImage(Image.ImageSize.medium,0);
@@ -275,7 +275,7 @@ public class LeftPanelListAdapter extends BaseAdapter {
                         for (User user : ((Group) item).getMembers())
                             if (!user.isMe()) {
                                 if ((user.getUserPublicProfile() != null) && (user.getUserPublicProfile().getShowingName() != null))
-                                    GroupName += ((GroupName.isEmpty())?"":", ") + "@" + user.getUserPublicProfile().getShowingName();
+                                    GroupName += ((GroupName.isEmpty())?"":", ").concat(context.getResources().getString(R.string.public_username_identifier_character).concat(user.getUserPublicProfile().getShowingName()));
                                 else
                                     user.UserLoaded.add(new EventHandler<EventArgs>(this,"OnAddItem",EventArgs.class));
                             }
@@ -304,9 +304,9 @@ public class LeftPanelListAdapter extends BaseAdapter {
                         ((Group)item).getParentHive().getHiveImage().loadImage(Image.ImageSize.medium,0);
                     } catch (Exception e) { }
                     if (((Group) item).getParentHive() != null)
-                        GroupName = ((Group) item).getParentHive().getName();
+                        GroupName = context.getResources().getString(R.string.hivename_identifier_character).concat(((Group) item).getParentHive().getName());
                     if ((lastMessage != null) && (lastMessage.getUser() != null) && (lastMessage.getUser().getUserPublicProfile() != null) && (lastMessage.getUser().getUserPublicProfile().getShowingName() != null) && (lastMessage.getMessageContent() != null) && (lastMessage.getMessageContent().getContent() != null)) {
-                        LastMessage = new SpannableString("@" + lastMessage.getUser().getUserPublicProfile().getShowingName() + ": " + lastMessage.getMessageContent().getContent());
+                        LastMessage = new SpannableString(context.getResources().getString(R.string.public_username_identifier_character).concat(lastMessage.getUser().getUserPublicProfile().getShowingName()).concat(": ").concat(lastMessage.getMessageContent().getContent()));
                     }
                     ((ChatViewHolder)holder).chatLastMessageTimestamp.setVisibility(View.INVISIBLE);
                     ((ChatViewHolder)holder).chatPendingMessagesNumber.setVisibility(View.INVISIBLE);

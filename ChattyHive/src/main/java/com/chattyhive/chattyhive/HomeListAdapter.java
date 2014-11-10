@@ -193,14 +193,14 @@ public class HomeListAdapter extends BaseAdapter {
         private void updateHiveName(HiveMessageCard hc) {
             if (hc == null) return;
             if (this.HiveName != null)
-                this.HiveName.setText(hc.getHive().getName());
+                this.HiveName.setText(context.getResources().getString(R.string.hivename_identifier_character).concat(hc.getHive().getName()));
         }
 
         private void updateUserName(HiveMessageCard hc) {
             if (hc == null) return;
             if (this.UserName != null) {
                 try {
-                    this.UserName.setText(hc.getMessage().getUser().getUserPublicProfile().getShowingName());
+                    this.UserName.setText(context.getResources().getString(R.string.public_username_identifier_character).concat(hc.getMessage().getUser().getUserPublicProfile().getShowingName()));
                     this.UserName.setTextColor(Color.parseColor(hc.getMessage().getUser().getUserPublicProfile().getColor()));
                 } catch (Exception e) {
 
