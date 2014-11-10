@@ -1,1 +1,1 @@
-include ':ChattyHive', ':BackEnd', ':Framework'
+include ':BackEnd', ':Framework', 'chattyhive'
