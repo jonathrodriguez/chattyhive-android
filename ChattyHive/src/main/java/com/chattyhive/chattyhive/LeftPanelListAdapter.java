@@ -47,9 +47,7 @@ public class LeftPanelListAdapter extends BaseAdapter {
     private ListView listView;
     private LayoutInflater inflater;
     private int visibleList;
-
     private View.OnClickListener clickListener;
-
     public Event<EventArgs> ListSizeChanged;
 
     public void SetVisibleList(int LeftPanel_ListKind) {

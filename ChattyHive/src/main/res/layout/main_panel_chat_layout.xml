@@ -21,9 +21,8 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#ffffff">
-
+        android:layout_height="55dp"
+        android:background="@drawable/border_text_bar">
         <ImageButton
             android:layout_width="46dp"
             android:layout_height="46dp"
@@ -33,7 +32,7 @@
             android:paddingRight="6dp"
             android:paddingTop="11dp"
             android:paddingBottom="8dp"
-            android:src="@drawable/home_group"
+            android:src="@drawable/launcher_launcher_a"
             android:scaleType="fitCenter"
             android:background="#ffffff"
             android:layout_gravity="center_horizontal|bottom" />
@@ -45,8 +44,22 @@
             android:ems="10"
             android:id="@+id/main_panel_chat_textBox"
             android:layout_weight="1"
-            android:layout_gravity="center" />
+            android:layout_gravity="center"
+            android:background="@null"/>
 
+        <ImageButton
+            android:layout_width="46dp"
+            android:layout_height="46dp"
+            android:id="@+id/main_panel_chat_sticker_icon"
+            android:paddingTop="11dp"
+            android:paddingLeft="6dp"
+            android:paddingRight="13dp"
+            android:paddingBottom="8dp"
+            android:background="#ffffff"
+            android:src="@drawable/chats_emoticons"
+            android:scaleType="fitCenter"
+            android:layout_gravity="center_horizontal|bottom"
+            android:alpha="0.5"/>
         <ImageButton
             android:layout_width="46dp"
             android:layout_height="46dp"
@@ -56,9 +69,9 @@
             android:paddingRight="13dp"
             android:paddingBottom="8dp"
             android:background="#ffffff"
-            android:src="@drawable/chats_reply"
+            android:src="@drawable/chats_send"
             android:scaleType="fitCenter"
-            android:layout_gravity="center_horizontal|bottom" />
-
+            android:layout_gravity="center_horizontal|bottom"
+            android:alpha="0.5"/>
     </LinearLayout>
 </LinearLayout>
