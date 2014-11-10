@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,14 +13,10 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.chattyhive.backend.businessobjects.Chats.Chat;
-import com.chattyhive.backend.businessobjects.Chats.GroupKind;
+import com.chattyhive.backend.businessobjects.Chats.ChatKind;
+import com.chattyhive.backend.businessobjects.Chats.Conversation;
 import com.chattyhive.backend.businessobjects.Chats.Messages.Message;
 import com.chattyhive.backend.businessobjects.Image;
-import com.chattyhive.backend.contentprovider.DataProvider;
-import com.chattyhive.backend.contentprovider.formats.CHAT_ID;
-import com.chattyhive.backend.contentprovider.formats.MESSAGE_INTERVAL;
-import com.chattyhive.backend.contentprovider.server.ServerCommand;
 import com.chattyhive.backend.util.events.EventArgs;
 import com.chattyhive.backend.util.events.EventHandler;
 import com.chattyhive.backend.util.formatters.DateFormatter;
@@ -41,17 +36,17 @@ public class ChatListAdapter extends BaseAdapter {
     private ListView listView;
     private LayoutInflater inflater;
 
-    private GroupKind chatKind;
-    private Chat channelChat;
+    private ChatKind chatKind;
+    private Conversation channelConversation;
 
-    public ChatListAdapter (Context activityContext,Chat channelChat) {
-        this.channelChat = channelChat;
+    public ChatListAdapter (Context activityContext,Conversation channelConversation) {
+        this.channelConversation = channelConversation;
 
         this.context = activityContext;
         this.inflater = ((Activity)this.context).getLayoutInflater();
 
         this.listView = ((ListView)((Activity)this.context).findViewById(R.id.left_panel_element_list));
-        this.chatKind = this.channelChat.getParent().getGroupKind();
+        this.chatKind = this.channelConversation.getParent().getChatKind();
     }
 
     public void OnAddItem(Object sender, EventArgs args) {
@@ -64,7 +59,7 @@ public class ChatListAdapter extends BaseAdapter {
 
     @Override
     public int getItemViewType(int position) {
-        Message m = this.channelChat.getMessageByIndex(position);
+        Message m = this.channelConversation.getMessageByIndex(position);
 
         if (m.getUser() == null) {
             if (m.getMessageContent().getContentType().equalsIgnoreCase("DATE_SEPARATOR"))
@@ -85,12 +80,12 @@ public class ChatListAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return this.channelChat.getCount();
+        return this.channelConversation.getCount();
     }
 
     @Override
     public Object getItem(int position){
-        return this.channelChat.getMessageByIndex(position);
+        return this.channelConversation.getMessageByIndex(position);
     }
 
     @Override
@@ -178,13 +173,13 @@ public class ChatListAdapter extends BaseAdapter {
             }
         }
 
-        Message message = this.channelChat.getMessageByIndex(position);
+        Message message = this.channelConversation.getMessageByIndex(position);
 
         convertView.setTag(R.id.BO_Message,message);
 
         if (isMessage) {
             if ((message.getUser() != null) && (holder.username != null)) {
-                if ((this.chatKind == GroupKind.PRIVATE_SINGLE) || (this.chatKind == GroupKind.PRIVATE_GROUP)) {
+                if ((this.chatKind == ChatKind.PRIVATE_SINGLE) || (this.chatKind == ChatKind.PRIVATE_GROUP)) {
                     holder.username.setText(message.getUser().getUserPrivateProfile().getShowingName());
                 } else {
                     holder.username.setText(message.getUser().getUserPublicProfile().getShowingName());
@@ -204,7 +199,7 @@ public class ChatListAdapter extends BaseAdapter {
                 holder.timeStamp.setText(TimestampFormatter.toLocaleString(new Date()));
 
             if (message.getUser().isMe()) {
-                if (((this.chatKind == GroupKind.PRIVATE_SINGLE) || (this.chatKind == GroupKind.PUBLIC_SINGLE)) && (message.getConfirmed())) {
+                if (((this.chatKind == ChatKind.PRIVATE_SINGLE) || (this.chatKind == ChatKind.PUBLIC_SINGLE)) && (message.getConfirmed())) {
                     StaticMethods.SetAlpha(holder.chatItem,1f);
                     holder.timeStamp.setCompoundDrawablesWithIntrinsicBounds(0,0,R.drawable.abc_ic_cab_done_holo_light,0);
                 } else if (message.getId() != null) {
@@ -219,11 +214,11 @@ public class ChatListAdapter extends BaseAdapter {
             //Load image
             if (holder.avatarThumbnail != null) {
                 Image image = null;
-                if ((chatKind == GroupKind.HIVE) || (chatKind == GroupKind.PUBLIC_GROUP)) {
+                if ((chatKind == ChatKind.HIVE) || (chatKind == ChatKind.PUBLIC_GROUP)) {
                     if ((message != null) && (message.getUser() != null) && (message.getUser().getUserPublicProfile() != null))
                         image = message.getUser().getUserPublicProfile().getProfileImage();
                 }
-                else if (chatKind == GroupKind.PRIVATE_GROUP) {
+                else if (chatKind == ChatKind.PRIVATE_GROUP) {
                     if ((message != null) && (message.getUser() != null) && (message.getUser().getUserPrivateProfile() != null))
                         image = message.getUser().getUserPrivateProfile().getProfileImage();
                 }
@@ -239,7 +234,7 @@ public class ChatListAdapter extends BaseAdapter {
                 holder.timeStamp.setText(DateFormatter.toHumanReadableString(new Date()));
         } else {
             holder.messageText.setText(String.format("Loading %s messages...",message.getMessageContent().getContent()));
-            message.FillMessageHole(this.channelChat.getMessageByIndex(position+1).getId());
+            message.FillMessageHole(this.channelConversation.getMessageByIndex(position+1).getId());
         }
         return convertView;
     }

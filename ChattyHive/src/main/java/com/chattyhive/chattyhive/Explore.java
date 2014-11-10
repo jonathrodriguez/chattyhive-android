@@ -1,19 +1,14 @@
 package com.chattyhive.chattyhive;
 
 import android.app.Activity;
-import android.content.Context;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.provider.DocumentsContract;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.chattyhive.backend.Controller;
-import com.chattyhive.backend.businessobjects.Chats.GroupKind;
 import com.chattyhive.backend.util.events.EventArgs;
 import com.chattyhive.backend.util.events.EventHandler;
 

@@ -2,9 +2,8 @@ package com.chattyhive.backend.contentprovider;
 
 import com.chattyhive.backend.Controller;
 import com.chattyhive.backend.StaticParameters;
-import com.chattyhive.backend.businessobjects.Chats.Group;
+import com.chattyhive.backend.businessobjects.Chats.Chat;
 import com.chattyhive.backend.businessobjects.Chats.Hive;
-import com.chattyhive.backend.businessobjects.Chats.Messages.Message;
 import com.chattyhive.backend.contentprovider.OSStorageProvider.GroupLocalStorageInterface;
 import com.chattyhive.backend.contentprovider.OSStorageProvider.HiveLocalStorageInterface;
 import com.chattyhive.backend.contentprovider.OSStorageProvider.LoginLocalStorageInterface;
@@ -19,18 +18,14 @@ import com.chattyhive.backend.contentprovider.formats.Format;
 import com.chattyhive.backend.contentprovider.formats.HIVE;
 import com.chattyhive.backend.contentprovider.formats.HIVE_ID;
 import com.chattyhive.backend.contentprovider.formats.LOCAL_USER_PROFILE;
-import com.chattyhive.backend.contentprovider.formats.LOGIN;
 import com.chattyhive.backend.contentprovider.formats.MESSAGE;
 import com.chattyhive.backend.contentprovider.formats.MESSAGE_ACK;
 import com.chattyhive.backend.contentprovider.formats.MESSAGE_LIST;
-import com.chattyhive.backend.contentprovider.formats.PRIVATE_PROFILE;
-import com.chattyhive.backend.contentprovider.formats.PUBLIC_PROFILE;
 import com.chattyhive.backend.contentprovider.formats.USER_PROFILE;
 import com.chattyhive.backend.contentprovider.local.LocalStorageInterface;
 import com.chattyhive.backend.contentprovider.pubsubservice.ConnectionState;
 import com.chattyhive.backend.contentprovider.pubsubservice.ConnectionStateChange;
 import com.chattyhive.backend.contentprovider.server.Server;
-import com.chattyhive.backend.contentprovider.server.ServerCommand;
 import com.chattyhive.backend.contentprovider.server.ServerUser;
 import com.chattyhive.backend.contentprovider.pubsubservice.PubSub;
 
@@ -43,21 +38,17 @@ import com.chattyhive.backend.util.events.EventHandler;
 import com.chattyhive.backend.util.events.FormatReceivedEventArgs;
 import com.chattyhive.backend.util.events.PubSubChannelEventArgs;
 import com.chattyhive.backend.util.events.PubSubConnectionEventArgs;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
 import java.io.InputStream;
-import java.lang.reflect.Array;
 import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.CookieStore;
 import java.net.HttpCookie;
-import java.rmi.MarshalException;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -502,11 +493,11 @@ public class DataProvider {
             for (Format format : receivedFormats)
                 if (format instanceof CHAT) {
                     Hive h = Hive.getHive(hive_id.NAME_URL);
-                    Group g = h.getPublicChat();
+                    Chat g = h.getPublicChat();
                     if (g != null)
                         g.fromFormat(format);
                     else {
-                        g = Group.getGroup(format);
+                        g = Chat.getGroup(format);
                         h.setPublicChat(g);
                     }
                 }

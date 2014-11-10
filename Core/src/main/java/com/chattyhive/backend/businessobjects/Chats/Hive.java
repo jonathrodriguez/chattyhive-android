@@ -9,7 +9,6 @@ import com.chattyhive.backend.contentprovider.formats.CHAT;
 import com.chattyhive.backend.contentprovider.formats.Format;
 import com.chattyhive.backend.contentprovider.formats.HIVE;
 import com.chattyhive.backend.contentprovider.formats.HIVE_ID;
-import com.chattyhive.backend.contentprovider.server.ServerCommand;
 import com.chattyhive.backend.util.events.Event;
 import com.chattyhive.backend.util.events.EventArgs;
 import com.chattyhive.backend.util.events.EventHandler;
@@ -27,7 +26,7 @@ import java.util.TreeMap;
  * This class represents a hive. A hive is one of the most basic business objects.
  */
 
-public class Hive {
+public class Hive implements IContextualizable {
 
     /**************************
        Static hive management
@@ -111,9 +110,9 @@ public class Hive {
         this.publicChat = null;
 
         if (data.PUBLIC_CHAT != null) {
-            this.publicChat = Group.getGroup(data.PUBLIC_CHAT.CHANNEL_UNICODE, false);
+            this.publicChat = Chat.getGroup(data.PUBLIC_CHAT.CHANNEL_UNICODE, false);
             if (this.publicChat == null) {
-                this.publicChat = new Group(data.PUBLIC_CHAT,this);
+                this.publicChat = new Chat(data.PUBLIC_CHAT,this);
             }
         }
     }
@@ -134,12 +133,12 @@ public class Hive {
                         this.nameUrl = data.NAME_URL;
 
                         if (data.PUBLIC_CHAT != null) {
-                            this.publicChat = Group.getGroup(data.PUBLIC_CHAT.CHANNEL_UNICODE, false);
+                            this.publicChat = Chat.getGroup(data.PUBLIC_CHAT.CHANNEL_UNICODE, false);
                             if (this.publicChat == null) {
-                                this.publicChat = new Group(data.PUBLIC_CHAT,this);
+                                this.publicChat = new Chat(data.PUBLIC_CHAT,this);
                             }
                         } else {
-                            this.publicChat = Group.getGroup(String.format("presence-%s",this.nameUrl));
+                            this.publicChat = Chat.getGroup(String.format("presence-%s", this.nameUrl));
                         }
                         break;
                     }
@@ -204,7 +203,7 @@ public class Hive {
     protected String description;
     protected String name;
     protected String nameUrl;
-    protected Group publicChat;
+    protected Chat publicChat;
 
     protected String imageURL;
     public String getImageURL() {
@@ -236,8 +235,8 @@ public class Hive {
 
     public String getNameUrl() { return this.nameUrl; }
 
-    public Group getPublicChat() { return this.publicChat; }
-    public void setPublicChat(Group value) { this.publicChat = value; }
+    public Chat getPublicChat() { return this.publicChat; }
+    public void setPublicChat(Chat value) { this.publicChat = value; }
 
     /*************************************/
     /*         PARSE METHODS             */
@@ -271,14 +270,14 @@ public class Hive {
             this.publicChat = null;
 
             if (((HIVE) format).PUBLIC_CHAT != null) {
-                this.publicChat = Group.getGroup(((HIVE) format).PUBLIC_CHAT);
+                this.publicChat = Chat.getGroup(((HIVE) format).PUBLIC_CHAT);
                 if (this.publicChat == null) {
-                    this.publicChat = new Group(((HIVE) format).PUBLIC_CHAT,this);
+                    this.publicChat = new Chat(((HIVE) format).PUBLIC_CHAT,this);
                 }
             } else {
-                this.publicChat = Group.getGroup(String.format("presence-%s",this.nameUrl));
+                this.publicChat = Chat.getGroup(String.format("presence-%s", this.nameUrl));
                 this.publicChat.parentHive = this;
-                this.publicChat.groupKind = GroupKind.HIVE;
+                this.publicChat.chatKind = ChatKind.HIVE;
             }
             return true;
         } else if (format instanceof HIVE_ID) {
