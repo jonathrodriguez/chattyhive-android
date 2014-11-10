@@ -165,7 +165,7 @@ public class StandAloneServer {
         /********************************************************************/
         /*                HIVES                                             */
         /********************************************************************/
-        hive = createHive("Minecraft - Unofficial chat","file_hive_minecraft_unofficial_hive.jpg","Videojuegos PC","This is the best unofficial hive for minecraft's fans, join us and share the lates news, pictures and experiences of your favourite game.");
+        hive = createHive("Minecraft - Unofficial chat","file_hive_minecraft_unofficial_hive.jpg","23.04","This is the best unofficial hive for minecraft's fans, join us and share the lates news, pictures and experiences of your favourite game.");
         subscribeHive("jonathan",hive.getNameUrl());
         subscribeHive("cassini91",hive.getNameUrl());
         subscribeHive("trabuco",hive.getNameUrl());
@@ -181,7 +181,7 @@ public class StandAloneServer {
         createChat(hive,"01/01/2000","jonathan","trabuco");
         createChat(hive,"01/05/2001","coolest_thing_21","serezy");
 
-        hive = createHive("Chattyhive","file_hive_chattyhive.jpg","Desarrollo de software","Official chattyhive's chat for internal communication.");
+        hive = createHive("Chattyhive","file_hive_chattyhive.jpg","21.06","Official chattyhive's chat for internal communication.");
         subscribeHive("jonathan",hive.getNameUrl());
         subscribeHive("cassini91",hive.getNameUrl());
         subscribeHive("trabuco",hive.getNameUrl());
@@ -194,7 +194,7 @@ public class StandAloneServer {
         createChat(hive,"01/01/2010","jonathan","serezy");
         createChat(hive,"08/11/1955","cassini91","coolest_thing_21");
 
-        hive = createHive("The sweetest thing ever!","file_hive_the_sweetest_thing_ever.jpg","Estilo de vida - General","Just talk about what you believe its the sweetest thing that could happen to you... and I am not (just) talking about food");
+        hive = createHive("The sweetest thing ever!","file_hive_the_sweetest_thing_ever.jpg","09.01","Just talk about what you believe its the sweetest thing that could happen to you... and I am not (just) talking about food");
         subscribeHive("jonathan",hive.getNameUrl());
         subscribeHive("trabuco",hive.getNameUrl());
         subscribeHive("serezy",hive.getNameUrl());
@@ -205,15 +205,15 @@ public class StandAloneServer {
         createChat(hive,"01/01/2010","jonathan","homer_ou");
         createChat(hive,"08/11/1955","homer_ou","trabuco");
 
-        hive = createHive("¡Lugares donde te gustaría perderte!","file_hive_lugares_donde_te_gustaria_perderte.jpg","Viajes - destinos","Hablemos y compartamos fotos sobre aquellos rincones donde no te importaría perder, y pasar una vida entera o al menos un buen cacho de tiempo. ¿Qué lugares te inspiran más paz?");
+        hive = createHive("¡Lugares donde te gustaría perderte!","file_hive_lugares_donde_te_gustaria_perderte.jpg","22.05","Hablemos y compartamos fotos sobre aquellos rincones donde no te importaría perder, y pasar una vida entera o al menos un buen cacho de tiempo. ¿Qué lugares te inspiran más paz?");
         subscribeHive("cassini91",hive.getNameUrl());
 
-        hive = createHive("Lets play guitar!","file_hive_lets_play_guitar.jpg","Producción musical e instrumentos","Are you a pro? still learning? doesn't matter, join this hive to learn and share about your favourite musical instrument");
+        hive = createHive("Lets play guitar!","file_hive_lets_play_guitar.jpg","06.07","Are you a pro? still learning? doesn't matter, join this hive to learn and share about your favourite musical instrument");
         subscribeHive("cassini91",hive.getNameUrl());
         subscribeHive("trabuco",hive.getNameUrl());
         createChat(hive,"25/02/2013","cassini91","trabuco");
 
-        hive = createHive("The most beautiful planet?","file_hive_the_most_beautiful_planet.jpg","Astronomía","You like astronomy so I ask you the following: do you think it would be possible to find a planet as beautiful and complex as our is?");
+        hive = createHive("The most beautiful planet?","file_hive_the_most_beautiful_planet.jpg","13.02","You like astronomy so I ask you the following: do you think it would be possible to find a planet as beautiful and complex as our is?");
         subscribeHive("jonathan",hive.getNameUrl());
         subscribeHive("cassini91",hive.getNameUrl());
         subscribeHive("trabuco",hive.getNameUrl());
@@ -229,7 +229,7 @@ public class StandAloneServer {
         createChat(hive,"01/01/2000","jonathan","trabuco");
         createChat(hive,"01/05/2001","coolest_thing_21","serezy");
 
-        hive = createHive("PC general news and thoughts","file_hive_pc_general_news_and_thoughts.jpg","Tecnología e informática - General","This is a general hive for PC lovers. Mac users are not welcome here (nah I am kidding)");
+        hive = createHive("PC general news and thoughts","file_hive_pc_general_news_and_thoughts.jpg","21.01","This is a general hive for PC lovers. Mac users are not welcome here (nah I am kidding)");
         subscribeHive("jonathan",hive.getNameUrl());
         subscribeHive("trabuco",hive.getNameUrl());
         subscribeHive("serezy",hive.getNameUrl());
@@ -240,7 +240,7 @@ public class StandAloneServer {
         createChat(hive,"01/01/2010","jonathan","homer_ou");
         createChat(hive,"08/11/1955","homer_ou","trabuco");
 
-        hive = createHive("Sustos y sorpresas","file_hive_sustos_y_sorpresas.jpg","Estados de ánimo","Comparte todos esos momentos que han hecho que se te quedasen los ojos cómo platos");
+        hive = createHive("Sustos y sorpresas","file_hive_sustos_y_sorpresas.jpg","09.05","Comparte todos esos momentos que han hecho que se te quedasen los ojos cómo platos");
         subscribeHive("jonathan",hive.getNameUrl());
         subscribeHive("cassini91",hive.getNameUrl());
         subscribeHive("trabuco",hive.getNameUrl());
@@ -256,7 +256,7 @@ public class StandAloneServer {
         createChat(hive,"01/01/2000","jonathan","trabuco");
         createChat(hive,"01/05/2001","coolest_thing_21","serezy");
 
-        hive = createHive("Cities are not for me, sorry","file_hive_cities_are_not_for_me.jpg","Estilo de vida - General","For those who can't live in a big city and enjoy life in small towns. Why can't you stand the big cities?");
+        hive = createHive("Cities are not for me, sorry","file_hive_cities_are_not_for_me.jpg","09.01","For those who can't live in a big city and enjoy life in small towns. Why can't you stand the big cities?");
         subscribeHive("jonathan",hive.getNameUrl());
         subscribeHive("cassini91",hive.getNameUrl());
         subscribeHive("trabuco",hive.getNameUrl());
@@ -269,7 +269,7 @@ public class StandAloneServer {
         createChat(hive,"01/01/2010","jonathan","serezy");
         createChat(hive,"08/11/1955","cassini91","coolest_thing_21");
 
-        hive = createHive("The funny hive","file_hive_the_funny_hive.jpg","Humor","Only funny stuff is allowed");
+        hive = createHive("The funny hive","file_hive_the_funny_hive.jpg","06.05","Only funny stuff is allowed");
         subscribeHive("jonathan",hive.getNameUrl());
         subscribeHive("trabuco",hive.getNameUrl());
         subscribeHive("serezy",hive.getNameUrl());
@@ -280,12 +280,12 @@ public class StandAloneServer {
         createChat(hive,"01/01/2010","jonathan","homer_ou");
         createChat(hive,"08/11/1955","homer_ou","trabuco");
 
-        hive = createHive("Biraz daha kalabilir misin?","file_hive_biraz_daha_kalabilir_misin.jpg","Amor","Seni çok özledim.");
+        hive = createHive("Biraz daha kalabilir misin?","file_hive_biraz_daha_kalabilir_misin.jpg","14.04","Seni çok özledim.");
         subscribeHive("cassini91",hive.getNameUrl());
         subscribeHive("serezy",hive.getNameUrl());
         createChat(hive,"25/02/2013","cassini91","serezy");
 
-        hive = createHive("¡Así es imposible estar a dieta!","file_hive_asi_es_imposible_estar_a_dieta.jpg","Dietas y nutrición","Cuando estás a dieta y el mundo se vuelve en tu contra...");
+        hive = createHive("¡Así es imposible estar a dieta!","file_hive_asi_es_imposible_estar_a_dieta.jpg","07.03","Cuando estás a dieta y el mundo se vuelve en tu contra...");
         subscribeHive("jonathan",hive.getNameUrl());
         subscribeHive("cassini91",hive.getNameUrl());
         subscribeHive("trabuco",hive.getNameUrl());
