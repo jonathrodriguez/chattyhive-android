@@ -484,17 +484,20 @@ public class Chat implements IContextualizable {
                 if ((this.parentHive == null) || (!this.parentHive.getNameUrl().equalsIgnoreCase(((CHAT) format).PARENT_HIVE.NAME_URL)))
                     this.parentHive = Hive.getHive(((CHAT) format).PARENT_HIVE.NAME_URL);
 
-            this.conversation = new Conversation(this);
+            if (this.conversation == null)
+                this.conversation = new Conversation(this);
             //this.CalculateGroupKind();
             return true;
         } else if (format instanceof CHAT_ID) {
             this.channelUnicode = ((CHAT_ID) format).CHANNEL_UNICODE;
-            this.conversation = new Conversation(this);
+            if (this.conversation == null)
+                this.conversation = new Conversation(this);
 
             return true;
         } else if (format instanceof CHAT_SYNC) {
             this.channelUnicode = ((CHAT_SYNC) format).CHANNEL_UNICODE;
-            this.conversation = new Conversation(this);
+            if (this.conversation == null)
+                this.conversation = new Conversation(this);
             this.conversation.addMessage(new Message(((CHAT_SYNC) format).LAST_MESSAGE));
 
             return true;
