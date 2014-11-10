@@ -4,11 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.view.View;
 import android.widget.ListView;
-import android.widget.TextView;
-
-import com.chattyhive.backend.businessobjects.Chats.Group;
-import com.chattyhive.backend.util.events.EventArgs;
-import com.chattyhive.backend.util.events.EventHandler;
 
 /**
  * Created by Jonathan on 10/10/2014.

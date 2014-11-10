@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import com.chattyhive.backend.Controller;
 import com.chattyhive.backend.businessobjects.Chats.Chat;
-import com.chattyhive.backend.businessobjects.Chats.Group;
+import com.chattyhive.backend.businessobjects.Chats.Conversation;
 import com.chattyhive.backend.businessobjects.Chats.Messages.Message;
 import com.chattyhive.backend.businessobjects.Chats.Messages.MessageContent;
 import com.chattyhive.backend.businessobjects.Image;
@@ -30,18 +30,18 @@ import java.util.Date;
 public class MainChat {
     Context context;
     TextView textInput;
-    Group channelGroup;
     Chat channelChat;
+    Conversation channelConversation;
 
     View mainChat;
     View actionBar;
 
     ChatListAdapter chatListAdapter;
 
-    public MainChat (Context context, Group channelGroup) {
+    public MainChat (Context context, Chat channelChat) {
         this.context = context;
-        this.channelGroup = channelGroup;
-        this.channelChat = this.channelGroup.getChat();
+        this.channelChat = channelChat;
+        this.channelConversation = this.channelChat.getConversation();
 
         ViewPair viewPair = ((Main)context).ShowLayout(R.layout.main_panel_chat_layout,R.layout.chat_action_bar);
         this.actionBar = viewPair.getActionBarView();
@@ -55,16 +55,16 @@ public class MainChat {
 
         this.textInput = ((TextView)mainChat.findViewById(R.id.main_panel_chat_textBox));
 
-        this.channelChat.setChatWindowActive(true);
+        this.channelConversation.setChatWindowActive(true);
 
-        this.chatListAdapter = new ChatListAdapter(context,this.channelChat);
+        this.chatListAdapter = new ChatListAdapter(context,this.channelConversation);
         ((ListView)mainChat.findViewById(R.id.main_panel_chat_message_list)).setAdapter(chatListAdapter);
 
-        this.channelChat.MessageListModifiedEvent.add(new EventHandler<EventArgs>(this.chatListAdapter,"OnAddItem",EventArgs.class));
+        this.channelConversation.MessageListModifiedEvent.add(new EventHandler<EventArgs>(this.chatListAdapter,"OnAddItem",EventArgs.class));
     }
 
     protected void loadActionBarData() {
-        this.actionBar.findViewById(R.id.main_panel_chat_name).setTag(this.channelGroup.getChannelUnicode());
+        this.actionBar.findViewById(R.id.main_panel_chat_name).setTag(this.channelChat.getChannelUnicode());
         this.actionBar.findViewById(R.id.main_panel_chat_menu_icon).setOnClickListener(((Main)context).menuIcon_ClickListener);
         this.actionBar.findViewById(R.id.main_panel_chat_icon).setOnClickListener(((Main)context).appIcon_ClickListener);
 
@@ -79,22 +79,22 @@ public class MainChat {
 
         User otherUser = null;
 
-        switch (channelGroup.getGroupKind()) {
+        switch (channelChat.getChatKind()) {
             case HIVE:
                 ((ImageView)actionBar.findViewById(R.id.main_panel_chat_icon)).setImageResource(R.drawable.pestanha_chats_public_chat);
 
-                if ((this.channelGroup.getParentHive() != null) && (this.channelGroup.getParentHive().getImageURL() != null) && (!this.channelGroup.getParentHive().getImageURL().isEmpty())) {
-                    this.channelGroup.getParentHive().getHiveImage().OnImageLoaded.add(new EventHandler<EventArgs>(this,"onImageLoaded",EventArgs.class));
-                    this.channelGroup.getParentHive().getHiveImage().loadImage(Image.ImageSize.small,0);
+                if ((this.channelChat.getParentHive() != null) && (this.channelChat.getParentHive().getImageURL() != null) && (!this.channelChat.getParentHive().getImageURL().isEmpty())) {
+                    this.channelChat.getParentHive().getHiveImage().OnImageLoaded.add(new EventHandler<EventArgs>(this,"onImageLoaded",EventArgs.class));
+                    this.channelChat.getParentHive().getHiveImage().loadImage(Image.ImageSize.small,0);
                 }
 
-                if ((this.channelGroup.getName() != null) && (!this.channelGroup.getName().isEmpty()))
-                    mainName = this.channelGroup.getName();
-                else if ((this.channelGroup.getParentHive() != null) && (this.channelGroup.getParentHive().getName() != null))
-                    mainName = hiveNameIdentifier.concat(this.channelGroup.getParentHive().getName());
+                if ((this.channelChat.getName() != null) && (!this.channelChat.getName().isEmpty()))
+                    mainName = this.channelChat.getName();
+                else if ((this.channelChat.getParentHive() != null) && (this.channelChat.getParentHive().getName() != null))
+                    mainName = hiveNameIdentifier.concat(this.channelChat.getParentHive().getName());
                 break;
             case PUBLIC_SINGLE:
-                for (User member : this.channelGroup.getMembers())
+                for (User member : this.channelChat.getMembers())
                     if (!member.isMe())
                         otherUser = member;
 
@@ -103,29 +103,29 @@ public class MainChat {
                     otherUser.getUserPublicProfile().getProfileImage().loadImage(Image.ImageSize.small,0);
                 }
 
-                if ((this.channelGroup.getName() != null) && (!this.channelGroup.getName().isEmpty()))
-                    mainName = this.channelGroup.getName();
+                if ((this.channelChat.getName() != null) && (!this.channelChat.getName().isEmpty()))
+                    mainName = this.channelChat.getName();
                 else if ((otherUser != null) && (otherUser.getUserPublicProfile() != null) && (otherUser.getUserPublicProfile().getPublicName() != null))
                     mainName = userPublicNameIdentifier.concat(otherUser.getUserPublicProfile().getPublicName());
 
-                if ((this.channelGroup.getParentHive() != null) && (this.channelGroup.getParentHive().getName() != null))
-                    infoText = hiveNameIdentifier.concat(this.channelGroup.getParentHive().getName());
+                if ((this.channelChat.getParentHive() != null) && (this.channelChat.getParentHive().getName() != null))
+                    infoText = hiveNameIdentifier.concat(this.channelChat.getParentHive().getName());
 
 
                 break;
             case PUBLIC_GROUP:
-                if ((this.channelGroup.getName() != null) && (!this.channelGroup.getName().isEmpty()))
-                    mainName = this.channelGroup.getName();
+                if ((this.channelChat.getName() != null) && (!this.channelChat.getName().isEmpty()))
+                    mainName = this.channelChat.getName();
                 else
-                    for (User member : this.channelGroup.getMembers())
+                    for (User member : this.channelChat.getMembers())
                         if (!member.isMe())
                             if ((member.getUserPublicProfile() != null) && (member.getUserPublicProfile().getPublicName() != null))
                                 mainName = ((mainName.isEmpty())?"":", ").concat(userPublicNameIdentifier.concat(member.getUserPublicProfile().getPublicName()));
-                if ((this.channelGroup.getParentHive() != null) && (this.channelGroup.getParentHive().getName() != null))
-                    infoText = hiveNameIdentifier.concat(this.channelGroup.getParentHive().getName());
+                if ((this.channelChat.getParentHive() != null) && (this.channelChat.getParentHive().getName() != null))
+                    infoText = hiveNameIdentifier.concat(this.channelChat.getParentHive().getName());
                 break;
             case PRIVATE_SINGLE:
-                for (User member : this.channelGroup.getMembers())
+                for (User member : this.channelChat.getMembers())
                     if (!member.isMe())
                         otherUser = member;
 
@@ -134,17 +134,17 @@ public class MainChat {
                     otherUser.getUserPrivateProfile().getProfileImage().loadImage(Image.ImageSize.small,0);
                 }
 
-                if ((this.channelGroup.getName() != null) && (!this.channelGroup.getName().isEmpty()))
-                    mainName = this.channelGroup.getName();
+                if ((this.channelChat.getName() != null) && (!this.channelChat.getName().isEmpty()))
+                    mainName = this.channelChat.getName();
                 else if ((otherUser != null) && (otherUser.getUserPrivateProfile() != null) && (otherUser.getUserPrivateProfile().getShowingName() != null))
                     mainName = otherUser.getUserPrivateProfile().getShowingName();
 
                 break;
             case PRIVATE_GROUP:
-                if ((this.channelGroup.getName() != null) && (!this.channelGroup.getName().isEmpty()))
-                    mainName = this.channelGroup.getName();
+                if ((this.channelChat.getName() != null) && (!this.channelChat.getName().isEmpty()))
+                    mainName = this.channelChat.getName();
                 else
-                    for (User member : this.channelGroup.getMembers())
+                    for (User member : this.channelChat.getMembers())
                         if (!member.isMe())
                             if ((member.getUserPrivateProfile() != null) && (member.getUserPrivateProfile().getShowingName() != null))
                                 mainName = ((mainName.isEmpty())?"":", ").concat(member.getUserPrivateProfile().getShowingName());
@@ -199,7 +199,7 @@ public class MainChat {
             if ((text_to_send == null) || (text_to_send.isEmpty())) return;
 
             try {
-                new Message(Controller.GetRunningController().getMe(),channelChat,new MessageContent("TEXT",text_to_send),new Date()).SendMessage();
+                new Message(Controller.GetRunningController().getMe(), channelConversation,new MessageContent("TEXT",text_to_send),new Date()).SendMessage();
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {
@@ -212,9 +212,9 @@ public class MainChat {
     public void finalize() throws Throwable {
         super.finalize();
         this.context = null;
-        this.channelChat.setChatWindowActive(false);
+        this.channelConversation.setChatWindowActive(false);
+        this.channelConversation = null;
         this.channelChat = null;
-        this.channelGroup = null;
         this.textInput = null;
         this.chatListAdapter = null;
     }

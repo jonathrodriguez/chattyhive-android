@@ -2,8 +2,8 @@ package com.chattyhive.backend.contentprovider.server;
 
 import com.chattyhive.backend.StaticParameters;
 import com.chattyhive.backend.businessobjects.Chats.Chat;
-import com.chattyhive.backend.businessobjects.Chats.Group;
-import com.chattyhive.backend.businessobjects.Chats.GroupKind;
+import com.chattyhive.backend.businessobjects.Chats.ChatKind;
+import com.chattyhive.backend.businessobjects.Chats.Conversation;
 import com.chattyhive.backend.businessobjects.Chats.Hive;
 import com.chattyhive.backend.businessobjects.Chats.Messages.Message;
 import com.chattyhive.backend.businessobjects.Chats.Messages.MessageContent;
@@ -60,9 +60,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
-import java.util.Set;
 
 /**
  * Created by Jonathan on 15/09/2014.
@@ -85,7 +83,7 @@ public class StandAloneServer {
     private static HashMap<String, Hive> Hives;
     private static HashMap<String, ArrayList<String>> HiveUserSubscriptions;
     private static HashMap<String, ArrayList<String>> UserHiveSubscriptions;
-    private static HashMap<String, Group> Chats;
+    private static HashMap<String, Chat> Chats;
     private static HashMap<String, ArrayList<String>> ChatUserSubscriptions;
     private static HashMap<String, ArrayList<String>> UserChatSubscriptions;
 
@@ -101,7 +99,7 @@ public class StandAloneServer {
             Hives = new HashMap<String, Hive>();
             HiveUserSubscriptions = new HashMap<String, ArrayList<String>>();
             UserHiveSubscriptions = new HashMap<String, ArrayList<String>>();
-            Chats = new HashMap<String, Group>();
+            Chats = new HashMap<String, Chat>();
             ChatUserSubscriptions = new HashMap<String, ArrayList<String>>();
             UserChatSubscriptions = new HashMap<String, ArrayList<String>>();
 
@@ -366,13 +364,13 @@ public class StandAloneServer {
     }
 
     private static void sendRandomMessage(Random random, Boolean confirmed, Boolean notify) {
-        Group group = Chats.values().toArray(new Group[Chats.size()])[random.nextInt(Chats.size())];
+        Chat chat = Chats.values().toArray(new Chat[Chats.size()])[random.nextInt(Chats.size())];
         User sender = null;
-        if (group.getGroupKind() != GroupKind.HIVE)
-            sender = group.getMembers().get(random.nextInt(group.getMembers().size()));
+        if (chat.getChatKind() != ChatKind.HIVE)
+            sender = chat.getMembers().get(random.nextInt(chat.getMembers().size()));
         else {
-            if ((HiveUserSubscriptions.containsKey(group.getParentHive().getNameUrl())) && (HiveUserSubscriptions.get(group.getParentHive().getNameUrl()) != null) && (HiveUserSubscriptions.get(group.getParentHive().getNameUrl()).size() > 0))
-                sender = LoginUser.get(HiveUserSubscriptions.get(group.getParentHive().getNameUrl()).get(random.nextInt(HiveUserSubscriptions.get(group.getParentHive().getNameUrl()).size())));
+            if ((HiveUserSubscriptions.containsKey(chat.getParentHive().getNameUrl())) && (HiveUserSubscriptions.get(chat.getParentHive().getNameUrl()) != null) && (HiveUserSubscriptions.get(chat.getParentHive().getNameUrl()).size() > 0))
+                sender = LoginUser.get(HiveUserSubscriptions.get(chat.getParentHive().getNameUrl()).get(random.nextInt(HiveUserSubscriptions.get(chat.getParentHive().getNameUrl()).size())));
         }
         if (sender != null) {
 
@@ -382,31 +380,31 @@ public class StandAloneServer {
                 messageContent = messageContent.concat(((messageContent.isEmpty())?"":" ")).concat(Words[random.nextInt(Words.length)]);
 
             MESSAGE message = new MESSAGE();
-            message.CHANNEL_UNICODE = group.getChannelUnicode();
+            message.CHANNEL_UNICODE = chat.getChannelUnicode();
             message.CONFIRMED = confirmed;
             message.TIMESTAMP = new Date();
             message.USER_ID = sender.getUserID();
             message.CONTENT = new MESSAGE_CONTENT();
             message.CONTENT.CONTENT_TYPE = "TEXT";
             message.CONTENT.CONTENT = messageContent;
-            sendMessage(sender,group,message,notify);
+            sendMessage(sender, chat,message,notify);
         }
     }
 
-    private static MESSAGE_ACK sendMessage(User sender, Group destination, MESSAGE message, Boolean notify) {
+    private static MESSAGE_ACK sendMessage(User sender, Chat destination, MESSAGE message, Boolean notify) {
         Message msg = new Message();
         msg.setUser(sender);
-        msg.setChat(destination.getChat());
+        msg.setConversation(destination.getConversation());
         msg.setConfirmed(message.CONFIRMED);
-        msg.setId(String.format("%d", destination.getChat().getCount()));
+        msg.setId(String.format("%d", destination.getConversation().getCount()));
         msg.setServerTimeStamp(new Date());
         msg.setTimeStamp(message.TIMESTAMP);
         msg.setMessageContent(new MessageContent(message.CONTENT.CONTENT_TYPE, message.CONTENT.CONTENT));
 
-        destination.getChat().addMessageByID(msg);
+        destination.getConversation().addMessageByID(msg);
         if (notify) {
             ArrayList<User> members;
-            if (destination.getGroupKind() != GroupKind.HIVE)
+            if (destination.getChatKind() != ChatKind.HIVE)
                 members = destination.getMembers();
             else {
                 members = new ArrayList<User>();
@@ -435,28 +433,28 @@ public class StandAloneServer {
         }
         return ((MESSAGE_ACK) msg.toFormat(new MESSAGE_ACK()));
     }
-    private static Group createChat(Hive hive, String creationDate, String... members) {
-        GroupKind groupKind = GroupKind.PUBLIC_SINGLE;
+    private static Chat createChat(Hive hive, String creationDate, String... members) {
+        ChatKind chatKind = ChatKind.PUBLIC_SINGLE;
         if ((hive == null) && (members.length > 2))
-            groupKind = GroupKind.PRIVATE_GROUP;
+            chatKind = ChatKind.PRIVATE_GROUP;
         else if ((hive == null) && (members.length < 3))
-            groupKind = GroupKind.PRIVATE_SINGLE;
+            chatKind = ChatKind.PRIVATE_SINGLE;
         else if ((hive != null) && (members.length > 2))
-            groupKind = GroupKind.PUBLIC_GROUP;
+            chatKind = ChatKind.PUBLIC_GROUP;
         else if ((hive != null) && (members.length < 3))
-            groupKind = GroupKind.PUBLIC_SINGLE;
+            chatKind = ChatKind.PUBLIC_SINGLE;
 
-        Group group = new Group(groupKind,hive);
-        group.setChannelUnicode(randomString.nextString());
-        group.setPusherChannel(String.format("presence-%s",group.getChannelUnicode()));
-        group.setCreationDate(DateFormatter.fromShortHumanReadableString(creationDate));
-        Chats.put(group.getChannelUnicode(),group);
+        Chat chat = new Chat(chatKind,hive);
+        chat.setChannelUnicode(randomString.nextString());
+        chat.setPusherChannel(String.format("presence-%s", chat.getChannelUnicode()));
+        chat.setCreationDate(DateFormatter.fromShortHumanReadableString(creationDate));
+        Chats.put(chat.getChannelUnicode(), chat);
         for (String member : members) {
-            group.addMember(LoginUser.get(member));
-            subscribeChat(member,group.getChannelUnicode());
+            chat.addMember(LoginUser.get(member));
+            subscribeChat(member, chat.getChannelUnicode());
         }
 
-        return group;
+        return chat;
     }
     private static void subscribeHive(String userLogin, String hiveNameURL) {
         if (!LoginUser.containsKey(userLogin)) return;
@@ -485,7 +483,7 @@ public class StandAloneServer {
     }
     private static Hive createHive(String name, String hiveImage,String category, String description) {
         Hive hive = new Hive(name,randomString.nextString());
-        Group publicChat = new Group(GroupKind.HIVE,hive);
+        Chat publicChat = new Chat(ChatKind.HIVE,hive);
 
         hive.setImageURL(hiveImage);
         hive.setCategory(category);
@@ -1068,7 +1066,7 @@ public class StandAloneServer {
                         common.STATUS = "ERROR";
                         common.ERROR = -8;
                     } else {
-                        Group chat = Chats.get(message.CHANNEL_UNICODE);
+                        Chat chat = Chats.get(message.CHANNEL_UNICODE);
                         responseFormats.add(sendMessage(user,chat,message,true));
                         common.STATUS = "OK";
                     }
@@ -1126,12 +1124,12 @@ public class StandAloneServer {
                         MESSAGE_LIST list = new MESSAGE_LIST();
                         responseFormats.add(list);
                         common.STATUS = "OK";
-                        Chat chat = Chats.get(chatId.CHANNEL_UNICODE).getChat();
+                        Conversation conversation = Chats.get(chatId.CHANNEL_UNICODE).getConversation();
                         ArrayList<Message> resultList = new ArrayList<Message>();
 
                         String lastMessageID = null;
                         if ((filter.LAST_MESSAGE_ID == null) || (filter.LAST_MESSAGE_ID.isEmpty()) || (filter.LAST_MESSAGE_ID.equalsIgnoreCase("LAST")))
-                            lastMessageID = chat.getLastMessage().getId();
+                            lastMessageID = conversation.getLastMessage().getId();
                         else
                             lastMessageID = filter.LAST_MESSAGE_ID;
                         int lastMessage = Integer.parseInt(lastMessageID);
@@ -1150,7 +1148,7 @@ public class StandAloneServer {
                             messageCount = lastMessage-firstMessage;
 
                         for (int i = lastMessage; ((i>firstMessage) && ((lastMessage-i)<messageCount)); i--) {
-                            resultList.add(chat.getMessageByID(String.format("%d",i)));
+                            resultList.add(conversation.getMessageByID(String.format("%d",i)));
                         }
 
                         list.MESSAGES = new ArrayList<MESSAGE>();
@@ -1598,7 +1596,7 @@ public class StandAloneServer {
                         common.STATUS = "ERROR";
                         common.ERROR = -10;
                     } else {
-                        Group chatInfo = Chats.get(chatId.CHANNEL_UNICODE);
+                        Chat chatInfo = Chats.get(chatId.CHANNEL_UNICODE);
                         responseFormats.add(chatInfo.toFormat(new CHAT()));
                         common.STATUS = "OK";
                     }
@@ -1657,7 +1655,7 @@ public class StandAloneServer {
                     list.LIST = new ArrayList<CHAT_SYNC>();
 
                     for (String channelUnicode : UserChatSubscriptions.get(user.getUserID())) {
-                        if ((Chats.containsKey(channelUnicode)) && (Chats.get(channelUnicode).getChat() != null) && (Chats.get(channelUnicode).getChat().getCount() > 0))
+                        if ((Chats.containsKey(channelUnicode)) && (Chats.get(channelUnicode).getConversation() != null) && (Chats.get(channelUnicode).getConversation().getCount() > 0))
                             list.LIST.add((CHAT_SYNC)Chats.get(channelUnicode).toFormat(new CHAT_SYNC()));
                     }
                 }

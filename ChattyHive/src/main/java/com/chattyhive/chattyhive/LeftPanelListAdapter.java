@@ -19,8 +19,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.chattyhive.backend.businessobjects.Chats.Group;
-import com.chattyhive.backend.businessobjects.Chats.GroupKind;
+import com.chattyhive.backend.businessobjects.Chats.Chat;
 import com.chattyhive.backend.businessobjects.Chats.Hive;
 import com.chattyhive.backend.businessobjects.Chats.Messages.Message;
 import com.chattyhive.backend.businessobjects.Image;
@@ -99,7 +98,7 @@ public class LeftPanelListAdapter extends BaseAdapter {
         if (this.visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Hives)) {
             result = Hive.getHiveCount();
         } else if (this.visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Chats)) {
-            result = Group.getGroupCount();
+            result = Chat.getGroupCount();
         } else if (this.visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Mates)) {
             result = 0;
         }
@@ -111,7 +110,7 @@ public class LeftPanelListAdapter extends BaseAdapter {
         if (this.visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Hives)) {
             return Hive.getHiveByIndex(position);
         } else if (this.visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Chats)) {
-            return Group.getGroupByIndex(position);
+            return Chat.getGroupByIndex(position);
         } else if (this.visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Mates)) {
             return null;
         }
@@ -185,9 +184,9 @@ public class LeftPanelListAdapter extends BaseAdapter {
         }
 
         if (type == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Hives)) {
-            ((HiveViewHolder)holder).hiveName.setText(context.getResources().getString(R.string.hivename_identifier_character).concat(((Hive)item).getName()));
+            ((HiveViewHolder)holder).hiveName.setText(context.getResources().getString(R.string.hivename_identifier_character).concat(((Hive) item).getName()));
             ((HiveViewHolder)holder).hiveDescription.setText(((Hive)item).getDescription());
-            Category.setCategory(((Hive) item).getCategory(),((HiveViewHolder)holder).hiveCategoryImage,((HiveViewHolder)holder).hiveCategoryName);
+            Category.setCategory(((Hive) item).getCategory(), ((HiveViewHolder) holder).hiveCategoryImage, ((HiveViewHolder) holder).hiveCategoryName);
             ((HiveViewHolder)holder).hiveSubscribedUsers.setText("Unknown");
             ((HiveViewHolder)holder).hiveItem.setTag(R.id.BO_Hive,item);
             ((HiveViewHolder)holder).hiveImage.setImageResource(R.drawable.pestanha_chats_public_chat);
@@ -203,7 +202,7 @@ public class LeftPanelListAdapter extends BaseAdapter {
             String LastMessageTimestamp = "";
 
             try {
-                lastMessage = ((Group)item).getChat().getLastMessage();
+                lastMessage = ((Chat)item).getConversation().getLastMessage();
                 Date timeStamp = lastMessage.getOrdinationTimeStamp();
                 Date fiveMinutesAgo = new Date((new Date()).getTime() - 5*60*1000);
                 Date today = DateFormatter.toDate(DateFormatter.toString(timeStamp));
@@ -221,18 +220,18 @@ public class LeftPanelListAdapter extends BaseAdapter {
             } catch (Exception e) {
                 //Log.w("ChatItem","Unable to recover last message: "+e.getMessage());
             }
-            if (((Group)item).getGroupKind() == null) return null;
+            if (((Chat)item).getChatKind() == null) return null;
 
-            switch (((Group)item).getGroupKind()) {
+            switch (((Chat)item).getChatKind()) {
                 case PUBLIC_SINGLE:
                     ((ChatViewHolder)holder).chatHiveImage.setVisibility(View.VISIBLE);
                     ((ChatViewHolder)holder).chatTypeImage.setImageResource(R.drawable.pestanha_chats_arroba);
                     ((ChatViewHolder)holder).chatImage.setImageResource(R.drawable.chats_users_online);
                     try {
-                        ((Group) item).getParentHive().getHiveImage().OnImageLoaded.add(new EventHandler<EventArgs>(holder, "loadHiveImage", EventArgs.class));
-                        ((Group) item).getParentHive().getHiveImage().loadImage(Image.ImageSize.small, 0);
+                        ((Chat) item).getParentHive().getHiveImage().OnImageLoaded.add(new EventHandler<EventArgs>(holder, "loadHiveImage", EventArgs.class));
+                        ((Chat) item).getParentHive().getHiveImage().loadImage(Image.ImageSize.small, 0);
                     } catch (Exception e) { }
-                    for (User user : ((Group) item).getMembers())
+                    for (User user : ((Chat) item).getMembers())
                         if (!user.isMe()) {
                             if ((user.getUserPublicProfile() != null) && (user.getUserPublicProfile().getShowingName() != null)) {
                                 GroupName = context.getResources().getString(R.string.public_username_identifier_character).concat(user.getUserPublicProfile().getShowingName());
@@ -264,13 +263,13 @@ public class LeftPanelListAdapter extends BaseAdapter {
                     ((ChatViewHolder)holder).chatTypeImage.setImageResource(R.drawable.pestanha_hives_show_more_users);
                     ((ChatViewHolder)holder).chatImage.setImageResource(R.drawable.chats_users_online);
                     try {
-                    ((Group)item).getParentHive().getHiveImage().OnImageLoaded.add(new EventHandler<EventArgs>(holder,"loadHiveImage",EventArgs.class));
-                    ((Group)item).getParentHive().getHiveImage().loadImage(Image.ImageSize.small,0);
+                    ((Chat)item).getParentHive().getHiveImage().OnImageLoaded.add(new EventHandler<EventArgs>(holder,"loadHiveImage",EventArgs.class));
+                    ((Chat)item).getParentHive().getHiveImage().loadImage(Image.ImageSize.small,0);
                     } catch (Exception e) { }
-                    if ((((Group)item).getName() != null) && (!((Group)item).getName().isEmpty()))
-                        GroupName = ((Group)item).getName();
+                    if ((((Chat)item).getName() != null) && (!((Chat)item).getName().isEmpty()))
+                        GroupName = ((Chat)item).getName();
                     else
-                        for (User user : ((Group) item).getMembers())
+                        for (User user : ((Chat) item).getMembers())
                             if (!user.isMe()) {
                                 if ((user.getUserPublicProfile() != null) && (user.getUserPublicProfile().getShowingName() != null))
                                     GroupName += ((GroupName.isEmpty())?"":", ").concat(context.getResources().getString(R.string.public_username_identifier_character).concat(user.getUserPublicProfile().getShowingName()));
@@ -298,11 +297,11 @@ public class LeftPanelListAdapter extends BaseAdapter {
                     ((ChatViewHolder)holder).chatTypeImage.setImageResource(R.drawable.pestanha_chats_public_chat);
                     ((ChatViewHolder)holder).chatImage.setImageResource(R.drawable.pestanha_chats_public_chat);
                     try {
-                        ((Group)item).getParentHive().getHiveImage().OnImageLoaded.add(new EventHandler<EventArgs>(holder,"loadChatImage",EventArgs.class));
-                        ((Group)item).getParentHive().getHiveImage().loadImage(Image.ImageSize.medium,0);
+                        ((Chat)item).getParentHive().getHiveImage().OnImageLoaded.add(new EventHandler<EventArgs>(holder,"loadChatImage",EventArgs.class));
+                        ((Chat)item).getParentHive().getHiveImage().loadImage(Image.ImageSize.medium,0);
                     } catch (Exception e) { }
-                    if (((Group) item).getParentHive() != null)
-                        GroupName = context.getResources().getString(R.string.hivename_identifier_character).concat(((Group) item).getParentHive().getName());
+                    if (((Chat) item).getParentHive() != null)
+                        GroupName = context.getResources().getString(R.string.hivename_identifier_character).concat(((Chat) item).getParentHive().getName());
                     if ((lastMessage != null) && (lastMessage.getUser() != null) && (lastMessage.getUser().getUserPublicProfile() != null) && (lastMessage.getUser().getUserPublicProfile().getShowingName() != null) && (lastMessage.getMessageContent() != null) && (lastMessage.getMessageContent().getContent() != null)) {
                         LastMessage = new SpannableString(context.getResources().getString(R.string.public_username_identifier_character).concat(lastMessage.getUser().getUserPublicProfile().getShowingName()).concat(": ").concat(lastMessage.getMessageContent().getContent()));
                     }
@@ -315,7 +314,7 @@ public class LeftPanelListAdapter extends BaseAdapter {
                     ((ChatViewHolder)holder).chatHiveImage.setVisibility(View.GONE);
                     ((ChatViewHolder)holder).chatTypeImage.setImageResource(R.drawable.pestanha_chats_user);
                     ((ChatViewHolder)holder).chatImage.setImageResource(R.drawable.chats_users_online);
-                    for (User user : ((Group) item).getMembers())
+                    for (User user : ((Chat) item).getMembers())
                         if (!user.isMe()) {
                             if ((user.getUserPrivateProfile() != null) && (user.getUserPrivateProfile().getShowingName() != null)) {
                                 GroupName = user.getUserPrivateProfile().getShowingName();
@@ -345,10 +344,10 @@ public class LeftPanelListAdapter extends BaseAdapter {
                     ((ChatViewHolder)holder).chatHiveImage.setVisibility(View.GONE);
                     ((ChatViewHolder)holder).chatTypeImage.setImageResource(R.drawable.pestanha_chats_group);
                     ((ChatViewHolder)holder).chatImage.setImageResource(R.drawable.chats_users_online);
-                    if (((Group) item).getName() != null)
-                        GroupName = ((Group)item).getName();
+                    if (((Chat) item).getName() != null)
+                        GroupName = ((Chat)item).getName();
                     else
-                        for (User user : ((Group) item).getMembers())
+                        for (User user : ((Chat) item).getMembers())
                             if (!user.isMe()) {
                                 if ((user.getUserPrivateProfile() != null) && (user.getUserPrivateProfile().getShowingName() != null))
                                     GroupName += ((GroupName.isEmpty())?"":", ") + user.getUserPrivateProfile().getFirstName();
