@@ -31,6 +31,6 @@ android {
 }
 
 dependencies {
-    compile project(':BackEnd')
+    compile project(':Core')
     compile 'com.android.support:appcompat-v7:19.0.0'
 }

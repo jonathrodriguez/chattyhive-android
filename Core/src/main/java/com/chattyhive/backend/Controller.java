@@ -1,13 +1,12 @@
 package com.chattyhive.backend;
 
 import com.chattyhive.backend.businessobjects.Chats.Chat;
-import com.chattyhive.backend.businessobjects.Chats.Group;
+import com.chattyhive.backend.businessobjects.Chats.Conversation;
 import com.chattyhive.backend.businessobjects.Chats.Hive;
 import com.chattyhive.backend.businessobjects.Chats.Messages.Message;
 import com.chattyhive.backend.businessobjects.Home.Cards.HiveMessageCard;
 import com.chattyhive.backend.businessobjects.Home.HomeCard;
 import com.chattyhive.backend.businessobjects.Users.ProfileLevel;
-import com.chattyhive.backend.businessobjects.Users.ProfileType;
 import com.chattyhive.backend.businessobjects.Users.User;
 import com.chattyhive.backend.contentprovider.AvailableCommands;
 import com.chattyhive.backend.contentprovider.DataProvider;
@@ -27,7 +26,6 @@ import com.chattyhive.backend.contentprovider.formats.USERNAME;
 import com.chattyhive.backend.contentprovider.formats.USER_EMAIL;
 import com.chattyhive.backend.contentprovider.formats.USER_PROFILE;
 import com.chattyhive.backend.contentprovider.local.LocalStorageInterface;
-import com.chattyhive.backend.contentprovider.server.ServerCommand;
 import com.chattyhive.backend.contentprovider.server.ServerUser;
 import com.chattyhive.backend.util.events.CancelableEventArgs;
 import com.chattyhive.backend.util.events.CommandCallbackEventArgs;
@@ -35,9 +33,7 @@ import com.chattyhive.backend.util.events.ConnectionEventArgs;
 import com.chattyhive.backend.util.events.Event;
 import com.chattyhive.backend.util.events.EventArgs;
 import com.chattyhive.backend.util.events.EventHandler;
-import com.chattyhive.backend.util.events.FormatReceivedEventArgs;
 import com.chattyhive.backend.util.events.PubSubConnectionEventArgs;
-import com.google.gson.JsonParser;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -247,10 +243,10 @@ public class Controller {
 
         this.dataProvider = DataProvider.GetDataProvider(localStorage);
 
-        Chat.Initialize(this,MessageLocalStorage);
-        Group.Initialize(this,GroupLocalStorage);
+        Conversation.Initialize(this, MessageLocalStorage);
+        Chat.Initialize(this, GroupLocalStorage);
         Hive.Initialize(this,HiveLocalStorage);
-        Group.RecoverLocalGroups();
+        Chat.RecoverLocalGroups();
 
         this.InitializeUsers();
         this.InitializeHome();
@@ -425,11 +421,11 @@ public class Controller {
     }
 
     public void clearAllChats() {
-        Group.clearGroups();
+        Chat.clearGroups();
     }
 
     private void clearChat(String channelUnicode) {
-        Group.removeGroup(channelUnicode);
+        Chat.removeGroup(channelUnicode);
     }
 
 
@@ -611,8 +607,8 @@ public class Controller {
                 HiveMessageCard homeCard;
                 for (int i = 0; i < hiveCount; i++) {
                     hive = Hive.getHiveByIndex(i);
-                    if ((hive != null) && (hive.getPublicChat() != null) && (hive.getPublicChat().getChat() != null) && (hive.getPublicChat().getChat().getCount() > 0)) {
-                        message = hive.getPublicChat().getChat().getLastMessage();
+                    if ((hive != null) && (hive.getPublicChat() != null) && (hive.getPublicChat().getConversation() != null) && (hive.getPublicChat().getConversation().getCount() > 0)) {
+                        message = hive.getPublicChat().getConversation().getLastMessage();
                         homeCard = new HiveMessageCard(message);
                         homeCards.put(message.getOrdinationTimeStamp(), homeCard);
                     }
@@ -624,7 +620,7 @@ public class Controller {
     }
 
     public void onHiveListChanged (Object sender, EventArgs eventArgs) {
-        if ((sender == null) || ((sender instanceof Hive) && (((Hive) sender).getPublicChat() != null) && (((Hive) sender).getPublicChat().getChat() != null) && (((Hive) sender).getPublicChat().getChat().getCount() > 0))) {
+        if ((sender == null) || ((sender instanceof Hive) && (((Hive) sender).getPublicChat() != null) && (((Hive) sender).getPublicChat().getConversation() != null) && (((Hive) sender).getPublicChat().getConversation().getCount() > 0))) {
             this.RequestHome();
         }
     }
