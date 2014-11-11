@@ -57,6 +57,7 @@ import java.net.URISyntaxException;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -961,6 +962,13 @@ public class StandAloneServer {
                     comparator = new Comparator<Hive>() {
                         @Override
                         public int compare(Hive o1, Hive o2) { //o1 < o2 => res < 0 | o1 = o2 => res = 0 | o1 > o2 => res > 0
+                            if ((o1 == null) && (o2 != null))
+                                return -1;
+                            else if ((o1 != null) && (o2 == null))
+                                return 1;
+                            else if ((o1 == null) && (o2 == null))
+                                return 0;
+
                             int u1 = 0;
                             int u2 = 0;
 
@@ -978,6 +986,13 @@ public class StandAloneServer {
                     comparator = new Comparator<Hive>() {
                         @Override
                         public int compare(Hive o1, Hive o2) { //o1 < o2 => res < 0 | o1 = o2 => res = 0 | o1 > o2 => res > 0
+                            if ((o1 == null) && (o2 != null))
+                                return -1;
+                            else if ((o1 != null) && (o2 == null))
+                                return 1;
+                            else if ((o1 == null) && (o2 == null))
+                                return 0;
+
                             long d1 = 0;
                             long d2 = 0;
 
@@ -995,6 +1010,13 @@ public class StandAloneServer {
                     comparator = new Comparator<Hive>() {
                         @Override
                         public int compare(Hive o1, Hive o2) { //o1 < o2 => res < 0 | o1 = o2 => res = 0 | o1 > o2 => res > 0
+                            if ((o1 == null) && (o2 != null))
+                                return -1;
+                            else if ((o1 != null) && (o2 == null))
+                                return 1;
+                            else if ((o1 == null) && (o2 == null))
+                                return 0;
+
                             int m1 = 0;
                             int m2 = 0;
 
@@ -1010,11 +1032,11 @@ public class StandAloneServer {
                     comparator = null;
                 }
 
-                TreeSet<Hive> resultSet = null;
+                Collection<Hive> resultSet = null;
                 if (comparator != null)
                     resultSet = new TreeSet<Hive>(comparator);
                 else
-                    resultSet = new TreeSet<Hive>();
+                    resultSet = new ArrayList<Hive>();
 
                 for (String hiveKey : allHives)
                     resultSet.add(Hives.get(hiveKey));
