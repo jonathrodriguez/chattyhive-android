@@ -127,12 +127,12 @@ public class Category {
         int imageResID = context.getResources().getIdentifier(categoryResource,"drawable","com.chattyhive.chattyhive");
 
         if ((nameResID == 0) && (this.categoryCode.contains("."))) {
-            categoryResource = "category_".concat(this.categoryCode.split(".")[0]).concat("_00");
+            categoryResource = "category_".concat(this.categoryCode.split("\\.")[0]).concat("_00");
             nameResID = context.getResources().getIdentifier(categoryResource,"string","com.chattyhive.chattyhive");
         }
 
         if ((imageResID == 0) && (this.categoryCode.contains("."))) {
-            categoryResource = "category_".concat(this.categoryCode.split(".")[0]).concat("_00");
+            categoryResource = "category_".concat(this.categoryCode.split("\\.")[0]).concat("_00");
             imageResID = context.getResources().getIdentifier(categoryResource,"drawable","com.chattyhive.chattyhive");
         }
 
