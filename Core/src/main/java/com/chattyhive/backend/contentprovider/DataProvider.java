@@ -4,7 +4,7 @@ import com.chattyhive.backend.Controller;
 import com.chattyhive.backend.StaticParameters;
 import com.chattyhive.backend.businessobjects.Chats.Chat;
 import com.chattyhive.backend.businessobjects.Chats.Hive;
-import com.chattyhive.backend.contentprovider.OSStorageProvider.GroupLocalStorageInterface;
+import com.chattyhive.backend.contentprovider.OSStorageProvider.ChatLocalStorageInterface;
 import com.chattyhive.backend.contentprovider.OSStorageProvider.HiveLocalStorageInterface;
 import com.chattyhive.backend.contentprovider.OSStorageProvider.LoginLocalStorageInterface;
 import com.chattyhive.backend.contentprovider.OSStorageProvider.MessageLocalStorageInterface;
@@ -128,7 +128,7 @@ public class DataProvider {
     }
 
     //STORAGE STATIC
-    private static GroupLocalStorageInterface GroupLocalStorage;
+    private static ChatLocalStorageInterface GroupLocalStorage;
     private static HiveLocalStorageInterface HiveLocalStorage;
     private static LoginLocalStorageInterface LoginLocalStorage;
     private static MessageLocalStorageInterface MessageLocalStorage;
@@ -136,8 +136,8 @@ public class DataProvider {
 
     public static void setLocalStorage(Object... LocalStorage) {
         for (Object localStorage : LocalStorage) {
-            if ((localStorage instanceof GroupLocalStorageInterface) && (GroupLocalStorage == null)) {
-                GroupLocalStorage = (GroupLocalStorageInterface) localStorage;
+            if ((localStorage instanceof ChatLocalStorageInterface) && (GroupLocalStorage == null)) {
+                GroupLocalStorage = (ChatLocalStorageInterface) localStorage;
             } else if ((localStorage instanceof HiveLocalStorageInterface) && (HiveLocalStorage == null)) {
                 HiveLocalStorage = (HiveLocalStorageInterface) localStorage;
             } else if ((localStorage instanceof LoginLocalStorageInterface) && (LoginLocalStorage == null)) {
@@ -497,7 +497,7 @@ public class DataProvider {
                     if (g != null)
                         g.fromFormat(format);
                     else {
-                        g = Chat.getGroup(format);
+                        g = Chat.getChat(format);
                         h.setPublicChat(g);
                     }
                 }

@@ -272,7 +272,7 @@ public class Message implements Comparable {
 
             this.confirmed = ((MESSAGE) format).CONFIRMED;
             this.content = new MessageContent(((MESSAGE) format).CONTENT);
-            this.conversation = Chat.getGroup(((MESSAGE) format).CHANNEL_UNICODE, true).getConversation();
+            this.conversation = Chat.getChat(((MESSAGE) format).CHANNEL_UNICODE, true).getConversation();
 
             PROFILE_ID profile_id = new PROFILE_ID();
             profile_id.USER_ID = ((MESSAGE) format).USER_ID;

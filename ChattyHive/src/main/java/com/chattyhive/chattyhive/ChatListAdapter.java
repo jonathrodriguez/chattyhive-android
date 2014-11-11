@@ -25,6 +25,7 @@ import com.chattyhive.chattyhive.framework.Util.StaticMethods;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Date;
 
 
@@ -39,6 +40,8 @@ public class ChatListAdapter extends BaseAdapter {
     private ChatKind chatKind;
     private Conversation channelConversation;
 
+    private ArrayList<Message> messages;
+
     public ChatListAdapter (Context activityContext,Conversation channelConversation) {
         this.channelConversation = channelConversation;
 
@@ -47,11 +50,17 @@ public class ChatListAdapter extends BaseAdapter {
 
         this.listView = ((ListView)((Activity)this.context).findViewById(R.id.left_panel_element_list));
         this.chatKind = this.channelConversation.getParent().getChatKind();
+
+        this.messages = new ArrayList<Message>(this.channelConversation.getMessages());
+        this.notifyDataSetChanged();
     }
 
-    public void OnAddItem(Object sender, EventArgs args) {
+    public void OnAddItem(Object sender, EventArgs args) { //TODO: This is only a patch. Message collection must be updated on UIThread.
         ((Activity)this.context).runOnUiThread(new Runnable(){
             public void run() {
+                messages = null;
+                while (messages == null)
+                    try { messages = new ArrayList<Message>(channelConversation.getMessages()); } catch (Exception e) { messages = null; }
                 notifyDataSetChanged();
             }
         });
@@ -59,7 +68,7 @@ public class ChatListAdapter extends BaseAdapter {
 
     @Override
     public int getItemViewType(int position) {
-        Message m = this.channelConversation.getMessageByIndex(position);
+        Message m = this.messages.get(position);
 
         if (m.getUser() == null) {
             if (m.getMessageContent().getContentType().equalsIgnoreCase("DATE_SEPARATOR"))
@@ -80,12 +89,12 @@ public class ChatListAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return this.channelConversation.getCount();
+        return this.messages.size();
     }
 
     @Override
     public Object getItem(int position){
-        return this.channelConversation.getMessageByIndex(position);
+        return this.messages.get(position);
     }
 
     @Override
@@ -173,7 +182,7 @@ public class ChatListAdapter extends BaseAdapter {
             }
         }
 
-        Message message = this.channelConversation.getMessageByIndex(position);
+        Message message = this.messages.get(position);
 
         convertView.setTag(R.id.BO_Message,message);
 
@@ -182,7 +191,7 @@ public class ChatListAdapter extends BaseAdapter {
                 if ((this.chatKind == ChatKind.PRIVATE_SINGLE) || (this.chatKind == ChatKind.PRIVATE_GROUP)) {
                     holder.username.setText(message.getUser().getUserPrivateProfile().getShowingName());
                 } else {
-                    holder.username.setText(message.getUser().getUserPublicProfile().getShowingName());
+                    holder.username.setText(context.getResources().getString(R.string.public_username_identifier_character).concat(message.getUser().getUserPublicProfile().getShowingName()));
                     holder.username.setTextColor(Color.parseColor(message.getUser().getUserPublicProfile().getColor()));
                 }
             }

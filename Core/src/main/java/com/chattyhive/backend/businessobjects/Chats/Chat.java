@@ -7,7 +7,7 @@ import com.chattyhive.backend.businessobjects.Users.ProfileType;
 import com.chattyhive.backend.businessobjects.Users.User;
 import com.chattyhive.backend.contentprovider.AvailableCommands;
 import com.chattyhive.backend.contentprovider.DataProvider;
-import com.chattyhive.backend.contentprovider.OSStorageProvider.GroupLocalStorageInterface;
+import com.chattyhive.backend.contentprovider.OSStorageProvider.ChatLocalStorageInterface;
 import com.chattyhive.backend.contentprovider.formats.CHAT;
 import com.chattyhive.backend.contentprovider.formats.CHAT_ID;
 import com.chattyhive.backend.contentprovider.formats.CHAT_SYNC;
@@ -34,24 +34,24 @@ public class Chat implements IContextualizable {
     /**************************
        Static group management
      **************************/
-    protected static GroupLocalStorageInterface localStorage;
+    protected static ChatLocalStorageInterface localStorage;
     protected static Controller controller;
 
-    public static Event<EventArgs> GroupListChanged;
+    public static Event<EventArgs> ChatListChanged;
 
-    private static TreeMap<String,Chat> UnloadedGroups;
-    private static TreeMap<String,Chat> Groups;
-    public static void Initialize(Controller controller, GroupLocalStorageInterface groupLocalStorageInterface) {
-        GroupListChanged = new Event<EventArgs>();
-        if (Chat.UnloadedGroups == null) {
-            Chat.UnloadedGroups = new TreeMap<String, Chat>();
+    private static TreeMap<String,Chat> UnloadedChats;
+    private static TreeMap<String,Chat> Chats;
+    public static void Initialize(Controller controller, ChatLocalStorageInterface chatLocalStorageInterface) {
+        ChatListChanged = new Event<EventArgs>();
+        if (Chat.UnloadedChats == null) {
+            Chat.UnloadedChats = new TreeMap<String, Chat>();
         }
-        if (Chat.Groups == null) {
-            Chat.Groups = new TreeMap<String, Chat>();
+        if (Chat.Chats == null) {
+            Chat.Chats = new TreeMap<String, Chat>();
         }
 
         Chat.controller = controller;
-        Chat.localStorage = groupLocalStorageInterface;
+        Chat.localStorage = chatLocalStorageInterface;
 
         DataProvider.GetDataProvider().onChatProfileReceived.add(new EventHandler<FormatReceivedEventArgs>(Chat.class, "onFormatReceived", FormatReceivedEventArgs.class));
 
@@ -62,8 +62,8 @@ public class Chat implements IContextualizable {
         }*/
     }
 
-    public static void RecoverLocalGroups() {
-        if ((Chat.localStorage == null) || (Chat.controller == null)) throw new IllegalStateException("Groups must be initialized");
+    public static void RecoverLocalChats() {
+        if ((Chat.localStorage == null) || (Chat.controller == null)) throw new IllegalStateException("Chats must be initialized");
 
         //Local recovering of groups.
         String[] groups = Chat.localStorage.RecoverGroups();
@@ -74,12 +74,12 @@ public class Chat implements IContextualizable {
                     if (format instanceof CHAT) {
                         Chat g = new Chat((CHAT) format, null);
                         if (g.isLoaded()) {
-                            Chat.Groups.put(g.channelUnicode, g);
-                            if (GroupListChanged != null)
-                                GroupListChanged.fire(g, EventArgs.Empty());
+                            Chat.Chats.put(g.channelUnicode, g);
+                            if (ChatListChanged != null)
+                                ChatListChanged.fire(g, EventArgs.Empty());
                         }
                         else
-                            Chat.UnloadedGroups.put(g.channelUnicode,g);
+                            Chat.UnloadedChats.put(g.channelUnicode,g);
                     }
                 }
             }
@@ -137,10 +137,10 @@ public class Chat implements IContextualizable {
             ((User)sender).UserLoaded.remove(new EventHandler<EventArgs>(this,"testLoaded",EventArgs.class));
 
         if (this.isLoaded()) {
-            UnloadedGroups.remove(this.channelUnicode);
-            Groups.put(this.channelUnicode,this);
-            if (GroupListChanged != null)
-                GroupListChanged.fire(this, EventArgs.Empty());
+            UnloadedChats.remove(this.channelUnicode);
+            Chats.put(this.channelUnicode, this);
+            if (ChatListChanged != null)
+                ChatListChanged.fire(this, EventArgs.Empty());
         }
     }
 
@@ -148,12 +148,14 @@ public class Chat implements IContextualizable {
     /*        STATIC LIST SUPPORT      */
     /***********************************/
 
-    public static Chat getGroupByIndex(int index) {
-        return Groups.values().toArray(new Chat[Groups.size()])[index];
+    public static Chat getChatByIndex(int index) {
+        return Chats.values().toArray(new Chat[Chats.size()])[index];
     }
-
-    public static int getGroupCount() {
-        return Groups.size();
+    public static Collection<Chat> getChats() {
+        return Chats.values();
+    }
+    public static int getChatCount() {
+        return Chats.size();
     }
 
     /*****************************************
@@ -207,47 +209,47 @@ public class Chat implements IContextualizable {
         this.creationDate = new Date();
     }
 
-    public static Chat getGroup(String channelUnicode) {
-        return Chat.getGroup(channelUnicode, true);
+    public static Chat getChat(String channelUnicode) {
+        return Chat.getChat(channelUnicode, true);
     }
 
-    public static Chat getGroup(String channelUnicode, Boolean addToList) {
-        if ((Chat.UnloadedGroups == null) || (Chat.Groups == null)) throw new IllegalStateException("Groups must be initialized.");
+    public static Chat getChat(String channelUnicode, Boolean addToList) {
+        if ((Chat.UnloadedChats == null) || (Chat.Chats == null)) throw new IllegalStateException("Chats must be initialized.");
         else if (channelUnicode == null) throw new NullPointerException("ChannelUnicode must not be null.");
         else if (channelUnicode.isEmpty()) throw  new IllegalArgumentException("ChannelUnicode must not be empty.");
 
-        if (Chat.UnloadedGroups.containsKey(channelUnicode))
-            return Chat.UnloadedGroups.get(channelUnicode);
-        else if (Chat.Groups.containsKey(channelUnicode))
-            return Chat.Groups.get(channelUnicode);
+        if (Chat.UnloadedChats.containsKey(channelUnicode))
+            return Chat.UnloadedChats.get(channelUnicode);
+        else if (Chat.Chats.containsKey(channelUnicode))
+            return Chat.Chats.get(channelUnicode);
         else if (addToList) {
             Chat g = new Chat(channelUnicode);
             if (g.isLoaded()) {
-                Chat.Groups.put(g.channelUnicode, g);
-                if (GroupListChanged != null)
-                    GroupListChanged.fire(g,EventArgs.Empty());
+                Chat.Chats.put(g.channelUnicode, g);
+                if (ChatListChanged != null)
+                    ChatListChanged.fire(g,EventArgs.Empty());
             }
             else
-                Chat.UnloadedGroups.put(g.channelUnicode,g);
+                Chat.UnloadedChats.put(g.channelUnicode,g);
             return g;
         } else {
             return null;
         }
     }
 
-    public static Chat getGroup(Format format) {
+    public static Chat getChat(Format format) {
         Chat g = new Chat(format,null);
         if ((g.channelUnicode != null) && (!g.channelUnicode.isEmpty())) {
-            Chat existent = Chat.getGroup(g.channelUnicode, false);
+            Chat existent = Chat.getChat(g.channelUnicode, false);
             if (existent == null) {
                 if (g.isLoaded()) {
-                    Chat.Groups.put(g.channelUnicode, g);
-                    if (GroupListChanged != null)
-                        GroupListChanged.fire(g,EventArgs.Empty());
+                    Chat.Chats.put(g.channelUnicode, g);
+                    if (ChatListChanged != null)
+                        ChatListChanged.fire(g,EventArgs.Empty());
                 } else
-                    Chat.UnloadedGroups.put(g.channelUnicode, g);
-                if (GroupListChanged != null)
-                    GroupListChanged.fire(g,EventArgs.Empty());
+                    Chat.UnloadedChats.put(g.channelUnicode, g);
+                if (ChatListChanged != null)
+                    ChatListChanged.fire(g,EventArgs.Empty());
                 return g;
             } else {
                 return existent;
@@ -257,57 +259,57 @@ public class Chat implements IContextualizable {
         }
     }
 
-    public static Chat createGroup(Collection<User> users,String parentGroup) {
+    public static Chat createChat(Collection<User> users, String parentGroup) {
         //TODO: implement server communication
         String groupChannelUnicode = ""; //Recovered from server.
         //TODO: implement local storage
 
         Chat g = new Chat(groupChannelUnicode);
         if (g.isLoaded()) {
-            Chat.Groups.put(groupChannelUnicode, g);
-            if (GroupListChanged != null)
-                GroupListChanged.fire(g,EventArgs.Empty());
+            Chat.Chats.put(groupChannelUnicode, g);
+            if (ChatListChanged != null)
+                ChatListChanged.fire(g,EventArgs.Empty());
         } else
-            Chat.UnloadedGroups.put(groupChannelUnicode, g);
+            Chat.UnloadedChats.put(groupChannelUnicode, g);
         return g;
     }
 
-    public static void removeGroup(String channelUnicode) {
-        if ((Chat.UnloadedGroups == null) || (Chat.Groups == null)) throw new IllegalStateException("Groups must be initialized.");
+    public static void removeChat(String channelUnicode) {
+        if ((Chat.UnloadedChats == null) || (Chat.Chats == null)) throw new IllegalStateException("Chats must be initialized.");
         else if (channelUnicode == null) throw new NullPointerException("ChannelUnicode must not be null.");
         else if (channelUnicode.isEmpty()) throw  new IllegalArgumentException("ChannelUnicode must not be empty.");
 
-        if (Chat.UnloadedGroups.containsKey(channelUnicode)) {
-            Chat g = Chat.UnloadedGroups.get(channelUnicode);
+        if (Chat.UnloadedChats.containsKey(channelUnicode)) {
+            Chat g = Chat.UnloadedChats.get(channelUnicode);
             g.conversation.clearAllMessages();
-            Chat.UnloadedGroups.remove(channelUnicode);
-        } else if (Chat.Groups.containsKey(channelUnicode)) {
-            Chat g = Chat.Groups.get(channelUnicode);
+            Chat.UnloadedChats.remove(channelUnicode);
+        } else if (Chat.Chats.containsKey(channelUnicode)) {
+            Chat g = Chat.Chats.get(channelUnicode);
             g.conversation.clearAllMessages();
-            Chat.Groups.remove(channelUnicode);
-            if (GroupListChanged != null)
-                GroupListChanged.fire(g,EventArgs.Empty());
+            Chat.Chats.remove(channelUnicode);
+            if (ChatListChanged != null)
+                ChatListChanged.fire(g,EventArgs.Empty());
         }
 
         Chat.localStorage.RemoveGroup(channelUnicode);
     }
-    public static void clearGroups() {
-        if ((Chat.UnloadedGroups == null) || (Chat.Groups == null)) throw new IllegalStateException("Groups must be initialized.");
+    public static void clearChats() {
+        if ((Chat.UnloadedChats == null) || (Chat.Chats == null)) throw new IllegalStateException("Chats must be initialized.");
 
-        for (Chat chat : Chat.UnloadedGroups.values())
+        for (Chat chat : Chat.UnloadedChats.values())
             if (chat.conversation != null)
                 chat.conversation.clearAllMessages();
-        Chat.UnloadedGroups.clear();
+        Chat.UnloadedChats.clear();
 
-        for (Chat chat : Chat.Groups.values())
+        for (Chat chat : Chat.Chats.values())
             if (chat.conversation != null)
                 chat.conversation.clearAllMessages();
-        Chat.Groups.clear();
+        Chat.Chats.clear();
 
         Chat.localStorage.ClearGroups();
 
-        if (GroupListChanged != null)
-            GroupListChanged.fire(null,EventArgs.Empty());
+        if (ChatListChanged != null)
+            ChatListChanged.fire(null,EventArgs.Empty());
     }
 
     /***********************************/
@@ -319,11 +321,11 @@ public class Chat implements IContextualizable {
             ArrayList<Format> formats = args.getReceivedFormats();
             for (Format format : formats) {
                 if (format instanceof CHAT) {
-                    Chat.getGroup(((CHAT) format).CHANNEL_UNICODE).fromFormat(format);
+                    Chat.getChat(((CHAT) format).CHANNEL_UNICODE).fromFormat(format);
                 } else if (format instanceof CHAT_ID) {
-                    Chat.getGroup(((CHAT_ID) format).CHANNEL_UNICODE).fromFormat(format);
+                    Chat.getChat(((CHAT_ID) format).CHANNEL_UNICODE).fromFormat(format);
                 } else if  (format instanceof CHAT_SYNC) {
-                    Chat.getGroup(((CHAT_SYNC) format).CHANNEL_UNICODE).fromFormat(format);
+                    Chat.getChat(((CHAT_SYNC) format).CHANNEL_UNICODE).fromFormat(format);
                 }
             }
         }
@@ -397,7 +399,7 @@ public class Chat implements IContextualizable {
     }
 
 
-    private void CalculateGroupKind() {
+    private void CalculateChatKind() {
         if (this.getParentHive() == null) {
             if (this.members.size() < 3)
                 this.chatKind = ChatKind.PRIVATE_SINGLE;
@@ -414,7 +416,7 @@ public class Chat implements IContextualizable {
     }
     public ChatKind getChatKind() {
         if (this.chatKind == null)
-            this.CalculateGroupKind();
+            this.CalculateChatKind();
         return this.chatKind;
     }
     public void setChatKind(ChatKind value) {
@@ -486,7 +488,7 @@ public class Chat implements IContextualizable {
 
             if (this.conversation == null)
                 this.conversation = new Conversation(this);
-            //this.CalculateGroupKind();
+            //this.CalculateChatKind();
             return true;
         } else if (format instanceof CHAT_ID) {
             this.channelUnicode = ((CHAT_ID) format).CHANNEL_UNICODE;

@@ -17,7 +17,6 @@ import android.util.Log;
 
 import com.chattyhive.backend.Controller;
 import com.chattyhive.backend.StaticParameters;
-import com.chattyhive.backend.contentprovider.DataProvider;
 import com.chattyhive.backend.contentprovider.formats.Format;
 import com.chattyhive.backend.contentprovider.formats.MESSAGE;
 import com.chattyhive.backend.contentprovider.pubsubservice.ConnectionState;
@@ -26,10 +25,9 @@ import com.chattyhive.backend.util.events.EventHandler;
 import com.chattyhive.backend.util.events.FormatReceivedEventArgs;
 import com.chattyhive.backend.util.events.PubSubConnectionEventArgs;
 import com.chattyhive.chattyhive.Main;
+import com.chattyhive.chattyhive.framework.OSStorageProvider.ChatLocalStorage;
 import com.chattyhive.chattyhive.framework.OSStorageProvider.CookieStore;
-import com.chattyhive.chattyhive.framework.OSStorageProvider.GroupLocalStorage;
 import com.chattyhive.chattyhive.framework.OSStorageProvider.HiveLocalStorage;
-import com.chattyhive.chattyhive.framework.OSStorageProvider.LocalStorage;
 import com.chattyhive.chattyhive.framework.OSStorageProvider.LoginLocalStorage;
 import com.chattyhive.chattyhive.framework.OSStorageProvider.MessageLocalStorage;
 import com.chattyhive.chattyhive.framework.OSStorageProvider.UserLocalStorage;
@@ -76,7 +74,7 @@ public class CHService extends Service {
     }
 
     public void captureController() {
-        Object[] LocalStorage = {LoginLocalStorage.getLoginLocalStorage(), GroupLocalStorage.getGroupLocalStorage(), HiveLocalStorage.getHiveLocalStorage(), MessageLocalStorage.getMessageLocalStorage(), UserLocalStorage.getUserLocalStorage()};
+        Object[] LocalStorage = {LoginLocalStorage.getLoginLocalStorage(), ChatLocalStorage.getGroupLocalStorage(), HiveLocalStorage.getHiveLocalStorage(), MessageLocalStorage.getMessageLocalStorage(), UserLocalStorage.getUserLocalStorage()};
         Controller.Initialize(new CookieStore(),LocalStorage);
 
         if ((this.controller == null) || (this.controller != Controller.GetRunningController(com.chattyhive.chattyhive.framework.OSStorageProvider.LocalStorage.getLocalStorage()))) {

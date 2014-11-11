@@ -3,9 +3,7 @@ package com.chattyhive.chattyhive;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.util.Log;
 
 import android.util.TypedValue;
 import android.view.KeyEvent;
@@ -16,16 +14,14 @@ import android.view.View;
 
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.ListView;
 
 import com.chattyhive.backend.Controller;
 import com.chattyhive.backend.StaticParameters;
 
 import com.chattyhive.backend.contentprovider.AvailableCommands;
 import com.chattyhive.backend.contentprovider.DataProvider;
-import com.chattyhive.backend.contentprovider.formats.Format;
+import com.chattyhive.chattyhive.framework.OSStorageProvider.ChatLocalStorage;
 import com.chattyhive.chattyhive.framework.OSStorageProvider.CookieStore;
-import com.chattyhive.chattyhive.framework.OSStorageProvider.GroupLocalStorage;
 import com.chattyhive.chattyhive.framework.OSStorageProvider.HiveLocalStorage;
 import com.chattyhive.chattyhive.framework.OSStorageProvider.LoginLocalStorage;
 import com.chattyhive.chattyhive.framework.OSStorageProvider.MessageLocalStorage;
@@ -121,7 +117,7 @@ public class Main extends Activity {
         setContentView(R.layout.main);
 
         //Log.w("Main","onCreate..."); //DEBUG
-        Object[] LocalStorage = {LoginLocalStorage.getLoginLocalStorage(), GroupLocalStorage.getGroupLocalStorage(), HiveLocalStorage.getHiveLocalStorage(), MessageLocalStorage.getMessageLocalStorage(), UserLocalStorage.getUserLocalStorage()};
+        Object[] LocalStorage = {LoginLocalStorage.getLoginLocalStorage(), ChatLocalStorage.getGroupLocalStorage(), HiveLocalStorage.getHiveLocalStorage(), MessageLocalStorage.getMessageLocalStorage(), UserLocalStorage.getUserLocalStorage()};
         Controller.Initialize(new CookieStore(),LocalStorage);
 
         this.controller = Controller.GetRunningController(com.chattyhive.chattyhive.framework.OSStorageProvider.LocalStorage.getLocalStorage());

@@ -44,12 +44,17 @@ public class HomeListAdapter extends BaseAdapter {
         this.controller = ((Main)this.context).controller;
 
         this.controller.HomeReceived.add(new EventHandler<EventArgs>(this,"onHomeChanged",EventArgs.class));
+
+        this.homeCards = new ArrayList<HomeCard>(this.controller.getHomeCards());
+        this.notifyDataSetChanged();
     }
 
-    public void onHomeChanged(Object sender, EventArgs eventArgs) {
+    public void onHomeChanged(Object sender, EventArgs eventArgs) { //TODO: this is only a patch. HomeCard collection in controller must be updated on UIThread.
         ((Activity)this.context).runOnUiThread(new Runnable(){
             public void run() {
-                homeCards = controller.getHomeCards();
+                homeCards = null;
+                while (homeCards == null)
+                    try { homeCards = new ArrayList<HomeCard>(controller.getHomeCards()); } catch (Exception e) { homeCards = null; }
                 notifyDataSetChanged();
             }
         });

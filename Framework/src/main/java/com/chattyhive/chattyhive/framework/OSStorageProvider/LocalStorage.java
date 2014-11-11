@@ -185,7 +185,7 @@ public class LocalStorage implements LocalStorageInterface {
                     result = false;
                 else {
                     HiveLocalStorage.getHiveLocalStorage().StoreHive(hive.NAME_URL,hive.toJSON().toString());
-                    GroupLocalStorage.getGroupLocalStorage().StoreGroup(chat.CHANNEL_UNICODE,chat.toJSON().toString());
+                    ChatLocalStorage.getGroupLocalStorage().StoreGroup(chat.CHANNEL_UNICODE,chat.toJSON().toString());
                     result = true;
                 }
                 break;
