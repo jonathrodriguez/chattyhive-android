@@ -27,7 +27,7 @@
     <color name="left_panel_list_filter_border_bottom">#c1a56a</color>
     <color name="left_panel_list_filter_selected_text">#ff8000</color>
     <color name="left_panel_list_filter_unselected_text">#333333</color>
-    <item name="left_panel_list_filter_image_alpha" format="float" type="color">0.66666666666666666666666666666667</item>
+    <item name="left_panel_list_filter_image_alpha" format="float" type="color">0.35</item>
 
     <color name="left_panel_list_border_right">#c0c0c0</color>
     <color name="left_panel_list_background">#d8d8d8</color>
@@ -42,7 +42,7 @@
     <color name="left_panel_chat_list_item_number_messages_text">#333333</color>
     <color name="left_panel_chat_list_item_number_messages_background">#edc97a</color>
     <color name="left_panel_chat_list_item_number_messages_border">#ff8000</color>
-    <item name="left_panel_chat_list_item_item_type_img_alpha" format="float" type="color">0.67843137254901960784313725490196</item>
+    <item name="left_panel_chat_list_item_item_type_img_alpha" format="float" type="color">0.35</item>
 
 
     <!--  HIVE ITEM COLORS -->
@@ -52,7 +52,7 @@
     <color name="left_panel_hive_list_item_hive_description">#333333</color>
     <color name="left_panel_hive_list_item_hive_category_text">#808080</color>
     <color name="left_panel_hive_list_item_hive_subscribed_users_text">#808080</color>
-    <item name="left_panel_hive_list_item_hive_category_img_alpha" format="float" type="color">0.5</item>
-    <item name="left_panel_hive_list_item_hive_subscribed_users_img_alpha" format="float" type="color">0.5</item>
+    <item name="left_panel_hive_list_item_hive_category_img_alpha" format="float" type="color">0.35</item>
+    <item name="left_panel_hive_list_item_hive_subscribed_users_img_alpha" format="float" type="color">0.35</item>
 
 </resources>
