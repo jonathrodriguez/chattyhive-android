@@ -11,6 +11,8 @@
     android:layout_height="match_parent"
     custom:centerActionBarRightVisibleWidth="48dp"
     custom:centerMainPanelRightVisibleWidth="48dp"
+    custom:centerActionBarLeftVisibleWidth="48dp"
+    custom:centerMainPanelLeftVisibleWidth="24dp"
     custom:touchActionMoveDistanceThreshold="10dp"
     custom:fixLeftPanel="@bool/fix_left_panel"
     custom:fixedLeftPanelWidth="@dimen/fixed_left_panel_width"

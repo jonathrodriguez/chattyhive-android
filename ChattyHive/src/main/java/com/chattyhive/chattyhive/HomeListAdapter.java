@@ -120,6 +120,22 @@ public class HomeListAdapter extends BaseAdapter {
             holder = (ViewHolder)convertView.getTag();
             holder.setCard(this.homeCards.get(position));
         }
+
+        int marginTop = (int)context.getResources().getDimension(R.dimen.home_card_margin_top);
+        int marginLeft = (int)context.getResources().getDimension(R.dimen.home_card_margin_left);
+        int marginRight = (int)context.getResources().getDimension(R.dimen.home_card_margin_right);
+        int marginBottom =  0;
+
+        if (position == (this.homeCards.size()-1))
+            marginBottom = (int)context.getResources().getDimension(R.dimen.home_list_padding_bottom);
+
+        ViewGroup.LayoutParams layoutParams = convertView.getLayoutParams();
+        if (layoutParams instanceof ViewGroup.MarginLayoutParams) {
+            convertView.postInvalidate();
+            ((ViewGroup.MarginLayoutParams) layoutParams).setMargins(marginLeft, marginTop, marginRight, marginBottom);
+            convertView.setLayoutParams(layoutParams);
+        }
+
         return convertView;
     }
 
