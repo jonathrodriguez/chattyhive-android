@@ -38,6 +38,7 @@
     <dimen name="left_panel_list_filter_img_padding_bottom">11dp</dimen>
 
     <dimen name="left_panel_list_item_margin_bottom">1px</dimen>
+    <dimen name="left_panel_list_item_margin_right">1px</dimen>
 
     <!-- CHAT LIST ITEM DIMENSIONS -->
     <!-- _________________________ -->

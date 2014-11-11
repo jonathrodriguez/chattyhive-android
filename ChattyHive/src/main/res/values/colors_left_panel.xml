@@ -30,7 +30,7 @@
     <item name="left_panel_list_filter_image_alpha" format="float" type="color">0.35</item>
 
     <color name="left_panel_list_border_right">#c0c0c0</color>
-    <color name="left_panel_list_background">#d8d8d8</color>
+    <color name="left_panel_list_background">#d8d8d8</color> <!-- #d8d8d8 -->
 
     <!--  CHAT ITEM COLORS -->
     <!-- _________________ -->
