@@ -18,6 +18,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.TreeMap;
 
@@ -79,6 +80,9 @@ public class Hive implements IContextualizable {
         return Hives.size();
     }
 
+    public static Collection<Hive> getHives() {
+        return Hives.values();
+    }
     /***********************************/
     /*        STATIC CALLBACKS         */
     /***********************************/
@@ -110,7 +114,7 @@ public class Hive implements IContextualizable {
         this.publicChat = null;
 
         if (data.PUBLIC_CHAT != null) {
-            this.publicChat = Chat.getGroup(data.PUBLIC_CHAT.CHANNEL_UNICODE, false);
+            this.publicChat = Chat.getChat(data.PUBLIC_CHAT.CHANNEL_UNICODE, false);
             if (this.publicChat == null) {
                 this.publicChat = new Chat(data.PUBLIC_CHAT,this);
             }
@@ -133,12 +137,12 @@ public class Hive implements IContextualizable {
                         this.nameUrl = data.NAME_URL;
 
                         if (data.PUBLIC_CHAT != null) {
-                            this.publicChat = Chat.getGroup(data.PUBLIC_CHAT.CHANNEL_UNICODE, false);
+                            this.publicChat = Chat.getChat(data.PUBLIC_CHAT.CHANNEL_UNICODE, false);
                             if (this.publicChat == null) {
                                 this.publicChat = new Chat(data.PUBLIC_CHAT,this);
                             }
                         } else {
-                            this.publicChat = Chat.getGroup(String.format("presence-%s", this.nameUrl));
+                            this.publicChat = Chat.getChat(String.format("presence-%s", this.nameUrl));
                         }
                         break;
                     }
@@ -270,12 +274,12 @@ public class Hive implements IContextualizable {
             this.publicChat = null;
 
             if (((HIVE) format).PUBLIC_CHAT != null) {
-                this.publicChat = Chat.getGroup(((HIVE) format).PUBLIC_CHAT);
+                this.publicChat = Chat.getChat(((HIVE) format).PUBLIC_CHAT);
                 if (this.publicChat == null) {
                     this.publicChat = new Chat(((HIVE) format).PUBLIC_CHAT,this);
                 }
             } else {
-                this.publicChat = Chat.getGroup(String.format("presence-%s", this.nameUrl));
+                this.publicChat = Chat.getChat(String.format("presence-%s", this.nameUrl));
                 this.publicChat.parentHive = this;
                 this.publicChat.chatKind = ChatKind.HIVE;
             }

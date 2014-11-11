@@ -4,7 +4,7 @@ import com.chattyhive.backend.Controller;
 import com.chattyhive.backend.StaticParameters;
 import com.chattyhive.backend.businessobjects.Chats.Chat;
 import com.chattyhive.backend.businessobjects.Chats.Hive;
-import com.chattyhive.backend.contentprovider.OSStorageProvider.GroupLocalStorageInterface;
+import com.chattyhive.backend.contentprovider.OSStorageProvider.ChatLocalStorageInterface;
 import com.chattyhive.backend.contentprovider.OSStorageProvider.HiveLocalStorageInterface;
 import com.chattyhive.backend.contentprovider.OSStorageProvider.LoginLocalStorageInterface;
 import com.chattyhive.backend.contentprovider.OSStorageProvider.MessageLocalStorageInterface;
@@ -14,9 +14,11 @@ import com.chattyhive.backend.contentprovider.formats.CHAT_ID;
 import com.chattyhive.backend.contentprovider.formats.CHAT_LIST;
 import com.chattyhive.backend.contentprovider.formats.CHAT_SYNC;
 import com.chattyhive.backend.contentprovider.formats.COMMON;
+import com.chattyhive.backend.contentprovider.formats.EXPLORE_FILTER;
 import com.chattyhive.backend.contentprovider.formats.Format;
 import com.chattyhive.backend.contentprovider.formats.HIVE;
 import com.chattyhive.backend.contentprovider.formats.HIVE_ID;
+import com.chattyhive.backend.contentprovider.formats.INTERVAL;
 import com.chattyhive.backend.contentprovider.formats.LOCAL_USER_PROFILE;
 import com.chattyhive.backend.contentprovider.formats.MESSAGE;
 import com.chattyhive.backend.contentprovider.formats.MESSAGE_ACK;
@@ -128,7 +130,7 @@ public class DataProvider {
     }
 
     //STORAGE STATIC
-    private static GroupLocalStorageInterface GroupLocalStorage;
+    private static ChatLocalStorageInterface GroupLocalStorage;
     private static HiveLocalStorageInterface HiveLocalStorage;
     private static LoginLocalStorageInterface LoginLocalStorage;
     private static MessageLocalStorageInterface MessageLocalStorage;
@@ -136,8 +138,8 @@ public class DataProvider {
 
     public static void setLocalStorage(Object... LocalStorage) {
         for (Object localStorage : LocalStorage) {
-            if ((localStorage instanceof GroupLocalStorageInterface) && (GroupLocalStorage == null)) {
-                GroupLocalStorage = (GroupLocalStorageInterface) localStorage;
+            if ((localStorage instanceof ChatLocalStorageInterface) && (GroupLocalStorage == null)) {
+                GroupLocalStorage = (ChatLocalStorageInterface) localStorage;
             } else if ((localStorage instanceof HiveLocalStorageInterface) && (HiveLocalStorage == null)) {
                 HiveLocalStorage = (HiveLocalStorageInterface) localStorage;
             } else if ((localStorage instanceof LoginLocalStorageInterface) && (LoginLocalStorage == null)) {
@@ -336,8 +338,6 @@ public class DataProvider {
     }
     /************************************************************************/
     //EXPLORE
-
-
     /************************************************************************/
     //INCOMING FORMATS MANAGEMENT
     public Event<FormatReceivedEventArgs> onMessageReceived;
@@ -497,7 +497,7 @@ public class DataProvider {
                     if (g != null)
                         g.fromFormat(format);
                     else {
-                        g = Chat.getGroup(format);
+                        g = Chat.getChat(format);
                         h.setPublicChat(g);
                     }
                 }
@@ -621,9 +621,12 @@ public class DataProvider {
             this.PubSubConnectionStateChanged.fire(sender,args);
     }
 
-    public void ExploreHives(int offset,int length,EventHandler<CommandCallbackEventArgs> Callback) {
+    public void ExploreHives(int offset,int length,Controller.ExploreType exploreType,EventHandler<CommandCallbackEventArgs> Callback) {
         // TODO: This is for server 0.5.0 which does not support list indexing for explore command.
-        this.server.RunCommand(AvailableCommands.Explore,Callback,null,null);
+        //this.server.RunCommand(AvailableCommands.Explore,Callback,null,null);
+        EXPLORE_FILTER explore_filter = new EXPLORE_FILTER();
+        explore_filter.TYPE = exploreType.name();
+        this.server.RunCommand(AvailableCommands.Explore,Callback,null,explore_filter);
     }
 
 

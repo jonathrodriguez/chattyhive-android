@@ -3,10 +3,13 @@ package com.chattyhive.backend.businessobjects.Chats;
 import com.chattyhive.backend.Controller;
 import com.chattyhive.backend.StaticParameters;
 import com.chattyhive.backend.businessobjects.Chats.Messages.Message;
+import com.chattyhive.backend.contentprovider.AvailableCommands;
 import com.chattyhive.backend.contentprovider.DataProvider;
 import com.chattyhive.backend.contentprovider.OSStorageProvider.MessageLocalStorageInterface;
+import com.chattyhive.backend.contentprovider.formats.CHAT_ID;
 import com.chattyhive.backend.contentprovider.formats.Format;
 import com.chattyhive.backend.contentprovider.formats.MESSAGE;
+import com.chattyhive.backend.contentprovider.formats.MESSAGE_INTERVAL;
 import com.chattyhive.backend.contentprovider.formats.MESSAGE_LIST;
 import com.chattyhive.backend.util.events.ChannelEventArgs;
 import com.chattyhive.backend.util.events.Event;
@@ -16,6 +19,7 @@ import com.chattyhive.backend.util.events.FormatReceivedEventArgs;
 import com.chattyhive.backend.util.formatters.DateFormatter;
 
 import java.util.ArrayList;
+import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -45,7 +49,7 @@ public class Conversation { //TODO: implements SortedSet<Message>
             ArrayList<Format> formats = args.getReceivedFormats();
             for (Format format : formats) {
                 if (format instanceof MESSAGE) {
-                    Chat.getGroup(((MESSAGE) format).CHANNEL_UNICODE).getConversation().addMessage(new Message(format));
+                    Chat.getChat(((MESSAGE) format).CHANNEL_UNICODE).getConversation().addMessage(new Message(format));
                 } else if (format instanceof MESSAGE_LIST) {
                     Conversation.onFormatReceived(sender, new FormatReceivedEventArgs(((MESSAGE_LIST) format).MESSAGES));
                 }
@@ -72,6 +76,7 @@ public class Conversation { //TODO: implements SortedSet<Message>
         if (value) {
             this.showingIndex = this.messages.size() - 100;
             controller.Join(this.parent.pusherChannel);
+            this.loadMessages(-1);
         }
         else {
             controller.Leave(this.parent.pusherChannel);
@@ -80,6 +85,33 @@ public class Conversation { //TODO: implements SortedSet<Message>
     }
 
     public Boolean hasMoreMessages() { return this.moreMessages; }
+
+    public void loadMessages(int lastIndex) {
+        String last = "LAST";
+        String start = "0";
+        if (lastIndex > -1) {
+            last = String.format("%d", lastIndex);
+            start = String.format("%d", ((lastIndex-100) > 0)?lastIndex-100:0 );
+        }
+
+        CHAT_ID chat_id = new CHAT_ID();
+        chat_id.CHANNEL_UNICODE = this.getParent().getChannelUnicode();
+
+        MESSAGE_INTERVAL message_interval = new MESSAGE_INTERVAL();
+        message_interval.LAST_MESSAGE_ID = last;
+        message_interval.COUNT = 100;
+        message_interval.START_MESSAGE_ID = start;
+
+        controller.getDataProvider().InvokeServerCommand(AvailableCommands.GetMessages,chat_id,message_interval);
+    }
+    public void unloadMessages() {
+        Message lastMessage = this.getLastMessage();
+        SortedSet<Message> tail = this.messages.tailSet(lastMessage,true);
+        this.messagesByID.clear();
+        this.messages.clear();
+        this.messagesByID.put(lastMessage.getId(),lastMessage);
+        this.messages.addAll(tail);
+    }
 
     /*****************************************
                     Constructor
@@ -263,5 +295,9 @@ public class Conversation { //TODO: implements SortedSet<Message>
 
     public void getMoreMessages() {
         //TODO: implement this function. May get into account that local messages have not to be retrieved from server
+    }
+
+    public TreeSet<Message> getMessages() {
+        return this.messages;
     }
 }

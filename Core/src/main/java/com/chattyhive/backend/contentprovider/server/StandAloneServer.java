@@ -57,10 +57,12 @@ import java.net.URISyntaxException;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
+import java.util.TreeSet;
 
 /**
  * Created by Jonathan on 15/09/2014.
@@ -128,35 +130,35 @@ public class StandAloneServer {
         /*              Login: coolest_thing_21 Pass: 87654321                  */
         /*              Login: akamatsu         Pass: Shizue_86                 */
         /************************************************************************/
-        user = createUser("jonathan@chattyhive.com", "Jonathan", "Rodriguez", "jonathan", "#AA22AA", "file_avatar_jonathan.jpg", "file_private_jonathan.jpg", "08/12/1987", "Vigo, Pontevedra, España", "MALE", true, false, true, true, "Español", "Francés", "Inglés", "Gallego", "Portugués");
+        user = createUser("jonathan@chattyhive.com", "Jonathan", "Rodriguez", "jonathan", "#AA22AA", "file_avatar_jonathan.jpg", "file_private_jonathan.jpg", "08/12/1987", "Vigo, Pontevedra, Espa\u00f1a", "MALE", true, false, true, true, "Espa\u00f1ol", "Franc\u00e9s", "Ingl\u00e9s", "Gallego", "Portugu\u00e9s");
         LoginUser.put(user.getUserPublicProfile().getPublicName(), user);
         LoginPassword.put(user.getEmail(), "12345678");
 
-        user = createUser("cassini91@hotmail.com", "Cassandra", "Prieto", "cassini91", "#55dd9f", "file_avatar_cassini91.jpg", "file_private_cassini91.jpg", "31/03/1991", "Vigo, Pontevedra, España", "FEMALE", false, false, false, false, "Español", "Gallego");
+        user = createUser("cassini91@hotmail.com", "Cassandra", "Prieto", "cassini91", "#55dd9f", "file_avatar_cassini91.jpg", "file_private_cassini91.jpg", "31/03/1991", "Vigo, Pontevedra, Espa\u00f1a", "FEMALE", false, false, false, false, "Espa\u00f1ol", "Gallego");
         LoginUser.put(user.getUserPublicProfile().getPublicName(), user);
         LoginPassword.put(user.getEmail(), "huygens");
 
-        user = createUser("monchuco@yahoo.es", "Ramon", "Araujo", "trabuco", "#dfada0", "file_avatar_trabuco.jpg", "file_private_trabuco.jpg", "15/08/1968", "Andorra", "MALE", true, true, true, true, "Español", "Francés", "Inglés", "Catalán");
+        user = createUser("monchuco@yahoo.es", "Ramon", "Araujo", "trabuco", "#dfada0", "file_avatar_trabuco.jpg", "file_private_trabuco.jpg", "15/08/1968", "Andorra", "MALE", true, true, true, true, "Espa\u00f1ol", "Franc\u00e9s", "Ingl\u00e9s", "Catal\u00e1n");
         LoginUser.put(user.getUserPublicProfile().getPublicName(), user);
         LoginPassword.put(user.getEmail(), "15081968");
 
-        user = createUser("serpalina@gmail.com", "Serezade", "Agthëãçykn", "serezy", "#16a46a", "file_avatar_serezy.jpg", "file_private_serezy.jpg", "04/07/1302", "Ankara, Ankara, Turquía", "FEMALE", true, true, false, false, "Inglés", "Turco");
+        user = createUser("serpalina@gmail.com", "Serezade", "Agth\u00eb\u00e3\u00e7ykn", "serezy", "#16a46a", "file_avatar_serezy.jpg", "file_private_serezy.jpg", "04/07/1302", "Ankara, Ankara, Turqu\u00eda", "FEMALE", true, true, false, false, "Ingl\u00e9s", "Turco");
         LoginUser.put(user.getUserPublicProfile().getPublicName(), user);
-        LoginPassword.put(user.getEmail(), "Istiklâl Marsi");
+        LoginPassword.put(user.getEmail(), "Istikl\u00e2l Marsi");
 
-        user = createUser("ramoncete_1985@gmail.com", "Ramón Fernández", "Guitiérrez Ibáñez", "homer_ou", "#5D00FF", "file_avatar_homer_ou.jpg", "file_private_homer_ou.jpg", "22/10/1985", "Orense, Orense, España", "MALE", false, true, false, true, "Español", "Gallego");
+        user = createUser("ramoncete_1985@gmail.com", "Ram\u00f3n Fern\u00e1ndez", "Guiti\u00e9rrez Ib\u00e1\u00f1ez", "homer_ou", "#5D00FF", "file_avatar_homer_ou.jpg", "file_private_homer_ou.jpg", "22/10/1985", "Ourense, Ourense, Espa\u00f1a", "MALE", false, true, false, true, "Espa\u00f1ol", "Gallego");
         LoginUser.put(user.getUserPublicProfile().getPublicName(), user);
         LoginPassword.put(user.getEmail(), "bartsimpson");
 
-        user = createUser("laura.gaza5@gmail.com", "Laura", "Gaza Moya", "weirdalien", "#00AF98", "file_avatar_weirdalien.jpg", "file_private_weirdalien.jpg", "04/07/1982", "Valladolid, Valladolid, España", "FEMALE", true, true, true, true, "Español", "Alemán", "Francés");
+        user = createUser("laura.gaza5@gmail.com", "Laura", "Gaza Moya", "weirdalien", "#00AF98", "file_avatar_weirdalien.jpg", "file_private_weirdalien.jpg", "04/07/1982", "Valladolid, Valladolid, Espa\u00f1a", "FEMALE", true, true, true, true, "Espa\u00f1ol", "Alem\u00e1n", "Franc\u00e9s");
         LoginUser.put(user.getUserPublicProfile().getPublicName(), user);
         LoginPassword.put(user.getEmail(), "AFD45ADE");
 
-        user = createUser("cool_cooper@gmail.com", "Charles L.", "Cooper", "coolest_thing_21", "#586000", "file_avatar_coolest_thing_21.jpg", "file_private_coolest_thing_21.jpg", "04/07/1990", "Big Thicket Creekmore Village, Texas, EEUU", "MALE", true, false, false, true, "Inglés");
+        user = createUser("cool_cooper@gmail.com", "Charles L.", "Cooper", "coolest_thing_21", "#586000", "file_avatar_coolest_thing_21.jpg", "file_private_coolest_thing_21.jpg", "04/07/1990", "Big Thicket Creekmore Village, Texas, EEUU", "MALE", true, false, false, true, "Ingl\u00e9s");
         LoginUser.put(user.getUserPublicProfile().getPublicName(), user);
         LoginPassword.put(user.getEmail(), "87654321");
 
-        user = createUser("akamatsu@gmail.com", "Clair", "Moreau", "akamatsu", "#820600", "file_avatar_akamatsu.jpg", "file_private_akamatsu.jpg", "04/07/1998", "París, Isla de Francia, Francia", "FEMALE", false, true, true, true, "Francés", "Inglés");
+        user = createUser("akamatsu@gmail.com", "Clair", "Moreau", "akamatsu", "#820600", "file_avatar_akamatsu.jpg", "file_private_akamatsu.jpg", "04/07/1998", "Paris, \u00cele-de-France, France", "FEMALE", false, true, true, true, "Franc\u00e9s", "Ingl\u00e9s");
         LoginUser.put(user.getUserPublicProfile().getPublicName(), user);
         LoginPassword.put(user.getEmail(), "Shizue_86");
 
@@ -203,7 +205,7 @@ public class StandAloneServer {
         createChat(hive,"01/01/2010","jonathan","homer_ou");
         createChat(hive,"08/11/1955","homer_ou","trabuco");
 
-        hive = createHive("¡Lugares donde te gustaría perderte!","file_hive_lugares_donde_te_gustaria_perderte.jpg","22.05","Hablemos y compartamos fotos sobre aquellos rincones donde no te importaría perder, y pasar una vida entera o al menos un buen cacho de tiempo. ¿Qué lugares te inspiran más paz?");
+        hive = createHive("\u00a1Lugares donde te gustar\u00eda perderte!","file_hive_lugares_donde_te_gustaria_perderte.jpg","22.05","Hablemos y compartamos fotos sobre aquellos rincones donde no te importar\u00eda perder, y pasar una vida entera o al menos un buen cacho de tiempo. \u00bfQu\u00e9 lugares te inspiran m\u00e1s paz?");
         subscribeHive("cassini91",hive.getNameUrl());
 
         hive = createHive("Lets play guitar!","file_hive_lets_play_guitar.jpg","06.07","Are you a pro? still learning? doesn't matter, join this hive to learn and share about your favourite musical instrument");
@@ -238,7 +240,7 @@ public class StandAloneServer {
         createChat(hive,"01/01/2010","jonathan","homer_ou");
         createChat(hive,"08/11/1955","homer_ou","trabuco");
 
-        hive = createHive("Sustos y sorpresas","file_hive_sustos_y_sorpresas.jpg","09.05","Comparte todos esos momentos que han hecho que se te quedasen los ojos cómo platos");
+        hive = createHive("Sustos y sorpresas","file_hive_sustos_y_sorpresas.jpg","09.05","Comparte todos esos momentos que han hecho que se te quedasen los ojos c\u00f3mo platos");
         subscribeHive("jonathan",hive.getNameUrl());
         subscribeHive("cassini91",hive.getNameUrl());
         subscribeHive("trabuco",hive.getNameUrl());
@@ -278,12 +280,12 @@ public class StandAloneServer {
         createChat(hive,"01/01/2010","jonathan","homer_ou");
         createChat(hive,"08/11/1955","homer_ou","trabuco");
 
-        hive = createHive("Biraz daha kalabilir misin?","file_hive_biraz_daha_kalabilir_misin.jpg","14.04","Seni çok özledim.");
+        hive = createHive("Biraz daha kalabilir misin?","file_hive_biraz_daha_kalabilir_misin.jpg","14.04","Seni \u00e7ok \u00f6zledim.");
         subscribeHive("cassini91",hive.getNameUrl());
         subscribeHive("serezy",hive.getNameUrl());
         createChat(hive,"25/02/2013","cassini91","serezy");
 
-        hive = createHive("¡Así es imposible estar a dieta!","file_hive_asi_es_imposible_estar_a_dieta.jpg","07.03","Cuando estás a dieta y el mundo se vuelve en tu contra...");
+        hive = createHive("\u00a1As\u00ed es imposible estar a dieta!","file_hive_asi_es_imposible_estar_a_dieta.jpg","07.03","Cuando est\u00e1s a dieta y el mundo se vuelve en tu contra...");
         subscribeHive("jonathan",hive.getNameUrl());
         subscribeHive("cassini91",hive.getNameUrl());
         subscribeHive("trabuco",hive.getNameUrl());
@@ -928,10 +930,10 @@ public class StandAloneServer {
         ArrayList<Format> responseFormats = new ArrayList<Format>();
         responseFormats.add(common);
 
-        /*if (filter == null) {
+        if (filter == null) {
             common.STATUS = "ERROR";
             common.ERROR = -1;
-        } else {*/
+        } else {
         HttpCookie csrfCookie = checkCSRFCookie(server.getAppName());
 
         if ((csrfCookie == null) || (csrfCookie.hasExpired()) || (!CSRFTokens.contains(csrfCookie.getValue())))
@@ -951,12 +953,75 @@ public class StandAloneServer {
                 if (userHives != null)
                     allHives.removeAll(userHives);
 
-                ArrayList<Hive> resultSet = new ArrayList<Hive>();
+                Comparator<Hive> comparator = null;
+
+                if (filter.TYPE.equalsIgnoreCase("OUTSTANDING")) {
+                    comparator = null;
+                } else if (filter.TYPE.equalsIgnoreCase("USERS")) {
+                    comparator = new Comparator<Hive>() {
+                        @Override
+                        public int compare(Hive o1, Hive o2) { //o1 < o2 => res < 0 | o1 = o2 => res = 0 | o1 > o2 => res > 0
+                            int u1 = 0;
+                            int u2 = 0;
+
+                            if (HiveUserSubscriptions != null) {
+                                if ((HiveUserSubscriptions.containsKey(o1.getNameUrl())) && (HiveUserSubscriptions.get(o1.getNameUrl()) != null))
+                                    u1 = HiveUserSubscriptions.get(o1.getNameUrl()).size();
+                                if ((HiveUserSubscriptions.containsKey(o2.getNameUrl())) && (HiveUserSubscriptions.get(o2.getNameUrl()) != null))
+                                    u2 = HiveUserSubscriptions.get(o2.getNameUrl()).size();
+                            }
+
+                            return u1-u2;
+                        }
+                    };
+                } else if (filter.TYPE.equalsIgnoreCase("CREATION_DATE")) {
+                    comparator = new Comparator<Hive>() {
+                        @Override
+                        public int compare(Hive o1, Hive o2) { //o1 < o2 => res < 0 | o1 = o2 => res = 0 | o1 > o2 => res > 0
+                            long d1 = 0;
+                            long d2 = 0;
+
+                            if (o1.getCreationDate() != null)
+                                d1 = o1.getCreationDate().getTime();
+                            if (o2.getCreationDate() != null)
+                                d2 = o2.getCreationDate().getTime();
+
+                            long res = d1-d2;
+
+                            return ((res > Integer.MAX_VALUE)?Integer.MAX_VALUE:((res < Integer.MIN_VALUE)?Integer.MIN_VALUE:(int)res));
+                        }
+                    };
+                } else if (filter.TYPE.equalsIgnoreCase("TRENDING")) {
+                    comparator = new Comparator<Hive>() {
+                        @Override
+                        public int compare(Hive o1, Hive o2) { //o1 < o2 => res < 0 | o1 = o2 => res = 0 | o1 > o2 => res > 0
+                            int m1 = 0;
+                            int m2 = 0;
+
+                            if ((o1.getPublicChat() != null) && (o1.getPublicChat().getConversation() != null))
+                                m1 = o1.getPublicChat().getConversation().getCount();
+                            if ((o2.getPublicChat() != null) && (o2.getPublicChat().getConversation() != null))
+                                m2 = o2.getPublicChat().getConversation().getCount();
+
+                            return m1-m2;
+                        }
+                    };
+                } else {
+                    comparator = null;
+                }
+
+                TreeSet<Hive> resultSet = null;
+                if (comparator != null)
+                    resultSet = new TreeSet<Hive>(comparator);
+                else
+                    resultSet = new TreeSet<Hive>();
+
                 for (String hiveKey : allHives)
                     resultSet.add(Hives.get(hiveKey));
 
                 HIVE_LIST list = new HIVE_LIST();
                 list.LIST = new ArrayList<HIVE>();
+
                 responseFormats.add(list);
 
                 for (Hive hive : resultSet)
@@ -967,7 +1032,7 @@ public class StandAloneServer {
                 common.STATUS = "SESSION EXPIRED";
             }
         }
-        //}
+        }
 
         if ((responseCode != null) && (responseCode == 200) && (responseFormats.size() > 0)) {
             responseBody = "";

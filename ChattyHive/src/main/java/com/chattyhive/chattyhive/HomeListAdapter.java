@@ -44,12 +44,17 @@ public class HomeListAdapter extends BaseAdapter {
         this.controller = ((Main)this.context).controller;
 
         this.controller.HomeReceived.add(new EventHandler<EventArgs>(this,"onHomeChanged",EventArgs.class));
+
+        this.homeCards = new ArrayList<HomeCard>(this.controller.getHomeCards());
+        this.notifyDataSetChanged();
     }
 
-    public void onHomeChanged(Object sender, EventArgs eventArgs) {
+    public void onHomeChanged(Object sender, EventArgs eventArgs) { //TODO: this is only a patch. HomeCard collection in controller must be updated on UIThread.
         ((Activity)this.context).runOnUiThread(new Runnable(){
             public void run() {
-                homeCards = controller.getHomeCards();
+                homeCards = null;
+                while (homeCards == null)
+                    try { homeCards = new ArrayList<HomeCard>(controller.getHomeCards()); } catch (Exception e) { homeCards = null; }
                 notifyDataSetChanged();
             }
         });
@@ -115,6 +120,22 @@ public class HomeListAdapter extends BaseAdapter {
             holder = (ViewHolder)convertView.getTag();
             holder.setCard(this.homeCards.get(position));
         }
+
+        int marginTop = (int)context.getResources().getDimension(R.dimen.home_card_margin_top);
+        int marginLeft = (int)context.getResources().getDimension(R.dimen.home_card_margin_left);
+        int marginRight = (int)context.getResources().getDimension(R.dimen.home_card_margin_right);
+        int marginBottom =  0;
+
+        if (position == (this.homeCards.size()-1))
+            marginBottom = (int)context.getResources().getDimension(R.dimen.home_list_padding_bottom);
+
+        ViewGroup.LayoutParams layoutParams = convertView.getLayoutParams();
+        if (layoutParams instanceof ViewGroup.MarginLayoutParams) {
+            convertView.postInvalidate();
+            ((ViewGroup.MarginLayoutParams) layoutParams).setMargins(marginLeft, marginTop, marginRight, marginBottom);
+            convertView.setLayoutParams(layoutParams);
+        }
+
         return convertView;
     }
 

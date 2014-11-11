@@ -10,7 +10,7 @@ import com.chattyhive.backend.businessobjects.Users.ProfileLevel;
 import com.chattyhive.backend.businessobjects.Users.User;
 import com.chattyhive.backend.contentprovider.AvailableCommands;
 import com.chattyhive.backend.contentprovider.DataProvider;
-import com.chattyhive.backend.contentprovider.OSStorageProvider.GroupLocalStorageInterface;
+import com.chattyhive.backend.contentprovider.OSStorageProvider.ChatLocalStorageInterface;
 import com.chattyhive.backend.contentprovider.OSStorageProvider.HiveLocalStorageInterface;
 import com.chattyhive.backend.contentprovider.OSStorageProvider.LoginLocalStorageInterface;
 import com.chattyhive.backend.contentprovider.OSStorageProvider.MessageLocalStorageInterface;
@@ -187,7 +187,7 @@ public class Controller {
     //STORAGE STATIC
 
     @Deprecated
-    public static GroupLocalStorageInterface GroupLocalStorage;
+    public static ChatLocalStorageInterface GroupLocalStorage;
     @Deprecated
     public static HiveLocalStorageInterface HiveLocalStorage;
     @Deprecated
@@ -199,8 +199,8 @@ public class Controller {
     @Deprecated
     public static void setLocalStorage(Object... LocalStorage) {
         for (Object localStorage : LocalStorage) {
-            if ((localStorage instanceof GroupLocalStorageInterface) && (GroupLocalStorage == null)) {
-                GroupLocalStorage = (GroupLocalStorageInterface) localStorage;
+            if ((localStorage instanceof ChatLocalStorageInterface) && (GroupLocalStorage == null)) {
+                GroupLocalStorage = (ChatLocalStorageInterface) localStorage;
             } else if ((localStorage instanceof HiveLocalStorageInterface) && (HiveLocalStorage == null)) {
                 HiveLocalStorage = (HiveLocalStorageInterface) localStorage;
             } else if ((localStorage instanceof LoginLocalStorageInterface) && (LoginLocalStorage == null)) {
@@ -246,7 +246,7 @@ public class Controller {
         Conversation.Initialize(this, MessageLocalStorage);
         Chat.Initialize(this, GroupLocalStorage);
         Hive.Initialize(this,HiveLocalStorage);
-        Chat.RecoverLocalGroups();
+        Chat.RecoverLocalChats();
 
         this.InitializeUsers();
         this.InitializeHome();
@@ -307,8 +307,6 @@ public class Controller {
     }
     /************************************************************************/
     //EXPLORE
-
-
     /************************************************************************/
 
 
@@ -396,9 +394,15 @@ public class Controller {
      * This method permits application to recover some hives from explore server list.
      * @param
      */
-    public void exploreHives(int offset,int length) {
+    public enum ExploreType {
+        OUTSTANDING,
+        USERS,
+        CREATION_DATE,
+        TRENDING
+    }
+    public void exploreHives(int offset,int length, ExploreType exploreType) {
         if (offset == 0) { exploreHives.clear(); }
-        this.dataProvider.ExploreHives(offset,length,new EventHandler<CommandCallbackEventArgs>(this,"onExploreHivesCallback",CommandCallbackEventArgs.class));
+        this.dataProvider.ExploreHives(offset,length, exploreType,new EventHandler<CommandCallbackEventArgs>(this,"onExploreHivesCallback",CommandCallbackEventArgs.class));
     }
 
     public void onExploreHivesCallback(Object sender,CommandCallbackEventArgs eventArgs) {
@@ -421,11 +425,11 @@ public class Controller {
     }
 
     public void clearAllChats() {
-        Chat.clearGroups();
+        Chat.clearChats();
     }
 
     private void clearChat(String channelUnicode) {
-        Chat.removeGroup(channelUnicode);
+        Chat.removeChat(channelUnicode);
     }
 
 

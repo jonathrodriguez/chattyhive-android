@@ -3,18 +3,18 @@ package com.chattyhive.chattyhive.framework.OSStorageProvider;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.chattyhive.backend.contentprovider.OSStorageProvider.GroupLocalStorageInterface;
+import com.chattyhive.backend.contentprovider.OSStorageProvider.ChatLocalStorageInterface;
 import com.chattyhive.chattyhive.framework.Util.ApplicationContextProvider;
 
 /**
  * Created by Jonathan on 23/06/2014.
  */
-public class GroupLocalStorage implements GroupLocalStorageInterface {
-    private GroupLocalStorage() {}
-    static GroupLocalStorage instance;
+public class ChatLocalStorage implements ChatLocalStorageInterface {
+    private ChatLocalStorage() {}
+    static ChatLocalStorage instance;
 
-    public static GroupLocalStorage getGroupLocalStorage() {
-        if (instance == null) { instance = new GroupLocalStorage(); }
+    public static ChatLocalStorage getGroupLocalStorage() {
+        if (instance == null) { instance = new ChatLocalStorage(); }
         return instance;
     }
 

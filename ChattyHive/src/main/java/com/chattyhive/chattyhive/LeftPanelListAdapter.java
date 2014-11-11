@@ -34,6 +34,7 @@ import com.chattyhive.chattyhive.util.Category;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -48,6 +49,8 @@ public class LeftPanelListAdapter extends BaseAdapter {
     private int visibleList;
     private View.OnClickListener clickListener;
     public Event<EventArgs> ListSizeChanged;
+    public ArrayList<Hive> hiveList;
+    public ArrayList<Chat> chatList;
 
     public void SetVisibleList(int LeftPanel_ListKind) {
         this.visibleList = LeftPanel_ListKind;
@@ -62,9 +65,22 @@ public class LeftPanelListAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
-    public void OnAddItem(Object sender, EventArgs args) {
+    public void OnAddItem(Object sender, EventArgs args) {  //TODO: This is only a patch. Hive and Chat collections must be updated on UIThread.
         ((Activity)this.context).runOnUiThread(new Runnable(){
             public void run() {
+                hiveList = null;
+                chatList = null;
+                if (visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Hives)) {
+                    while (hiveList == null)
+                        try { hiveList = new ArrayList<Hive>(Hive.getHives()); } catch (Exception e) { hiveList = null; }
+                } else if (visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Chats)) {
+                    while (chatList == null)
+                        try { chatList = new ArrayList<Chat>(Chat.getChats()); } catch (Exception e) { chatList = null; }
+                } else if (visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Mates)) {
+                    hiveList = null;
+                    chatList = null;
+                }
+
                 notifyDataSetChanged();
                 if ((ListSizeChanged != null) && (ListSizeChanged.count() > 0))
                     ListSizeChanged.fire(this, EventArgs.Empty());
@@ -80,6 +96,18 @@ public class LeftPanelListAdapter extends BaseAdapter {
         this.listView = ((ListView)((Activity)this.context).findViewById(R.id.left_panel_element_list));
         //this.listView.setAdapter(this);
 
+        if (visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Hives)) {
+            hiveList = new ArrayList<Hive>(Hive.getHives());
+            chatList = null;
+        } else if (visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Chats)) {
+            hiveList = null;
+            chatList = new ArrayList<Chat>(Chat.getChats());
+        } else if (visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Mates)) {
+            hiveList = null;
+            chatList = null;
+        }
+
+        notifyDataSetChanged();
     }
 
     @Override
@@ -96,9 +124,9 @@ public class LeftPanelListAdapter extends BaseAdapter {
     public int getCount() {
         int result = 0;
         if (this.visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Hives)) {
-            result = Hive.getHiveCount();
+            result = hiveList.size();
         } else if (this.visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Chats)) {
-            result = Chat.getGroupCount();
+            result = chatList.size();
         } else if (this.visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Mates)) {
             result = 0;
         }
@@ -108,9 +136,9 @@ public class LeftPanelListAdapter extends BaseAdapter {
     @Override
     public Object getItem(int position){
         if (this.visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Hives)) {
-            return Hive.getHiveByIndex(position);
+            return hiveList.get(position);
         } else if (this.visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Chats)) {
-            return Chat.getGroupByIndex(position);
+            return chatList.get(position);
         } else if (this.visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Mates)) {
             return null;
         }

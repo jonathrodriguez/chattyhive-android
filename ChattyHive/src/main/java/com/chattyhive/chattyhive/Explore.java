@@ -48,14 +48,14 @@ public class Explore extends Activity {
 
         this.findViewById(R.id.explore_action_bar_goBack_button).setOnClickListener(this.backButton);
         this.findViewById(R.id.explore_button_categories).setOnClickListener(this.categoriesButton);
-        this.controller.exploreHives(0,9);
+        this.controller.exploreHives(0,9, Controller.ExploreType.OUTSTANDING);
 
 
     }
 
     public void GetMoreHives() {
         this.lastOffset += 9;
-        this.controller.exploreHives(this.lastOffset,9);
+        this.controller.exploreHives(this.lastOffset,9, Controller.ExploreType.OUTSTANDING);
     }
 
     protected View.OnClickListener backButton = new View.OnClickListener() {
