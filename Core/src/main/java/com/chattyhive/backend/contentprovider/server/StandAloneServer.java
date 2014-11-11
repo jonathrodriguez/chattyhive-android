@@ -57,10 +57,12 @@ import java.net.URISyntaxException;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
+import java.util.TreeSet;
 
 /**
  * Created by Jonathan on 15/09/2014.
@@ -928,10 +930,10 @@ public class StandAloneServer {
         ArrayList<Format> responseFormats = new ArrayList<Format>();
         responseFormats.add(common);
 
-        /*if (filter == null) {
+        if (filter == null) {
             common.STATUS = "ERROR";
             common.ERROR = -1;
-        } else {*/
+        } else {
         HttpCookie csrfCookie = checkCSRFCookie(server.getAppName());
 
         if ((csrfCookie == null) || (csrfCookie.hasExpired()) || (!CSRFTokens.contains(csrfCookie.getValue())))
@@ -951,12 +953,75 @@ public class StandAloneServer {
                 if (userHives != null)
                     allHives.removeAll(userHives);
 
-                ArrayList<Hive> resultSet = new ArrayList<Hive>();
+                Comparator<Hive> comparator = null;
+
+                if (filter.TYPE.equalsIgnoreCase("OUTSTANDING")) {
+                    comparator = null;
+                } else if (filter.TYPE.equalsIgnoreCase("USERS")) {
+                    comparator = new Comparator<Hive>() {
+                        @Override
+                        public int compare(Hive o1, Hive o2) { //o1 < o2 => res < 0 | o1 = o2 => res = 0 | o1 > o2 => res > 0
+                            int u1 = 0;
+                            int u2 = 0;
+
+                            if (HiveUserSubscriptions != null) {
+                                if ((HiveUserSubscriptions.containsKey(o1.getNameUrl())) && (HiveUserSubscriptions.get(o1.getNameUrl()) != null))
+                                    u1 = HiveUserSubscriptions.get(o1.getNameUrl()).size();
+                                if ((HiveUserSubscriptions.containsKey(o2.getNameUrl())) && (HiveUserSubscriptions.get(o2.getNameUrl()) != null))
+                                    u2 = HiveUserSubscriptions.get(o2.getNameUrl()).size();
+                            }
+
+                            return u1-u2;
+                        }
+                    };
+                } else if (filter.TYPE.equalsIgnoreCase("CREATION_DATE")) {
+                    comparator = new Comparator<Hive>() {
+                        @Override
+                        public int compare(Hive o1, Hive o2) { //o1 < o2 => res < 0 | o1 = o2 => res = 0 | o1 > o2 => res > 0
+                            long d1 = 0;
+                            long d2 = 0;
+
+                            if (o1.getCreationDate() != null)
+                                d1 = o1.getCreationDate().getTime();
+                            if (o2.getCreationDate() != null)
+                                d2 = o2.getCreationDate().getTime();
+
+                            long res = d1-d2;
+
+                            return ((res > Integer.MAX_VALUE)?Integer.MAX_VALUE:((res < Integer.MIN_VALUE)?Integer.MIN_VALUE:(int)res));
+                        }
+                    };
+                } else if (filter.TYPE.equalsIgnoreCase("TRENDING")) {
+                    comparator = new Comparator<Hive>() {
+                        @Override
+                        public int compare(Hive o1, Hive o2) { //o1 < o2 => res < 0 | o1 = o2 => res = 0 | o1 > o2 => res > 0
+                            int m1 = 0;
+                            int m2 = 0;
+
+                            if ((o1.getPublicChat() != null) && (o1.getPublicChat().getConversation() != null))
+                                m1 = o1.getPublicChat().getConversation().getCount();
+                            if ((o2.getPublicChat() != null) && (o2.getPublicChat().getConversation() != null))
+                                m2 = o2.getPublicChat().getConversation().getCount();
+
+                            return m1-m2;
+                        }
+                    };
+                } else {
+                    comparator = null;
+                }
+
+                TreeSet<Hive> resultSet = null;
+                if (comparator != null)
+                    resultSet = new TreeSet<Hive>(comparator);
+                else
+                    resultSet = new TreeSet<Hive>();
+
                 for (String hiveKey : allHives)
                     resultSet.add(Hives.get(hiveKey));
 
                 HIVE_LIST list = new HIVE_LIST();
                 list.LIST = new ArrayList<HIVE>();
+
                 responseFormats.add(list);
 
                 for (Hive hive : resultSet)
@@ -967,7 +1032,7 @@ public class StandAloneServer {
                 common.STATUS = "SESSION EXPIRED";
             }
         }
-        //}
+        }
 
         if ((responseCode != null) && (responseCode == 200) && (responseFormats.size() > 0)) {
             responseBody = "";

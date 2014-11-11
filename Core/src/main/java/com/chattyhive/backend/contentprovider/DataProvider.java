@@ -14,9 +14,11 @@ import com.chattyhive.backend.contentprovider.formats.CHAT_ID;
 import com.chattyhive.backend.contentprovider.formats.CHAT_LIST;
 import com.chattyhive.backend.contentprovider.formats.CHAT_SYNC;
 import com.chattyhive.backend.contentprovider.formats.COMMON;
+import com.chattyhive.backend.contentprovider.formats.EXPLORE_FILTER;
 import com.chattyhive.backend.contentprovider.formats.Format;
 import com.chattyhive.backend.contentprovider.formats.HIVE;
 import com.chattyhive.backend.contentprovider.formats.HIVE_ID;
+import com.chattyhive.backend.contentprovider.formats.INTERVAL;
 import com.chattyhive.backend.contentprovider.formats.LOCAL_USER_PROFILE;
 import com.chattyhive.backend.contentprovider.formats.MESSAGE;
 import com.chattyhive.backend.contentprovider.formats.MESSAGE_ACK;
@@ -336,8 +338,6 @@ public class DataProvider {
     }
     /************************************************************************/
     //EXPLORE
-
-
     /************************************************************************/
     //INCOMING FORMATS MANAGEMENT
     public Event<FormatReceivedEventArgs> onMessageReceived;
@@ -621,9 +621,12 @@ public class DataProvider {
             this.PubSubConnectionStateChanged.fire(sender,args);
     }
 
-    public void ExploreHives(int offset,int length,EventHandler<CommandCallbackEventArgs> Callback) {
+    public void ExploreHives(int offset,int length,Controller.ExploreType exploreType,EventHandler<CommandCallbackEventArgs> Callback) {
         // TODO: This is for server 0.5.0 which does not support list indexing for explore command.
-        this.server.RunCommand(AvailableCommands.Explore,Callback,null,null);
+        //this.server.RunCommand(AvailableCommands.Explore,Callback,null,null);
+        EXPLORE_FILTER explore_filter = new EXPLORE_FILTER();
+        explore_filter.TYPE = exploreType.name();
+        this.server.RunCommand(AvailableCommands.Explore,Callback,null,explore_filter);
     }
 
 

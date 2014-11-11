@@ -2,6 +2,7 @@ package com.chattyhive.backend.contentprovider.server;
 
 import com.chattyhive.backend.contentprovider.AvailableCommands;
 import com.chattyhive.backend.contentprovider.formats.CHAT_ID;
+import com.chattyhive.backend.contentprovider.formats.EXPLORE_FILTER;
 import com.chattyhive.backend.contentprovider.formats.Format;
 import com.chattyhive.backend.contentprovider.formats.HIVE_ID;
 import com.chattyhive.backend.contentprovider.formats.LOCAL_USER_PROFILE;
@@ -127,8 +128,8 @@ public class ServerCommand {
         command = AvailableCommands.Explore;
         method = Method.GET;
         commandType = CommandType.Query;
-        url = "android.explore/";
-        paramFormats = null;
+        url = "android.explore/[EXPLORE_FILTER.TYPE]";
+        paramFormats = new ArrayList<Class<?>>() {{add(EXPLORE_FILTER.class);}};;
         inputFormats = null;
         requiredCookies = new ArrayList<String>() {{add(CSRFTokenCookie); add(SessionCookie);}};
         returningCookies = null;

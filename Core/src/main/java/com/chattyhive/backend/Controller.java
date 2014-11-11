@@ -307,8 +307,6 @@ public class Controller {
     }
     /************************************************************************/
     //EXPLORE
-
-
     /************************************************************************/
 
 
@@ -396,9 +394,15 @@ public class Controller {
      * This method permits application to recover some hives from explore server list.
      * @param
      */
-    public void exploreHives(int offset,int length) {
+    public enum ExploreType {
+        OUTSTANDING,
+        USERS,
+        CREATION_DATE,
+        TRENDING
+    }
+    public void exploreHives(int offset,int length, ExploreType exploreType) {
         if (offset == 0) { exploreHives.clear(); }
-        this.dataProvider.ExploreHives(offset,length,new EventHandler<CommandCallbackEventArgs>(this,"onExploreHivesCallback",CommandCallbackEventArgs.class));
+        this.dataProvider.ExploreHives(offset,length, exploreType,new EventHandler<CommandCallbackEventArgs>(this,"onExploreHivesCallback",CommandCallbackEventArgs.class));
     }
 
     public void onExploreHivesCallback(Object sender,CommandCallbackEventArgs eventArgs) {
