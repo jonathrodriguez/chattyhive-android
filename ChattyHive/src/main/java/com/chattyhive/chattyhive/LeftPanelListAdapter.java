@@ -223,6 +223,11 @@ public class LeftPanelListAdapter extends BaseAdapter {
                 ((Hive) item).getHiveImage().OnImageLoaded.add(new EventHandler<EventArgs>(holder, "loadHiveImage", EventArgs.class));
                 ((Hive) item).getHiveImage().loadImage(Image.ImageSize.medium, 0);
             } catch (Exception e) { }
+
+            TypedValue item_type_img_alpha = new TypedValue();
+            this.context.getResources().getValue(R.color.left_panel_chat_list_item_item_type_img_alpha, item_type_img_alpha, true);
+            StaticMethods.SetAlpha(((ChatViewHolder)holder).chatTypeImage, item_type_img_alpha.getFloat());
+
         } else if (type == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Chats)) {
             String GroupName = "";
             SpannableString LastMessage = new SpannableString("");
@@ -406,6 +411,10 @@ public class LeftPanelListAdapter extends BaseAdapter {
             ((ChatViewHolder) holder).chatLastMessage.setText(LastMessage);
 
             ((ChatViewHolder)holder).chatItem.setTag(R.id.BO_Chat,item);
+
+            TypedValue item_type_img_alpha = new TypedValue();
+            this.context.getResources().getValue(R.color.left_panel_chat_list_item_item_type_img_alpha, item_type_img_alpha, true);
+            StaticMethods.SetAlpha(((ChatViewHolder)holder).chatTypeImage, item_type_img_alpha.getFloat());
         } /*else if (type == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Mates)) {
 
         }*/

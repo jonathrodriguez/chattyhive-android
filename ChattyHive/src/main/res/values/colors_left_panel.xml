@@ -15,7 +15,7 @@
     <color name="left_panel_action_bar_selected_button_text">#3a3a3a</color>
 
     <color name="left_panel_action_bar_search_button_background">#292929</color>
-    <item name="left_panel_action_bar_search_button_alpha" format="float" type="color">0.83137254901960784313725490196078</item>
+    <item name="left_panel_action_bar_search_button_alpha" format="float" type="color">0.5</item>
 
     <!--    LIST COLORS    -->
     <!-- _________________ -->
