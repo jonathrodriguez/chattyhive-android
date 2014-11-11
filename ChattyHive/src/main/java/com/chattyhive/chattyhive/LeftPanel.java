@@ -59,6 +59,12 @@ public class LeftPanel {
         hives.setOnClickListener(left_panel_tab_button_click);
         friends.setOnClickListener(left_panel_tab_button_click);
 
+        TypedValue alpha = new TypedValue();
+        this.context.getResources().getValue(R.color.left_panel_list_filter_image_alpha, alpha, true);
+        StaticMethods.SetAlpha(((Activity) this.context).findViewById(R.id.left_panel_list_filter_help), alpha.getFloat());
+        this.context.getResources().getValue(R.color.left_panel_action_bar_search_button_alpha, alpha, true);
+        StaticMethods.SetAlpha(((Activity) this.context).findViewById(R.id.left_panel_search_button), alpha.getFloat());
+
         this.leftPanelListAdapter = new LeftPanelListAdapter(this.context);
         ((ListView)((Activity)this.context).findViewById(R.id.left_panel_element_list)).setAdapter(this.leftPanelListAdapter);
 

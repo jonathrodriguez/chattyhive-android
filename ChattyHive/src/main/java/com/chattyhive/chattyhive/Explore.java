@@ -1,10 +1,12 @@
 package com.chattyhive.chattyhive;
 
 import android.app.Activity;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -23,20 +25,14 @@ public class Explore extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.explore);
-
-         //View footerView =  ((LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.explore_hive_card, null, false);
-        //listView.addHeaderView(footerView);
-
         ListView listView = (ListView) findViewById(R.id.explore_list_listView);
         LayoutInflater inflater = getLayoutInflater();
         ViewGroup header = (ViewGroup) inflater.inflate(R.layout.explore_hive_card, listView, false);
         listView.addHeaderView(header);
-
-
         this.Initialize();
     }
 
-    private void Initialize() {
+    private void Initialize(){
         this.controller = Controller.GetRunningController();
         this.lastOffset = 0;
 
@@ -49,8 +45,6 @@ public class Explore extends Activity {
         this.findViewById(R.id.explore_action_bar_goBack_button).setOnClickListener(this.backButton);
         this.findViewById(R.id.explore_button_categories).setOnClickListener(this.categoriesButton);
         this.controller.exploreHives(0,9, Controller.ExploreType.OUTSTANDING);
-
-
     }
 
     public void GetMoreHives() {
@@ -70,29 +64,12 @@ public class Explore extends Activity {
     protected View.OnClickListener categoriesButton = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (v.findViewById(R.id.explore_categories_list).getVisibility() == View.GONE){
-                v.findViewById(R.id.explore_categories_list).setVisibility(View.VISIBLE);
-                if (v.findViewById(R.id.explore_list_item_short).getVisibility() == View.VISIBLE){
-                    v.findViewById(R.id.explore_list_item_short).setVisibility(View.GONE);
-                }else if (v.findViewById(R.id.explore_hive_card).getVisibility() == View.VISIBLE){
-                    v.findViewById(R.id.explore_hive_card).setVisibility(View.GONE);
-                }
+            if(findViewById(R.id.explore_list_categories).getVisibility()==View.GONE){
+                findViewById(R.id.explore_list_categories).setVisibility(View.VISIBLE);
+                findViewById(R.id.explore_list_frame).setVisibility(View.GONE);
             }
         }
     };
-
-    /*protected View.OnClickListener join_button_click = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            System.out.println("join!!!!");
-            //String hiveNameURL =((String) ((TextView)v.findViewById(R.id.explore_list_item_name)).getTag());
-            //controller.JoinHive(hiveNameURL);
-            if(v.findViewById(R.id.explore_chat_button).getVisibility() == View.GONE){
-                v.findViewById(R.id.explore_chat_button).setVisibility(View.VISIBLE);
-                v.findViewById(R.id.explore_join_button).setVisibility(View.GONE);
-        }
-        }
-    };*/
 
     protected View.OnClickListener expand_hive = new View.OnClickListener() {
         @Override
@@ -114,7 +91,7 @@ public class Explore extends Activity {
             @Override
             public void run() {
                 if (joined == 0)
-                    //((ImageButton)findViewById(R.id.explore_action_bar_goBack_button)).setBackgroundColor(Color.GREEN);
+                    findViewById(R.id.explore_action_bar_goBack_button).setBackgroundColor(Color.GREEN);
                 joined++;
                 ((TextView)findViewById(R.id.explore_action_bar_number_text)).setText(String.valueOf(joined));
             }
