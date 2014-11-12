@@ -189,7 +189,7 @@ public class StandAloneServer {
         subscribeHive("weirdalien",hive.getNameUrl());
         subscribeHive("coolest_thing_21",hive.getNameUrl());
         subscribeHive("akamatsu",hive.getNameUrl());
-        createChat(hive,"15/12/2014","weirdalien","cassini91");
+        createChat(hive,"15/12/2013","weirdalien","cassini91");
         createChat(hive,"01/01/2010","jonathan","coolest_thing_21");
         createChat(hive,"08/11/1955","trabuco","cassini91");
         createChat(hive,"01/01/2010","jonathan","serezy");
@@ -200,7 +200,7 @@ public class StandAloneServer {
         subscribeHive("trabuco",hive.getNameUrl());
         subscribeHive("serezy",hive.getNameUrl());
         subscribeHive("homer_ou",hive.getNameUrl());
-        createChat(hive,"15/12/2014","jonathan","trabuco");
+        createChat(hive,"15/12/2013","jonathan","trabuco");
         createChat(hive,"01/01/2010","jonathan","serezy");
         createChat(hive,"08/11/1955","trabuco","serezy");
         createChat(hive,"01/01/2010","jonathan","homer_ou");
@@ -235,7 +235,7 @@ public class StandAloneServer {
         subscribeHive("trabuco",hive.getNameUrl());
         subscribeHive("serezy",hive.getNameUrl());
         subscribeHive("homer_ou",hive.getNameUrl());
-        createChat(hive,"15/12/2014","jonathan","trabuco");
+        createChat(hive,"15/12/2013","jonathan","trabuco");
         createChat(hive,"01/01/2010","jonathan","serezy");
         createChat(hive,"08/11/1955","trabuco","serezy");
         createChat(hive,"01/01/2010","jonathan","homer_ou");
@@ -264,7 +264,7 @@ public class StandAloneServer {
         subscribeHive("weirdalien",hive.getNameUrl());
         subscribeHive("coolest_thing_21",hive.getNameUrl());
         subscribeHive("akamatsu",hive.getNameUrl());
-        createChat(hive,"15/12/2014","weirdalien","cassini91");
+        createChat(hive,"15/12/2013","weirdalien","cassini91");
         createChat(hive,"01/01/2010","jonathan","coolest_thing_21");
         createChat(hive,"08/11/1955","trabuco","cassini91");
         createChat(hive,"01/01/2010","jonathan","serezy");
@@ -275,13 +275,13 @@ public class StandAloneServer {
         subscribeHive("trabuco",hive.getNameUrl());
         subscribeHive("serezy",hive.getNameUrl());
         subscribeHive("homer_ou",hive.getNameUrl());
-        createChat(hive,"15/12/2014","jonathan","trabuco");
+        createChat(hive,"15/12/2013","jonathan","trabuco");
         createChat(hive,"01/01/2010","jonathan","serezy");
-        createChat(hive,"08/11/1955","trabuco","serezy");
+        createChat(hive,"08/11/1975","trabuco","serezy");
         createChat(hive,"01/01/2010","jonathan","homer_ou");
         createChat(hive,"08/11/1955","homer_ou","trabuco");
 
-        hive = createHive("Biraz daha kalabilir misin?","file_hive_biraz_daha_kalabilir_misin.jpg","14.04","Seni \u00e7ok \u00f6zledim.");
+        hive = createHive("Biraz daha kalabilir misin?","file_hive_biraz_daha_kalabilir_misin.jpg","10.04","Seni \u00e7ok \u00f6zledim.");
         subscribeHive("cassini91",hive.getNameUrl());
         subscribeHive("serezy",hive.getNameUrl());
         createChat(hive,"25/02/2013","cassini91","serezy");
@@ -312,7 +312,7 @@ public class StandAloneServer {
         createChat(null,"16/08/2001","coolest_thing_21","serezy");
         createChat(null,"06/02/2014","weirdalien","akamatsu");
         createChat(null,"21/08/2004","weirdalien","serezy");
-        createChat(null,"16/12/2014","homer_ou","akamatsu");
+        createChat(null,"16/12/2013","homer_ou","akamatsu");
 
         /********************************************************************/
         /*                USER FRIEND LIST                                  */
@@ -382,10 +382,19 @@ public class StandAloneServer {
             for (int wordCount = 0; wordCount < messageLength; wordCount++)
                 messageContent = messageContent.concat(((messageContent.isEmpty())?"":" ")).concat(Words[random.nextInt(Words.length)]);
 
+            long minDate = chat.getCreationDate().getTime();
+            if ((chat.getConversation().getCount() > 0) && (chat.getConversation().getLastMessage() != null))
+                minDate = chat.getConversation().getLastMessage().getServerTimeStamp().getTime();
+            long maxDate = (new Date()).getTime();
+
+            long date = Math.round((Math.min(Math.abs((new Random()).nextGaussian() * 0.17),0.99) * (maxDate - minDate)) + minDate);
+
+
             MESSAGE message = new MESSAGE();
             message.CHANNEL_UNICODE = chat.getChannelUnicode();
             message.CONFIRMED = confirmed;
-            message.TIMESTAMP = new Date();
+            message.TIMESTAMP = new Date(date);
+            message.SERVER_TIMESTAMP = new Date(date);
             message.USER_ID = sender.getUserID();
             message.CONTENT = new MESSAGE_CONTENT();
             message.CONTENT.CONTENT_TYPE = "TEXT";
@@ -400,7 +409,10 @@ public class StandAloneServer {
         msg.setConversation(destination.getConversation());
         msg.setConfirmed(message.CONFIRMED);
         msg.setId(String.format("%d", destination.getConversation().getCount()));
-        msg.setServerTimeStamp(new Date());
+        if (message.SERVER_TIMESTAMP == null)
+            msg.setServerTimeStamp(new Date());
+        else
+            msg.setServerTimeStamp(message.SERVER_TIMESTAMP);
         msg.setTimeStamp(message.TIMESTAMP);
         msg.setMessageContent(new MessageContent(message.CONTENT.CONTENT_TYPE, message.CONTENT.CONTENT));
 
@@ -495,6 +507,7 @@ public class StandAloneServer {
 
         publicChat.setChannelUnicode(hive.getNameUrl());
         publicChat.setPusherChannel(String.format("presence-%s",hive.getNameUrl()));
+        publicChat.setCreationDate(new Date(Math.round((new Random()).nextDouble() * (new Date()).getTime())));
 
         Hives.put(hive.getNameUrl(), hive);
         Chats.put(publicChat.getChannelUnicode(),publicChat);
