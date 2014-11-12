@@ -18,6 +18,8 @@ import android.widget.ImageButton;
 import com.chattyhive.backend.Controller;
 import com.chattyhive.backend.StaticParameters;
 
+import com.chattyhive.backend.businessobjects.Chats.Chat;
+import com.chattyhive.backend.businessobjects.Chats.Hive;
 import com.chattyhive.backend.contentprovider.AvailableCommands;
 import com.chattyhive.backend.contentprovider.DataProvider;
 import com.chattyhive.chattyhive.framework.OSStorageProvider.ChatLocalStorage;
@@ -151,7 +153,20 @@ public class Main extends Activity {
                 break;
             case OP_CODE_EXPLORE:
                     if (resultCode == RESULT_OK) {
-                        this.ShowHives();
+                        String nameURL = null;
+                        if (data.hasExtra("NameURL"))
+                            nameURL = data.getStringExtra("NameURL");
+                        if ((nameURL != null) && (!nameURL.isEmpty())) {
+                            Hive h = Hive.getHive(nameURL);
+                            Chat c = null;
+                            if (h != null)
+                                c = h.getPublicChat();
+                            if (c != null)
+                                new MainChat(this, c);
+                            else
+                                this.ShowHives();
+                        } else
+                            this.ShowHives();
                     }
                 break;
         }

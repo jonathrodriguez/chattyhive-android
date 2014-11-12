@@ -1,6 +1,7 @@
 package com.chattyhive.chattyhive;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -57,6 +58,11 @@ public class Explore extends Activity {
         public void onClick(View v) {
             if (joined > 0)
                 setResult(RESULT_OK);
+
+            /*Intent data = new Intent();
+            data.putExtra("NameURL",hive.getNameURL());
+            setResult(RESULT_OK,data);*/
+
             finish();
         }
     };
@@ -64,8 +70,8 @@ public class Explore extends Activity {
     protected View.OnClickListener categoriesButton = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if(findViewById(R.id.explore_categories_list).getVisibility()==View.GONE){
-                findViewById(R.id.explore_categories_list).setVisibility(View.VISIBLE);
+            if(findViewById(R.id.explore_list_categories_list).getVisibility()==View.GONE){
+                findViewById(R.id.explore_list_categories_list).setVisibility(View.VISIBLE);
                 findViewById(R.id.explore_list_frame).setVisibility(View.GONE);
             }
         }
