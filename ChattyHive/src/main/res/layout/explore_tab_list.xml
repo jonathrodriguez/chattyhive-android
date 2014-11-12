@@ -20,28 +20,16 @@
         android:id="@+id/explore_tab_list_favourites_button"
         android:paddingTop="10dp"
         android:paddingBottom="13dp"
-        android:src="@drawable/chats_favourite"
+        android:src="@drawable/explore_new_hive_for_you_alternative"
         android:layout_weight="1"
         android:scaleType="fitCenter"
-        android:background="@drawable/explore_tab_list_border"
+        android:background="@drawable/explore_tab_list_no_selected_border"
         android:alpha="1"/>
 
     <ImageButton
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:id="@+id/explore_tab_list_location_button"
-        android:paddingTop="10dp"
-        android:paddingBottom="13dp"
-        android:src="@drawable/pestanha_hives_location"
-        android:layout_weight="1"
-        android:scaleType="fitCenter"
-        android:background="@drawable/explore_tab_list_no_selected_border"
-        android:alpha="0.25"/>
-
-    <ImageButton
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:id="@+id/explore_tab_list_recent_button"
         android:paddingTop="10dp"
         android:paddingBottom="13dp"
         android:src="@drawable/pestanha_hives_historial"
@@ -53,9 +41,21 @@
     <ImageButton
         android:layout_width="match_parent"
         android:layout_height="48dp"
+        android:id="@+id/explore_tab_list_recent_button"
         android:paddingTop="10dp"
         android:paddingBottom="13dp"
-        android:src="@drawable/pestanha_hives_flag"
+        android:src="@drawable/explore_new_hive_trending_hives"
+        android:layout_weight="1"
+        android:scaleType="fitCenter"
+        android:background="@drawable/explore_tab_list_no_selected_border"
+        android:alpha="0.25"/>
+
+    <ImageButton
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="13dp"
+        android:src="@drawable/explore_new_hive_top_hives"
         android:layout_weight="1"
         android:scaleType="fitCenter"
         android:background="@drawable/explore_tab_list_no_selected_border"
@@ -72,6 +72,7 @@
          android:textColor="#111111"
          android:alpha="0.25"
          android:paddingLeft="30dp"
-         android:paddingRight="24dp"/>
+         android:paddingRight="24dp"
+         android:background="@drawable/explore_tab_list_no_selected_border"/>
     </LinearLayout>
 </LinearLayout>

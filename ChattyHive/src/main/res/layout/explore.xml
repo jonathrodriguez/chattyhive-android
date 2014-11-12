@@ -77,6 +77,8 @@
                 android:layout_height="28dp"
                 android:id="@+id/explore_search_text"
                 android:hint="@string/explore_search_hint"
+                android:textColorHint="#808080"
+                android:textColor="#111111"
                 android:gravity="center|left"
                 android:background="@null"
                 android:layout_marginLeft="8dp"/>

@@ -18,7 +18,7 @@
                 <ImageView
                     android:layout_width="32dp"
                     android:layout_height="32dp"
-                    android:src="@drawable/contextos_historial"
+                    android:src="@drawable/category_01_00"
                     android:layout_marginRight="10dp"
                     android:alpha="0.75"/>
                 <TextView
@@ -36,7 +36,7 @@
                 <ImageView
                     android:layout_width="32dp"
                     android:layout_height="32dp"
-                    android:src="@drawable/contextos_historial"
+                    android:src="@drawable/category_02_00"
                     android:layout_marginRight="10dp"
                     android:alpha="0.75"/>
                 <TextView
@@ -58,7 +58,7 @@
                 <ImageView
                     android:layout_width="32dp"
                     android:layout_height="32dp"
-                    android:src="@drawable/contextos_historial"
+                    android:src="@drawable/category_03_00"
                     android:layout_marginRight="10dp"
                     android:alpha="0.75"/>
                 <TextView
@@ -76,7 +76,7 @@
                 <ImageView
                     android:layout_width="32dp"
                     android:layout_height="32dp"
-                    android:src="@drawable/contextos_historial"
+                    android:src="@drawable/category_19_00"
                     android:layout_marginRight="10dp"
                     android:alpha="0.75"/>
                 <TextView
@@ -98,7 +98,7 @@
                 <ImageView
                     android:layout_width="32dp"
                     android:layout_height="32dp"
-                    android:src="@drawable/contextos_historial"
+                    android:src="@drawable/category_04_00"
                     android:layout_marginRight="10dp"
                     android:alpha="0.75"/>
                 <TextView
@@ -116,7 +116,7 @@
                 <ImageView
                     android:layout_width="32dp"
                     android:layout_height="32dp"
-                    android:src="@drawable/contextos_historial"
+                    android:src="@drawable/category_05_00"
                     android:layout_marginRight="10dp"
                     android:alpha="0.75"/>
                 <TextView
@@ -138,7 +138,7 @@
                 <ImageView
                     android:layout_width="32dp"
                     android:layout_height="32dp"
-                    android:src="@drawable/contextos_historial"
+                    android:src="@drawable/category_06_00"
                     android:layout_marginRight="10dp"
                     android:alpha="0.75"/>
                 <TextView
@@ -156,7 +156,7 @@
                 <ImageView
                     android:layout_width="32dp"
                     android:layout_height="32dp"
-                    android:src="@drawable/contextos_historial"
+                    android:src="@drawable/category_07_00"
                     android:layout_marginRight="10dp"
                     android:alpha="0.75"/>
                 <TextView
@@ -178,7 +178,7 @@
                 <ImageView
                     android:layout_width="32dp"
                     android:layout_height="32dp"
-                    android:src="@drawable/contextos_historial"
+                    android:src="@drawable/category_08_00"
                     android:layout_marginRight="10dp"
                     android:alpha="0.75"/>
                 <TextView
@@ -196,7 +196,7 @@
                 <ImageView
                     android:layout_width="32dp"
                     android:layout_height="32dp"
-                    android:src="@drawable/contextos_historial"
+                    android:src="@drawable/category_09_00"
                     android:layout_marginRight="10dp"
                     android:alpha="0.75"/>
                 <TextView
@@ -218,7 +218,7 @@
                 <ImageView
                     android:layout_width="32dp"
                     android:layout_height="32dp"
-                    android:src="@drawable/contextos_historial"
+                    android:src="@drawable/category_10_00"
                     android:layout_marginRight="10dp"
                     android:alpha="0.75"/>
                 <TextView
@@ -236,7 +236,7 @@
                 <ImageView
                     android:layout_width="32dp"
                     android:layout_height="32dp"
-                    android:src="@drawable/contextos_historial"
+                    android:src="@drawable/category_11_00"
                     android:layout_marginRight="10dp"
                     android:alpha="0.75"/>
                 <TextView
@@ -258,7 +258,7 @@
                 <ImageView
                     android:layout_width="32dp"
                     android:layout_height="32dp"
-                    android:src="@drawable/contextos_historial"
+                    android:src="@drawable/category_12_00"
                     android:layout_marginRight="10dp"
                     android:alpha="0.75"/>
                 <TextView
@@ -276,7 +276,7 @@
                 <ImageView
                     android:layout_width="32dp"
                     android:layout_height="32dp"
-                    android:src="@drawable/contextos_historial"
+                    android:src="@drawable/category_13_00"
                     android:layout_marginRight="10dp"
                     android:alpha="0.75"/>
                 <TextView
@@ -298,7 +298,7 @@
                 <ImageView
                     android:layout_width="32dp"
                     android:layout_height="32dp"
-                    android:src="@drawable/contextos_historial"
+                    android:src="@drawable/category_14_00"
                     android:layout_marginRight="10dp"
                     android:alpha="0.75"/>
                 <TextView
@@ -316,7 +316,7 @@
                 <ImageView
                     android:layout_width="32dp"
                     android:layout_height="32dp"
-                    android:src="@drawable/contextos_historial"
+                    android:src="@drawable/category_15_00"
                     android:layout_marginRight="10dp"
                     android:alpha="0.75"/>
                 <TextView
@@ -338,7 +338,7 @@
                 <ImageView
                     android:layout_width="32dp"
                     android:layout_height="32dp"
-                    android:src="@drawable/contextos_historial"
+                    android:src="@drawable/category_16_00"
                     android:layout_marginRight="10dp"
                     android:alpha="0.75"/>
                 <TextView
@@ -356,7 +356,7 @@
                 <ImageView
                     android:layout_width="32dp"
                     android:layout_height="32dp"
-                    android:src="@drawable/contextos_historial"
+                    android:src="@drawable/category_17_00"
                     android:layout_marginRight="10dp"
                     android:alpha="0.75"/>
                 <TextView
@@ -378,7 +378,7 @@
                 <ImageView
                     android:layout_width="32dp"
                     android:layout_height="32dp"
-                    android:src="@drawable/contextos_historial"
+                    android:src="@drawable/category_18_00"
                     android:layout_marginRight="10dp"
                     android:alpha="0.75"/>
                 <TextView
@@ -396,7 +396,7 @@
                 <ImageView
                     android:layout_width="32dp"
                     android:layout_height="32dp"
-                    android:src="@drawable/contextos_historial"
+                    android:src="@drawable/category_19_00"
                     android:layout_marginRight="10dp"
                     android:alpha="0.75"/>
                 <TextView
@@ -418,7 +418,7 @@
                 <ImageView
                     android:layout_width="32dp"
                     android:layout_height="32dp"
-                    android:src="@drawable/contextos_historial"
+                    android:src="@drawable/category_20_00"
                     android:layout_marginRight="10dp"
                     android:alpha="0.75"/>
                 <TextView
@@ -436,7 +436,7 @@
                 <ImageView
                     android:layout_width="32dp"
                     android:layout_height="32dp"
-                    android:src="@drawable/contextos_historial"
+                    android:src="@drawable/category_21_00"
                     android:layout_marginRight="10dp"
                     android:alpha="0.75"/>
                 <TextView
@@ -458,7 +458,7 @@
                 <ImageView
                     android:layout_width="32dp"
                     android:layout_height="32dp"
-                    android:src="@drawable/contextos_historial"
+                    android:src="@drawable/category_22_00"
                     android:layout_marginRight="10dp"
                     android:alpha="0.75"/>
                 <TextView
@@ -476,7 +476,7 @@
                 <ImageView
                     android:layout_width="32dp"
                     android:layout_height="32dp"
-                    android:src="@drawable/contextos_historial"
+                    android:src="@drawable/category_23_00"
                     android:layout_marginRight="10dp"
                     android:alpha="0.75"/>
                 <TextView
@@ -498,7 +498,7 @@
                 <ImageView
                     android:layout_width="32dp"
                     android:layout_height="32dp"
-                    android:src="@drawable/contextos_historial"
+                    android:src="@drawable/category_24_00"
                     android:layout_marginRight="10dp"
                     android:alpha="0.75"/>
                 <TextView
