@@ -71,29 +71,18 @@ public class Explore extends Activity {
         }
     };
 
-    protected View.OnClickListener expand_hive = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            //System.out.println("expanded!!!!");
-            if(v.findViewById(R.id.explore_hive_card).getVisibility() == View.GONE) {
-                v.findViewById(R.id.explore_list_item_short).setVisibility(View.GONE);
-                v.findViewById(R.id.explore_hive_card).setVisibility(View.VISIBLE);
-            }
-            else if (findViewById(R.id.explore_list_item_short).getVisibility() == View.GONE) {
-                v.findViewById(R.id.explore_hive_card).setVisibility(View.GONE);
-                v.findViewById(R.id.explore_list_item_short).setVisibility(View.VISIBLE);
-            }
-        }
-    };
-
     public void onHiveJoined(Object sender,EventArgs eventArgs) {
         this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (joined == 0)
-                    findViewById(R.id.explore_action_bar_goBack_button).setBackgroundColor(Color.GREEN);
+                if (joined == 0) {
+                    findViewById(R.id.explore_action_bar_goBack_button).setBackgroundResource(R.drawable.explore_action_bar_hive_joined_border);
+                    findViewById(R.id.explore_action_bar_hive_added).setVisibility(View.VISIBLE);
+                    ((ImageView)findViewById(R.id.explore_action_bar_goBack_image)).setImageResource(R.drawable.explore_new_hive_back_with_subscriptions);
+                }
                 joined++;
                 ((TextView)findViewById(R.id.explore_action_bar_number_text)).setText(String.valueOf(joined));
+
             }
         });
     }
