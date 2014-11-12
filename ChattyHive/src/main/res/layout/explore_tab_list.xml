@@ -24,7 +24,8 @@
         android:layout_weight="1"
         android:scaleType="fitCenter"
         android:background="@drawable/explore_tab_list_no_selected_border"
-        android:alpha="1"/>
+        android:alpha="1"
+        android:adjustViewBounds="true" />
 
     <ImageButton
         android:layout_width="match_parent"
@@ -36,7 +37,8 @@
         android:layout_weight="1"
         android:scaleType="fitCenter"
         android:background="@drawable/explore_tab_list_no_selected_border"
-        android:alpha="0.25"/>
+        android:alpha="0.25"
+        android:adjustViewBounds="true" />
 
     <ImageButton
         android:layout_width="match_parent"
@@ -48,7 +50,8 @@
         android:layout_weight="1"
         android:scaleType="fitCenter"
         android:background="@drawable/explore_tab_list_no_selected_border"
-        android:alpha="0.25"/>
+        android:alpha="0.25"
+        android:adjustViewBounds="true" />
 
     <ImageButton
         android:layout_width="match_parent"
@@ -60,7 +63,8 @@
         android:scaleType="fitCenter"
         android:background="@drawable/explore_tab_list_no_selected_border"
         android:id="@+id/explore_tab_list_trending_button"
-        android:alpha="0.25"/>
+        android:alpha="0.25"
+        android:adjustViewBounds="true" />
 
      <TextView
          android:id="@+id/explore_button_categories"

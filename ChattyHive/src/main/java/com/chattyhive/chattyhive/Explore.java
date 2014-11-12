@@ -22,6 +22,12 @@ public class Explore extends Activity {
     int lastOffset;
     int joined = 0;
 
+    int tabTopPadding = 0;
+    int tabLeftPadding = 0;
+    int tabRightPadding = 0;
+    int tabBottomPadding = 0;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,7 +55,14 @@ public class Explore extends Activity {
         this.findViewById(R.id.explore_tab_list_location_button).setOnClickListener(this.time);
         this.findViewById(R.id.explore_tab_list_recent_button).setOnClickListener(this.trending);
         this.findViewById(R.id.explore_tab_list_trending_button).setOnClickListener(this.users);
+
+        this.tabTopPadding = findViewById(R.id.explore_tab_list_favourites_button).getPaddingTop();
+        this.tabBottomPadding = findViewById(R.id.explore_tab_list_favourites_button).getPaddingBottom();
+        this.tabLeftPadding = findViewById(R.id.explore_tab_list_favourites_button).getPaddingLeft();
+        this.tabRightPadding = findViewById(R.id.explore_tab_list_favourites_button).getPaddingRight();
+
         findViewById(R.id.explore_tab_list_favourites_button).setBackgroundResource(R.drawable.explore_tab_list_border);
+        findViewById(R.id.explore_tab_list_favourites_button).setPadding(tabLeftPadding,tabTopPadding,tabRightPadding,tabBottomPadding);
 //        this.controller.exploreHives(0,9, Controller.ExploreType.OUTSTANDING);
     }
 
@@ -78,11 +91,17 @@ public class Explore extends Activity {
         public void onClick(View v) {
             controller.exploreHives(0,9, Controller.ExploreType.OUTSTANDING);
             findViewById(R.id.explore_tab_list_favourites_button).setBackgroundResource(R.drawable.explore_tab_list_border);
+            findViewById(R.id.explore_tab_list_favourites_button).setPadding(tabLeftPadding,tabTopPadding,tabRightPadding,tabBottomPadding);
+
 
             findViewById(R.id.explore_tab_list_location_button).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
+            findViewById(R.id.explore_tab_list_location_button).setPadding(tabLeftPadding,tabTopPadding,tabRightPadding,tabBottomPadding);
             findViewById(R.id.explore_tab_list_recent_button).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
+            findViewById(R.id.explore_tab_list_recent_button).setPadding(tabLeftPadding,tabTopPadding,tabRightPadding,tabBottomPadding);
             findViewById(R.id.explore_tab_list_trending_button).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
+            findViewById(R.id.explore_tab_list_trending_button).setPadding(tabLeftPadding,tabTopPadding,tabRightPadding,tabBottomPadding);
             findViewById(R.id.explore_button_categories).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
+            findViewById(R.id.explore_button_categories).setPadding(tabLeftPadding,tabTopPadding,tabRightPadding,tabBottomPadding);
         }
     };
     protected View.OnClickListener time = new View.OnClickListener() {
@@ -90,11 +109,18 @@ public class Explore extends Activity {
         public void onClick(View v) {
             controller.exploreHives(0,9, Controller.ExploreType.CREATION_DATE);
             findViewById(R.id.explore_tab_list_location_button).setBackgroundResource(R.drawable.explore_tab_list_border);
+            findViewById(R.id.explore_tab_list_location_button).setPadding(tabLeftPadding,tabTopPadding,tabRightPadding,tabBottomPadding);
 
             findViewById(R.id.explore_tab_list_favourites_button).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
             findViewById(R.id.explore_tab_list_recent_button).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
             findViewById(R.id.explore_tab_list_trending_button).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
             findViewById(R.id.explore_button_categories).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
+
+            findViewById(R.id.explore_tab_list_favourites_button).setPadding(tabLeftPadding,tabTopPadding,tabRightPadding,tabBottomPadding);
+            findViewById(R.id.explore_tab_list_location_button).setPadding(tabLeftPadding,tabTopPadding,tabRightPadding,tabBottomPadding);
+            findViewById(R.id.explore_tab_list_recent_button).setPadding(tabLeftPadding,tabTopPadding,tabRightPadding,tabBottomPadding);
+            findViewById(R.id.explore_tab_list_trending_button).setPadding(tabLeftPadding,tabTopPadding,tabRightPadding,tabBottomPadding);
+            findViewById(R.id.explore_button_categories).setPadding(tabLeftPadding,tabTopPadding,tabRightPadding,tabBottomPadding);
         }
     };
     protected View.OnClickListener trending = new View.OnClickListener() {
@@ -107,6 +133,12 @@ public class Explore extends Activity {
             findViewById(R.id.explore_tab_list_favourites_button).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
             findViewById(R.id.explore_tab_list_trending_button).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
             findViewById(R.id.explore_button_categories).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
+
+            findViewById(R.id.explore_tab_list_favourites_button).setPadding(tabLeftPadding,tabTopPadding,tabRightPadding,tabBottomPadding);
+            findViewById(R.id.explore_tab_list_location_button).setPadding(tabLeftPadding,tabTopPadding,tabRightPadding,tabBottomPadding);
+            findViewById(R.id.explore_tab_list_recent_button).setPadding(tabLeftPadding,tabTopPadding,tabRightPadding,tabBottomPadding);
+            findViewById(R.id.explore_tab_list_trending_button).setPadding(tabLeftPadding,tabTopPadding,tabRightPadding,tabBottomPadding);
+            findViewById(R.id.explore_button_categories).setPadding(tabLeftPadding,tabTopPadding,tabRightPadding,tabBottomPadding);
         }
     };
     protected View.OnClickListener users = new View.OnClickListener() {
@@ -119,6 +151,12 @@ public class Explore extends Activity {
             findViewById(R.id.explore_tab_list_favourites_button).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
             findViewById(R.id.explore_tab_list_recent_button).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
             findViewById(R.id.explore_button_categories).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
+
+            findViewById(R.id.explore_tab_list_favourites_button).setPadding(tabLeftPadding,tabTopPadding,tabRightPadding,tabBottomPadding);
+            findViewById(R.id.explore_tab_list_location_button).setPadding(tabLeftPadding,tabTopPadding,tabRightPadding,tabBottomPadding);
+            findViewById(R.id.explore_tab_list_recent_button).setPadding(tabLeftPadding,tabTopPadding,tabRightPadding,tabBottomPadding);
+            findViewById(R.id.explore_tab_list_trending_button).setPadding(tabLeftPadding,tabTopPadding,tabRightPadding,tabBottomPadding);
+            findViewById(R.id.explore_button_categories).setPadding(tabLeftPadding,tabTopPadding,tabRightPadding,tabBottomPadding);
         }
     };
 
@@ -135,6 +173,12 @@ public class Explore extends Activity {
             findViewById(R.id.explore_tab_list_favourites_button).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
             findViewById(R.id.explore_tab_list_recent_button).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
             findViewById(R.id.explore_tab_list_trending_button).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
+
+            findViewById(R.id.explore_tab_list_favourites_button).setPadding(tabLeftPadding,tabTopPadding,tabRightPadding,tabBottomPadding);
+            findViewById(R.id.explore_tab_list_location_button).setPadding(tabLeftPadding,tabTopPadding,tabRightPadding,tabBottomPadding);
+            findViewById(R.id.explore_tab_list_recent_button).setPadding(tabLeftPadding,tabTopPadding,tabRightPadding,tabBottomPadding);
+            findViewById(R.id.explore_tab_list_trending_button).setPadding(tabLeftPadding,tabTopPadding,tabRightPadding,tabBottomPadding);
+            findViewById(R.id.explore_button_categories).setPadding(tabLeftPadding,tabTopPadding,tabRightPadding,tabBottomPadding);
         }
     };
 

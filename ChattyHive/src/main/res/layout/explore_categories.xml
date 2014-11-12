@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
     <TableLayout
         android:id="@+id/explore_categories_list"
         android:layout_width="match_parent"
@@ -20,9 +26,11 @@
                     android:layout_height="32dp"
                     android:src="@drawable/category_01_00"
                     android:layout_marginRight="10dp"
-                    android:alpha="0.75"/>
+                    android:alpha="0.75"
+                    android:padding="4dp"
+                    android:adjustViewBounds="true" />
                 <TextView
-                    android:layout_width="128dp"
+                    android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:text="@string/explore_category_art"
                     android:textSize="14.5dp"
@@ -38,9 +46,11 @@
                     android:layout_height="32dp"
                     android:src="@drawable/category_02_00"
                     android:layout_marginRight="10dp"
-                    android:alpha="0.75"/>
+                    android:alpha="0.75"
+                    android:padding="4dp"
+                    android:adjustViewBounds="true" />
                 <TextView
-                    android:layout_width="128dp"
+                    android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:text="Books &amp; Comics"
                     android:textSize="14.5dp"
@@ -60,9 +70,11 @@
                     android:layout_height="32dp"
                     android:src="@drawable/category_03_00"
                     android:layout_marginRight="10dp"
-                    android:alpha="0.75"/>
+                    android:alpha="0.75"
+                    android:padding="4dp"
+                    android:adjustViewBounds="true" />
                 <TextView
-                    android:layout_width="128dp"
+                    android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:text="Cars, Motorbikes    &amp; Others"
                     android:textSize="14.5dp"
@@ -78,9 +90,11 @@
                     android:layout_height="32dp"
                     android:src="@drawable/category_19_00"
                     android:layout_marginRight="10dp"
-                    android:alpha="0.75"/>
+                    android:alpha="0.75"
+                    android:padding="4dp"
+                    android:adjustViewBounds="true" />
                 <TextView
-                    android:layout_width="128dp"
+                    android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:text="Communities"
                     android:textSize="14.5dp"
@@ -100,9 +114,11 @@
                     android:layout_height="32dp"
                     android:src="@drawable/category_04_00"
                     android:layout_marginRight="10dp"
-                    android:alpha="0.75"/>
+                    android:alpha="0.75"
+                    android:padding="4dp"
+                    android:adjustViewBounds="true" />
                 <TextView
-                    android:layout_width="128dp"
+                    android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:text="Education"
                     android:textSize="14.5dp"
@@ -118,9 +134,11 @@
                     android:layout_height="32dp"
                     android:src="@drawable/category_05_00"
                     android:layout_marginRight="10dp"
-                    android:alpha="0.75"/>
+                    android:alpha="0.75"
+                    android:padding="4dp"
+                    android:adjustViewBounds="true" />
                 <TextView
-                    android:layout_width="128dp"
+                    android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:text="Family, Home         &amp; Pets"
                     android:textSize="14.5dp"
@@ -140,9 +158,11 @@
                     android:layout_height="32dp"
                     android:src="@drawable/category_06_00"
                     android:layout_marginRight="10dp"
-                    android:alpha="0.75"/>
+                    android:alpha="0.75"
+                    android:padding="4dp"
+                    android:adjustViewBounds="true" />
                 <TextView
-                    android:layout_width="128dp"
+                    android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:text="Free time"
                     android:textSize="14.5dp"
@@ -158,9 +178,11 @@
                     android:layout_height="32dp"
                     android:src="@drawable/category_07_00"
                     android:layout_marginRight="10dp"
-                    android:alpha="0.75"/>
+                    android:alpha="0.75"
+                    android:padding="4dp"
+                    android:adjustViewBounds="true" />
                 <TextView
-                    android:layout_width="128dp"
+                    android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:text="Health &amp; Fitness"
                     android:textSize="14.5dp"
@@ -180,9 +202,11 @@
                     android:layout_height="32dp"
                     android:src="@drawable/category_08_00"
                     android:layout_marginRight="10dp"
-                    android:alpha="0.75"/>
+                    android:alpha="0.75"
+                    android:padding="4dp"
+                    android:adjustViewBounds="true" />
                 <TextView
-                    android:layout_width="128dp"
+                    android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:text="Internet"
                     android:textSize="14.5dp"
@@ -198,9 +222,11 @@
                     android:layout_height="32dp"
                     android:src="@drawable/category_09_00"
                     android:layout_marginRight="10dp"
-                    android:alpha="0.75"/>
+                    android:alpha="0.75"
+                    android:padding="4dp"
+                    android:adjustViewBounds="true" />
                 <TextView
-                    android:layout_width="128dp"
+                    android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:text="Lifestyle"
                     android:textSize="14.5dp"
@@ -220,9 +246,11 @@
                     android:layout_height="32dp"
                     android:src="@drawable/category_10_00"
                     android:layout_marginRight="10dp"
-                    android:alpha="0.75"/>
+                    android:alpha="0.75"
+                    android:padding="4dp"
+                    android:adjustViewBounds="true" />
                 <TextView
-                    android:layout_width="128dp"
+                    android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:text="Love &amp; Friendship"
                     android:textSize="14.5dp"
@@ -238,9 +266,11 @@
                     android:layout_height="32dp"
                     android:src="@drawable/category_11_00"
                     android:layout_marginRight="10dp"
-                    android:alpha="0.75"/>
+                    android:alpha="0.75"
+                    android:padding="4dp"
+                    android:adjustViewBounds="true" />
                 <TextView
-                    android:layout_width="128dp"
+                    android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:text="Meet new people"
                     android:textSize="14.5dp"
@@ -260,9 +290,11 @@
                     android:layout_height="32dp"
                     android:src="@drawable/category_12_00"
                     android:layout_marginRight="10dp"
-                    android:alpha="0.75"/>
+                    android:alpha="0.75"
+                    android:padding="4dp"
+                    android:adjustViewBounds="true" />
                 <TextView
-                    android:layout_width="128dp"
+                    android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:text="Movies &amp; TV"
                     android:textSize="14.5dp"
@@ -278,9 +310,11 @@
                     android:layout_height="32dp"
                     android:src="@drawable/category_13_00"
                     android:layout_marginRight="10dp"
-                    android:alpha="0.75"/>
+                    android:alpha="0.75"
+                    android:padding="4dp"
+                    android:adjustViewBounds="true" />
                 <TextView
-                    android:layout_width="128dp"
+                    android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:text="Natural sciences"
                     android:textSize="14.5dp"
@@ -300,9 +334,11 @@
                     android:layout_height="32dp"
                     android:src="@drawable/category_14_00"
                     android:layout_marginRight="10dp"
-                    android:alpha="0.75"/>
+                    android:alpha="0.75"
+                    android:padding="4dp"
+                    android:adjustViewBounds="true" />
                 <TextView
-                    android:layout_width="128dp"
+                    android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:text="Music"
                     android:textSize="14.5dp"
@@ -318,9 +354,11 @@
                     android:layout_height="32dp"
                     android:src="@drawable/category_15_00"
                     android:layout_marginRight="10dp"
-                    android:alpha="0.75"/>
+                    android:alpha="0.75"
+                    android:padding="4dp"
+                    android:adjustViewBounds="true" />
                 <TextView
-                    android:layout_width="128dp"
+                    android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:text="News &amp; Current affairs"
                     android:textSize="14.5dp"
@@ -340,9 +378,11 @@
                     android:layout_height="32dp"
                     android:src="@drawable/category_16_00"
                     android:layout_marginRight="10dp"
-                    android:alpha="0.75"/>
+                    android:alpha="0.75"
+                    android:padding="4dp"
+                    android:adjustViewBounds="true" />
                 <TextView
-                    android:layout_width="128dp"
+                    android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:text="Places, Companies &amp; Brands"
                     android:textSize="14.5dp"
@@ -358,9 +398,11 @@
                     android:layout_height="32dp"
                     android:src="@drawable/category_17_00"
                     android:layout_marginRight="10dp"
-                    android:alpha="0.75"/>
+                    android:alpha="0.75"
+                    android:padding="4dp"
+                    android:adjustViewBounds="true" />
                 <TextView
-                    android:layout_width="128dp"
+                    android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:text="Politics &amp; Activism"
                     android:textSize="14.5dp"
@@ -380,9 +422,11 @@
                     android:layout_height="32dp"
                     android:src="@drawable/category_18_00"
                     android:layout_marginRight="10dp"
-                    android:alpha="0.75"/>
+                    android:alpha="0.75"
+                    android:padding="4dp"
+                    android:adjustViewBounds="true" />
                 <TextView
-                    android:layout_width="128dp"
+                    android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:text="Shopping &amp; Market"
                     android:textSize="14.5dp"
@@ -398,9 +442,11 @@
                     android:layout_height="32dp"
                     android:src="@drawable/category_19_00"
                     android:layout_marginRight="10dp"
-                    android:alpha="0.75"/>
+                    android:alpha="0.75"
+                    android:padding="4dp"
+                    android:adjustViewBounds="true" />
                 <TextView
-                    android:layout_width="128dp"
+                    android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:text="Socil sciences"
                     android:textSize="14.5dp"
@@ -420,9 +466,11 @@
                     android:layout_height="32dp"
                     android:src="@drawable/category_20_00"
                     android:layout_marginRight="10dp"
-                    android:alpha="0.75"/>
+                    android:alpha="0.75"
+                    android:padding="4dp"
+                    android:adjustViewBounds="true" />
                 <TextView
-                    android:layout_width="128dp"
+                    android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:text="Sport"
                     android:textSize="14.5dp"
@@ -438,9 +486,11 @@
                     android:layout_height="32dp"
                     android:src="@drawable/category_21_00"
                     android:layout_marginRight="10dp"
-                    android:alpha="0.75"/>
+                    android:alpha="0.75"
+                    android:padding="4dp"
+                    android:adjustViewBounds="true" />
                 <TextView
-                    android:layout_width="128dp"
+                    android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:text="Technology             &amp; computers"
                     android:textSize="14.5dp"
@@ -460,9 +510,11 @@
                     android:layout_height="32dp"
                     android:src="@drawable/category_22_00"
                     android:layout_marginRight="10dp"
-                    android:alpha="0.75"/>
+                    android:alpha="0.75"
+                    android:padding="4dp"
+                    android:adjustViewBounds="true" />
                 <TextView
-                    android:layout_width="128dp"
+                    android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:text="Trips &amp; Places"
                     android:textSize="14.5dp"
@@ -478,9 +530,11 @@
                     android:layout_height="32dp"
                     android:src="@drawable/category_23_00"
                     android:layout_marginRight="10dp"
-                    android:alpha="0.75"/>
+                    android:alpha="0.75"
+                    android:padding="4dp"
+                    android:adjustViewBounds="true" />
                 <TextView
-                    android:layout_width="128dp"
+                    android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:text="Video games"
                     android:textSize="14.5dp"
@@ -500,9 +554,11 @@
                     android:layout_height="32dp"
                     android:src="@drawable/category_24_00"
                     android:layout_marginRight="10dp"
-                    android:alpha="0.75"/>
+                    android:alpha="0.75"
+                    android:padding="4dp"
+                    android:adjustViewBounds="true" />
                 <TextView
-                    android:layout_width="128dp"
+                    android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:text="Work &amp; Business"
                     android:textSize="14.5dp"
@@ -524,4 +580,6 @@
             </LinearLayout>
         </TableRow>
     </TableLayout>
+
 </LinearLayout>
+</ScrollView>
