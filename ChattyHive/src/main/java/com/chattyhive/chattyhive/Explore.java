@@ -1,10 +1,13 @@
 package com.chattyhive.chattyhive;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ImageButton;
+import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -19,31 +22,55 @@ public class Explore extends Activity {
     int lastOffset;
     int joined = 0;
 
+    int tabTopPadding = 0;
+    int tabLeftPadding = 0;
+    int tabRightPadding = 0;
+    int tabBottomPadding = 0;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.explore);
-
+        ListView listView = (ListView) findViewById(R.id.explore_list_listView);
+        LayoutInflater inflater = getLayoutInflater();
+        ViewGroup header = (ViewGroup) inflater.inflate(R.layout.explore_hive_card, listView, false);
+        listView.addHeaderView(header);
         this.Initialize();
     }
 
-    private void Initialize() {
+    private void Initialize(){
         this.controller = Controller.GetRunningController();
         this.lastOffset = 0;
 
-        this.exploreListAdapter = new ExploreListAdapter(this,this.controller.getExploreHives(),(ListView)this.findViewById(R.id.explore_list_listView));
+        this.exploreListAdapter = new ExploreListAdapter(this,this.controller.getExploreHives(), (ListView)this.findViewById(R.id.explore_list_listView));
         ((ListView) this.findViewById(R.id.explore_list_listView)).setAdapter(this.exploreListAdapter);
 
         this.controller.ExploreHivesListChange.add(new EventHandler<EventArgs>(exploreListAdapter, "OnAddItem", EventArgs.class));
-        this.controller.HiveJoined.add(new EventHandler<EventArgs>(this,"onHiveJoined",EventArgs.class));
+        this.controller.HiveJoined.add(new EventHandler<EventArgs>(this,"onHiveJoined", EventArgs.class));
 
         this.findViewById(R.id.explore_action_bar_goBack_button).setOnClickListener(this.backButton);
-        this.controller.exploreHives(0,9);
+        this.findViewById(R.id.explore_button_categories).setOnClickListener(this.categoriesButton);
+        this.findViewById(R.id.explore_tab_list_favourites_button).setOnClickListener(this.outstanding);
+        this.findViewById(R.id.explore_tab_list_location_button).setOnClickListener(this.time);
+        this.findViewById(R.id.explore_tab_list_recent_button).setOnClickListener(this.trending);
+        this.findViewById(R.id.explore_tab_list_trending_button).setOnClickListener(this.users);
+
+        this.tabTopPadding = findViewById(R.id.explore_tab_list_favourites_button).getPaddingTop();
+        this.tabBottomPadding = findViewById(R.id.explore_tab_list_favourites_button).getPaddingBottom();
+        this.tabLeftPadding = findViewById(R.id.explore_tab_list_favourites_button).getPaddingLeft();
+        this.tabRightPadding = findViewById(R.id.explore_tab_list_favourites_button).getPaddingRight();
+
+        findViewById(R.id.explore_tab_list_favourites_button).performClick();
+        //findViewById(R.id.explore_tab_list_favourites_button).setBackgroundResource(R.drawable.explore_tab_list_border);
+        //findViewById(R.id.explore_tab_list_favourites_button).setPadding(tabLeftPadding,tabTopPadding,tabRightPadding,tabBottomPadding);
+//        this.controller.exploreHives(0,9, Controller.ExploreType.OUTSTANDING);
     }
 
     public void GetMoreHives() {
         this.lastOffset += 9;
-        this.controller.exploreHives(this.lastOffset,9);
+        this.controller.exploreHives(this.lastOffset,9, Controller.ExploreType.OUTSTANDING);
+        //findViewById(R.id.explore_tab_list_favourites_button).setBackgroundResource(R.drawable.explore_tab_list_border);
     }
 
     protected View.OnClickListener backButton = new View.OnClickListener() {
@@ -51,15 +78,124 @@ public class Explore extends Activity {
         public void onClick(View v) {
             if (joined > 0)
                 setResult(RESULT_OK);
+
+            /*Intent data = new Intent();
+            data.putExtra("NameURL",hive.getNameURL());
+            setResult(RESULT_OK,data);*/
+
             finish();
         }
     };
 
-    protected View.OnClickListener join_button_click = new View.OnClickListener() {
+    protected View.OnClickListener outstanding = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            String hiveNameURL =((String) ((TextView)v.findViewById(R.id.explore_list_item_name)).getTag());
-            controller.JoinHive(hiveNameURL);
+            if(findViewById(R.id.explore_list_categories_list).getVisibility()==View.VISIBLE){
+                findViewById(R.id.explore_list_categories_list).setVisibility(View.GONE);
+                findViewById(R.id.explore_list_frame).setVisibility(View.VISIBLE);
+            }
+            controller.exploreHives(0,9, Controller.ExploreType.OUTSTANDING);
+            findViewById(R.id.explore_tab_list_favourites_button).setBackgroundResource(R.drawable.explore_tab_list_border);
+            findViewById(R.id.explore_tab_list_favourites_button).setPadding(tabLeftPadding,tabTopPadding,tabRightPadding,tabBottomPadding);
+
+
+            findViewById(R.id.explore_tab_list_location_button).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
+            findViewById(R.id.explore_tab_list_location_button).setPadding(tabLeftPadding,tabTopPadding,tabRightPadding,tabBottomPadding);
+            findViewById(R.id.explore_tab_list_recent_button).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
+            findViewById(R.id.explore_tab_list_recent_button).setPadding(tabLeftPadding,tabTopPadding,tabRightPadding,tabBottomPadding);
+            findViewById(R.id.explore_tab_list_trending_button).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
+            findViewById(R.id.explore_tab_list_trending_button).setPadding(tabLeftPadding,tabTopPadding,tabRightPadding,tabBottomPadding);
+            findViewById(R.id.explore_button_categories).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
+            findViewById(R.id.explore_button_categories).setPadding(tabLeftPadding,tabTopPadding,tabRightPadding,tabBottomPadding);
+        }
+    };
+    protected View.OnClickListener time = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if(findViewById(R.id.explore_list_categories_list).getVisibility()==View.VISIBLE){
+                findViewById(R.id.explore_list_categories_list).setVisibility(View.GONE);
+                findViewById(R.id.explore_list_frame).setVisibility(View.VISIBLE);
+            }
+            controller.exploreHives(0,9, Controller.ExploreType.CREATION_DATE);
+            findViewById(R.id.explore_tab_list_location_button).setBackgroundResource(R.drawable.explore_tab_list_border);
+            findViewById(R.id.explore_tab_list_location_button).setPadding(tabLeftPadding,tabTopPadding,tabRightPadding,tabBottomPadding);
+
+            findViewById(R.id.explore_tab_list_favourites_button).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
+            findViewById(R.id.explore_tab_list_recent_button).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
+            findViewById(R.id.explore_tab_list_trending_button).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
+            findViewById(R.id.explore_button_categories).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
+
+            findViewById(R.id.explore_tab_list_favourites_button).setPadding(tabLeftPadding,tabTopPadding,tabRightPadding,tabBottomPadding);
+            findViewById(R.id.explore_tab_list_location_button).setPadding(tabLeftPadding,tabTopPadding,tabRightPadding,tabBottomPadding);
+            findViewById(R.id.explore_tab_list_recent_button).setPadding(tabLeftPadding,tabTopPadding,tabRightPadding,tabBottomPadding);
+            findViewById(R.id.explore_tab_list_trending_button).setPadding(tabLeftPadding,tabTopPadding,tabRightPadding,tabBottomPadding);
+            findViewById(R.id.explore_button_categories).setPadding(tabLeftPadding,tabTopPadding,tabRightPadding,tabBottomPadding);
+        }
+    };
+    protected View.OnClickListener trending = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if(findViewById(R.id.explore_list_categories_list).getVisibility()==View.VISIBLE){
+                findViewById(R.id.explore_list_categories_list).setVisibility(View.GONE);
+                findViewById(R.id.explore_list_frame).setVisibility(View.VISIBLE);
+            }
+            controller.exploreHives(0,9, Controller.ExploreType.TRENDING);
+            findViewById(R.id.explore_tab_list_recent_button).setBackgroundResource(R.drawable.explore_tab_list_border);
+
+            findViewById(R.id.explore_tab_list_location_button).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
+            findViewById(R.id.explore_tab_list_favourites_button).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
+            findViewById(R.id.explore_tab_list_trending_button).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
+            findViewById(R.id.explore_button_categories).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
+
+            findViewById(R.id.explore_tab_list_favourites_button).setPadding(tabLeftPadding,tabTopPadding,tabRightPadding,tabBottomPadding);
+            findViewById(R.id.explore_tab_list_location_button).setPadding(tabLeftPadding,tabTopPadding,tabRightPadding,tabBottomPadding);
+            findViewById(R.id.explore_tab_list_recent_button).setPadding(tabLeftPadding,tabTopPadding,tabRightPadding,tabBottomPadding);
+            findViewById(R.id.explore_tab_list_trending_button).setPadding(tabLeftPadding,tabTopPadding,tabRightPadding,tabBottomPadding);
+            findViewById(R.id.explore_button_categories).setPadding(tabLeftPadding,tabTopPadding,tabRightPadding,tabBottomPadding);
+        }
+    };
+    protected View.OnClickListener users = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if(findViewById(R.id.explore_list_categories_list).getVisibility()==View.VISIBLE){
+                findViewById(R.id.explore_list_categories_list).setVisibility(View.GONE);
+                findViewById(R.id.explore_list_frame).setVisibility(View.VISIBLE);
+            }
+            controller.exploreHives(0,9, Controller.ExploreType.USERS);
+            findViewById(R.id.explore_tab_list_trending_button).setBackgroundResource(R.drawable.explore_tab_list_border);
+
+            findViewById(R.id.explore_tab_list_location_button).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
+            findViewById(R.id.explore_tab_list_favourites_button).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
+            findViewById(R.id.explore_tab_list_recent_button).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
+            findViewById(R.id.explore_button_categories).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
+
+            findViewById(R.id.explore_tab_list_favourites_button).setPadding(tabLeftPadding,tabTopPadding,tabRightPadding,tabBottomPadding);
+            findViewById(R.id.explore_tab_list_location_button).setPadding(tabLeftPadding,tabTopPadding,tabRightPadding,tabBottomPadding);
+            findViewById(R.id.explore_tab_list_recent_button).setPadding(tabLeftPadding,tabTopPadding,tabRightPadding,tabBottomPadding);
+            findViewById(R.id.explore_tab_list_trending_button).setPadding(tabLeftPadding,tabTopPadding,tabRightPadding,tabBottomPadding);
+            findViewById(R.id.explore_button_categories).setPadding(tabLeftPadding,tabTopPadding,tabRightPadding,tabBottomPadding);
+        }
+    };
+
+    protected View.OnClickListener categoriesButton = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if(findViewById(R.id.explore_list_categories_list).getVisibility()==View.GONE){
+                findViewById(R.id.explore_list_categories_list).setVisibility(View.VISIBLE);
+                findViewById(R.id.explore_list_frame).setVisibility(View.GONE);
+            }
+            findViewById(R.id.explore_button_categories).setBackgroundResource(R.drawable.explore_tab_list_border);
+
+            findViewById(R.id.explore_tab_list_location_button).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
+            findViewById(R.id.explore_tab_list_favourites_button).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
+            findViewById(R.id.explore_tab_list_recent_button).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
+            findViewById(R.id.explore_tab_list_trending_button).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
+
+            findViewById(R.id.explore_tab_list_favourites_button).setPadding(tabLeftPadding,tabTopPadding,tabRightPadding,tabBottomPadding);
+            findViewById(R.id.explore_tab_list_location_button).setPadding(tabLeftPadding,tabTopPadding,tabRightPadding,tabBottomPadding);
+            findViewById(R.id.explore_tab_list_recent_button).setPadding(tabLeftPadding,tabTopPadding,tabRightPadding,tabBottomPadding);
+            findViewById(R.id.explore_tab_list_trending_button).setPadding(tabLeftPadding,tabTopPadding,tabRightPadding,tabBottomPadding);
+            findViewById(R.id.explore_button_categories).setPadding(tabLeftPadding,tabTopPadding,tabRightPadding,tabBottomPadding);
         }
     };
 
@@ -67,10 +203,14 @@ public class Explore extends Activity {
         this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (joined == 0)
-                    ((ImageButton)findViewById(R.id.explore_action_bar_goBack_button)).setBackgroundColor(Color.GREEN);
+                if (joined == 0) {
+                    findViewById(R.id.explore_action_bar_goBack_button).setBackgroundResource(R.drawable.explore_action_bar_hive_joined_border);
+                    findViewById(R.id.explore_action_bar_hive_added).setVisibility(View.VISIBLE);
+                    ((ImageView)findViewById(R.id.explore_action_bar_goBack_image)).setImageResource(R.drawable.explore_new_hive_back_with_subscriptions);
+                }
                 joined++;
                 ((TextView)findViewById(R.id.explore_action_bar_number_text)).setText(String.valueOf(joined));
+
             }
         });
     }
@@ -78,7 +218,7 @@ public class Explore extends Activity {
     @Override
     protected void onDestroy(){
         this.controller.ExploreHivesListChange.remove(new EventHandler<EventArgs>(exploreListAdapter, "OnAddItem", EventArgs.class));
-        this.controller.HiveJoined.remove(new EventHandler<EventArgs>(this,"onHiveJoined",EventArgs.class));
+        this.controller.HiveJoined.remove(new EventHandler<EventArgs>(this, "onHiveJoined", EventArgs.class));
 
         exploreListAdapter = null;
         controller = null;

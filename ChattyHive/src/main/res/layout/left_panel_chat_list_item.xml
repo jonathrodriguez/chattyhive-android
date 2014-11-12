@@ -1,13 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#00000000"
+    android:paddingBottom="@dimen/left_panel_list_item_margin_bottom">
+<RelativeLayout
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/left_panel_chat_list_item_background"
     android:focusableInTouchMode="false"
     android:id="@+id/left_panel_chat_list_item_top_view"
-    android:layout_marginBottom="@dimen/left_panel_list_item_margin_bottom"
+    android:layout_marginRight="@dimen/left_panel_list_item_margin_right"
     android:minHeight="70dp"
     android:visibility="visible">
 
@@ -42,7 +47,9 @@
         android:layout_marginTop="@dimen/left_panel_chat_list_item_little_img_margin_top"
         android:layout_alignLeft="@+id/left_panel_chat_list_item_big_img"
         android:layout_alignParentTop="false"
-        android:layout_alignTop="@+id/left_panel_chat_list_item_big_img" />
+        android:layout_alignTop="@+id/left_panel_chat_list_item_big_img"
+        android:paddingBottom="@dimen/left_panel_chat_list_item_little_img_padding_bottom"
+        android:paddingRight="@dimen/left_panel_chat_list_item_little_img_padding_right" />
 
     <TextView
         android:layout_width="fill_parent"
@@ -135,3 +142,4 @@
         android:visibility="visible" />
 
 </RelativeLayout>
+</FrameLayout>

@@ -3,7 +3,6 @@ package com.chattyhive.chattyhive;
 import android.app.Activity;
 import android.content.Context;
 //import android.util.Log;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.ImageView;
@@ -12,12 +11,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
-import com.chattyhive.backend.businessobjects.Chats.Group;
+import com.chattyhive.backend.businessobjects.Chats.Chat;
 import com.chattyhive.backend.businessobjects.Chats.Hive;
 import com.chattyhive.backend.util.events.EventArgs;
 import com.chattyhive.backend.util.events.EventHandler;
 import com.chattyhive.chattyhive.framework.Util.StaticMethods;
-import com.chattyhive.chattyhive.framework.Util.ViewPair;
 
 /**
  * Created by Jonathan on 7/03/14.
@@ -61,11 +59,17 @@ public class LeftPanel {
         hives.setOnClickListener(left_panel_tab_button_click);
         friends.setOnClickListener(left_panel_tab_button_click);
 
+        TypedValue alpha = new TypedValue();
+        this.context.getResources().getValue(R.color.left_panel_list_filter_image_alpha, alpha, true);
+        StaticMethods.SetAlpha(((Activity) this.context).findViewById(R.id.left_panel_list_filter_help), alpha.getFloat());
+        this.context.getResources().getValue(R.color.left_panel_action_bar_search_button_alpha, alpha, true);
+        StaticMethods.SetAlpha(((Activity) this.context).findViewById(R.id.left_panel_search_button), alpha.getFloat());
+
         this.leftPanelListAdapter = new LeftPanelListAdapter(this.context);
         ((ListView)((Activity)this.context).findViewById(R.id.left_panel_element_list)).setAdapter(this.leftPanelListAdapter);
 
         Hive.HiveListChanged.add(new EventHandler<EventArgs>(leftPanelListAdapter, "OnAddItem", EventArgs.class));
-        Group.GroupListChanged.add(new EventHandler<EventArgs>(leftPanelListAdapter, "OnAddItem", EventArgs.class));
+        Chat.ChatListChanged.add(new EventHandler<EventArgs>(leftPanelListAdapter, "OnAddItem", EventArgs.class));
 
         this.leftPanelListAdapter.ListSizeChanged.add(new EventHandler<EventArgs>(this,"OnListSizeChanged",EventArgs.class));
 
@@ -178,48 +182,30 @@ public class LeftPanel {
     protected View.OnClickListener OpenChat = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            View chatView;
-            View actionBarView;
             MainChat mainChat;
 
-            ViewPair viewPair = ((Main)context).ShowLayout(R.layout.main_panel_chat_layout,R.layout.chat_action_bar);
-
-            actionBarView = viewPair.getActionBarView();
-            chatView = viewPair.getMainView();
             int visibleList = leftPanelListAdapter.GetVisibleList();
 
+            Chat chatChat = null;
+
+            /*if (((Main)context).ActiveLayoutID == R.layout.main_panel_chat_layout) {
+                ((Main)context).controller.Leave((String)((Activity)context).findViewById(R.id.main_panel_chat_name).getTag());
+            }*/
+
+
             if (visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Hives)) {
-                /*if (((Main)context).ActiveLayoutID == R.layout.main_panel_chat_layout) {
-                        ((Main)context).controller.Leave((String)((Activity)context).findViewById(R.id.main_panel_chat_name).getTag());
-                    }*/
-
-                Hive h = ((Hive)v.getTag(R.id.BO_Hive));
-
-
-                ((TextView)actionBarView.findViewById(R.id.main_panel_chat_name)).setText(h.getName());
-                actionBarView.findViewById(R.id.main_panel_chat_name).setTag(h.getPublicChat().getChannelUnicode());
-
-                actionBarView.findViewById(R.id.main_panel_chat_menu_icon).setOnClickListener(((Main)context).menuIcon_ClickListener);
-                actionBarView.findViewById(R.id.main_panel_chat_icon).setOnClickListener(((Main)context).appIcon_ClickListener);
-                ((Main)context).appIcon_ClickListener.onClick(actionBarView.findViewById(R.id.main_panel_chat_icon));
-
-                mainChat = new MainChat(context,h.getPublicChat().getChannelUnicode());
-                chatView.findViewById(R.id.main_panel_chat_send_icon).setOnClickListener(mainChat.send_button_click);
+                chatChat = ((Hive)v.getTag(R.id.BO_Hive)).getPublicChat();
             } else if (visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Chats)) {
-                Group g = ((Group)v.getTag(R.id.BO_Chat));
-
-                ((TextView)actionBarView.findViewById(R.id.main_panel_chat_name)).setText(g.getName());
-                actionBarView.findViewById(R.id.main_panel_chat_name).setTag(g.getChannelUnicode());
-
-                actionBarView.findViewById(R.id.main_panel_chat_menu_icon).setOnClickListener(((Main)context).menuIcon_ClickListener);
-                actionBarView.findViewById(R.id.main_panel_chat_icon).setOnClickListener(((Main)context).appIcon_ClickListener);
-                ((Main)context).appIcon_ClickListener.onClick(actionBarView.findViewById(R.id.main_panel_chat_icon));
-
-                mainChat = new MainChat(context,g.getChannelUnicode());
-                chatView.findViewById(R.id.main_panel_chat_send_icon).setOnClickListener(mainChat.send_button_click);
+                chatChat = ((Chat)v.getTag(R.id.BO_Chat));
             } /*else if (visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Mates)) {
 
             }*/
+            if (chatChat != null) {
+                mainChat = new MainChat(context, chatChat);
+            }
         }
     };
+
+
+
 }

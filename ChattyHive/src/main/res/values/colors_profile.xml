@@ -85,6 +85,6 @@
 
     <!-- _____________________________________________________________________ -->
     <!-- USER PROFILE:  Main panel colors -->
-
+    <color name="profile_photo_border_color">#c0c0c0</color>
     <color name="profile_photo_background_color">#00000000</color>
 </resources>

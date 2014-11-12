@@ -7,24 +7,26 @@
     android:background="#111111">
 
         <ImageButton
+            android:id="@+id/main_panel_chat_icon"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:id="@+id/main_panel_chat_icon"
             android:background="#111111"
             android:src="@drawable/registro_load_picture"
             android:scaleType="fitCenter"
-            android:padding="5dp" />
+            android:padding="5dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"/>
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:orientation="vertical"
             android:layout_width="0dp"
             android:layout_height="48dp"
             android:layout_weight="1"
-            android:background="#111111"
-            android:paddingLeft="5dp"
-            android:paddingTop="0dp"
+            android:background="#1d1d1d"
+            android:paddingLeft="8dp"
+            android:paddingTop="4dp"
             android:paddingRight="5dp"
-            android:paddingBottom="4dp">
+            android:gravity="top|left">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -33,7 +35,12 @@
                 android:text="Medium Text"
                 android:id="@+id/main_panel_chat_name"
                 android:textColor="#fff9ff"
-                android:textSize="20dp" />
+                android:textSize="16dp"
+                android:textStyle="bold"
+                android:lines="1"
+                android:maxLines="1"
+                android:minLines="1"
+                android:ellipsize="end" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -41,17 +48,21 @@
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:text="Small Text"
                 android:id="@+id/main_panel_chat_info"
-                android:textColor="#ebeff4"
-                android:textSize="14dp"
-                android:layout_marginTop="-2dp" />
+                android:textColor="#c0c0c0"
+                android:textSize="13.5dp"
+                android:ellipsize="end"
+                android:lines="1"
+                android:maxLines="1"
+                android:minLines="1" />
         </LinearLayout>
 
         <ImageButton
-            android:layout_width="wrap_content"
+            android:layout_width="48dp"
             android:layout_height="48dp"
-            android:background="#111111"
-            android:src="@drawable/home_menu"
+            android:background="#1d1d1d"
+            android:src="@drawable/chats_opciones_chat"
             android:scaleType="centerInside"
             android:id="@+id/main_panel_chat_menu_icon"
-            android:padding="5dp" />
+            android:padding="10dp"
+            android:alpha="1"/>
 </LinearLayout>

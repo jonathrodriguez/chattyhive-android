@@ -14,29 +14,26 @@
         android:scrollingCache="true"
         android:smoothScrollbar="true"
         android:fastScrollEnabled="true"
-        android:transcriptMode="normal"
+        android:transcriptMode="alwaysScroll"
         android:choiceMode="none"
-        android:divider="@null"/>
+        android:divider="@null"
+        android:stackFromBottom="true"
+        android:cacheColorHint="#00000000"/>
 
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#ffffff">
-
-        <ImageButton
-            android:layout_width="46dp"
-            android:layout_height="46dp"
+        android:layout_height="55dp"
+        android:background="@drawable/border_text_bar"
+        android:gravity="center">
+        <ImageView
+            android:layout_width="32dp"
+            android:layout_height="32dp"
             android:id="@+id/main_panel_chat_smyles_icon"
-            android:layout_weight="0"
-            android:paddingLeft="13dp"
-            android:paddingRight="6dp"
-            android:paddingTop="11dp"
-            android:paddingBottom="8dp"
-            android:src="@drawable/home_group"
-            android:scaleType="fitCenter"
-            android:background="#ffffff"
-            android:layout_gravity="center_horizontal|bottom" />
+            android:src="@drawable/launcher_launcher_a"
+            android:layout_gravity="center"
+            android:layout_marginLeft="11dp"
+            android:layout_marginRight="10dp"/>
 
         <EditText
             android:layout_width="0dp"
@@ -44,21 +41,28 @@
             android:inputType="textMultiLine"
             android:ems="10"
             android:id="@+id/main_panel_chat_textBox"
-            android:layout_weight="1"
-            android:layout_gravity="center" />
+            android:layout_weight="0.5"
+            android:gravity="center|left"
+            android:background="@null"
+            android:textColorHint="#808080"
+            android:hint="Write a message.."
+            android:textSize="18.5dp"/>
 
-        <ImageButton
-            android:layout_width="46dp"
-            android:layout_height="46dp"
+        <ImageView
+            android:layout_width="26dp"
+            android:layout_height="26dp"
+            android:id="@+id/main_panel_chat_sticker_icon"
+            android:src="@drawable/chats_emoticons"
+            android:layout_gravity="center"
+            android:alpha="0.5"/>
+        <ImageView
+            android:layout_width="26dp"
+            android:layout_height="26dp"
             android:id="@+id/main_panel_chat_send_icon"
-            android:paddingTop="11dp"
-            android:paddingLeft="6dp"
-            android:paddingRight="13dp"
-            android:paddingBottom="8dp"
-            android:background="#ffffff"
-            android:src="@drawable/chats_reply"
-            android:scaleType="fitCenter"
-            android:layout_gravity="center_horizontal|bottom" />
-
+            android:src="@drawable/chats_send"
+            android:layout_gravity="center"
+            android:alpha="0.5"
+            android:layout_marginRight="15dp"
+            android:layout_marginLeft="15dp"/>
     </LinearLayout>
 </LinearLayout>

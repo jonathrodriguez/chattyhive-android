@@ -43,7 +43,6 @@
             android:textSize="@dimen/hive_description_text_size"
             android:gravity="left"
             android:paddingTop="@dimen/hive_description_text_padding_top"
-
             android:textColor="@color/menu_text_white"/>
     </LinearLayout>
 </LinearLayout>

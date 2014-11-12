@@ -1,8 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#ededed">
+
+<!--     <TextView
+        android:id="@+id/explore_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="18.5dp"
+        android:layout_marginLeft="11dp"
+        android:text="Hives for you"
+        android:textSize="17.5dp"
+        android:textColor="#333333"
+        />-->
 
     <ListView
         android:layout_width="match_parent"
@@ -10,5 +24,6 @@
         android:id="@+id/explore_list_listView"
         android:layout_gravity="center"
         android:background="#ededed"
-        android:divider="@null"/>
-</FrameLayout>
+        android:divider="@null"
+        />
+</LinearLayout>

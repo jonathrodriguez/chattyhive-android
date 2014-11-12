@@ -1,155 +1,436 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal" android:layout_width="match_parent"
+    android:id="@+id/explore_list_item"
     android:layout_height="wrap_content"
-    android:background="#ededed"
-    android:padding="2dp">
+    android:layout_width="match_parent"
+    android:orientation="vertical">
 
+    <LinearLayout
+        android:id="@+id/explore_list_item_short"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#ededed"
+        android:visibility="visible">
 
-
-        <TextView
-            android:layout_width="76dp"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="100/100"
-            android:id="@+id/explore_list_item_image_and_score_textview"
-            android:textColor="#333"
-            android:textSize="12sp"
-            android:layout_gravity="center"
-            android:drawableTop="@drawable/pestanha_chats_mas_opciones"
-            android:drawablePadding="9dp"
-            android:gravity="center"
-            android:background="#fff"
-            android:padding="9dp" />
+            android:orientation="vertical"
+            android:layout_marginLeft="8.5dp"
+            android:layout_marginRight="8.5dp"
+            android:layout_marginBottom="20dp"
+            android:layout_marginTop="3.5dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/home_card_background">
+
+    <RelativeLayout
+        android:layout_width="79.5dp"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/explore_list_item_collapsed_hive_image"
+            android:layout_width="58dp"
+            android:layout_height="58dp"
+            android:src="@drawable/launcher_launcher_b"
+            android:layout_marginTop="9.5dp"
+            android:layout_marginLeft="9.5dp"
+            android:layout_marginRight="12dp"/>
+    </RelativeLayout>
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:background="#ffffff">
-
+        android:layout_height="wrap_content">
         <LinearLayout
-            android:orientation="horizontal"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_weight="1"
-            android:background="#fff">
-
-            <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:layout_weight="1"
-                android:background="#fff">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="Medium Text"
-                    android:id="@+id/explore_list_item_name"
-                    android:layout_marginTop="9dp"
-                    android:layout_marginBottom="4dp"
-                    android:layout_marginRight="9dp"
-                    android:layout_marginLeft="2dp"
-                    android:autoText="false"
-                    android:background="#ffffff"
-                    android:textColor="#000" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:text="Small Text"
-                    android:id="@+id/explore_list_item_text"
-                    android:layout_marginLeft="2dp"
-                    android:layout_marginRight="9dp"
-                    android:layout_marginBottom="9dp"
-                    android:background="#ffffff"
-                    android:textColor="#000" />
-            </LinearLayout>
-
-            <ImageButton
-                android:layout_width="10dp"
-                android:layout_height="20dp"
-                android:id="@+id/explore_list_item_menu_image"
-                android:src="@drawable/abc_ic_menu_moreoverflow_normal_holo_light"
-                android:scaleType="centerCrop"
-                android:background="#ffffff"
-                android:layout_marginTop="5dp"
-                android:layout_marginRight="5dp" />
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginRight="14dp">
+            <TextView
+                android:id="@+id/explore_list_item_collapsed_hive_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=":What to do when you are very"
+                android:textSize="16dp"
+                android:textColor="#202020"
+                android:layout_marginTop="14dp"
+                android:layout_marginBottom="5dp"
+                android:textStyle="bold"
+                android:maxLines="1"/>
+            <TextView
+                android:id="@+id/explore_list_item_collapsed_hive_description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Share your best thoughts on how to kill time when you have nothing else to do!"
+                android:textSize="12.5dp"
+                android:maxLines="2"
+                android:layout_marginBottom="5dp"
+                android:textColor="#333333"/>
         </LinearLayout>
 
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="fill_parent"
-            android:layout_height="16dp"
-            android:layout_marginBottom="9dp"
-            android:layout_marginLeft="2dp"
-            android:layout_weight="0"
-            android:layout_marginRight="5dp"
-            android:layout_gravity="right"
-            android:gravity="right"
-            android:background="#fff">
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:layout_marginBottom="10dp">
 
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="wrap_content"
-                android:layout_height="fill_parent"
-                android:layout_marginLeft="20dp"
-                android:background="#fff">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:text="users"
-                    android:id="@+id/explore_list_item_users_textview"
-                    android:background="#ffffff"
-                    android:textColor="#000"
-                    android:gravity="center_vertical|center_horizontal" />
+                android:layout_height="fill_parent">
 
                 <ImageView
                     android:layout_width="12dp"
                     android:layout_height="12dp"
-                    android:id="@+id/explore_list_item_users_image_view"
+                    android:id="@+id/explore_list_item_collapsed_category_image"
                     android:src="@drawable/pestanha_chats_arroba"
                     android:scaleType="fitCenter"
                     android:layout_gravity="center"
-                    android:background="#ffffff" />
+                    android:alpha="0.5"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:text="Moods"
+                    android:textSize="12dp"
+                    android:layout_gravity="bottom"
+                    android:id="@+id/explore_list_item_collapsed_category_text"
+                    android:textColor="#808080"
+                    android:gravity="left|top"
+                    android:layout_marginLeft="7dp"
+                    android:layout_marginRight="17dp"
+                    android:maxWidth="120dp"/>
             </LinearLayout>
 
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="wrap_content"
-                android:layout_height="fill_parent"
-                android:gravity="right"
-                android:layout_marginLeft="20dp"
-                android:background="#fff">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:text="category"
-                    android:id="@+id/explore_list_item_category_textview"
-                    android:background="#ffffff"
-                    android:textColor="#000"
-                    android:gravity="center_vertical|center_horizontal" />
-
+                android:layout_height="fill_parent">
                 <ImageView
                     android:layout_width="12dp"
                     android:layout_height="12dp"
                     android:id="@+id/explore_list_item_category_imageview"
-                    android:src="@drawable/pestanha_hives_location"
+                    android:src="@drawable/pestanha_chats_arroba"
                     android:layout_gravity="center"
                     android:scaleType="fitCenter"
-                    android:background="#ffffff" />
+                    android:alpha="0.5"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:text="143"
+                    android:textSize="12dp"
+                    android:id="@+id/explore_list_item_collapsed_users_number"
+                    android:textColor="#808080"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:layout_marginLeft="5dp"/>
             </LinearLayout>
-
         </LinearLayout>
+    </LinearLayout>
+</LinearLayout>
+</LinearLayout>
 
     </LinearLayout>
+    <LinearLayout
+        android:id="@+id/explore_hive_card"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#ededed"
+        android:visibility="gone">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/home_card_background"
+            android:layout_marginLeft="8.5dp"
+            android:layout_marginRight="8.5dp"
+            android:layout_marginBottom="20dp"
+            android:layout_marginTop="3.5dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingTop="12dp"
+                android:paddingBottom="2dp"
+                android:paddingLeft="11dp"
+                android:paddingRight="11dp">
+
+                <TextView
+                    android:id="@+id/explore_list_item_expanded_hive_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/explore_hive_name"
+                    android:textColor="#111111"
+                    android:textSize="18dp"
+                    android:maxLines="2"
+                    android:textStyle="bold"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingTop="14.5dp">
+                    <ImageView
+                        android:id="@+id/explore_list_item_expanded_hive_image"
+                        android:layout_width="70dp"
+                        android:layout_height="70dp"
+                        android:src="@drawable/launcher_launcher_b"/>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingTop="6dp"
+                        android:paddingRight="0dp"
+                        android:paddingLeft="9.5dp">
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:paddingBottom="5.5dp">
+                            <ImageView
+                                android:id="@+id/explore_list_item_expanded_category_image"
+                                android:layout_width="16dp"
+                                android:layout_height="16dp"
+                                android:layout_marginRight="4dp"
+                                android:src="@drawable/pestanha_chats_arroba"/>
+                            <TextView
+                                android:id="@+id/explore_list_item_expanded_category_text"
+                                android:layout_width="wrap_content"
+                                android:layout_height="16dp"
+                                android:text="Videojuegos"
+                                android:textColor="#111111"
+                                android:textSize="12dp"
+                                android:layout_gravity="center"/>
+                        </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:paddingBottom="5.5dp">
+                            <ImageView
+                                android:layout_width="16dp"
+                                android:layout_height="16dp"
+                                android:layout_marginRight="4dp"
+                                android:src="@drawable/pestanha_chats_arroba"/>
+                            <TextView
+                                android:id="@+id/explore_list_item_expanded_users_number"
+                                android:layout_width="wrap_content"
+                                android:layout_height="16dp"
+                                android:text="20 mates"
+                                android:textColor="#111111"
+                                android:textSize="12dp"
+                                android:layout_gravity="center"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="16dp"
+                                android:text=" joined the hive"
+                                android:textColor="#808080"
+                                android:textSize="12dp"
+                                android:layout_gravity="center"/>
+                        </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+                            <ImageView
+                                android:layout_width="16dp"
+                                android:layout_height="16dp"
+                                android:layout_marginRight="4dp"
+                                android:src="@drawable/pestanha_hives_language_opcion3"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="16dp"
+                                android:text="Hive chat languages: "
+                                android:textColor="#808080"
+                                android:textSize="12dp"
+                                android:layout_gravity="center"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="16dp"
+                                android:text="English"
+                                android:textColor="#111111"
+                                android:textSize="12dp"
+                                android:layout_gravity="center"/>
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+                <TextView
+                    android:id="@+id/explore_list_item_expanded_hive_description"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="This is a topic to discuss about Notch's game. News, maps, experiences... For suport and reporting problems join :Minecraft - Support"
+                    android:textSize="13.25sp"
+                    android:textColor="#111111"
+                    android:maxLines="3"
+                    android:paddingTop="13dp"
+                    android:paddingRight="25dp"
+                    android:paddingLeft="0dp"
+                    android:lineSpacingExtra="4.25sp"/>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginLeft="2dp"
+                    android:layout_marginTop="12dp">
+                    <ImageView
+                        android:layout_width="15dp"
+                        android:layout_height="15dp"
+                        android:src="@drawable/explore_new_hive_tag"
+                        android:alpha="0.75"
+                        android:layout_gravity="center"/>
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_weight="3">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="12dp"
+                            android:text="sandbox"
+                            android:gravity="top"
+                            android:layout_marginLeft="5.5dp"
+                            android:textColor="#333333"
+                            android:background="@drawable/explore_tags_border"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="12dp"
+                            android:text="sandbox"
+                            android:gravity="top"
+                            android:layout_marginLeft="5.5dp"
+                            android:textColor="#333333"
+                            android:background="@drawable/explore_tags_border"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="12dp"
+                            android:text="sandbox"
+                            android:gravity="top"
+                            android:layout_marginLeft="5.5dp"
+                            android:textColor="#333333"
+                            android:background="@drawable/explore_tags_border"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="12dp"
+                            android:text="survival"
+                            android:layout_marginLeft="5.5dp"
+                            android:textColor="#333333"
+                            android:background="@drawable/explore_tags_border"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="12dp"
+                            android:text="notch"
+                            android:layout_marginLeft="5.5dp"
+                            android:textColor="#333333"
+                            android:background="@drawable/explore_tags_border"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="12dp"
+                            android:text="indie"
+                            android:layout_marginLeft="5.5dp"
+                            android:textColor="#333333"
+                            android:background="@drawable/explore_tags_border"/>
+                    </LinearLayout>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="19dp"
+                    android:layout_marginBottom="12dp">
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <ImageView
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:src="@drawable/pestanha_hives_share"
+                            android:layout_marginRight="10dp"/>
+                        <TextView
+                            android:layout_width="1px"
+                            android:layout_height="16.5dp"
+                            android:background="#c0c0c0"
+                            android:layout_gravity="center"/>
+                        <ImageView
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:src="@drawable/pestanha_hives_report"
+                            android:layout_marginLeft="10dp"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="right">
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+                            <LinearLayout
+                            android:id="@+id/explore_join_button"
+                            android:visibility="visible"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center"
+                            android:background="@drawable/explore_button_border"
+                            android:paddingLeft="10dp"
+                            android:paddingRight="10dp">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="30dp"
+                                android:gravity="center"
+                                android:text="Join hive"
+                                android:textSize="16dp"
+                                android:textColor="#E87400"
+                                android:layout_marginRight="7dp"/>
+                                <ImageView
+                                    android:layout_width="20dp"
+                                    android:layout_height="20dp"
+                                    android:src="@drawable/explore_new_hive_join_hive"/>
+                        </LinearLayout>
+                            <LinearLayout
+                                android:id="@+id/explore_chat_button2"
+                                android:visibility="gone"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:gravity="center"
+                                android:background="@drawable/explore_button_border"
+                                android:paddingLeft="10dp"
+                                android:paddingRight="10dp">
+                                <ImageView
+                                    android:layout_width="20dp"
+                                    android:layout_height="20dp"
+                                    android:src="@drawable/launcher_launcher_a"/>
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="30dp"
+                                    android:gravity="center"
+                                    android:text="Public Chat"
+                                    android:textSize="16dp"
+                                    android:textColor="#333333"
+                                    android:layout_marginLeft="7dp"/>
+                            </LinearLayout>
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
 </LinearLayout>

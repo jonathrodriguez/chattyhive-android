@@ -2,8 +2,8 @@ package com.chattyhive.chattyhive;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,18 +13,19 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.chattyhive.backend.businessobjects.Chats.Chat;
-import com.chattyhive.backend.businessobjects.Chats.GroupKind;
+import com.chattyhive.backend.businessobjects.Chats.ChatKind;
+import com.chattyhive.backend.businessobjects.Chats.Conversation;
 import com.chattyhive.backend.businessobjects.Chats.Messages.Message;
-import com.chattyhive.backend.contentprovider.DataProvider;
-import com.chattyhive.backend.contentprovider.formats.CHAT_ID;
-import com.chattyhive.backend.contentprovider.formats.MESSAGE_INTERVAL;
-import com.chattyhive.backend.contentprovider.server.ServerCommand;
+import com.chattyhive.backend.businessobjects.Image;
 import com.chattyhive.backend.util.events.EventArgs;
+import com.chattyhive.backend.util.events.EventHandler;
 import com.chattyhive.backend.util.formatters.DateFormatter;
 import com.chattyhive.backend.util.formatters.TimestampFormatter;
 import com.chattyhive.chattyhive.framework.Util.StaticMethods;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Date;
 
 
@@ -36,22 +37,30 @@ public class ChatListAdapter extends BaseAdapter {
     private ListView listView;
     private LayoutInflater inflater;
 
-    private GroupKind chatKind;
-    private Chat channelChat;
+    private ChatKind chatKind;
+    private Conversation channelConversation;
 
-    public ChatListAdapter (Context activityContext,Chat channelChat) {
-        this.channelChat = channelChat;
+    private ArrayList<Message> messages;
+
+    public ChatListAdapter (Context activityContext,Conversation channelConversation) {
+        this.channelConversation = channelConversation;
 
         this.context = activityContext;
         this.inflater = ((Activity)this.context).getLayoutInflater();
 
         this.listView = ((ListView)((Activity)this.context).findViewById(R.id.left_panel_element_list));
-        this.chatKind = this.channelChat.getParent().getGroupKind();
+        this.chatKind = this.channelConversation.getParent().getChatKind();
+
+        this.messages = new ArrayList<Message>(this.channelConversation.getMessages());
+        this.notifyDataSetChanged();
     }
 
-    public void OnAddItem(Object sender, EventArgs args) {
+    public void OnAddItem(Object sender, EventArgs args) { //TODO: This is only a patch. Message collection must be updated on UIThread.
         ((Activity)this.context).runOnUiThread(new Runnable(){
             public void run() {
+                messages = null;
+                while (messages == null)
+                    try { messages = new ArrayList<Message>(channelConversation.getMessages()); } catch (Exception e) { messages = null; }
                 notifyDataSetChanged();
             }
         });
@@ -59,7 +68,7 @@ public class ChatListAdapter extends BaseAdapter {
 
     @Override
     public int getItemViewType(int position) {
-        Message m = this.channelChat.getMessageByIndex(position);
+        Message m = this.messages.get(position);
 
         if (m.getUser() == null) {
             if (m.getMessageContent().getContentType().equalsIgnoreCase("DATE_SEPARATOR"))
@@ -80,12 +89,12 @@ public class ChatListAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return this.channelChat.getCount();
+        return this.messages.size();
     }
 
     @Override
     public Object getItem(int position){
-        return this.channelChat.getMessageByIndex(position);
+        return this.messages.get(position);
     }
 
     @Override
@@ -155,6 +164,7 @@ public class ChatListAdapter extends BaseAdapter {
                         holder.messageText = (TextView) convertView.findViewById(R.id.main_panel_chat_single_message_messageText);
                         holder.timeStamp = (TextView) convertView.findViewById(R.id.main_panel_chat_single_message_timeStamp);
                         holder.chatItem = convertView.findViewById(R.id.main_panel_chat_item);
+                        holder.tickImage = (ImageView)convertView.findViewById(R.id.main_panel_chat_single_message_confirm_icon);
                     }
                     break;
                 default:
@@ -173,16 +183,16 @@ public class ChatListAdapter extends BaseAdapter {
             }
         }
 
-        Message message = this.channelChat.getMessageByIndex(position);
+        Message message = this.messages.get(position);
 
         convertView.setTag(R.id.BO_Message,message);
 
         if (isMessage) {
             if ((message.getUser() != null) && (holder.username != null)) {
-                if ((this.chatKind == GroupKind.PRIVATE_SINGLE) || (this.chatKind == GroupKind.PRIVATE_GROUP)) {
+                if ((this.chatKind == ChatKind.PRIVATE_SINGLE) || (this.chatKind == ChatKind.PRIVATE_GROUP)) {
                     holder.username.setText(message.getUser().getUserPrivateProfile().getShowingName());
                 } else {
-                    holder.username.setText(message.getUser().getUserPublicProfile().getShowingName());
+                    holder.username.setText(context.getResources().getString(R.string.public_username_identifier_character).concat(message.getUser().getUserPublicProfile().getShowingName()));
                     holder.username.setTextColor(Color.parseColor(message.getUser().getUserPublicProfile().getColor()));
                 }
             }
@@ -199,16 +209,40 @@ public class ChatListAdapter extends BaseAdapter {
                 holder.timeStamp.setText(TimestampFormatter.toLocaleString(new Date()));
 
             if (message.getUser().isMe()) {
-                if (((this.chatKind == GroupKind.PRIVATE_SINGLE) || (this.chatKind == GroupKind.PUBLIC_SINGLE)) && (message.getConfirmed())) {
+                if (((this.chatKind == ChatKind.PRIVATE_SINGLE) || (this.chatKind == ChatKind.PUBLIC_SINGLE)) && (message.getConfirmed())) {
                     StaticMethods.SetAlpha(holder.chatItem,1f);
-                    holder.timeStamp.setCompoundDrawablesWithIntrinsicBounds(0,0,R.drawable.abc_ic_cab_done_holo_light,0);
+                    if (holder.tickImage != null)
+                        holder.tickImage.setVisibility(View.VISIBLE);
                 } else if (message.getId() != null) {
                     StaticMethods.SetAlpha(holder.chatItem,1f);
+                    if (holder.tickImage != null)
+                        holder.tickImage.setVisibility(View.GONE);
                 } else {
                     StaticMethods.SetAlpha(holder.chatItem,0.5f);
+                    if (holder.tickImage != null)
+                        holder.tickImage.setVisibility(View.GONE);
                 }
             } else {
                 StaticMethods.SetAlpha(holder.chatItem,1f);
+                if (holder.tickImage != null)
+                    holder.tickImage.setVisibility(View.GONE);
+            }
+
+            //Load image
+            if (holder.avatarThumbnail != null) {
+                Image image = null;
+                if ((chatKind == ChatKind.HIVE) || (chatKind == ChatKind.PUBLIC_GROUP)) {
+                    if ((message != null) && (message.getUser() != null) && (message.getUser().getUserPublicProfile() != null))
+                        image = message.getUser().getUserPublicProfile().getProfileImage();
+                }
+                else if (chatKind == ChatKind.PRIVATE_GROUP) {
+                    if ((message != null) && (message.getUser() != null) && (message.getUser().getUserPrivateProfile() != null))
+                        image = message.getUser().getUserPrivateProfile().getProfileImage();
+                }
+                if (image != null) {
+                    image.OnImageLoaded.add(new EventHandler<EventArgs>(holder,"onImageLoaded",EventArgs.class));
+                    image.loadImage(Image.ImageSize.small,0);
+                }
             }
         } else if (!isHoleMarker) {
             if (message.getTimeStamp() != null)
@@ -217,16 +251,43 @@ public class ChatListAdapter extends BaseAdapter {
                 holder.timeStamp.setText(DateFormatter.toHumanReadableString(new Date()));
         } else {
             holder.messageText.setText(String.format("Loading %s messages...",message.getMessageContent().getContent()));
-            message.FillMessageHole(this.channelChat.getMessageByIndex(position+1).getId());
+            message.FillMessageHole(this.channelConversation.getMessageByIndex(position+1).getId());
         }
         return convertView;
     }
 
-    private static class ViewHolder {
+    private class ViewHolder {
         public View chatItem;
         public TextView username;
         public TextView messageText;
         public TextView timeStamp;
         public ImageView avatarThumbnail;
+        public ImageView tickImage;
+
+        public void onImageLoaded(Object sender,EventArgs eventArgs) {
+            if (!(sender instanceof Image)) return;
+
+            final Image image = (Image)sender;
+            final ViewHolder thisViewHolder = this;
+
+            ((Activity)context).runOnUiThread( new Runnable() {
+                @Override
+                public void run() {
+                    InputStream is = image.getImage(Image.ImageSize.small,0);
+                    if ((is != null) && (avatarThumbnail != null)) {
+                        avatarThumbnail.setImageBitmap(BitmapFactory.decodeStream(is));
+                        try {
+                            is.reset();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    if (is != null)
+                        image.OnImageLoaded.remove(new EventHandler<EventArgs>(thisViewHolder,"onImageLoaded",EventArgs.class));
+                    //image.freeMemory();
+                }
+            });
+        }
     }
 }

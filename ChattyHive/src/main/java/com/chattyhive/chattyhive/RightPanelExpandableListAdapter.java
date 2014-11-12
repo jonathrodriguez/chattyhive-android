@@ -114,7 +114,6 @@ public class RightPanelExpandableListAdapter extends BaseExpandableListAdapter {
                 imgv.setImageResource(R.drawable.ic_action_next_item);
                 //convertView.findViewById(R.id.right_panel_hive).setBackgroundResource(R.drawable.borde2pxhide);
             }
-
         }
         return convertView;
     }

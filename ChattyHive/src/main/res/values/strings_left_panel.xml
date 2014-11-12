@@ -12,7 +12,7 @@
     <string name="left_panel_filter_all">All</string>
     <string name="left_panel_filter_friends">Friends</string>
     <string name="left_panel_filter_hivemates">Mates</string>
-    <string name="left_panel_filter_hive_chats">Hive chats</string>
+    <string name="left_panel_filter_hive_chats">Public</string>
     <string name="left_panel_filter_help_button_description">Help</string>
 
     <string name="left_panel_imprecise_time_now">NOW</string>

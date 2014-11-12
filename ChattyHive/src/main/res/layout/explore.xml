@@ -1,17 +1,14 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"  xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context="${packageName}.${activityClass}">
-
 
     <include
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         layout="@layout/explore_action_bar"
         android:layout_gravity="center_horizontal" />
-
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -21,7 +18,7 @@
 
         <include
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="49.5dp"
             layout="@layout/explore_tab_list"
             android:layout_gravity="center_horizontal" />
     </FrameLayout>
@@ -31,15 +28,29 @@
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:background="#ffffff"
-        android:id="@+id/explore_list_frame">
+        android:id="@+id/explore_list_frame"
+        android:visibility="visible">
         <include
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             layout="@layout/explore_list"
             android:layout_gravity="center_horizontal" />
         </FrameLayout>
-
     <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="#ffffff"
+        android:id="@+id/explore_list_categories_list"
+        android:visibility="gone">
+        <include
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            layout="@layout/explore_categories"
+            android:layout_gravity="center_horizontal" />
+    </FrameLayout>
+
+    <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="55dp"
         android:layout_weight="0"
@@ -47,16 +58,30 @@
         android:paddingRight="23dp"
         android:paddingBottom="3dp"
         android:paddingTop="4dp"
-        android:background="#ffffff"
-        android:id="@+id/explore_search_frame">
-
-        <EditText
+        android:background="@drawable/border_text_bar"
+        android:id="@+id/explore_search_frame"
+        android:gravity="center">
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:id="@+id/explore_search_text"
-            android:hint="@string/explore_search_hint"
-            android:gravity="center|left" />
-    </FrameLayout>
-
-
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:background="@drawable/border_edit_text">
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/menu_new_hive"
+                android:layout_marginLeft="24dp"/>
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="28dp"
+                android:id="@+id/explore_search_text"
+                android:hint="@string/explore_search_hint"
+                android:textColorHint="#808080"
+                android:textColor="#111111"
+                android:gravity="center|left"
+                android:background="@null"
+                android:layout_marginLeft="8dp"/>
+        </LinearLayout>
+    </LinearLayout>
 </LinearLayout>
