@@ -61,8 +61,9 @@ public class Explore extends Activity {
         this.tabLeftPadding = findViewById(R.id.explore_tab_list_favourites_button).getPaddingLeft();
         this.tabRightPadding = findViewById(R.id.explore_tab_list_favourites_button).getPaddingRight();
 
-        findViewById(R.id.explore_tab_list_favourites_button).setBackgroundResource(R.drawable.explore_tab_list_border);
-        findViewById(R.id.explore_tab_list_favourites_button).setPadding(tabLeftPadding,tabTopPadding,tabRightPadding,tabBottomPadding);
+        findViewById(R.id.explore_tab_list_favourites_button).performClick();
+        //findViewById(R.id.explore_tab_list_favourites_button).setBackgroundResource(R.drawable.explore_tab_list_border);
+        //findViewById(R.id.explore_tab_list_favourites_button).setPadding(tabLeftPadding,tabTopPadding,tabRightPadding,tabBottomPadding);
 //        this.controller.exploreHives(0,9, Controller.ExploreType.OUTSTANDING);
     }
 
@@ -89,6 +90,10 @@ public class Explore extends Activity {
     protected View.OnClickListener outstanding = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            if(findViewById(R.id.explore_list_categories_list).getVisibility()==View.VISIBLE){
+                findViewById(R.id.explore_list_categories_list).setVisibility(View.GONE);
+                findViewById(R.id.explore_list_frame).setVisibility(View.VISIBLE);
+            }
             controller.exploreHives(0,9, Controller.ExploreType.OUTSTANDING);
             findViewById(R.id.explore_tab_list_favourites_button).setBackgroundResource(R.drawable.explore_tab_list_border);
             findViewById(R.id.explore_tab_list_favourites_button).setPadding(tabLeftPadding,tabTopPadding,tabRightPadding,tabBottomPadding);
@@ -107,6 +112,10 @@ public class Explore extends Activity {
     protected View.OnClickListener time = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            if(findViewById(R.id.explore_list_categories_list).getVisibility()==View.VISIBLE){
+                findViewById(R.id.explore_list_categories_list).setVisibility(View.GONE);
+                findViewById(R.id.explore_list_frame).setVisibility(View.VISIBLE);
+            }
             controller.exploreHives(0,9, Controller.ExploreType.CREATION_DATE);
             findViewById(R.id.explore_tab_list_location_button).setBackgroundResource(R.drawable.explore_tab_list_border);
             findViewById(R.id.explore_tab_list_location_button).setPadding(tabLeftPadding,tabTopPadding,tabRightPadding,tabBottomPadding);
@@ -126,6 +135,10 @@ public class Explore extends Activity {
     protected View.OnClickListener trending = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            if(findViewById(R.id.explore_list_categories_list).getVisibility()==View.VISIBLE){
+                findViewById(R.id.explore_list_categories_list).setVisibility(View.GONE);
+                findViewById(R.id.explore_list_frame).setVisibility(View.VISIBLE);
+            }
             controller.exploreHives(0,9, Controller.ExploreType.TRENDING);
             findViewById(R.id.explore_tab_list_recent_button).setBackgroundResource(R.drawable.explore_tab_list_border);
 
@@ -144,6 +157,10 @@ public class Explore extends Activity {
     protected View.OnClickListener users = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            if(findViewById(R.id.explore_list_categories_list).getVisibility()==View.VISIBLE){
+                findViewById(R.id.explore_list_categories_list).setVisibility(View.GONE);
+                findViewById(R.id.explore_list_frame).setVisibility(View.VISIBLE);
+            }
             controller.exploreHives(0,9, Controller.ExploreType.USERS);
             findViewById(R.id.explore_tab_list_trending_button).setBackgroundResource(R.drawable.explore_tab_list_border);
 
