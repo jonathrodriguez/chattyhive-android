@@ -146,8 +146,8 @@ public class Profile {
                 //Images
                 profileView.findViewById(R.id.profile_big_photo_thumbnail).setVisibility(View.VISIBLE);
                 profileView.findViewById(R.id.profile_small_photo_thumbnail).setVisibility(View.VISIBLE);
-                profileView.findViewById(R.id.profile_big_photo_thumbnail).setBackgroundResource(R.color.profile_photo_background_color);
-                profileView.findViewById(R.id.profile_small_photo_thumbnail).setBackgroundResource(R.color.profile_photo_background_color);
+                profileView.findViewById(R.id.profile_big_photo_thumbnail).setBackgroundResource(R.drawable.profile_photo_background);
+                profileView.findViewById(R.id.profile_small_photo_thumbnail).setBackgroundResource(R.drawable.profile_photo_background);
                 ((ImageView)profileView.findViewById(R.id.profile_big_photo_thumbnail)).setImageResource(R.drawable.my_profile_private_profile_simple);
                 ((ImageView)profileView.findViewById(R.id.profile_small_photo_thumbnail)).setImageResource(R.drawable.my_profile_public_profile_simple);
                 //Full name and public name
@@ -205,7 +205,7 @@ public class Profile {
                 profileView.findViewById(R.id.profile_big_photo_thumbnail).setVisibility(View.VISIBLE);
                 profileView.findViewById(R.id.profile_small_photo_thumbnail).setVisibility(View.GONE);
                 ((ImageView)profileView.findViewById(R.id.profile_big_photo_thumbnail)).setImageResource(R.drawable.my_profile_public_profile_simple);
-                profileView.findViewById(R.id.profile_big_photo_thumbnail).setBackgroundResource(R.color.profile_photo_background_color);
+                profileView.findViewById(R.id.profile_big_photo_thumbnail).setBackgroundResource(R.drawable.profile_photo_background);
                 //Full name and public name
                 profileView.findViewById(R.id.profile_full_name).setVisibility(View.GONE);
                 profileView.findViewById(R.id.profile_full_name_value).setOnClickListener(null);
@@ -258,8 +258,8 @@ public class Profile {
                 //Images
                 profileView.findViewById(R.id.profile_big_photo_thumbnail).setVisibility(View.VISIBLE);
                 profileView.findViewById(R.id.profile_small_photo_thumbnail).setVisibility(View.VISIBLE);
-                profileView.findViewById(R.id.profile_big_photo_thumbnail).setBackgroundResource(R.color.profile_photo_background_color);
-                profileView.findViewById(R.id.profile_small_photo_thumbnail).setBackgroundResource(R.color.profile_photo_background_color);
+                profileView.findViewById(R.id.profile_big_photo_thumbnail).setBackgroundResource(R.drawable.profile_photo_background);
+                profileView.findViewById(R.id.profile_small_photo_thumbnail).setBackgroundResource(R.drawable.profile_photo_background);
                 ((ImageView)profileView.findViewById(R.id.profile_big_photo_thumbnail)).setImageResource(R.drawable.my_profile_private_profile_simple);
                 ((ImageView)profileView.findViewById(R.id.profile_small_photo_thumbnail)).setImageResource(R.drawable.my_profile_public_profile_simple);
                 //Full name and public name

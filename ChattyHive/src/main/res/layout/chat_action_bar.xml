@@ -36,7 +36,11 @@
                 android:id="@+id/main_panel_chat_name"
                 android:textColor="#fff9ff"
                 android:textSize="16dp"
-                android:textStyle="bold"/>
+                android:textStyle="bold"
+                android:lines="1"
+                android:maxLines="1"
+                android:minLines="1"
+                android:ellipsize="end" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -45,14 +49,18 @@
                 android:text="Small Text"
                 android:id="@+id/main_panel_chat_info"
                 android:textColor="#c0c0c0"
-                android:textSize="13.5dp" />
+                android:textSize="13.5dp"
+                android:ellipsize="end"
+                android:lines="1"
+                android:maxLines="1"
+                android:minLines="1" />
         </LinearLayout>
 
         <ImageButton
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:background="#1d1d1d"
-            android:src="@drawable/ajustes_ajustes"
+            android:src="@drawable/chats_opciones_chat"
             android:scaleType="centerInside"
             android:id="@+id/main_panel_chat_menu_icon"
             android:padding="10dp"

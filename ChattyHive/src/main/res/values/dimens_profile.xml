@@ -196,4 +196,5 @@
 
     <!-- _____________________________________________________________________ -->
     <!-- USER PROFILE:  Main panel dimensions -->
+    <dimen name="profile_photo_border_thick">1px</dimen>
 </resources>

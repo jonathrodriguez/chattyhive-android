@@ -350,29 +350,15 @@ public class Controller {
     public void onJoinHiveCallback(Object sender, CommandCallbackEventArgs eventArgs)  {
         ArrayList<Format> receivedFormats = eventArgs.getReceivedFormats();
 
-        Boolean exploreHivesChanged = false;
         Boolean hiveJoined = false;
 
         for(Format format : receivedFormats)
             if (format instanceof COMMON) {
                 if (((COMMON) format).STATUS.equalsIgnoreCase("OK")) {
                     hiveJoined = true;
-                    ArrayList<Format> sentFormats = eventArgs.getSentFormats();
-                    ArrayList<Hive> toRemove = new ArrayList<Hive>();
-                    for (Format sentFormat : sentFormats)
-                        if (sentFormat instanceof HIVE_ID)
-                            for (Hive h : exploreHives)
-                                if (h.getNameUrl().equalsIgnoreCase(((HIVE_ID) sentFormat).NAME_URL))
-                                    toRemove.add(h);
-
-                    for (Hive h : toRemove)
-                        exploreHivesChanged = (exploreHivesChanged || exploreHives.remove(h));
                 }
                 break;
             }
-
-        if ((exploreHivesChanged) && (ExploreHivesListChange != null))
-            ExploreHivesListChange.fire(exploreHives, EventArgs.Empty());
 
         if ((hiveJoined) && (HiveJoined != null))
             HiveJoined.fire(exploreHives,EventArgs.Empty());

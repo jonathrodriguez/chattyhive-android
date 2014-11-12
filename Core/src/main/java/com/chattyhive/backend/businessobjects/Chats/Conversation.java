@@ -222,12 +222,13 @@ public class Conversation { //TODO: implements SortedSet<Message>
         boolean previousNewDay = false;
         boolean nextNewDay = false;
 
-        if ((previous != null) && (previous.getMessageContent().getContentType().endsWith("_SEPARATOR")))
+        //if ((previous != null) && (previous.getMessageContent().getContentType().endsWith("_SEPARATOR")))
+        if (previous != null)
             previousNewDay = !(DateFormatter.toString(previous.getTimeStamp()).equalsIgnoreCase(DateFormatter.toString(message.getTimeStamp())));
         else if (previous == null)
             previousNewDay = true;
 
-        if ((next != null) && (next.getMessageContent().getContentType().endsWith("_SEPARATOR")))
+        if ((next != null) && (previous != null) && (next.getMessageContent().getContentType().endsWith("_SEPARATOR")))
             nextNewDay = !(DateFormatter.toString(previous.getTimeStamp()).equalsIgnoreCase(DateFormatter.toString(message.getTimeStamp())));
 
         if (previousNewDay)
