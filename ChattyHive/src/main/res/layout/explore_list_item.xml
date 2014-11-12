@@ -58,8 +58,9 @@
                 android:textSize="16dp"
                 android:textColor="#202020"
                 android:layout_marginTop="14dp"
-                android:layout_marginBottom="8.5dp"
-                android:textStyle="bold"/>
+                android:layout_marginBottom="5dp"
+                android:textStyle="bold"
+                android:maxLines="1"/>
             <TextView
                 android:id="@+id/explore_list_item_collapsed_hive_description"
                 android:layout_width="wrap_content"
@@ -67,7 +68,7 @@
                 android:text="Share your best thoughts on how to kill time when you have nothing else to do!"
                 android:textSize="12.5dp"
                 android:maxLines="2"
-                android:layout_marginBottom="0dp"
+                android:layout_marginBottom="5dp"
                 android:textColor="#333333"/>
         </LinearLayout>
 
@@ -100,9 +101,10 @@
                     android:layout_gravity="bottom"
                     android:id="@+id/explore_list_item_collapsed_category_text"
                     android:textColor="#808080"
-                    android:gravity="center_vertical|center_horizontal"
+                    android:gravity="left|top"
                     android:layout_marginLeft="7dp"
-                    android:layout_marginRight="17dp"/>
+                    android:layout_marginRight="17dp"
+                    android:maxWidth="120dp"/>
             </LinearLayout>
 
             <LinearLayout
@@ -125,7 +127,7 @@
                     android:textSize="12dp"
                     android:id="@+id/explore_list_item_collapsed_users_number"
                     android:textColor="#808080"
-                    android:gravity="center_vertical|center_horizontal"
+                    android:gravity="center|center_horizontal|center_vertical"
                     android:layout_marginLeft="5dp"/>
             </LinearLayout>
         </LinearLayout>
@@ -242,7 +244,7 @@
                                 android:layout_width="16dp"
                                 android:layout_height="16dp"
                                 android:layout_marginRight="4dp"
-                                android:src="@drawable/pestanha_chats_arroba"/>
+                                android:src="@drawable/pestanha_hives_language_opcion3"/>
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="16dp"
@@ -282,7 +284,7 @@
                     <ImageView
                         android:layout_width="15dp"
                         android:layout_height="15dp"
-                        android:src="@drawable/my_profile_edit"
+                        android:src="@drawable/explore_new_hive_tag"
                         android:alpha="0.75"
                         android:layout_gravity="center"/>
                     <LinearLayout
@@ -389,18 +391,18 @@
                             android:background="@drawable/explore_button_border"
                             android:paddingLeft="10dp"
                             android:paddingRight="10dp">
-                            <ImageView
-                                android:layout_width="20dp"
-                                android:layout_height="20dp"
-                                android:src="@drawable/launcher_launcher_b"/>
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="30dp"
                                 android:gravity="center"
                                 android:text="Join hive"
                                 android:textSize="16dp"
-                                android:textColor="#333333"
-                                android:layout_marginLeft="7dp"/>
+                                android:textColor="#E87400"
+                                android:layout_marginRight="7dp"/>
+                                <ImageView
+                                    android:layout_width="20dp"
+                                    android:layout_height="20dp"
+                                    android:src="@drawable/explore_new_hive_join_hive"/>
                         </LinearLayout>
                             <LinearLayout
                                 android:id="@+id/explore_chat_button2"

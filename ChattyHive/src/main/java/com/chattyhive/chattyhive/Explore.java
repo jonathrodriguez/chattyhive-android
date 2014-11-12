@@ -45,12 +45,18 @@ public class Explore extends Activity {
 
         this.findViewById(R.id.explore_action_bar_goBack_button).setOnClickListener(this.backButton);
         this.findViewById(R.id.explore_button_categories).setOnClickListener(this.categoriesButton);
-        this.controller.exploreHives(0,9, Controller.ExploreType.OUTSTANDING);
+        this.findViewById(R.id.explore_tab_list_favourites_button).setOnClickListener(this.outstanding);
+        this.findViewById(R.id.explore_tab_list_location_button).setOnClickListener(this.time);
+        this.findViewById(R.id.explore_tab_list_recent_button).setOnClickListener(this.trending);
+        this.findViewById(R.id.explore_tab_list_trending_button).setOnClickListener(this.users);
+        findViewById(R.id.explore_tab_list_favourites_button).setBackgroundResource(R.drawable.explore_tab_list_border);
+//        this.controller.exploreHives(0,9, Controller.ExploreType.OUTSTANDING);
     }
 
     public void GetMoreHives() {
         this.lastOffset += 9;
         this.controller.exploreHives(this.lastOffset,9, Controller.ExploreType.OUTSTANDING);
+        //findViewById(R.id.explore_tab_list_favourites_button).setBackgroundResource(R.drawable.explore_tab_list_border);
     }
 
     protected View.OnClickListener backButton = new View.OnClickListener() {
@@ -67,6 +73,55 @@ public class Explore extends Activity {
         }
     };
 
+    protected View.OnClickListener outstanding = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            controller.exploreHives(0,9, Controller.ExploreType.OUTSTANDING);
+            findViewById(R.id.explore_tab_list_favourites_button).setBackgroundResource(R.drawable.explore_tab_list_border);
+
+            findViewById(R.id.explore_tab_list_location_button).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
+            findViewById(R.id.explore_tab_list_recent_button).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
+            findViewById(R.id.explore_tab_list_trending_button).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
+            findViewById(R.id.explore_button_categories).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
+        }
+    };
+    protected View.OnClickListener time = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            controller.exploreHives(0,9, Controller.ExploreType.CREATION_DATE);
+            findViewById(R.id.explore_tab_list_location_button).setBackgroundResource(R.drawable.explore_tab_list_border);
+
+            findViewById(R.id.explore_tab_list_favourites_button).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
+            findViewById(R.id.explore_tab_list_recent_button).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
+            findViewById(R.id.explore_tab_list_trending_button).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
+            findViewById(R.id.explore_button_categories).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
+        }
+    };
+    protected View.OnClickListener trending = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            controller.exploreHives(0,9, Controller.ExploreType.TRENDING);
+            findViewById(R.id.explore_tab_list_recent_button).setBackgroundResource(R.drawable.explore_tab_list_border);
+
+            findViewById(R.id.explore_tab_list_location_button).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
+            findViewById(R.id.explore_tab_list_favourites_button).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
+            findViewById(R.id.explore_tab_list_trending_button).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
+            findViewById(R.id.explore_button_categories).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
+        }
+    };
+    protected View.OnClickListener users = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            controller.exploreHives(0,9, Controller.ExploreType.USERS);
+            findViewById(R.id.explore_tab_list_trending_button).setBackgroundResource(R.drawable.explore_tab_list_border);
+
+            findViewById(R.id.explore_tab_list_location_button).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
+            findViewById(R.id.explore_tab_list_favourites_button).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
+            findViewById(R.id.explore_tab_list_recent_button).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
+            findViewById(R.id.explore_button_categories).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
+        }
+    };
+
     protected View.OnClickListener categoriesButton = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -74,6 +129,12 @@ public class Explore extends Activity {
                 findViewById(R.id.explore_list_categories_list).setVisibility(View.VISIBLE);
                 findViewById(R.id.explore_list_frame).setVisibility(View.GONE);
             }
+            findViewById(R.id.explore_button_categories).setBackgroundResource(R.drawable.explore_tab_list_border);
+
+            findViewById(R.id.explore_tab_list_location_button).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
+            findViewById(R.id.explore_tab_list_favourites_button).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
+            findViewById(R.id.explore_tab_list_recent_button).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
+            findViewById(R.id.explore_tab_list_trending_button).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
         }
     };
 
