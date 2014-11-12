@@ -64,8 +64,8 @@ public class Explore extends Activity {
     protected View.OnClickListener categoriesButton = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if(findViewById(R.id.explore_list_categories).getVisibility()==View.GONE){
-                findViewById(R.id.explore_list_categories).setVisibility(View.VISIBLE);
+            if(findViewById(R.id.explore_categories_list).getVisibility()==View.GONE){
+                findViewById(R.id.explore_categories_list).setVisibility(View.VISIBLE);
                 findViewById(R.id.explore_list_frame).setVisibility(View.GONE);
             }
         }
