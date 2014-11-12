@@ -33,6 +33,7 @@ public class ExploreListAdapter extends BaseAdapter {
     private ListView listView;
     private LayoutInflater inflater;
     private ArrayList<Hive> hives_list_data;
+    private ArrayList<Hive> hives_list_data_origin;
     private View.OnClickListener clickListener;
     private Hive hive;
     private int expanded_hive;
@@ -42,6 +43,7 @@ public class ExploreListAdapter extends BaseAdapter {
     public void OnAddItem(Object sender, EventArgs args) {
         ((Activity)this.context).runOnUiThread(new Runnable(){
             public void run() {
+                hives_list_data = new ArrayList<Hive>(hives_list_data_origin);
                 notifyDataSetChanged();
             }
         });
@@ -49,7 +51,8 @@ public class ExploreListAdapter extends BaseAdapter {
 
     public ExploreListAdapter (Context activityContext, ArrayList<Hive> hivesList, ListView listView) {
         this.controller = Controller.GetRunningController();
-        this.hives_list_data = hivesList;
+        this.hives_list_data_origin = hivesList;
+        this.hives_list_data = new ArrayList<Hive>(this.hives_list_data_origin);
         this.moreItems = false;
         this.context = activityContext;
         this.inflater = ((Activity)this.context).getLayoutInflater();
