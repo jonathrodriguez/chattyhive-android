@@ -29,7 +29,9 @@ public class Image {
     String fileURL;
 
     public Image(String fileURL) {
-        this.dataProvider = Controller.GetRunningController().getDataProvider();
+        if (Controller.GetRunningController() != null)
+            this.dataProvider = Controller.GetRunningController().getDataProvider();
+
         this.fileURL = fileURL;
         this.OnImageLoaded = new Event<EventArgs>();
     }
@@ -75,6 +77,12 @@ public class Image {
     }
 
     private void internalLoadImage (ImageSize imageSize, int imageDensity) {
+        if ((this.dataProvider == null) && (Controller.GetRunningController() != null))
+            this.dataProvider = Controller.GetRunningController().getDataProvider();
+
+        if (this.dataProvider == null)
+            return;
+
         switch (imageSize) {
             case small:
                 if (smallThumbnail != null) {
