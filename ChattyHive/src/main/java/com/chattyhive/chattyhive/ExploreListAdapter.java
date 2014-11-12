@@ -35,6 +35,7 @@ public class ExploreListAdapter extends BaseAdapter {
     private ArrayList<Hive> hives_list_data;
     private View.OnClickListener clickListener;
     private Hive hive;
+    private int expanded_hive;
 
     public void SetOnClickListener (View.OnClickListener listener) { this.clickListener = listener; notifyDataSetChanged(); }
 
@@ -54,6 +55,7 @@ public class ExploreListAdapter extends BaseAdapter {
         this.inflater = ((Activity)this.context).getLayoutInflater();
         this.listView = listView;
         this.listView.setAdapter(this);
+        this.expanded_hive = -1;
     }
 
     @Override
@@ -92,7 +94,6 @@ public class ExploreListAdapter extends BaseAdapter {
             holder.expanded_categoryText = (TextView)convertView.findViewById(R.id.explore_list_item_expanded_category_text);
             holder.expanded_categoryImage = (ImageView)convertView.findViewById(R.id.explore_list_item_expanded_category_image);
             holder.expanded_usersText = (TextView)convertView.findViewById(R.id.explore_list_item_expanded_users_number);
-            holder.card_number = -1;
 
             convertView.setTag(R.id.Explore_ListViewHolder, holder);
         } else {
@@ -103,28 +104,20 @@ public class ExploreListAdapter extends BaseAdapter {
             @Override
             public void onClick(View v) {
                 ViewHolder h = (ViewHolder)v.getTag(R.id.Explore_ListViewHolder);
-                int hive_num = h.card_number;
 
-                /*if (hive_num == -1){
-                    h.card_number = position;
-                }*/
-
-                if (position == hive_num){//SI SE SELECCIONA EL HIVE YA EXPANDIDO SE PONE A -1
-                    h.card_number = -1;
+                if (expanded_hive == position){//SI SE SELECCIONA EL HIVE YA EXPANDIDO SE PONE A -1
+                    expanded_hive = -1;
                 }
                 else {
-                    h.card_number = position;
+                    expanded_hive = position;
                 }
-                v.setTag(R.id.Explore_ListViewHolder, h);
-                notifyDataSetChanged();
 
+                notifyDataSetChanged();
             }
         };
         convertView.setOnClickListener(expand_hive);//setOnClickListener to expand/collapse hive cards
 
-        System.out.println("POSITION: "+position);
-        System.out.println("CARD_NUMBER: "+holder.card_number);
-        if(holder.card_number == position) {//EXPANDIR
+        if(expanded_hive == position) {//EXPANDIR
             convertView.findViewById(R.id.explore_list_item_short).setVisibility(View.GONE);
             convertView.findViewById(R.id.explore_hive_card).setVisibility(View.VISIBLE);
         }
@@ -192,7 +185,6 @@ public class ExploreListAdapter extends BaseAdapter {
         public TextView expanded_categoryText;
         public TextView expanded_usersText;
         public ImageView expanded_hiveImage;
-        public int card_number;
 
         public void loadCollapsedHiveImage(Object sender,EventArgs eventArgs) {
             if (!(sender instanceof Image)) return;
