@@ -111,6 +111,8 @@ public class Hive implements IContextualizable {
         this.name = data.NAME;
         this.nameUrl = data.NAME_URL;
 
+        this.setImageURL(data.IMAGE_URL);
+
         this.publicChat = null;
 
         if (data.PUBLIC_CHAT != null) {

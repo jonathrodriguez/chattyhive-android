@@ -164,6 +164,7 @@ public class ChatListAdapter extends BaseAdapter {
                         holder.messageText = (TextView) convertView.findViewById(R.id.main_panel_chat_single_message_messageText);
                         holder.timeStamp = (TextView) convertView.findViewById(R.id.main_panel_chat_single_message_timeStamp);
                         holder.chatItem = convertView.findViewById(R.id.main_panel_chat_item);
+                        holder.tickImage = (ImageView)convertView.findViewById(R.id.main_panel_chat_single_message_confirm_icon);
                     }
                     break;
                 default:
@@ -210,14 +211,21 @@ public class ChatListAdapter extends BaseAdapter {
             if (message.getUser().isMe()) {
                 if (((this.chatKind == ChatKind.PRIVATE_SINGLE) || (this.chatKind == ChatKind.PUBLIC_SINGLE)) && (message.getConfirmed())) {
                     StaticMethods.SetAlpha(holder.chatItem,1f);
-                    holder.timeStamp.setCompoundDrawablesWithIntrinsicBounds(0,0,R.drawable.abc_ic_cab_done_holo_light,0);
+                    if (holder.tickImage != null)
+                        holder.tickImage.setVisibility(View.VISIBLE);
                 } else if (message.getId() != null) {
                     StaticMethods.SetAlpha(holder.chatItem,1f);
+                    if (holder.tickImage != null)
+                        holder.tickImage.setVisibility(View.GONE);
                 } else {
                     StaticMethods.SetAlpha(holder.chatItem,0.5f);
+                    if (holder.tickImage != null)
+                        holder.tickImage.setVisibility(View.GONE);
                 }
             } else {
                 StaticMethods.SetAlpha(holder.chatItem,1f);
+                if (holder.tickImage != null)
+                    holder.tickImage.setVisibility(View.GONE);
             }
 
             //Load image
@@ -254,6 +262,7 @@ public class ChatListAdapter extends BaseAdapter {
         public TextView messageText;
         public TextView timeStamp;
         public ImageView avatarThumbnail;
+        public ImageView tickImage;
 
         public void onImageLoaded(Object sender,EventArgs eventArgs) {
             if (!(sender instanceof Image)) return;

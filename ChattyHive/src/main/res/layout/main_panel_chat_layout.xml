@@ -14,9 +14,11 @@
         android:scrollingCache="true"
         android:smoothScrollbar="true"
         android:fastScrollEnabled="true"
-        android:transcriptMode="normal"
+        android:transcriptMode="alwaysScroll"
         android:choiceMode="none"
-        android:divider="@null"/>
+        android:divider="@null"
+        android:stackFromBottom="true"
+        android:cacheColorHint="#00000000"/>
 
     <LinearLayout
         android:orientation="horizontal"

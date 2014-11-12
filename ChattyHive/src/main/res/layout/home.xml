@@ -139,5 +139,6 @@
         android:layout_height="match_parent"
         android:id="@+id/home_listView"
         android:background="@color/home_list_background"
-        android:divider="@null" />
+        android:divider="@null"
+        android:cacheColorHint="#00000000"/>
 </LinearLayout>

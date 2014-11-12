@@ -36,7 +36,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 /**
  * Created by Jonathan on 13/03/14.
@@ -75,7 +78,55 @@ public class LeftPanelListAdapter extends BaseAdapter {
                         try { hiveList = new ArrayList<Hive>(Hive.getHives()); } catch (Exception e) { hiveList = null; }
                 } else if (visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Chats)) {
                     while (chatList == null)
-                        try { chatList = new ArrayList<Chat>(Chat.getChats()); } catch (Exception e) { chatList = null; }
+                        try {
+                            TreeSet<Chat> list = new TreeSet<Chat>(new Comparator<Chat>() {
+                                @Override
+                                public int compare(Chat lhs, Chat rhs) { // lhs < rhs => return < 0 | lhs = rhs => return = 0 | lhs > rhs => return > 0
+                                    int res = 0;
+                                    if ((lhs == null) && (rhs != null))
+                                        res = 1;
+                                    else if ((lhs != null) && (rhs == null))
+                                        res = -1;
+                                    else if ((lhs == null) && (rhs == null))
+                                        res = 0;
+                                    else {
+                                        Date lhsDate = null;
+                                        Date rhsDate = null;
+
+                                        if ((lhs.getConversation() != null) && (lhs.getConversation().getLastMessage() != null))
+                                            lhsDate = lhs.getConversation().getLastMessage().getOrdinationTimeStamp();
+
+                                        if ((rhs.getConversation() != null) && (rhs.getConversation().getLastMessage() != null))
+                                            rhsDate = rhs.getConversation().getLastMessage().getOrdinationTimeStamp();
+
+                                        if ((lhsDate == null) && (rhsDate != null))
+                                            res = 1;
+                                        else if ((lhsDate != null) && (rhsDate == null))
+                                            res = -1;
+                                        else if ((lhsDate != null) && (rhsDate != null))
+                                            res = rhsDate.compareTo(lhsDate);
+                                        else {
+                                            lhsDate = lhs.getCreationDate();
+                                            rhsDate = rhs.getCreationDate();
+
+                                            if ((lhsDate == null) && (rhsDate != null))
+                                                res = 1;
+                                            else if ((lhsDate != null) && (rhsDate == null))
+                                                res = -1;
+                                            else if ((lhsDate != null) && (rhsDate != null))
+                                                res = rhsDate.compareTo(lhsDate);
+                                            else {
+                                                res = 0;
+                                            }
+                                        }
+                                    }
+
+                                    return res;
+                                }
+                            });
+                            list.addAll(Chat.getChats());
+                            chatList = new ArrayList<Chat>(list);
+                        } catch (Exception e) { chatList = null; }
                 } else if (visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Mates)) {
                     hiveList = null;
                     chatList = null;
@@ -219,7 +270,6 @@ public class LeftPanelListAdapter extends BaseAdapter {
             ((HiveViewHolder)holder).hiveItem.setTag(R.id.BO_Hive,item);
             ((HiveViewHolder)holder).hiveImage.setImageResource(R.drawable.pestanha_chats_public_chat);
             try {
-                Log.w("Showing Hive item",String.format("Image URL: %s",((Hive)item).getImageURL()));
                 ((Hive) item).getHiveImage().OnImageLoaded.add(new EventHandler<EventArgs>(holder, "loadHiveImage", EventArgs.class));
                 ((Hive) item).getHiveImage().loadImage(Image.ImageSize.medium, 0);
             } catch (Exception e) { }
@@ -233,10 +283,10 @@ public class LeftPanelListAdapter extends BaseAdapter {
                 lastMessage = ((Chat)item).getConversation().getLastMessage();
                 Date timeStamp = lastMessage.getOrdinationTimeStamp();
                 Date fiveMinutesAgo = new Date((new Date()).getTime() - 5*60*1000);
-                Date today = DateFormatter.toDate(DateFormatter.toString(timeStamp));
+                Date today = DateFormatter.toDate(DateFormatter.toString(new Date()));
                 Calendar yesterday = Calendar.getInstance();
                 yesterday.setTime(today);
-                yesterday.roll(Calendar.DAY_OF_MONTH, false);
+                yesterday.roll(Calendar.DATE, false);
                 if (timeStamp.after( fiveMinutesAgo ))
                     LastMessageTimestamp = this.context.getString(R.string.left_panel_imprecise_time_now);
                 else if (timeStamp.after(today))
@@ -244,7 +294,7 @@ public class LeftPanelListAdapter extends BaseAdapter {
                 else if (timeStamp.after(yesterday.getTime()))
                     LastMessageTimestamp = this.context.getString(R.string.left_panel_imprecise_time_yesterday);
                 else
-                    LastMessageTimestamp = DateFormatter.toHumanReadableString(timeStamp);
+                    LastMessageTimestamp = DateFormatter.toShortHumanReadableString(timeStamp);
             } catch (Exception e) {
                 //Log.w("ChatItem","Unable to recover last message: "+e.getMessage());
             }
@@ -333,7 +383,7 @@ public class LeftPanelListAdapter extends BaseAdapter {
                     if ((lastMessage != null) && (lastMessage.getUser() != null) && (lastMessage.getUser().getUserPublicProfile() != null) && (lastMessage.getUser().getUserPublicProfile().getShowingName() != null) && (lastMessage.getMessageContent() != null) && (lastMessage.getMessageContent().getContent() != null)) {
                         LastMessage = new SpannableString(context.getResources().getString(R.string.public_username_identifier_character).concat(lastMessage.getUser().getUserPublicProfile().getShowingName()).concat(": ").concat(lastMessage.getMessageContent().getContent()));
                     }
-                    ((ChatViewHolder)holder).chatLastMessageTimestamp.setVisibility(View.INVISIBLE);
+                    ((ChatViewHolder)holder).chatLastMessageTimestamp.setVisibility(View.GONE);
                     ((ChatViewHolder)holder).chatPendingMessagesNumber.setVisibility(View.INVISIBLE);
                     ((ChatViewHolder)holder).chatImage.setAdjustViewBounds(true);
                     ((ChatViewHolder)holder).chatImage.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
