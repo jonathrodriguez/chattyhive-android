@@ -89,6 +89,8 @@ public class SlidingStepsLayout extends ViewGroup {
     private int leftmostActionBarTag = -1;
     private int actualSelectedActionBarTag = -1;
 
+    private int directDestination = -1;
+
     private OnInflateLayoutListener inflateLayoutListener;
     public void setOnInflateLayoutListener(OnInflateLayoutListener listener) {
         this.inflateLayoutListener = listener;
@@ -220,9 +222,9 @@ public class SlidingStepsLayout extends ViewGroup {
             this.addView(child);
 
             if (child.getId() == -1)
-                child.setId(childLayoutParams.getLayout());
-
-            childLayoutParams.setViewID(child.getId());
+                child.setId(childLayoutParams.getViewID());
+            else
+                childLayoutParams.setViewID(child.getId());
 
             if (this.inflateLayoutListener != null)
                 this.inflateLayoutListener.OnInflate(child);
@@ -268,6 +270,8 @@ public class SlidingStepsLayout extends ViewGroup {
     }
 
     public View getViewByStep(int step) {
+        if ((this.layouts == null) || (this.layouts.isEmpty()))
+            this.loadChildren();
         return this.findViewById(this.layouts.toArray(new LayoutParams[this.layouts.size()])[step].getViewID());
     }
     @Override
@@ -560,26 +564,31 @@ public class SlidingStepsLayout extends ViewGroup {
                 if (this.actualPosition > 0) {
                     this.actualStep++;
 
+                    if (this.actualStep < (this.numberSteps-1))
+                        this.inflateChild(this.actualStep+1);
+
                     if (this.transitionListener != null)
                         this.transitionListener.OnEndTransition(this.actualStep,previousStep);
 
                     if (this.actualStep > 1)
                         this.removeChild(this.actualStep-2);
-                    if (this.actualStep < (this.numberSteps-1))
-                        this.inflateChild(this.actualStep+1);
                 }
                 else if (this.actualPosition < 0) {
                     this.actualStep--;
 
+                    if (this.actualStep > 0)
+                        this.inflateChild(this.actualStep-1);
+
                     if (this.transitionListener != null)
                         this.transitionListener.OnEndTransition(this.actualStep,previousStep);
 
-                    if (this.actualStep < (this.numberSteps-2))
-                        this.removeChild(this.actualStep+2);
-                    if (this.actualStep > 0)
-                        this.inflateChild(this.actualStep-1);
+                    if (this.actualStep > 1)
+                        this.removeChild(this.actualStep-2);
                 }
                 this.setCurrentPosition(0);
+
+                if (this.directDestination != -1)
+                    this.openStep();
             }
         }
     }
@@ -632,6 +641,20 @@ public class SlidingStepsLayout extends ViewGroup {
         float rightBound = -(this.getMeasuredWidth() + ((MarginLayoutParams)this.findViewById(layoutParams[this.actualStep+1].getViewID()).getLayoutParams()).leftMargin + ((MarginLayoutParams)this.findViewById(layoutParams[this.actualStep+1].getViewID()).getLayoutParams()).rightMargin);
         float distance = actualPosition-rightBound;
         movePanels(distance, animationDuration);
+    }
+    public void openStep(int step) {
+        if ((step < 0) || (step >= this.numberSteps) || (step == this.actualStep) || (this.directDestination > -1)) return;
+        this.directDestination = step;
+        openStep();
+    }
+
+    protected void openStep() {
+        if (this.directDestination > this.actualStep)
+            this.openNext();
+        else if (this.directDestination < this.actualStep)
+            this.openPrevious();
+        else
+            this.directDestination = -1;
     }
 
     @Override
@@ -704,6 +727,7 @@ public class SlidingStepsLayout extends ViewGroup {
             int stepOrder = -1;
             int previousStepButton = -1;
             int nextStepButton = -1;
+            int id = -2;
 
             String stepTitle = null;
             String stepSubtitle = null;
@@ -734,6 +758,10 @@ public class SlidingStepsLayout extends ViewGroup {
                 }
             }
 
+            int[] attrsArray = new int[] { android.R.attr.id };
+            TypedArray ta = context.obtainStyledAttributes(attrs, attrsArray);
+            id = ta.getResourceId(0 /* index of attribute in attrsArray */, View.NO_ID);
+
             if ((layout >= 0) && (stepOrder >= 0)) {
                 this.setLayout(layout);
                 this.setStepOrder(stepOrder);
@@ -741,6 +769,7 @@ public class SlidingStepsLayout extends ViewGroup {
                 this.setNextStepButton((nextStepButton >= 0) ? nextStepButton : null);
                 this.setStepTitle((stepTitle != null) ? stepTitle : "");
                 this.setStepSubtitle((stepSubtitle != null) ? stepSubtitle : "");
+                this.setViewID((id <= 0)?id:layout);
             }
             a.recycle();
         }

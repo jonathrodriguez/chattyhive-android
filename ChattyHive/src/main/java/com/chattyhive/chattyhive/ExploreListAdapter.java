@@ -30,7 +30,7 @@ public class ExploreListAdapter extends BaseAdapter {
     Controller controller;
     private Boolean moreItems;
     private Context context;
-    private ListView listView;
+    //private ListView listView;
     private LayoutInflater inflater;
     private ArrayList<Hive> hives_list_data;
     private ArrayList<Hive> hives_list_data_origin;
@@ -49,15 +49,15 @@ public class ExploreListAdapter extends BaseAdapter {
         });
     }
 
-    public ExploreListAdapter (Context activityContext, ArrayList<Hive> hivesList, ListView listView) {
+    public ExploreListAdapter (Context activityContext, ArrayList<Hive> hivesList /*,ListView listView*/) {
         this.controller = Controller.GetRunningController();
         this.hives_list_data_origin = hivesList;
         this.hives_list_data = new ArrayList<Hive>(this.hives_list_data_origin);
         this.moreItems = false;
         this.context = activityContext;
         this.inflater = ((Activity)this.context).getLayoutInflater();
-        this.listView = listView;
-        this.listView.setAdapter(this);
+        //this.listView = listView;
+        //this.listView.setAdapter(this);
         this.expanded_hive = -1;
     }
 
