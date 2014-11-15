@@ -28,6 +28,7 @@ import com.chattyhive.chattyhive.framework.CustomViews.View.ShapeArrow;
 import com.chattyhive.chattyhive.framework.R;
 
 import java.security.InvalidParameterException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.TreeSet;
 
@@ -196,11 +197,16 @@ public class SlidingStepsLayout extends ViewGroup {
         if (this.layouts != null) return;
         this.layouts = new TreeSet<LayoutParams>();
 
-        for (int i = 0; i < this.getChildCount(); i++) {
-            View child = this.getChildAt(i);
+        ArrayList<View> children = new ArrayList<View>(this.getChildCount());
+        for (int i = 0; i < this.getChildCount(); i++)
+            children.add(this.getChildAt(i));
+
+        for (View child : children) {
             ViewGroup.LayoutParams layoutParams = child.getLayoutParams();
-            if (layoutParams instanceof LayoutParams)
-                this.layouts.add((LayoutParams)layoutParams);
+            if (layoutParams instanceof LayoutParams) {
+                this.layouts.add((LayoutParams) layoutParams);
+                this.removeView(child);
+            }
         }
         this.numberSteps = this.layouts.size();
         this.actualStep = 0;
@@ -278,8 +284,8 @@ public class SlidingStepsLayout extends ViewGroup {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int widestChildWidth = 0;
         int highestChildHeight = 0;
-        int actionBarHeight = (int)((this.showActionBar)?this.actionBarHeight:0);
-        int childHeightMeasureSpec = MeasureSpec.makeMeasureSpec(MeasureSpec.getSize(heightMeasureSpec) - actionBarHeight, MeasureSpec.getMode(heightMeasureSpec));
+        int effectiveActionBarHeight = (int)((this.showActionBar)?this.actionBarHeight:0);
+        int childHeightMeasureSpec = MeasureSpec.makeMeasureSpec(MeasureSpec.getSize(heightMeasureSpec) - effectiveActionBarHeight, MeasureSpec.getMode(heightMeasureSpec));
 
         this.loadChildren();
 
@@ -305,11 +311,12 @@ public class SlidingStepsLayout extends ViewGroup {
         }
 
         widestChildWidth += this.getPaddingLeft() + this.getPaddingRight();
-        highestChildHeight += this.getPaddingTop() + this.getPaddingBottom() + actionBarHeight;
+        highestChildHeight += this.getPaddingTop() + this.getPaddingBottom() + effectiveActionBarHeight;
 
         this.setMeasuredDimension(resolveSize(widestChildWidth,widthMeasureSpec),resolveSize(highestChildHeight, heightMeasureSpec));
 
-        this.calculateActionBarShowingMode();
+        if (this.showActionBar)
+            this.calculateActionBarShowingMode();
     }
 
     private void calculateActionBarShowingMode() {
@@ -485,8 +492,8 @@ public class SlidingStepsLayout extends ViewGroup {
         final int childCount = this.getChildCount();
         final int paddingLeft = this.getPaddingLeft();
         final int paddingRight = this.getPaddingRight();
-        final int paddingTop = this.getPaddingTop();
-        final int paddingBottom = this.getPaddingBottom();
+        final int paddingTop = this.getPaddingTop() - this.getTop();
+        final int paddingBottom = this.getPaddingBottom() + this.getTop();
 
         final int width = this.getMeasuredWidth();
 
@@ -500,7 +507,7 @@ public class SlidingStepsLayout extends ViewGroup {
 
         for (int i = 0; i < childCount; i++) {
             View child = this.getChildAt(i);
-            if ((unloadingStep > -1) && (child.getId() == layoutParams[this.unloadingStep].layout)) continue;
+            if ((unloadingStep > -1) && (child.getId() == layoutParams[this.unloadingStep].getViewID())) continue;
             ViewGroup.LayoutParams vLayoutParams = child.getLayoutParams();
             if (!(vLayoutParams instanceof MarginLayoutParams)) continue;
             MarginLayoutParams marginLayoutParams = (MarginLayoutParams) vLayoutParams;
@@ -769,9 +776,10 @@ public class SlidingStepsLayout extends ViewGroup {
                 this.setNextStepButton((nextStepButton >= 0) ? nextStepButton : null);
                 this.setStepTitle((stepTitle != null) ? stepTitle : "");
                 this.setStepSubtitle((stepSubtitle != null) ? stepSubtitle : "");
-                this.setViewID((id <= 0)?id:layout);
+                this.setViewID((id > 0)?id:layout);
             }
             a.recycle();
+            ta.recycle();
         }
         public LayoutParams(int width, int height) {
             super(width, height);

@@ -59,10 +59,12 @@ public class Explore extends Activity {
         }
 
         ListView listView = (ListView)(this.slidingPanel.getViewByStep(step).findViewById(R.id.explore_list_listView));
-        LayoutInflater inflater = getLayoutInflater();
-        ViewGroup header = (ViewGroup) inflater.inflate(R.layout.explore_hive_card, listView, false);
-        listView.addHeaderView(header);
-        listView.setAdapter(listAdapter);
+        if (listView.getAdapter() == null) {
+            LayoutInflater inflater = getLayoutInflater();
+            ViewGroup header = (ViewGroup) inflater.inflate(R.layout.explore_hive_card, listView, false);
+            listView.addHeaderView(header);
+            listView.setAdapter(listAdapter);
+        }
     }
 
     private void Initialize(){
@@ -74,6 +76,7 @@ public class Explore extends Activity {
         this.controller.exploreHives(0,9, Controller.ExploreType.USERS);
 
         this.slidingPanel = (SlidingStepsLayout)findViewById(R.id.explore_slidingsteps);
+        this.slidingPanel.setOnTransitionListener(onTransitionListener);
         this.lastOffset = 0;
 
         this.exploreListAdapter_list0 = new ExploreListAdapter(this,this.controller.getExploreHives(Controller.ExploreType.OUTSTANDING));

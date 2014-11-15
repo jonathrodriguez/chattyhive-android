@@ -652,6 +652,8 @@ public class StandAloneServer {
                         } else {
                             //TODO: Check COMMON for operation Error and set result here.
                             server.getServerUser().setStatus(ServerStatus.ERROR);
+                            System.out.println(String.format("ERROR. Code: %d. Request command: %s. Request URL: %s. Request body: %s",((COMMON) format).ERROR,command.toString(),ServerCommand.GetCommand(command).getUrl(formats),ServerCommand.GetCommand(command).getBodyData(formats)));
+                            result = true;
                         }
                         break;
                     }
