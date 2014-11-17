@@ -154,7 +154,7 @@ public class Main extends Activity {
             case OP_CODE_EXPLORE:
                     if (resultCode == RESULT_OK) {
                         String nameURL = null;
-                        if (data.hasExtra("NameURL"))
+                        if ((data != null) && (data.hasExtra("NameURL")))
                             nameURL = data.getStringExtra("NameURL");
                         if ((nameURL != null) && (!nameURL.isEmpty())) {
                             Hive h = Hive.getHive(nameURL);

@@ -12,6 +12,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.chattyhive.backend.Controller;
+import com.chattyhive.backend.businessobjects.Chats.Hive;
 import com.chattyhive.backend.util.events.EventArgs;
 import com.chattyhive.backend.util.events.EventHandler;
 import com.chattyhive.chattyhive.framework.CustomViews.Listener.OnTransitionListener;
@@ -25,6 +26,10 @@ public class Explore extends Activity {
     ExploreListAdapter exploreListAdapter_list1;
     ExploreListAdapter exploreListAdapter_list2;
     ExploreListAdapter exploreListAdapter_list3;
+
+    int[] exploreListHeaders;
+    int[] tabButtonIDs;
+
     int lastOffset;
     int joined = 0;
 
@@ -62,12 +67,15 @@ public class Explore extends Activity {
         if (listView.getAdapter() == null) {
             LayoutInflater inflater = getLayoutInflater();
             ViewGroup header = (ViewGroup) inflater.inflate(R.layout.explore_hive_card, listView, false);
+            ((TextView)header.findViewById(R.id.explore_title)).setText(this.exploreListHeaders[step]);
             listView.addHeaderView(header);
             listView.setAdapter(listAdapter);
         }
     }
 
     private void Initialize(){
+        this.exploreListHeaders = new int[] { R.string.explore_outstanding_hives, R.string.explore_hives_by_date, R.string.explore_trending_hives, R.string.explore_hives_by_users };
+        this.tabButtonIDs = new int[] {R.id.explore_tab_list_favourites_button,R.id.explore_tab_list_location_button,R.id.explore_tab_list_recent_button,R.id.explore_tab_list_trending_button,R.id.explore_button_categories };
         this.controller = Controller.GetRunningController();
 
         this.controller.exploreHives(0,9, Controller.ExploreType.OUTSTANDING);
@@ -79,10 +87,10 @@ public class Explore extends Activity {
         this.slidingPanel.setOnTransitionListener(onTransitionListener);
         this.lastOffset = 0;
 
-        this.exploreListAdapter_list0 = new ExploreListAdapter(this,this.controller.getExploreHives(Controller.ExploreType.OUTSTANDING));
-        this.exploreListAdapter_list1 = new ExploreListAdapter(this,this.controller.getExploreHives(Controller.ExploreType.CREATION_DATE));
-        this.exploreListAdapter_list2 = new ExploreListAdapter(this,this.controller.getExploreHives(Controller.ExploreType.TRENDING));
-        this.exploreListAdapter_list3 = new ExploreListAdapter(this,this.controller.getExploreHives(Controller.ExploreType.USERS));
+        this.exploreListAdapter_list0 = new ExploreListAdapter(this,this.controller.getExploreHives(Controller.ExploreType.OUTSTANDING),goToPublicChat);
+        this.exploreListAdapter_list1 = new ExploreListAdapter(this,this.controller.getExploreHives(Controller.ExploreType.CREATION_DATE),goToPublicChat);
+        this.exploreListAdapter_list2 = new ExploreListAdapter(this,this.controller.getExploreHives(Controller.ExploreType.TRENDING),goToPublicChat);
+        this.exploreListAdapter_list3 = new ExploreListAdapter(this,this.controller.getExploreHives(Controller.ExploreType.USERS),goToPublicChat);
 
         this.controller.ExploreHivesListChange.add(new EventHandler<EventArgs>(exploreListAdapter_list0, "OnAddItem", EventArgs.class));
         this.controller.ExploreHivesListChange.add(new EventHandler<EventArgs>(exploreListAdapter_list1, "OnAddItem", EventArgs.class));
@@ -98,13 +106,7 @@ public class Explore extends Activity {
         this.findViewById(R.id.explore_tab_list_recent_button).setOnClickListener(this.trending);
         this.findViewById(R.id.explore_tab_list_trending_button).setOnClickListener(this.users);
 
-        StaticMethods.SetAlpha(findViewById(R.id.explore_tab_list_favourites_button),1f);
-        StaticMethods.SetAlpha(findViewById(R.id.explore_tab_list_location_button),0.25f);
-        StaticMethods.SetAlpha(findViewById(R.id.explore_tab_list_recent_button),0.25f);
-        StaticMethods.SetAlpha(findViewById(R.id.explore_tab_list_trending_button),0.25f);
-        StaticMethods.SetAlpha(findViewById(R.id.explore_button_categories),0.25f);
-
-        findViewById(R.id.explore_tab_list_favourites_button).setBackgroundResource(R.drawable.explore_tab_list_border);
+        setTabStatus(0);
 
         loadListView(0);
         loadListView(1);
@@ -119,11 +121,21 @@ public class Explore extends Activity {
     protected OnTransitionListener onTransitionListener = new OnTransitionListener() {
         @Override
         public boolean OnBeginTransition(int actualStep, int nextStep) {
+            if (nextStep < 4)
+                loadListView(nextStep);
+
             return true;
         }
 
         @Override
+        public void OnDuringTransition(int[] visibleSteps, float[] visibilityAmount) {
+            setTabStatus(visibleSteps,visibilityAmount);
+        }
+
+        @Override
         public void OnEndTransition(int actualStep, int previousStep) {
+            setTabStatus(actualStep);
+
             if ((actualStep > previousStep) && (actualStep < 3))
                 loadListView(actualStep+1);
             else if ((actualStep < previousStep) && (actualStep > 0))
@@ -131,15 +143,53 @@ public class Explore extends Activity {
         }
     };
 
+    protected void setTabStatus (int[] visibleSteps, float[] visibilityAmount) {
+        for (int i = 0; i < this.tabButtonIDs.length; i++) {
+            int index = IndexOfInt(i,visibleSteps);
+            if (index > -1) {
+                findViewById(this.tabButtonIDs[i]).setBackgroundResource(R.drawable.explore_tab_list_border);
+                float alpha = ((1f - 0.25f)*visibilityAmount[index]) + 0.25f;
+                StaticMethods.SetAlpha(findViewById(this.tabButtonIDs[i]),alpha);
+            } else {
+                findViewById(this.tabButtonIDs[i]).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
+                StaticMethods.SetAlpha(findViewById(this.tabButtonIDs[i]),0.25f);
+            }
+        }
+    }
+    protected int IndexOfInt(int value, int[] array) {
+        for (int i = 0; i < array.length; i++)
+            if (value == array[i]) return i;
+        return -1;
+    }
+    protected void setTabStatus (int step) {
+        for (int i = 0; i < this.tabButtonIDs.length; i++) {
+            if (i == step) {
+                findViewById(this.tabButtonIDs[i]).setBackgroundResource(R.drawable.explore_tab_list_border);
+                StaticMethods.SetAlpha(findViewById(this.tabButtonIDs[i]),1f);
+            } else {
+                findViewById(this.tabButtonIDs[i]).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
+                StaticMethods.SetAlpha(findViewById(this.tabButtonIDs[i]),0.25f);
+            }
+        }
+    }
+
     protected View.OnClickListener backButton = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             if (joined > 0)
                 setResult(RESULT_OK);
+            finish();
+        }
+    };
 
-            /*Intent data = new Intent();
-            data.putExtra("NameURL",hive.getNameURL());
-            setResult(RESULT_OK,data);*/
+    protected View.OnClickListener goToPublicChat = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Hive hive = (Hive)v.getTag(R.id.BO_Hive);
+
+            Intent data = new Intent();
+            data.putExtra("NameURL",hive.getNameUrl());
+            setResult(RESULT_OK,data);
 
             finish();
         }
@@ -150,20 +200,6 @@ public class Explore extends Activity {
         public void onClick(View v) {
             //GOTO STEP 0:
             slidingPanel.openStep(0);
-
-            findViewById(R.id.explore_tab_list_favourites_button).setBackgroundResource(R.drawable.explore_tab_list_border);
-
-
-            findViewById(R.id.explore_tab_list_location_button).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
-            findViewById(R.id.explore_tab_list_recent_button).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
-            findViewById(R.id.explore_tab_list_trending_button).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
-            findViewById(R.id.explore_button_categories).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
-
-            StaticMethods.SetAlpha(findViewById(R.id.explore_tab_list_favourites_button),1f);
-            StaticMethods.SetAlpha(findViewById(R.id.explore_tab_list_location_button),0.25f);
-            StaticMethods.SetAlpha(findViewById(R.id.explore_tab_list_recent_button),0.25f);
-            StaticMethods.SetAlpha(findViewById(R.id.explore_tab_list_trending_button),0.25f);
-            StaticMethods.SetAlpha(findViewById(R.id.explore_button_categories),0.25f);
         }
     };
     protected View.OnClickListener time = new View.OnClickListener() {
@@ -171,19 +207,6 @@ public class Explore extends Activity {
         public void onClick(View v) {
             //GOTO STEP 1:
             slidingPanel.openStep(1);
-
-            findViewById(R.id.explore_tab_list_location_button).setBackgroundResource(R.drawable.explore_tab_list_border);
-
-            findViewById(R.id.explore_tab_list_favourites_button).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
-            findViewById(R.id.explore_tab_list_recent_button).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
-            findViewById(R.id.explore_tab_list_trending_button).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
-            findViewById(R.id.explore_button_categories).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
-
-            StaticMethods.SetAlpha(findViewById(R.id.explore_tab_list_favourites_button),0.25f);
-            StaticMethods.SetAlpha(findViewById(R.id.explore_tab_list_location_button),1f);
-            StaticMethods.SetAlpha(findViewById(R.id.explore_tab_list_recent_button),0.25f);
-            StaticMethods.SetAlpha(findViewById(R.id.explore_tab_list_trending_button),0.25f);
-            StaticMethods.SetAlpha(findViewById(R.id.explore_button_categories),0.25f);
         }
     };
     protected View.OnClickListener trending = new View.OnClickListener() {
@@ -191,19 +214,6 @@ public class Explore extends Activity {
         public void onClick(View v) {
             //GOTO STEP 2:
             slidingPanel.openStep(2);
-
-            findViewById(R.id.explore_tab_list_recent_button).setBackgroundResource(R.drawable.explore_tab_list_border);
-
-            findViewById(R.id.explore_tab_list_location_button).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
-            findViewById(R.id.explore_tab_list_favourites_button).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
-            findViewById(R.id.explore_tab_list_trending_button).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
-            findViewById(R.id.explore_button_categories).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
-
-            StaticMethods.SetAlpha(findViewById(R.id.explore_tab_list_favourites_button),0.25f);
-            StaticMethods.SetAlpha(findViewById(R.id.explore_tab_list_location_button),0.25f);
-            StaticMethods.SetAlpha(findViewById(R.id.explore_tab_list_recent_button),1f);
-            StaticMethods.SetAlpha(findViewById(R.id.explore_tab_list_trending_button),0.25f);
-            StaticMethods.SetAlpha(findViewById(R.id.explore_button_categories),0.25f);
         }
     };
     protected View.OnClickListener users = new View.OnClickListener() {
@@ -211,19 +221,6 @@ public class Explore extends Activity {
         public void onClick(View v) {
             //GOTO STEP 3:
             slidingPanel.openStep(3);
-
-            findViewById(R.id.explore_tab_list_trending_button).setBackgroundResource(R.drawable.explore_tab_list_border);
-
-            findViewById(R.id.explore_tab_list_location_button).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
-            findViewById(R.id.explore_tab_list_favourites_button).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
-            findViewById(R.id.explore_tab_list_recent_button).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
-            findViewById(R.id.explore_button_categories).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
-
-            StaticMethods.SetAlpha(findViewById(R.id.explore_tab_list_favourites_button),0.25f);
-            StaticMethods.SetAlpha(findViewById(R.id.explore_tab_list_location_button),0.25f);
-            StaticMethods.SetAlpha(findViewById(R.id.explore_tab_list_recent_button),0.25f);
-            StaticMethods.SetAlpha(findViewById(R.id.explore_tab_list_trending_button),1f);
-            StaticMethods.SetAlpha(findViewById(R.id.explore_button_categories),0.25f);
         }
     };
 
@@ -232,19 +229,6 @@ public class Explore extends Activity {
         public void onClick(View v) {
             //GOTO STEP 4:
             slidingPanel.openStep(4);
-
-            findViewById(R.id.explore_button_categories).setBackgroundResource(R.drawable.explore_tab_list_border);
-
-            findViewById(R.id.explore_tab_list_location_button).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
-            findViewById(R.id.explore_tab_list_favourites_button).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
-            findViewById(R.id.explore_tab_list_recent_button).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
-            findViewById(R.id.explore_tab_list_trending_button).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
-
-            StaticMethods.SetAlpha(findViewById(R.id.explore_tab_list_favourites_button),0.25f);
-            StaticMethods.SetAlpha(findViewById(R.id.explore_tab_list_location_button),0.25f);
-            StaticMethods.SetAlpha(findViewById(R.id.explore_tab_list_recent_button),0.25f);
-            StaticMethods.SetAlpha(findViewById(R.id.explore_tab_list_trending_button),0.25f);
-            StaticMethods.SetAlpha(findViewById(R.id.explore_button_categories),1f);
         }
     };
 

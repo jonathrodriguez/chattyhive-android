@@ -30,7 +30,8 @@
         custom:showActionBar="false"
         custom:buttonPressedTransitionAnimationDuration="250"
         custom:maxTransitionAnimationDuration="250"
-        custom:flingSpeedDetectionThreshold="800">
+        custom:flingSpeedDetectionThreshold="800"
+        custom:allowSwipeToChangeStep="true">
         <View
             android:layout_height="0dp"
             android:layout_width="0dp"

@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="explore_search_hint">Start or search a hive&#8230;</string>
-    <string name="explore_hive_name">:Minecraft - A game about building anything you can imagine</string>
-    <string name="explore_category_art">Art &amp; Cultural Events</string>
+    <string name="explore_outstanding_hives">Hives for you</string>
+    <string name="explore_hives_by_date">Recent hives</string>
+    <string name="explore_trending_hives">Trending hives</string>
+    <string name="explore_hives_by_users">Most popular hives</string>
 </resources>

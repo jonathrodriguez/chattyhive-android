@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.chattyhive.backend.Controller;
@@ -34,11 +33,12 @@ public class ExploreListAdapter extends BaseAdapter {
     private LayoutInflater inflater;
     private ArrayList<Hive> hives_list_data;
     private ArrayList<Hive> hives_list_data_origin;
-    private View.OnClickListener clickListener;
-    private Hive hive;
+    private View.OnClickListener publicChatClickListener;
+    //private Hive hive;
     private int expanded_hive;
+    private ArrayList<Integer> joined_Hives;
 
-    public void SetOnClickListener (View.OnClickListener listener) { this.clickListener = listener; notifyDataSetChanged(); }
+    public void SetPublicChatClickListener(View.OnClickListener listener) { this.publicChatClickListener = listener; notifyDataSetChanged(); }
 
     public void OnAddItem(Object sender, EventArgs args) {
         ((Activity)this.context).runOnUiThread(new Runnable(){
@@ -49,16 +49,18 @@ public class ExploreListAdapter extends BaseAdapter {
         });
     }
 
-    public ExploreListAdapter (Context activityContext, ArrayList<Hive> hivesList /*,ListView listView*/) {
+    public ExploreListAdapter (Context activityContext, ArrayList<Hive> hivesList, View.OnClickListener publicChatClickListener /*,ListView listView*/) {
         this.controller = Controller.GetRunningController();
         this.hives_list_data_origin = hivesList;
         this.hives_list_data = new ArrayList<Hive>(this.hives_list_data_origin);
         this.moreItems = false;
         this.context = activityContext;
         this.inflater = ((Activity)this.context).getLayoutInflater();
+        this.publicChatClickListener = publicChatClickListener;
         //this.listView = listView;
         //this.listView.setAdapter(this);
         this.expanded_hive = -1;
+        this.joined_Hives = new ArrayList<Integer>();
     }
 
     @Override
@@ -129,7 +131,8 @@ public class ExploreListAdapter extends BaseAdapter {
             convertView.findViewById(R.id.explore_list_item_short).setVisibility(View.VISIBLE);
         }
 
-        this.hive = this.hives_list_data.get(position);
+        Hive hive = this.hives_list_data.get(position);
+        holder.hive = hive;
         convertView.findViewById(R.id.explore_join_button).setTag(R.id.BO_Hive, hive);//cambiado del converview al boton de join para recuperar info de hive subscrito!!!
 
         holder.collapsed_hive_name.setText(hive.getName());
@@ -158,20 +161,33 @@ public class ExploreListAdapter extends BaseAdapter {
         View.OnClickListener join_button_click = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                System.out.println("join!!!!");
+                //System.out.println("join!!!!");
                 //String hiveNameURL =((String) ((TextView)v.findViewById(R.id.explore_list_item_name)).getTag());
                 //controller.JoinHive(hiveNameURL);
 
-                if(((View)v.getParent()).findViewById(R.id.explore_chat_button2).getVisibility() == View.GONE){
-                    ((View)v.getParent()).findViewById(R.id.explore_chat_button2).setVisibility(View.VISIBLE);
-                    v.findViewById(R.id.explore_join_button).setVisibility(View.GONE);
-                    //((TextView)((View)v.getParent()).findViewById(R.id.explore_list_item_collapsed_hive_name)).setTextColor(R.color.explore_hive_joined);   FIND PARENT
-                    //((TextView)((View)v.getParent()).findViewById(R.id.explore_list_item_expanded_hive_name)).setTextColor(R.color.explore_hive_joined);
-                    controller.JoinHive(hive.getNameUrl());
-                }
+                ViewHolder holder = (ViewHolder)v.getTag(R.id.Explore_ListViewHolder);
+
+                joined_Hives.add(position);
+
+                ((View)v.getParent()).findViewById(R.id.explore_chat_button2).setVisibility(View.VISIBLE);
+                v.findViewById(R.id.explore_join_button).setVisibility(View.GONE);
+                controller.JoinHive(holder.hive.getNameUrl());
             }
         };
+
+        convertView.findViewById(R.id.explore_join_button).setVisibility(View.VISIBLE);
+        convertView.findViewById(R.id.explore_chat_button2).setVisibility(View.GONE);
+        convertView.findViewById(R.id.explore_join_button).setTag(R.id.Explore_ListViewHolder,holder);
+        convertView.findViewById(R.id.explore_chat_button2).setTag(R.id.BO_Hive,hive);
         convertView.findViewById(R.id.explore_join_button).setOnClickListener(join_button_click);
+        convertView.findViewById(R.id.explore_chat_button2).setOnClickListener(publicChatClickListener);
+
+        for (Integer joined : joined_Hives)
+            if (joined == position) {
+                convertView.findViewById(R.id.explore_join_button).setVisibility(View.GONE);
+                convertView.findViewById(R.id.explore_chat_button2).setVisibility(View.VISIBLE);
+                break;
+            }
         return convertView;
     }
 
@@ -188,6 +204,8 @@ public class ExploreListAdapter extends BaseAdapter {
         public TextView expanded_categoryText;
         public TextView expanded_usersText;
         public ImageView expanded_hiveImage;
+
+        public Hive hive;
 
         public void loadCollapsedHiveImage(Object sender,EventArgs eventArgs) {
             if (!(sender instanceof Image)) return;

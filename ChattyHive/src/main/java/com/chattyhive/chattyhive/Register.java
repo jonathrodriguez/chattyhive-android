@@ -239,6 +239,9 @@ public class Register extends Activity {
         }
 
         @Override
+        public void OnDuringTransition(int[] visibleSteps, float[] visibilityAmount) { }
+
+        @Override
         public void OnEndTransition(int actualStep, int previousStep) {
             switch (previousStep) {
                 case 0:

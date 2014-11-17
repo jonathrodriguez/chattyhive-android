@@ -6,18 +6,6 @@
     android:orientation="vertical"
     android:background="#ededed">
 
-<!--     <TextView
-        android:id="@+id/explore_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="18.5dp"
-        android:layout_marginLeft="11dp"
-        android:text="Hives for you"
-        android:textSize="17.5dp"
-        android:textColor="#333333"
-        />-->
-
     <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
