@@ -51,7 +51,7 @@ public class MainChat {
 
         this.mainChat.findViewById(R.id.main_panel_chat_send_icon).setOnClickListener(this.send_button_click);
 
-        ((Main)context).appIcon_ClickListener.onClick(this.actionBar.findViewById(R.id.main_panel_chat_icon));
+        ((Main)context).floatingPanel.close();
 
         this.textInput = ((TextView)mainChat.findViewById(R.id.main_panel_chat_textBox));
 

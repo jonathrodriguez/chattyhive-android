@@ -156,11 +156,13 @@ public class Main extends Activity {
                         String nameURL = null;
                         if ((data != null) && (data.hasExtra("NameURL")))
                             nameURL = data.getStringExtra("NameURL");
+
                         if ((nameURL != null) && (!nameURL.isEmpty())) {
                             Hive h = Hive.getHive(nameURL);
                             Chat c = null;
                             if (h != null)
                                 c = h.getPublicChat();
+
                             if (c != null)
                                 new MainChat(this, c);
                             else
