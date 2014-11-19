@@ -16,6 +16,7 @@ public class RightPanelExpandableListAdapter extends BaseExpandableListAdapter {
     private final SparseArray<RightPanelListItem> group;
     public LayoutInflater inflater;
     public Activity activity;
+    private short expanded;
 
     public RightPanelExpandableListAdapter(Activity act, SparseArray<RightPanelListItem> group) {
         activity = act;
@@ -68,16 +69,14 @@ public class RightPanelExpandableListAdapter extends BaseExpandableListAdapter {
     @Override
     public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
         if (groupPosition == 0){
-            //if (convertView == null) {
                 convertView = inflater.inflate(R.layout.right_panel_items_layout, null);
-            //}
-
             if(isExpanded){
                 convertView.findViewById(R.id.menu_notexpanded_explora_img).setVisibility(View.INVISIBLE);
                 convertView.findViewById(R.id.menu_notexpanded_home_img).setVisibility(View.INVISIBLE);
                 ImageView imgv = (ImageView) convertView.findViewById(R.id.menu_flecha_imagen);
                 imgv.setImageResource(R.drawable.ic_action_next_item_down);
                 convertView.findViewById(R.id.right_panel_items_layout).setBackgroundResource(R.drawable.borde2px);
+
             }else{
                 convertView.findViewById(R.id.menu_notexpanded_explora_img).setVisibility(View.VISIBLE);
                 convertView.findViewById(R.id.menu_notexpanded_home_img).setVisibility(View.VISIBLE);
@@ -87,9 +86,7 @@ public class RightPanelExpandableListAdapter extends BaseExpandableListAdapter {
             }
         }
         if (groupPosition == 1){
-//            if (convertView == null) {
                 convertView = inflater.inflate(R.layout.right_panel_options, null);
-//            }
                 if (isExpanded){
                     ImageView imgv = (ImageView) convertView.findViewById(R.id.menu_flecha_imagen2);
                     imgv.setImageResource(R.drawable.ic_action_next_item_down);
@@ -102,9 +99,7 @@ public class RightPanelExpandableListAdapter extends BaseExpandableListAdapter {
 
         }
         if (groupPosition == 2){
-//            if (convertView == null) {
             convertView = inflater.inflate(R.layout.right_panel_hive, null);
-//            }
             if (isExpanded){
                 ImageView imgv = (ImageView) convertView.findViewById(R.id.menu_flecha_imagen3);
                 imgv.setImageResource(R.drawable.ic_action_next_item_down);
@@ -122,9 +117,7 @@ public class RightPanelExpandableListAdapter extends BaseExpandableListAdapter {
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
         final String children = (String) getChild(groupPosition, childPosition);
         if(groupPosition==0) {
-            //if (convertView == null) {
                 convertView = inflater.inflate(R.layout.right_panel_subitems_layout, null);
-            //}
 
             convertView.findViewById(R.id.menu_layout_inicio).setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
@@ -143,14 +136,10 @@ public class RightPanelExpandableListAdapter extends BaseExpandableListAdapter {
             convertView.findViewById(R.id.menu_layout_logout).setOnClickListener(((Main) activity).logout_button_click);
         }
         if (groupPosition == 1){
-            //if (convertView==null){
                 convertView = inflater.inflate(R.layout.right_panel_subitems_options, null);
-            //}
         }
         if (groupPosition == 2){
-            //if (convertView==null){
                 convertView = inflater.inflate(R.layout.right_panel_subitems_hive, null);
-            //}
         }
         return convertView;
     }

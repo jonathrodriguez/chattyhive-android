@@ -2,10 +2,10 @@
 <resources>
     <!-- right_panel_action_bar -->
     <dimen name="action_bar_height">48dp</dimen>
-    <dimen name="action_bar_margin_left">45dp</dimen>
+    <dimen name="action_bar_margin_left">47dp</dimen>
     <dimen name="action_bar_private_name_size">14dp</dimen>
     <dimen name="action_bar_public_name_size">12dp</dimen>
-    <dimen name="action_bar_relative_width">45dp</dimen>
+    <dimen name="action_bar_relative_width">47dp</dimen>
     <dimen name="action_bar_image_dimens">44dp</dimen>
     <dimen name="action_bar_image_padding">1.5dp</dimen>
 
@@ -43,7 +43,7 @@
     <dimen name="options_parent_arrow_padding_top">14dp</dimen>
     <dimen name="options_parent_arrow_padding_bottom">2dp</dimen>
     <dimen name="options_parent_arrow_img">18dp</dimen>
-    <dimen name="options_parent_text_height">33dp</dimen>
+    <dimen name="options_parent_text_height">38dp</dimen>
     <dimen name="options_parent_text_size">16dp</dimen>
     <dimen name="options_parent_text_padding_top">12dp</dimen>
     <dimen name="options_parent_text_padding_bottom">2dp</dimen>
@@ -88,7 +88,7 @@
     <dimen name="menu_children_2img_layout_padding_top">8dp</dimen>
     <dimen name="menu_children_2img_layout_padding_bottom">7.5dp</dimen>
     <!--title-->
-    <dimen name="menu_children_title_margin_left">35dp</dimen>
+    <dimen name="menu_children_title_margin_left">38dp</dimen>
     <dimen name="menu_children_title_size">13.5dp</dimen>
     <dimen name="menu_children_title_padding_left">5dp</dimen>
     <dimen name="menu_children_title_padding_right">0dp</dimen>
