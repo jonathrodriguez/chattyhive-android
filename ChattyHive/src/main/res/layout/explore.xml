@@ -29,7 +29,7 @@
         android:id="@+id/explore_slidingsteps"
         custom:showActionBar="false"
         custom:buttonPressedTransitionAnimationDuration="250"
-        custom:maxTransitionAnimationDuration="250"
+        custom:maxTransitionAnimationDuration="400"
         custom:flingSpeedDetectionThreshold="800"
         custom:allowSwipeToChangeStep="true">
         <View
