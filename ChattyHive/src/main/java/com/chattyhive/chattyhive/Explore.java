@@ -136,10 +136,10 @@ public class Explore extends Activity {
         public void OnEndTransition(int actualStep, int previousStep) {
             setTabStatus(actualStep);
 
-            if ((actualStep > previousStep) && (actualStep < 3))
+           /* if ((actualStep > previousStep) && (actualStep < 3))
                 loadListView(actualStep+1);
             else if ((actualStep < previousStep) && (actualStep > 0))
-                loadListView(actualStep-1);
+                loadListView(actualStep-1);*/
         }
     };
 
