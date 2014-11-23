@@ -83,6 +83,12 @@ public class RightPanelExpandableListAdapter extends BaseExpandableListAdapter {
                 ImageView imgv = (ImageView) convertView.findViewById(R.id.menu_flecha_imagen);
                 imgv.setImageResource(R.drawable.ic_action_next_item);
                 convertView.findViewById(R.id.right_panel_items_layout).setBackgroundResource(R.drawable.borde2pxhide);
+                convertView.findViewById(R.id.menu_notexpanded_home_img).setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+                        ((Main) activity).ShowHome();
+                    }
+                });
+                convertView.findViewById(R.id.menu_notexpanded_explora_img).setOnClickListener(((Main) activity).explore_button_click);
             }
         }
         if (groupPosition == 1){
@@ -134,6 +140,21 @@ public class RightPanelExpandableListAdapter extends BaseExpandableListAdapter {
             convertView.findViewById(R.id.menu_layout_explora).setOnClickListener(((Main) activity).explore_button_click);
 
             convertView.findViewById(R.id.menu_layout_logout).setOnClickListener(((Main) activity).logout_button_click);
+
+            convertView.findViewById(R.id.menu_friends_checkbox).setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    ((ImageView)v.findViewById(R.id.menu_friends_checkbox)).setImageResource(R.drawable.menu_white_tick_deactivated_grey);
+                }
+            });
+            convertView.findViewById(R.id.menu_hivemates_checkbox).setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    //if (!((ImageView)v.findViewById(R.id.menu_hivemates_checkbox)).isActivated()) {
+                        //((ImageView) v.findViewById(R.id.menu_hivemates_checkbox)).setActivated(true);
+                        ((ImageView) v.findViewById(R.id.menu_hivemates_checkbox)).setImageResource(R.drawable.menu_white_tick_deactivated_grey);
+                    //}
+
+                }
+            });
         }
         if (groupPosition == 1){
                 convertView = inflater.inflate(R.layout.right_panel_subitems_options, null);
