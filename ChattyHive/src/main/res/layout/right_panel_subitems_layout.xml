@@ -7,233 +7,252 @@
     android:orientation="vertical"
     android:paddingLeft="@dimen/menu_children_paddin_left_right"
     android:paddingRight="@dimen/menu_children_paddin_left_right">
-    
+
     <LinearLayout
         android:id="@+id/menu_layout_inicio"
         android:layout_width="match_parent"
         android:layout_height="@dimen/menu_children_base_element_height"
-        android:orientation="horizontal"
-        android:background="@drawable/borde1px">
+        android:background="@drawable/borde1px"
+        android:orientation="horizontal">
+
         <RelativeLayout
             android:layout_width="@dimen/menu_children_base_element_img_layout_width"
             android:layout_height="match_parent"
+            android:paddingBottom="@dimen/menu_children_base_element_img_padding_bottom"
             android:paddingLeft="@dimen/menu_children_base_element_img_padding_left"
             android:paddingRight="@dimen/menu_children_base_element_img_padding_right"
-            android:paddingTop="@dimen/menu_children_base_element_img_padding_top"
-            android:paddingBottom="@dimen/menu_children_base_element_img_padding_bottom">
-        <ImageView
-            android:layout_width="@dimen/menu_children_base_element_img_dimens"
-            android:layout_height="@dimen/menu_children_base_element_img_dimens"
-            android:src="@drawable/home"/>
+            android:paddingTop="@dimen/menu_children_base_element_img_padding_top">
+
+            <ImageView
+                android:layout_width="@dimen/menu_children_base_element_img_dimens"
+                android:layout_height="@dimen/menu_children_base_element_img_dimens"
+                android:src="@drawable/home" />
         </RelativeLayout>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:gravity="center_vertical"
-        android:text="@string/menu_home"
-        android:textSize="@dimen/menu_children_base_element_text_size"
-        android:textStyle="normal"
-        android:textColor="@color/menu_text_white"
-        android:layout_gravity="center"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:gravity="center_vertical"
+            android:text="@string/menu_home"
+            android:textColor="@color/menu_text_white"
+            android:textSize="@dimen/menu_children_base_element_text_size"
+            android:textStyle="normal" />
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/menu_layout_explora"
-        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="@dimen/menu_children_base_element_height"
+        android:background="@drawable/borde1px"
         android:gravity="right"
-        android:background="@drawable/borde1px">
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/menu_children_base_element_height"
-        android:orientation="horizontal"
-        android:layout_marginLeft="@dimen/menu_children_2img_layout_margin_left">
-        <RelativeLayout
-            android:layout_width="@dimen/menu_children_base_element_img_layout_width"
-            android:layout_height="match_parent"
-            android:paddingLeft="@dimen/menu_children_base_element_img_padding_left"
-            android:paddingRight="@dimen/menu_children_base_element_img_padding_right"
-            android:paddingTop="@dimen/menu_children_base_element_img_padding_top"
-            android:paddingBottom="@dimen/menu_children_base_element_img_padding_bottom">
-            <ImageView
-                android:layout_width="@dimen/menu_children_base_element_img_dimens"
-                android:layout_height="@dimen/menu_children_base_element_img_dimens"
-                android:src="@drawable/explore_naranja"/>
-        </RelativeLayout>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical"
-            android:text="@string/menu_explore"
-            android:textSize="@dimen/menu_children_base_element_text_size"
-            android:textStyle="bold"
-            android:layout_gravity="center"
-            android:textColor="@color/menu_text_yellow"/>
-    </LinearLayout>
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/menu_children_base_element_height"
+            android:layout_marginLeft="@dimen/menu_children_2img_layout_margin_left"
+            android:orientation="horizontal">
+
+            <RelativeLayout
+                android:layout_width="@dimen/menu_children_base_element_img_layout_width"
+                android:layout_height="match_parent"
+                android:paddingBottom="@dimen/menu_children_base_element_img_padding_bottom"
+                android:paddingLeft="@dimen/menu_children_base_element_img_padding_left"
+                android:paddingRight="@dimen/menu_children_base_element_img_padding_right"
+                android:paddingTop="@dimen/menu_children_base_element_img_padding_top">
+
+                <ImageView
+                    android:layout_width="@dimen/menu_children_base_element_img_dimens"
+                    android:layout_height="@dimen/menu_children_base_element_img_dimens"
+                    android:src="@drawable/explore_naranja" />
+            </RelativeLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:gravity="center_vertical"
+                android:text="@string/menu_explore"
+                android:textColor="@color/menu_text_yellow"
+                android:textSize="@dimen/menu_children_base_element_text_size"
+                android:textStyle="bold" />
+        </LinearLayout>
 
         <RelativeLayout
             android:layout_width="@dimen/menu_children_2img_layout_width"
             android:layout_height="match_parent"
-            android:paddingRight="@dimen/menu_children_2img_layout_padding_right"
+            android:paddingBottom="@dimen/menu_children_2img_layout_padding_bottom"
             android:paddingLeft="@dimen/menu_children_2img_layout_padding_left"
-            android:paddingTop="@dimen/menu_children_2img_layout_padding_top"
-            android:paddingBottom="@dimen/menu_children_2img_layout_padding_bottom">
+            android:paddingRight="@dimen/menu_children_2img_layout_padding_right"
+            android:paddingTop="@dimen/menu_children_2img_layout_padding_top">
+
             <ImageView
+                android:id="@+id/menu_icon_pluma"
                 android:layout_width="@dimen/menu_children_base_element_img_dimens"
                 android:layout_height="@dimen/menu_children_base_element_img_dimens"
-                android:id="@+id/menu_icon_pluma"
-                android:src="@drawable/menu_new_hive_blanco"/>
+                android:src="@drawable/menu_new_hive_blanco" />
         </RelativeLayout>
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/menu_layout_chats"
-        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="@dimen/menu_children_base_element_height"
+        android:background="@drawable/borde1px"
         android:gravity="right"
-        android:background="@drawable/borde1px">
+        android:orientation="horizontal">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="@dimen/menu_children_base_element_height"
-            android:orientation="horizontal"
-            android:layout_marginLeft="@dimen/menu_children_2img_layout_margin_left">
+            android:layout_marginLeft="@dimen/menu_children_2img_layout_margin_left"
+            android:orientation="horizontal">
+
             <RelativeLayout
                 android:layout_width="@dimen/menu_children_base_element_img_layout_width"
                 android:layout_height="match_parent"
+                android:paddingBottom="@dimen/menu_children_base_element_img_padding_bottom"
                 android:paddingLeft="@dimen/menu_children_base_element_img_padding_left"
                 android:paddingRight="@dimen/menu_children_base_element_img_padding_right"
-                android:paddingTop="@dimen/menu_children_base_element_img_padding_top"
-                android:paddingBottom="@dimen/menu_children_base_element_img_padding_bottom">
+                android:paddingTop="@dimen/menu_children_base_element_img_padding_top">
+
                 <ImageView
                     android:layout_width="@dimen/menu_children_base_element_img_dimens"
                     android:layout_height="@dimen/menu_children_base_element_img_dimens"
-                    android:src="@drawable/menu_chats_blanco"/>
+                    android:src="@drawable/menu_chats_blanco" />
             </RelativeLayout>
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:layout_gravity="center"
                 android:gravity="center_vertical"
                 android:text="@string/menu_chats"
-                android:textSize="@dimen/menu_children_base_element_text_size"
-                android:textStyle="normal"
                 android:textColor="@color/menu_text_white"
-                android:layout_gravity="center"/>
+                android:textSize="@dimen/menu_children_base_element_text_size"
+                android:textStyle="normal" />
         </LinearLayout>
 
         <RelativeLayout
             android:layout_width="@dimen/menu_children_2img_layout_width"
             android:layout_height="match_parent"
-            android:paddingRight="@dimen/menu_children_2img_layout_padding_right"
+            android:paddingBottom="@dimen/menu_children_2img_layout_padding_bottom"
             android:paddingLeft="@dimen/menu_children_2img_layout_padding_left"
-            android:paddingTop="@dimen/menu_children_2img_layout_padding_top"
-            android:paddingBottom="@dimen/menu_children_2img_layout_padding_bottom">
+            android:paddingRight="@dimen/menu_children_2img_layout_padding_right"
+            android:paddingTop="@dimen/menu_children_2img_layout_padding_top">
+
             <TextView
                 android:id="@+id/menu_num_chats"
                 android:layout_width="@dimen/menu_children_base_element_img_dimens"
                 android:layout_height="@dimen/menu_children_base_element_img_dimens"
-                android:text="@string/menu_num_request"
-                android:textColor="@color/menu_text_white"
                 android:background="@drawable/counter"
-                android:gravity="center"/>
+                android:gravity="center"
+                android:text="@string/menu_num_request"
+                android:textColor="@color/menu_text_white" />
         </RelativeLayout>
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/menu_layout_peticiones"
-        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="@dimen/menu_children_base_element_height"
-        android:gravity="right">
+        android:gravity="right"
+        android:orientation="horizontal">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="@dimen/menu_children_base_element_height"
-            android:orientation="horizontal"
-            android:layout_marginLeft="@dimen/menu_children_2img_layout_margin_left">
+            android:layout_marginLeft="@dimen/menu_children_2img_layout_margin_left"
+            android:orientation="horizontal">
+
             <RelativeLayout
                 android:layout_width="@dimen/menu_children_base_element_img_layout_width"
                 android:layout_height="match_parent"
+                android:paddingBottom="@dimen/menu_children_base_element_img_padding_bottom"
                 android:paddingLeft="@dimen/menu_children_base_element_img_padding_left"
                 android:paddingRight="@dimen/menu_children_base_element_img_padding_right"
-                android:paddingTop="@dimen/menu_children_base_element_img_padding_top"
-                android:paddingBottom="@dimen/menu_children_base_element_img_padding_bottom">
+                android:paddingTop="@dimen/menu_children_base_element_img_padding_top">
+
                 <ImageView
                     android:layout_width="@dimen/menu_children_base_element_img_dimens"
                     android:layout_height="@dimen/menu_children_base_element_img_dimens"
-                    android:src="@drawable/menu_peticiones_blanco"/>
+                    android:src="@drawable/menu_peticiones_blanco" />
             </RelativeLayout>
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:layout_gravity="center"
                 android:gravity="center_vertical"
                 android:text="@string/menu_request"
-                android:textSize="@dimen/menu_children_base_element_text_size"
-                android:textStyle="normal"
                 android:textColor="@color/menu_text_white"
-                android:layout_gravity="center"/>
+                android:textSize="@dimen/menu_children_base_element_text_size"
+                android:textStyle="normal" />
         </LinearLayout>
 
         <RelativeLayout
             android:layout_width="@dimen/menu_children_2img_layout_width"
             android:layout_height="match_parent"
-            android:paddingRight="@dimen/menu_children_2img_layout_padding_right"
+            android:paddingBottom="@dimen/menu_children_2img_layout_padding_bottom"
             android:paddingLeft="@dimen/menu_children_2img_layout_padding_left"
-            android:paddingTop="@dimen/menu_children_2img_layout_padding_top"
-            android:paddingBottom="@dimen/menu_children_2img_layout_padding_bottom">
+            android:paddingRight="@dimen/menu_children_2img_layout_padding_right"
+            android:paddingTop="@dimen/menu_children_2img_layout_padding_top">
+
             <TextView
                 android:id="@+id/menu_num_peticiones"
                 android:layout_width="@dimen/menu_children_base_element_img_dimens"
                 android:layout_height="@dimen/menu_children_base_element_img_dimens"
-                android:text="@string/menu_num_request"
-                android:textColor="@color/menu_text_white"
                 android:background="@drawable/counter"
-                android:gravity="center"/>
+                android:gravity="center"
+                android:text="@string/menu_num_request"
+                android:textColor="@color/menu_text_white" />
         </RelativeLayout>
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/menu_layout_notificaciones_titulo"
-        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="@dimen/menu_children_base_element_height"
         android:gravity="right"
-        >
+        android:orientation="horizontal">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="@dimen/menu_children_base_element_height"
-            android:orientation="horizontal"
-            android:layout_marginLeft="@dimen/menu_children_title_margin_left">
+            android:layout_marginLeft="@dimen/menu_children_title_margin_left"
+            android:orientation="horizontal">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:gravity="bottom"
-                android:text="@string/menu_notifications"
-                android:textSize="@dimen/menu_children_title_size"
-                android:textStyle="normal"
-                android:textColor="@color/menu_text_white"
                 android:layout_gravity="center"
+                android:layout_marginBottom="@dimen/menu_children_title_marging_bottom"
+                android:layout_marginRight="@dimen/menu_children_title_marging_right"
+                android:background="@drawable/borde1px"
+                android:gravity="bottom"
+                android:paddingBottom="@dimen/menu_children_title_padding_bottom"
                 android:paddingLeft="@dimen/menu_children_title_padding_left"
                 android:paddingRight="@dimen/menu_children_title_marging_right"
-                android:paddingBottom="@dimen/menu_children_title_padding_bottom"
-                android:layout_marginBottom="@dimen/menu_children_title_marging_bottom"
-                android:background="@drawable/borde1px"
-                android:layout_marginRight="@dimen/menu_children_title_marging_right"/>
+                android:text="@string/menu_notifications"
+                android:textColor="@color/menu_text_white"
+                android:textSize="@dimen/menu_children_title_size"
+                android:textStyle="normal" />
         </LinearLayout>
 
         <RelativeLayout
             android:layout_width="@dimen/menu_children_2img_layout_width"
             android:layout_height="match_parent"
-            android:paddingRight="@dimen/menu_children_2img_layout_padding_right"
+            android:paddingBottom="@dimen/menu_children_2img_layout_padding_bottom"
             android:paddingLeft="@dimen/menu_children_2img_layout_padding_left"
-            android:paddingTop="@dimen/menu_children_2img_layout_padding_top"
-            android:paddingBottom="@dimen/menu_children_2img_layout_padding_bottom">
+            android:paddingRight="@dimen/menu_children_2img_layout_padding_right"
+            android:paddingTop="@dimen/menu_children_2img_layout_padding_top">
+
             <ImageView
+                android:id="@+id/menu_bell"
                 android:layout_width="@dimen/menu_children_base_element_img_dimens"
                 android:layout_height="@dimen/menu_children_base_element_img_dimens"
-                android:id="@+id/menu_bell"
-                android:src="@drawable/menu_notificaciones_on_blanco"/>
+                android:src="@drawable/menu_notificaciones_on_blanco" />
         </RelativeLayout>
     </LinearLayout>
 
@@ -241,66 +260,70 @@
         android:id="@+id/menu_check_buttons"
         android:layout_width="match_parent"
         android:layout_height="@dimen/menu_children_check_height"
-        android:orientation="horizontal"
-        android:gravity="center">
+        android:gravity="center"
+        android:orientation="horizontal">
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="match_parent">
 
             <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="left">
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center">
 
-            <RelativeLayout
-                android:layout_width="@dimen/menu_children_check_layout_width"
-                android:layout_height="match_parent"
-                android:paddingLeft="@dimen/menu_children_check_layout_padding_left"
-                android:paddingRight="@dimen/menu_children_check_layout_padding_right"
-                android:paddingBottom="@dimen/menu_children_check_layout_paddding_bottom"
-                android:paddingTop="@dimen/menu_children_check_layout_padding_top">
-                <ImageView
-                    android:layout_width="@dimen/menu_children_check_img_dimens"
-                    android:layout_height="@dimen/menu_children_check_img_dimens"
-                    android:src="@drawable/menu_white_tick_activated_grey"/>
+                <RelativeLayout
+                    android:layout_width="@dimen/menu_children_check_layout_width"
+                    android:layout_height="match_parent"
+                    android:paddingBottom="@dimen/menu_children_check_layout_paddding_bottom"
+                    android:paddingLeft="@dimen/menu_children_check_layout_padding_left"
+                    android:paddingRight="@dimen/menu_children_check_layout_padding_right"
+                    android:paddingTop="@dimen/menu_children_check_layout_padding_top">
+
+                    <ImageView
+                        android:layout_width="@dimen/menu_children_check_img_dimens"
+                        android:layout_height="@dimen/menu_children_check_img_dimens"
+                        android:src="@drawable/menu_white_tick_activated_grey" />
                 </RelativeLayout>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="@string/menu_friends"
-                android:textSize="@dimen/menu_children_check_text_size"
-                android:textColor="@color/menu_text_white"
-                android:gravity="center"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="@string/menu_friends"
+                    android:textColor="@color/menu_text_white"
+                    android:textSize="@dimen/menu_children_check_text_size" />
             </LinearLayout>
 
             <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:paddingLeft="@dimen/menu_children_check_2layout_padding_left"
-            android:paddingRight="@dimen/menu_children_check_2layout_padding_right"
-            android:gravity="left">
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center">
 
-            <RelativeLayout
-                android:layout_width="@dimen/menu_children_check_layout_width"
-                android:layout_height="match_parent"
-                android:paddingLeft="@dimen/menu_children_check_layout_padding_left"
-                android:paddingRight="@dimen/menu_children_check_layout_padding_right"
-                android:paddingBottom="@dimen/menu_children_check_layout_paddding_bottom"
-                android:paddingTop="@dimen/menu_children_check_layout_padding_top">
-                <ImageView
-                    android:layout_width="@dimen/menu_children_check_img_dimens"
-                    android:layout_height="@dimen/menu_children_check_img_dimens"
-                    android:src="@drawable/menu_white_tick_activated_grey"/>
-            </RelativeLayout>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="@string/menu_hivemates"
-                android:textSize="@dimen/menu_children_check_text_size"
-                android:textColor="@color/menu_text_white"
-                android:gravity="center"/>
-        </LinearLayout>
+                <RelativeLayout
+                    android:layout_width="@dimen/menu_children_check_layout_width"
+                    android:layout_height="match_parent"
+                    android:paddingBottom="@dimen/menu_children_check_layout_paddding_bottom"
+                    android:paddingLeft="@dimen/menu_children_check_layout_padding_left"
+                    android:paddingRight="@dimen/menu_children_check_layout_padding_right"
+                    android:paddingTop="@dimen/menu_children_check_layout_padding_top">
+
+                    <ImageView
+                        android:layout_width="@dimen/menu_children_check_img_dimens"
+                        android:layout_height="@dimen/menu_children_check_img_dimens"
+                        android:src="@drawable/menu_white_tick_activated_grey" />
+                </RelativeLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="@string/menu_hivemates"
+                    android:textColor="@color/menu_text_white"
+                    android:textSize="@dimen/menu_children_check_text_size" />
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 
@@ -308,132 +331,146 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/menu_children_title_margin_left"
         android:background="@drawable/borde1px">
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="@string/menu_others"
-            android:textSize="@dimen/menu_children_title_size"
-            android:textColor="@color/menu_text_white"
+            android:paddingBottom="@dimen/menu_children_title_others_padding_bottom"
             android:paddingLeft="@dimen/menu_children_title_padding_left"
             android:paddingRight="@dimen/menu_children_title_padding_right"
             android:paddingTop="@dimen/menu_children_title_others_padding_top"
-            android:paddingBottom="@dimen/menu_children_title_others_padding_bottom"/>
-        </LinearLayout>
+            android:text="@string/menu_others"
+            android:textColor="@color/menu_text_white"
+            android:textSize="@dimen/menu_children_title_size" />
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/menu_layout_ajustes"
         android:layout_width="match_parent"
         android:layout_height="@dimen/menu_children_base_element_height"
-        android:orientation="horizontal"
-        android:background="@drawable/borde1px">
+        android:background="@drawable/borde1px"
+        android:orientation="horizontal">
+
         <RelativeLayout
             android:layout_width="@dimen/menu_children_base_element_img_layout_width"
             android:layout_height="match_parent"
+            android:paddingBottom="@dimen/menu_children_base_element_img_padding_bottom"
             android:paddingLeft="@dimen/menu_children_base_element_img_padding_left"
             android:paddingRight="@dimen/menu_children_base_element_img_padding_right"
-            android:paddingTop="@dimen/menu_children_base_element_img_padding_top"
-            android:paddingBottom="@dimen/menu_children_base_element_img_padding_bottom">
+            android:paddingTop="@dimen/menu_children_base_element_img_padding_top">
+
             <ImageView
                 android:layout_width="@dimen/menu_children_base_element_img_dimens"
                 android:layout_height="@dimen/menu_children_base_element_img_dimens"
-                android:src="@drawable/menu_settings_blanco"/>
+                android:src="@drawable/menu_settings_blanco" />
         </RelativeLayout>
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:layout_gravity="center"
             android:gravity="center_vertical"
             android:text="@string/menu_adjusts"
-            android:textSize="@dimen/menu_children_base_element_text_size"
-            android:textStyle="normal"
             android:textColor="@color/menu_text_white"
-            android:layout_gravity="center"/>
+            android:textSize="@dimen/menu_children_base_element_text_size"
+            android:textStyle="normal" />
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/menu_layout_feedback"
         android:layout_width="match_parent"
         android:layout_height="@dimen/menu_children_base_element_height"
-        android:orientation="horizontal"
-        android:background="@drawable/borde1px">
+        android:background="@drawable/borde1px"
+        android:orientation="horizontal">
+
         <RelativeLayout
             android:layout_width="@dimen/menu_children_base_element_img_layout_width"
             android:layout_height="match_parent"
+            android:paddingBottom="@dimen/menu_children_base_element_img_padding_bottom"
             android:paddingLeft="@dimen/menu_children_base_element_img_padding_left"
             android:paddingRight="@dimen/menu_children_base_element_img_padding_right"
-            android:paddingTop="@dimen/menu_children_base_element_img_padding_top"
-            android:paddingBottom="@dimen/menu_children_base_element_img_padding_bottom">
+            android:paddingTop="@dimen/menu_children_base_element_img_padding_top">
+
             <ImageView
                 android:layout_width="@dimen/menu_children_base_element_img_dimens"
                 android:layout_height="@dimen/menu_children_base_element_img_dimens"
-                android:src="@drawable/menu_feedback"/>
+                android:src="@drawable/menu_feedback" />
         </RelativeLayout>
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:layout_gravity="center"
             android:gravity="center_vertical"
             android:text="@string/menu_feedback"
+            android:textColor="@color/menu_text_white"
             android:textSize="@dimen/menu_children_base_element_text_size"
             android:textStyle="normal"
-            android:textColor="@color/menu_text_white"
-            android:layout_gravity="center"/>
+            android:maxLines="1"/>
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/menu_layout_invite"
         android:layout_width="match_parent"
         android:layout_height="@dimen/menu_children_base_element_height"
-        android:orientation="horizontal"
-        android:background="@drawable/borde1px">
+        android:background="@drawable/borde1px"
+        android:orientation="horizontal">
+
         <RelativeLayout
             android:layout_width="@dimen/menu_children_base_element_img_layout_width"
             android:layout_height="match_parent"
+            android:paddingBottom="@dimen/menu_children_base_element_img_padding_bottom"
             android:paddingLeft="@dimen/menu_children_base_element_img_padding_left"
             android:paddingRight="@dimen/menu_children_base_element_img_padding_right"
-            android:paddingTop="@dimen/menu_children_base_element_img_padding_top"
-            android:paddingBottom="@dimen/menu_children_base_element_img_padding_bottom">
+            android:paddingTop="@dimen/menu_children_base_element_img_padding_top">
+
             <ImageView
                 android:layout_width="@dimen/menu_children_base_element_img_dimens"
                 android:layout_height="@dimen/menu_children_base_element_img_dimens"
-                android:src="@drawable/menu_share_white"/>
+                android:src="@drawable/menu_share_white" />
         </RelativeLayout>
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:layout_gravity="center"
             android:gravity="center_vertical"
             android:text="@string/menu_invite"
-            android:textSize="@dimen/menu_children_base_element_text_size"
-            android:textStyle="normal"
             android:textColor="@color/menu_text_white"
-            android:layout_gravity="center"/>
+            android:textSize="@dimen/menu_children_base_element_text_size"
+            android:textStyle="normal" />
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/menu_layout_ayuda"
         android:layout_width="match_parent"
         android:layout_height="@dimen/menu_children_base_element_height"
-        android:orientation="horizontal"
-        android:background="@drawable/borde1px">
+        android:background="@drawable/borde1px"
+        android:orientation="horizontal">
+
         <RelativeLayout
             android:layout_width="@dimen/menu_children_base_element_img_layout_width"
             android:layout_height="match_parent"
+            android:paddingBottom="@dimen/menu_children_base_element_img_padding_bottom"
             android:paddingLeft="@dimen/menu_children_base_element_img_padding_left"
             android:paddingRight="@dimen/menu_children_base_element_img_padding_right"
-            android:paddingTop="@dimen/menu_children_base_element_img_padding_top"
-            android:paddingBottom="@dimen/menu_children_base_element_img_padding_bottom">
+            android:paddingTop="@dimen/menu_children_base_element_img_padding_top">
+
             <ImageView
                 android:layout_width="@dimen/menu_children_base_element_img_dimens"
                 android:layout_height="@dimen/menu_children_base_element_img_dimens"
-                android:src="@drawable/menu_help_blanco"/>
+                android:src="@drawable/menu_help_blanco" />
         </RelativeLayout>
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:layout_gravity="center"
             android:gravity="center_vertical"
             android:text="@string/menu_help"
-            android:textSize="@dimen/menu_children_base_element_text_size"
-            android:textStyle="normal"
             android:textColor="@color/menu_text_white"
-            android:layout_gravity="center"/>
+            android:textSize="@dimen/menu_children_base_element_text_size"
+            android:textStyle="normal" />
     </LinearLayout>
 
     <LinearLayout
@@ -441,27 +478,30 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/menu_children_base_element_height"
         android:orientation="horizontal">
+
         <RelativeLayout
             android:layout_width="@dimen/menu_children_base_element_img_layout_width"
             android:layout_height="match_parent"
+            android:paddingBottom="@dimen/menu_children_base_element_img_padding_bottom"
             android:paddingLeft="@dimen/menu_children_base_element_img_padding_left"
             android:paddingRight="@dimen/menu_children_base_element_img_padding_right"
-            android:paddingTop="@dimen/menu_children_base_element_img_padding_top"
-            android:paddingBottom="@dimen/menu_children_base_element_img_padding_bottom">
+            android:paddingTop="@dimen/menu_children_base_element_img_padding_top">
+
             <ImageView
                 android:layout_width="@dimen/menu_children_base_element_img_dimens"
                 android:layout_height="@dimen/menu_children_base_element_img_dimens"
-                android:src="@drawable/menu_log_out_blanco"/>
+                android:src="@drawable/menu_log_out_blanco" />
         </RelativeLayout>
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:layout_gravity="center"
             android:gravity="center_vertical"
             android:text="@string/menu_logout"
-            android:textSize="@dimen/menu_children_base_element_text_size"
-            android:textStyle="normal"
             android:textColor="@color/menu_text_white"
-            android:layout_gravity="center"/>
+            android:textSize="@dimen/menu_children_base_element_text_size"
+            android:textStyle="normal" />
     </LinearLayout>
 
 </LinearLayout>

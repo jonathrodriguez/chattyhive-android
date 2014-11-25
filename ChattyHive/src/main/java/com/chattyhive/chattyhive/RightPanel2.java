@@ -86,16 +86,16 @@ public class RightPanel2{
 
         View footer = ((Activity)this.context).findViewById(R.id.footer);
 
-        //if (listView.isGroupExpanded(0)==false){
+        if (listView.isGroupExpanded(0)==false) {
             listView.expandGroup(0);
 //        }
-//        if(listView.isGroupExpanded(1)== true){
-//            listView.collapseGroup(1);
-//        }
-//        if(listView.isGroupExpanded(2)== true){
-//            listView.collapseGroup(2);
-//        }
-
+            if (listView.isGroupExpanded(1) == true) {
+                listView.collapseGroup(1);
+            }
+            if (listView.isGroupExpanded(2) == true) {
+                listView.collapseGroup(2);
+            }
+        }
         //listView.addFooterView(footer);
         /*if(listView.isGroupExpanded(0) == true) {
             if(listView.isGroupExpanded(1) == true) {

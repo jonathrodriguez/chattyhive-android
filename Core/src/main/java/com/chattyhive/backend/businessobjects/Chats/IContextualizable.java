@@ -5,4 +5,5 @@ package com.chattyhive.backend.businessobjects.Chats;
  */
 public interface IContextualizable {
     //TODO: Define required methods here
+
 }

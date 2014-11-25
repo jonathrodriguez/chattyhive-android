@@ -1,91 +1,92 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
+    android:id="@+id/main_panel_chat_item"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/border_hive_message_me"
     android:focusableInTouchMode="false"
-    android:id="@+id/main_panel_chat_item"
-    android:paddingTop="10dp"
-    android:paddingRight="7dp"
+    android:orientation="horizontal"
+    android:paddingBottom="10dp"
     android:paddingLeft="7dp"
-    android:paddingBottom="15dp">
+    android:paddingRight="7dp"
+    android:paddingTop="10dp">
 
     <LinearLayout
-        android:orientation="horizontal"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
         android:layout_gravity="center_horizontal|top"
-        android:gravity="center_vertical">
-
-        <TextView
-            android:layout_width="40dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="left|top"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="99:99"
-            android:id="@+id/main_panel_chat_timeStamp"
-            android:layout_marginRight="9dp"
-            android:textColor="#808080"/>
+        android:layout_weight="1"
+        android:gravity="center_vertical"
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginTop="5dp"
-            android:layout_gravity="right|top"
-            android:gravity="right|top">
+            android:orientation="horizontal">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="\@me"
-            android:id="@+id/main_panel_chat_username"
-            android:layout_gravity="right|top"
-            android:gravity="right"
-            android:textAlignment="gravity"
-            android:singleLine="true"
-            android:textColor="#808040"
-            android:layout_marginBottom="8dp"/>
+            <TextView
+                android:id="@+id/main_panel_chat_timeStamp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left|top"
+                android:text="99:99"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="#808080"
+                android:textSize="12dp" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:id="@+id/main_panel_chat_messageText"
-            android:text='"Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est.'
-            android:textAlignment="gravity"
-            android:textColor="#333333"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2.5dp"
+                android:gravity="right|bottom"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/main_panel_chat_username"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:text="\@me"
+                    android:textAlignment="gravity"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="#808040"
+                    android:textSize="14.75dp"
+                    android:layout_marginRight="1.5dp"/>
+            </LinearLayout>
         </LinearLayout>
-        <!--<TextView
-            android:layout_width="wrap_content"
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="99:99"
-            android:id="@+id/main_panel_chat_timeStamp"
-            android:layout_gravity="bottom|left"
-            android:textAlignment="gravity"
-            android:gravity="right"
-            android:singleLine="true"
-            android:layout_alignParentBottom="false"
-            android:layout_alignParentRight="false"
-            android:layout_alignParentLeft="false"
-            android:layout_alignParentEnd="false"
-            android:layout_alignParentStart="false"
-            android:textColor="#808080" />-->
+            android:layout_gravity="right|top"
+            android:layout_marginLeft="6dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="4dp"
+            android:gravity="right|top"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/main_panel_chat_messageText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text='"Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est.'
+                android:textAlignment="gravity"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#333333"
+                android:textSize="14.5sp"
+                android:gravity="left"/>
+        </LinearLayout>
     </LinearLayout>
 
     <ImageView
+        android:id="@+id/main_panel_chat_avatarThumbnail"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:id="@+id/main_panel_chat_avatarThumbnail"
         android:layout_gravity="right|top"
-        android:src="@drawable/my_profile_private_profile_simple"
-        android:contentDescription="my_image"
+        android:layout_marginLeft="7.5dp"
         android:background="#fff0e4"
-        android:layout_marginLeft="7dp"/>
+        android:contentDescription="my_image"
+        android:src="@drawable/my_profile_private_profile_simple" />
 
 </LinearLayout>
