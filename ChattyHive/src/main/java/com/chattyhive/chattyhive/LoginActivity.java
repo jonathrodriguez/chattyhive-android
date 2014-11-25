@@ -19,6 +19,7 @@ import com.chattyhive.backend.contentprovider.formats.Format;
 import com.chattyhive.backend.contentprovider.server.ServerUser;
 import com.chattyhive.backend.util.events.CommandCallbackEventArgs;
 import com.chattyhive.backend.util.events.ConnectionEventArgs;
+import com.chattyhive.backend.util.events.EventArgs;
 import com.chattyhive.backend.util.events.EventHandler;
 
 public class LoginActivity extends Activity {
@@ -67,6 +68,7 @@ public class LoginActivity extends Activity {
 
     public void facebookButtonFakeSignUp(String username, String password) {
         fakeMode = true;
+        controller.LocalUserReceived.add(new EventHandler<EventArgs>(this,"onLocalUserLoaded",EventArgs.class));
         dataProvider.setUser(new ServerUser(username, password));
         dataProvider.Connect();
     }
@@ -168,6 +170,14 @@ public class LoginActivity extends Activity {
         }
     }
 
+    public void onLocalUserLoaded(Object sender,EventArgs eventArgs) {
+        if (fakeMode) {
+            Intent intent = new Intent(this, Register.class);
+            intent.putExtra("fake",true);
+            startActivityForResult(intent, OP_CODE_REGISTER);
+        }
+    }
+
     public void onServerConnectionStateChanged(Object sender,ConnectionEventArgs eventArgs) {
         connecting = false;
         //First hide animation
@@ -175,10 +185,6 @@ public class LoginActivity extends Activity {
             if (!fakeMode) {
                 setResult(RESULT_OK);
                 finish();
-            } else {
-                Intent intent = new Intent(this, Register.class);
-                intent.putExtra("fake",true);
-                startActivityForResult(intent, OP_CODE_REGISTER);
             }
         } else {
             //Show some kind of error
