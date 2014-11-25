@@ -25,6 +25,7 @@ public class LoginActivity extends Activity {
     static final int OP_CODE_REGISTER = 3;
 
     private Boolean connecting;
+    private Boolean fakeMode;
     private DataProvider dataProvider;
     private Controller controller;
 
@@ -49,11 +50,25 @@ public class LoginActivity extends Activity {
             }
         });
 
+        findViewById(R.id.login_sign_up_with_facebook).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                facebookButtonFakeSignUp("jonathan","12345678");
+            }
+        });
+
         connecting = false;
+        fakeMode = false;
 
             dataProvider = DataProvider.GetDataProvider();
             controller = Controller.GetRunningController();
             dataProvider.ServerConnectionStateChanged.add(new EventHandler<ConnectionEventArgs>(this,"onServerConnectionStateChanged",ConnectionEventArgs.class));
+    }
+
+    public void facebookButtonFakeSignUp(String username, String password) {
+        fakeMode = true;
+        dataProvider.setUser(new ServerUser(username, password));
+        dataProvider.Connect();
     }
 
     protected void setTabButtonsBehaviour() {
@@ -157,8 +172,14 @@ public class LoginActivity extends Activity {
         connecting = false;
         //First hide animation
         if (eventArgs.getConnected()) {
-            setResult(RESULT_OK);
-            finish();
+            if (!fakeMode) {
+                setResult(RESULT_OK);
+                finish();
+            } else {
+                Intent intent = new Intent(this, Register.class);
+                intent.putExtra("fake",true);
+                startActivityForResult(intent, OP_CODE_REGISTER);
+            }
         } else {
             //Show some kind of error
             TextView usernameView = ((TextView)findViewById(R.id.login_activity_login_username));
