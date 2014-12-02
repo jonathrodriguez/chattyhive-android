@@ -5,581 +5,651 @@
     android:layout_height="match_parent">
 
     <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-
-    <TableLayout
-        android:id="@+id/explore_categories_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#ffffff">
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="48dp">
-            <LinearLayout
-                android:layout_weight="0.5"
-                android:gravity="center"
-                android:background="@drawable/explore_category_list_border">
-                <ImageView
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:src="@drawable/category_01_00"
-                    android:layout_marginRight="10dp"
-                    android:alpha="0.75"
-                    android:padding="4dp"
-                    android:adjustViewBounds="true" />
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:text="@string/explore_category_art"
-                    android:textSize="14.5dp"
-                    android:gravity="center_vertical"
-                    android:textColor="#515151"/>
-            </LinearLayout>
-            <LinearLayout
-                android:layout_weight="0.5"
-                android:gravity="center"
-                android:background="@drawable/explore_category_list_border">
-                <ImageView
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:src="@drawable/category_02_00"
-                    android:layout_marginRight="10dp"
-                    android:alpha="0.75"
-                    android:padding="4dp"
-                    android:adjustViewBounds="true" />
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:text="Books &amp; Comics"
-                    android:textSize="14.5dp"
-                    android:gravity="center_vertical"
-                    android:textColor="#515151"/>
-            </LinearLayout>
-        </TableRow>
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="48dp">
-            <LinearLayout
-                android:layout_weight="0.5"
-                android:gravity="center"
-                android:background="@drawable/explore_category_list_border">
-                <ImageView
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:src="@drawable/category_03_00"
-                    android:layout_marginRight="10dp"
-                    android:alpha="0.75"
-                    android:padding="4dp"
-                    android:adjustViewBounds="true" />
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:text="Cars, Motorbikes    &amp; Others"
-                    android:textSize="14.5dp"
-                    android:gravity="center_vertical"
-                    android:textColor="#515151"/>
-            </LinearLayout>
-            <LinearLayout
-                android:layout_weight="0.5"
-                android:gravity="center"
-                android:background="@drawable/explore_category_list_border">
-                <ImageView
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:src="@drawable/category_19_00"
-                    android:layout_marginRight="10dp"
-                    android:alpha="0.75"
-                    android:padding="4dp"
-                    android:adjustViewBounds="true" />
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:text="Communities"
-                    android:textSize="14.5dp"
-                    android:gravity="center_vertical"
-                    android:textColor="#515151"/>
-            </LinearLayout>
-        </TableRow>
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="48dp">
-            <LinearLayout
-                android:layout_weight="0.5"
-                android:gravity="center"
-                android:background="@drawable/explore_category_list_border">
-                <ImageView
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:src="@drawable/category_04_00"
-                    android:layout_marginRight="10dp"
-                    android:alpha="0.75"
-                    android:padding="4dp"
-                    android:adjustViewBounds="true" />
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:text="Education"
-                    android:textSize="14.5dp"
-                    android:gravity="center_vertical"
-                    android:textColor="#515151"/>
-            </LinearLayout>
-            <LinearLayout
-                android:layout_weight="0.5"
-                android:gravity="center"
-                android:background="@drawable/explore_category_list_border">
-                <ImageView
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:src="@drawable/category_05_00"
-                    android:layout_marginRight="10dp"
-                    android:alpha="0.75"
-                    android:padding="4dp"
-                    android:adjustViewBounds="true" />
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:text="Family, Home         &amp; Pets"
-                    android:textSize="14.5dp"
-                    android:gravity="center_vertical"
-                    android:textColor="#515151"/>
-            </LinearLayout>
-        </TableRow>
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="48dp">
-            <LinearLayout
-                android:layout_weight="0.5"
-                android:gravity="center"
-                android:background="@drawable/explore_category_list_border">
-                <ImageView
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:src="@drawable/category_06_00"
-                    android:layout_marginRight="10dp"
-                    android:alpha="0.75"
-                    android:padding="4dp"
-                    android:adjustViewBounds="true" />
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:text="Free time"
-                    android:textSize="14.5dp"
-                    android:gravity="center_vertical"
-                    android:textColor="#515151"/>
-            </LinearLayout>
-            <LinearLayout
-                android:layout_weight="0.5"
-                android:gravity="center"
-                android:background="@drawable/explore_category_list_border">
-                <ImageView
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:src="@drawable/category_07_00"
-                    android:layout_marginRight="10dp"
-                    android:alpha="0.75"
-                    android:padding="4dp"
-                    android:adjustViewBounds="true" />
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:text="Health &amp; Fitness"
-                    android:textSize="14.5dp"
-                    android:gravity="center_vertical"
-                    android:textColor="#515151"/>
-            </LinearLayout>
-        </TableRow>
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="48dp">
-            <LinearLayout
-                android:layout_weight="0.5"
-                android:gravity="center"
-                android:background="@drawable/explore_category_list_border">
-                <ImageView
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:src="@drawable/category_08_00"
-                    android:layout_marginRight="10dp"
-                    android:alpha="0.75"
-                    android:padding="4dp"
-                    android:adjustViewBounds="true" />
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:text="Internet"
-                    android:textSize="14.5dp"
-                    android:gravity="center_vertical"
-                    android:textColor="#515151"/>
-            </LinearLayout>
-            <LinearLayout
-                android:layout_weight="0.5"
-                android:gravity="center"
-                android:background="@drawable/explore_category_list_border">
-                <ImageView
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:src="@drawable/category_09_00"
-                    android:layout_marginRight="10dp"
-                    android:alpha="0.75"
-                    android:padding="4dp"
-                    android:adjustViewBounds="true" />
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:text="Lifestyle"
-                    android:textSize="14.5dp"
-                    android:gravity="center_vertical"
-                    android:textColor="#515151"/>
-            </LinearLayout>
-        </TableRow>
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="48dp">
-            <LinearLayout
-                android:layout_weight="0.5"
-                android:gravity="center"
-                android:background="@drawable/explore_category_list_border">
-                <ImageView
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:src="@drawable/category_10_00"
-                    android:layout_marginRight="10dp"
-                    android:alpha="0.75"
-                    android:padding="4dp"
-                    android:adjustViewBounds="true" />
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:text="Love &amp; Friendship"
-                    android:textSize="14.5dp"
-                    android:gravity="center_vertical"
-                    android:textColor="#515151"/>
-            </LinearLayout>
-            <LinearLayout
-                android:layout_weight="0.5"
-                android:gravity="center"
-                android:background="@drawable/explore_category_list_border">
-                <ImageView
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:src="@drawable/category_11_00"
-                    android:layout_marginRight="10dp"
-                    android:alpha="0.75"
-                    android:padding="4dp"
-                    android:adjustViewBounds="true" />
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:text="Meet new people"
-                    android:textSize="14.5dp"
-                    android:gravity="center_vertical"
-                    android:textColor="#515151"/>
-            </LinearLayout>
-        </TableRow>
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="48dp">
-            <LinearLayout
-                android:layout_weight="0.5"
-                android:gravity="center"
-                android:background="@drawable/explore_category_list_border">
-                <ImageView
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:src="@drawable/category_12_00"
-                    android:layout_marginRight="10dp"
-                    android:alpha="0.75"
-                    android:padding="4dp"
-                    android:adjustViewBounds="true" />
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:text="Movies &amp; TV"
-                    android:textSize="14.5dp"
-                    android:gravity="center_vertical"
-                    android:textColor="#515151"/>
-            </LinearLayout>
-            <LinearLayout
-                android:layout_weight="0.5"
-                android:gravity="center"
-                android:background="@drawable/explore_category_list_border">
-                <ImageView
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:src="@drawable/category_13_00"
-                    android:layout_marginRight="10dp"
-                    android:alpha="0.75"
-                    android:padding="4dp"
-                    android:adjustViewBounds="true" />
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:text="Natural sciences"
-                    android:textSize="14.5dp"
-                    android:gravity="center_vertical"
-                    android:textColor="#515151"/>
-            </LinearLayout>
-        </TableRow>
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="48dp">
-            <LinearLayout
-                android:layout_weight="0.5"
-                android:gravity="center"
-                android:background="@drawable/explore_category_list_border">
-                <ImageView
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:src="@drawable/category_14_00"
-                    android:layout_marginRight="10dp"
-                    android:alpha="0.75"
-                    android:padding="4dp"
-                    android:adjustViewBounds="true" />
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:text="Music"
-                    android:textSize="14.5dp"
-                    android:gravity="center_vertical"
-                    android:textColor="#515151"/>
-            </LinearLayout>
-            <LinearLayout
-                android:layout_weight="0.5"
-                android:gravity="center"
-                android:background="@drawable/explore_category_list_border">
-                <ImageView
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:src="@drawable/category_15_00"
-                    android:layout_marginRight="10dp"
-                    android:alpha="0.75"
-                    android:padding="4dp"
-                    android:adjustViewBounds="true" />
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:text="News &amp; Current affairs"
-                    android:textSize="14.5dp"
-                    android:gravity="center_vertical"
-                    android:textColor="#515151"/>
-            </LinearLayout>
-        </TableRow>
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="48dp">
-            <LinearLayout
-                android:layout_weight="0.5"
-                android:gravity="center"
-                android:background="@drawable/explore_category_list_border">
-                <ImageView
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:src="@drawable/category_16_00"
-                    android:layout_marginRight="10dp"
-                    android:alpha="0.75"
-                    android:padding="4dp"
-                    android:adjustViewBounds="true" />
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:text="Places, Companies &amp; Brands"
-                    android:textSize="14.5dp"
-                    android:gravity="center_vertical"
-                    android:textColor="#515151"/>
-            </LinearLayout>
-            <LinearLayout
-                android:layout_weight="0.5"
-                android:gravity="center"
-                android:background="@drawable/explore_category_list_border">
-                <ImageView
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:src="@drawable/category_17_00"
-                    android:layout_marginRight="10dp"
-                    android:alpha="0.75"
-                    android:padding="4dp"
-                    android:adjustViewBounds="true" />
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:text="Politics &amp; Activism"
-                    android:textSize="14.5dp"
-                    android:gravity="center_vertical"
-                    android:textColor="#515151"/>
-            </LinearLayout>
-        </TableRow>
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="48dp">
-            <LinearLayout
-                android:layout_weight="0.5"
-                android:gravity="center"
-                android:background="@drawable/explore_category_list_border">
-                <ImageView
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:src="@drawable/category_18_00"
-                    android:layout_marginRight="10dp"
-                    android:alpha="0.75"
-                    android:padding="4dp"
-                    android:adjustViewBounds="true" />
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:text="Shopping &amp; Market"
-                    android:textSize="14.5dp"
-                    android:gravity="center_vertical"
-                    android:textColor="#515151"/>
-            </LinearLayout>
-            <LinearLayout
-                android:layout_weight="0.5"
-                android:gravity="center"
-                android:background="@drawable/explore_category_list_border">
-                <ImageView
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:src="@drawable/category_19_00"
-                    android:layout_marginRight="10dp"
-                    android:alpha="0.75"
-                    android:padding="4dp"
-                    android:adjustViewBounds="true" />
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:text="Socil sciences"
-                    android:textSize="14.5dp"
-                    android:gravity="center_vertical"
-                    android:textColor="#515151"/>
-            </LinearLayout>
-        </TableRow>
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="48dp">
-            <LinearLayout
-                android:layout_weight="0.5"
-                android:gravity="center"
-                android:background="@drawable/explore_category_list_border">
-                <ImageView
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:src="@drawable/category_20_00"
-                    android:layout_marginRight="10dp"
-                    android:alpha="0.75"
-                    android:padding="4dp"
-                    android:adjustViewBounds="true" />
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:text="Sport"
-                    android:textSize="14.5dp"
-                    android:gravity="center_vertical"
-                    android:textColor="#515151"/>
-            </LinearLayout>
-            <LinearLayout
-                android:layout_weight="0.5"
-                android:gravity="center"
-                android:background="@drawable/explore_category_list_border">
-                <ImageView
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:src="@drawable/category_21_00"
-                    android:layout_marginRight="10dp"
-                    android:alpha="0.75"
-                    android:padding="4dp"
-                    android:adjustViewBounds="true" />
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:text="Technology             &amp; computers"
-                    android:textSize="14.5dp"
-                    android:gravity="center_vertical"
-                    android:textColor="#515151"/>
-            </LinearLayout>
-        </TableRow>
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="48dp">
-            <LinearLayout
-                android:layout_weight="0.5"
-                android:gravity="center"
-                android:background="@drawable/explore_category_list_border">
-                <ImageView
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:src="@drawable/category_22_00"
-                    android:layout_marginRight="10dp"
-                    android:alpha="0.75"
-                    android:padding="4dp"
-                    android:adjustViewBounds="true" />
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:text="Trips &amp; Places"
-                    android:textSize="14.5dp"
-                    android:gravity="center_vertical"
-                    android:textColor="#515151"/>
-            </LinearLayout>
-            <LinearLayout
-                android:layout_weight="0.5"
-                android:gravity="center"
-                android:background="@drawable/explore_category_list_border">
-                <ImageView
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:src="@drawable/category_23_00"
-                    android:layout_marginRight="10dp"
-                    android:alpha="0.75"
-                    android:padding="4dp"
-                    android:adjustViewBounds="true" />
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:text="Video games"
-                    android:textSize="14.5dp"
-                    android:gravity="center_vertical"
-                    android:textColor="#515151"/>
-            </LinearLayout>
-        </TableRow>
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="48dp">
-            <LinearLayout
-                android:layout_weight="0.5"
-                android:gravity="center"
-                android:background="@drawable/explore_category_list_border">
-                <ImageView
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:src="@drawable/category_24_00"
-                    android:layout_marginRight="10dp"
-                    android:alpha="0.75"
-                    android:padding="4dp"
-                    android:adjustViewBounds="true" />
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:text="Work &amp; Business"
-                    android:textSize="14.5dp"
-                    android:gravity="center_vertical"
-                    android:textColor="#515151"/>
-            </LinearLayout>
-            <LinearLayout
-                android:layout_weight="0.5"
-                android:gravity="center"
-                android:background="@drawable/explore_category_list_border">
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:text=""
-                    android:textSize="14.5dp"
-                    android:gravity="center_vertical"
-                    android:textColor="#515151"
-                    android:background="#EFEFEF"/>
-            </LinearLayout>
-        </TableRow>
-    </TableLayout>
+        android:orientation="vertical">
 
-</LinearLayout>
+        <TableLayout
+            android:id="@+id/explore_categories_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#ffffff">
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="48dp">
+
+                <LinearLayout
+                    android:layout_weight="0.5"
+                    android:background="@drawable/explore_category_list_border"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:adjustViewBounds="true"
+                        android:alpha="0.75"
+                        android:src="@drawable/category_01_00" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:gravity="center_vertical"
+                        android:text="Art &amp; Cultural Events"
+                        android:textColor="#515151"
+                        android:textSize="14.5dp"
+                        android:layout_marginRight="5dp"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_weight="0.5"
+                    android:background="@drawable/explore_category_list_border"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:adjustViewBounds="true"
+                        android:alpha="0.75"
+                        android:src="@drawable/category_02_00" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:gravity="center_vertical"
+                        android:text="Books &amp; Comics"
+                        android:textColor="#515151"
+                        android:textSize="14.5dp"
+                        android:layout_marginRight="5dp"/>
+                </LinearLayout>
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="48dp">
+
+                <LinearLayout
+                    android:layout_weight="0.5"
+                    android:background="@drawable/explore_category_list_border"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:adjustViewBounds="true"
+                        android:alpha="0.75"
+                        android:src="@drawable/category_03_00" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:gravity="center_vertical"
+                        android:text="Cars, Motorbikes  &amp; Others"
+                        android:textColor="#515151"
+                        android:textSize="14.5dp"
+                        android:layout_marginRight="5dp"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_weight="0.5"
+                    android:background="@drawable/explore_category_list_border"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:adjustViewBounds="true"
+                        android:alpha="0.75"
+                        android:src="@drawable/category_04_00" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:gravity="center_vertical"
+                        android:text="Education"
+                        android:textColor="#515151"
+                        android:textSize="14.5dp"
+                        android:layout_marginRight="5dp"/>
+                </LinearLayout>
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="48dp">
+
+                <LinearLayout
+                    android:layout_weight="0.5"
+                    android:background="@drawable/explore_category_list_border"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:adjustViewBounds="true"
+                        android:alpha="0.75"
+                        android:src="@drawable/category_05_00" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:gravity="center_vertical"
+                        android:text="Family, Home &amp; Pets"
+                        android:textColor="#515151"
+                        android:textSize="14.5dp"
+                        android:layout_marginRight="5dp"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_weight="0.5"
+                    android:background="@drawable/explore_category_list_border"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:adjustViewBounds="true"
+                        android:alpha="0.75"
+                        android:src="@drawable/category_06_00" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:gravity="center_vertical"
+                        android:text="Free time"
+                        android:textColor="#515151"
+                        android:textSize="14.5dp"
+                        android:layout_marginRight="5dp"/>
+                </LinearLayout>
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="48dp">
+
+                <LinearLayout
+                    android:layout_weight="0.5"
+                    android:background="@drawable/explore_category_list_border"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:adjustViewBounds="true"
+                        android:alpha="0.75"
+                        android:src="@drawable/category_07_00" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:gravity="center_vertical"
+                        android:text="Health &amp; Fitness"
+                        android:textColor="#515151"
+                        android:textSize="14.5dp"
+                        android:layout_marginRight="5dp"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_weight="0.5"
+                    android:background="@drawable/explore_category_list_border"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:adjustViewBounds="true"
+                        android:alpha="0.75"
+                        android:src="@drawable/category_08_00" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:gravity="center_vertical"
+                        android:text="Internet"
+                        android:textColor="#515151"
+                        android:textSize="14.5dp"
+                        android:layout_marginRight="5dp"/>
+                </LinearLayout>
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="48dp">
+
+                <LinearLayout
+                    android:layout_weight="0.5"
+                    android:background="@drawable/explore_category_list_border"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:adjustViewBounds="true"
+                        android:alpha="0.75"
+                        android:src="@drawable/category_09_00" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:gravity="center_vertical"
+                        android:text="Lifestyle"
+                        android:textColor="#515151"
+                        android:textSize="14.5dp"
+                        android:layout_marginRight="5dp"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_weight="0.5"
+                    android:background="@drawable/explore_category_list_border"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:adjustViewBounds="true"
+                        android:alpha="0.75"
+                        android:src="@drawable/category_10_00" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:gravity="center_vertical"
+                        android:text="Love &amp; Friendship"
+                        android:textColor="#515151"
+                        android:textSize="14.5dp"
+                        android:layout_marginRight="5dp"/>
+                </LinearLayout>
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="48dp">
+
+                <LinearLayout
+                    android:layout_weight="0.5"
+                    android:background="@drawable/explore_category_list_border"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:adjustViewBounds="true"
+                        android:alpha="0.75"
+                        android:src="@drawable/category_11_00" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:gravity="center_vertical"
+                        android:text="Meet new people"
+                        android:textColor="#515151"
+                        android:textSize="14.5dp"
+                        android:layout_marginRight="5dp"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_weight="0.5"
+                    android:background="@drawable/explore_category_list_border"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:adjustViewBounds="true"
+                        android:alpha="0.75"
+                        android:src="@drawable/category_12_00" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:gravity="center_vertical"
+                        android:text="Movies &amp; TV"
+                        android:textColor="#515151"
+                        android:textSize="14.5dp"
+                        android:layout_marginRight="5dp"/>
+                </LinearLayout>
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="48dp">
+
+                <LinearLayout
+                    android:layout_weight="0.5"
+                    android:background="@drawable/explore_category_list_border"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:adjustViewBounds="true"
+                        android:alpha="0.75"
+                        android:src="@drawable/category_13_00" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:gravity="center_vertical"
+                        android:text="Natural sciences"
+                        android:textColor="#515151"
+                        android:textSize="14.5dp"
+                        android:layout_marginRight="5dp"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_weight="0.5"
+                    android:background="@drawable/explore_category_list_border"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:adjustViewBounds="true"
+                        android:alpha="0.75"
+                        android:src="@drawable/category_14_00" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:gravity="center_vertical"
+                        android:text="Music"
+                        android:textColor="#515151"
+                        android:textSize="14.5dp"
+                        android:layout_marginRight="5dp"/>
+                </LinearLayout>
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="48dp">
+
+                <LinearLayout
+                    android:layout_weight="0.5"
+                    android:background="@drawable/explore_category_list_border"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:adjustViewBounds="true"
+                        android:alpha="0.75"
+                        android:src="@drawable/category_15_00" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:gravity="center_vertical"
+                        android:text="News &amp; Current affairs"
+                        android:textColor="#515151"
+                        android:textSize="14.5dp"
+                        android:layout_marginRight="5dp"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_weight="0.5"
+                    android:background="@drawable/explore_category_list_border"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:adjustViewBounds="true"
+                        android:alpha="0.75"
+                        android:src="@drawable/category_16_00" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:gravity="center_vertical"
+                        android:text="Places, Companies &amp; Brands"
+                        android:textColor="#515151"
+                        android:textSize="14.5dp"
+                        android:layout_marginRight="5dp"/>
+                </LinearLayout>
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="48dp">
+
+                <LinearLayout
+                    android:layout_weight="0.5"
+                    android:background="@drawable/explore_category_list_border"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:adjustViewBounds="true"
+                        android:alpha="0.75"
+                        android:src="@drawable/category_17_00" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:gravity="center_vertical"
+                        android:text="Politics &amp; Activism"
+                        android:textColor="#515151"
+                        android:textSize="14.5dp"
+                        android:layout_marginRight="5dp"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_weight="0.5"
+                    android:background="@drawable/explore_category_list_border"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:adjustViewBounds="true"
+                        android:alpha="0.75"
+                        android:src="@drawable/category_18_00" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:gravity="center_vertical"
+                        android:text="Shopping &amp; Market"
+                        android:textColor="#515151"
+                        android:textSize="14.5dp"
+                        android:layout_marginRight="5dp"/>
+                </LinearLayout>
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="48dp">
+
+                <LinearLayout
+                    android:layout_weight="0.5"
+                    android:background="@drawable/explore_category_list_border"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:adjustViewBounds="true"
+                        android:alpha="0.75"
+                        android:src="@drawable/category_19_00" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:gravity="center_vertical"
+                        android:text="Socil sciences"
+                        android:textColor="#515151"
+                        android:textSize="14.5dp"
+                        android:layout_marginRight="5dp"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_weight="0.5"
+                    android:background="@drawable/explore_category_list_border"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:adjustViewBounds="true"
+                        android:alpha="0.75"
+                        android:src="@drawable/category_20_00" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:gravity="center_vertical"
+                        android:text="Sport"
+                        android:textColor="#515151"
+                        android:textSize="14.5dp"
+                        android:layout_marginRight="5dp"/>
+                </LinearLayout>
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="48dp">
+
+                <LinearLayout
+                    android:layout_weight="0.5"
+                    android:background="@drawable/explore_category_list_border"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:adjustViewBounds="true"
+                        android:alpha="0.75"
+                        android:src="@drawable/category_21_00" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:gravity="center_vertical"
+                        android:text="Technology &amp; Computers"
+                        android:textColor="#515151"
+                        android:textSize="14.5dp"
+                        android:layout_marginRight="5dp"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_weight="0.5"
+                    android:background="@drawable/explore_category_list_border"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:adjustViewBounds="true"
+                        android:alpha="0.75"
+                        android:src="@drawable/category_22_00" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:gravity="center_vertical"
+                        android:text="Trips &amp; Places"
+                        android:textColor="#515151"
+                        android:textSize="14.5dp"
+                        android:layout_marginRight="5dp"/>
+                </LinearLayout>
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="48dp">
+
+                <LinearLayout
+                    android:layout_weight="0.5"
+                    android:background="@drawable/explore_category_list_border"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:adjustViewBounds="true"
+                        android:alpha="0.75"
+                        android:src="@drawable/category_23_00" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:gravity="center_vertical"
+                        android:text="Video games"
+                        android:textColor="#515151"
+                        android:textSize="14.5dp"
+                        android:layout_marginRight="5dp"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_weight="0.5"
+                    android:background="@drawable/explore_category_list_border"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:adjustViewBounds="true"
+                        android:alpha="0.75"
+                        android:src="@drawable/category_24_00" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:gravity="center_vertical"
+                        android:text="Work &amp; Business"
+                        android:textColor="#515151"
+                        android:textSize="14.5dp"
+                        android:layout_marginRight="5dp"/>
+                </LinearLayout>
+            </TableRow>
+        </TableLayout>
+    </LinearLayout>
 </ScrollView>
