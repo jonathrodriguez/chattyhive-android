@@ -64,6 +64,7 @@ public class RightPanelExpandableListAdapter extends BaseExpandableListAdapter {
     @Override
     public void onGroupExpanded(int groupPosition) {
         super.onGroupExpanded(groupPosition);
+
     }
 
     @Override
@@ -91,6 +92,7 @@ public class RightPanelExpandableListAdapter extends BaseExpandableListAdapter {
                 convertView.findViewById(R.id.menu_notexpanded_explora_img).setOnClickListener(((Main) activity).explore_button_click);
             }
         }
+
         if (groupPosition == 1){
                 convertView = inflater.inflate(R.layout.right_panel_options, null);
                 if (isExpanded){

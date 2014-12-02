@@ -61,6 +61,12 @@ public class MainChat {
         ((ListView)mainChat.findViewById(R.id.main_panel_chat_message_list)).setAdapter(chatListAdapter);
 
         this.channelConversation.MessageListModifiedEvent.add(new EventHandler<EventArgs>(this.chatListAdapter,"OnAddItem",EventArgs.class));
+
+        if(((TextView)mainChat.findViewById(R.id.main_panel_chat_textBox)).didTouchFocusSelect()){////????????????????????????????????????
+            ((ImageView)mainChat.findViewById(R.id.main_panel_chat_smyles_icon)).setBackgroundResource(R.drawable.launcher_launcher_a);
+        }else{
+            ((ImageView)mainChat.findViewById(R.id.main_panel_chat_smyles_icon)).setBackgroundResource(R.drawable.chats_attachment3);
+        }
     }
 
     protected void loadActionBarData() {
@@ -129,6 +135,7 @@ public class MainChat {
                     if (!member.isMe())
                         otherUser = member;
 
+
                 if ((otherUser != null) && (otherUser.getUserPrivateProfile() != null) && (otherUser.getUserPrivateProfile().getImageURL() != null) && (!otherUser.getUserPrivateProfile().getImageURL().isEmpty())) {
                     otherUser.getUserPrivateProfile().getProfileImage().OnImageLoaded.add(new EventHandler<EventArgs>(this,"onImageLoaded",EventArgs.class));
                     otherUser.getUserPrivateProfile().getProfileImage().loadImage(Image.ImageSize.small,0);
@@ -138,7 +145,8 @@ public class MainChat {
                     mainName = this.channelChat.getName();
                 else if ((otherUser != null) && (otherUser.getUserPrivateProfile() != null) && (otherUser.getUserPrivateProfile().getShowingName() != null))
                     mainName = otherUser.getUserPrivateProfile().getShowingName();
-
+                if ((otherUser != null) && (otherUser.getUserPublicProfile() != null) && (otherUser.getUserPublicProfile().getPublicName() != null))
+                    infoText = userPublicNameIdentifier.concat(otherUser.getUserPublicProfile().getPublicName());
                 break;
             case PRIVATE_GROUP:
                 if ((this.channelChat.getName() != null) && (!this.channelChat.getName().isEmpty()))

@@ -60,7 +60,8 @@
         android:paddingTop="4dp"
         android:background="@drawable/border_text_bar"
         android:id="@+id/explore_search_frame"
-        android:gravity="center">
+        android:gravity="center"
+        android:visibility="gone">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

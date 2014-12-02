@@ -26,12 +26,23 @@ public class RightPanel2{
     SparseArray<RightPanelListItem> grupos = new  SparseArray<RightPanelListItem>();
     ExpandableListView listView;
     View img;
+    private int lastExpandedPosition = -1;
 
     public RightPanel2(Context activity){
         this.context = activity ;
         this.InitializeComponent();
         ((Activity)this.context).findViewById(R.id.right_panel_action_bar).setOnClickListener((new Profile(this.context)).open_profile);
         ((Main)this.context).controller.LocalUserReceived.add(new EventHandler<EventArgs>(this, "onLocalUserLoaded", EventArgs.class));
+        listView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
+            @Override
+            public void onGroupExpand(int groupPosition) {
+                if (lastExpandedPosition != -1
+                        && groupPosition != lastExpandedPosition) {
+                    listView.collapseGroup(lastExpandedPosition);
+                }
+                lastExpandedPosition = groupPosition;
+            }
+        });
     }
 
     public void onLocalUserLoaded(Object sender, EventArgs args){

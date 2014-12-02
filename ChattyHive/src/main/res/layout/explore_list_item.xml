@@ -20,8 +20,8 @@
             android:orientation="vertical"
             android:layout_marginLeft="8.5dp"
             android:layout_marginRight="8.5dp"
-            android:layout_marginBottom="20dp"
-            android:layout_marginTop="3.5dp">
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="1.75dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -104,7 +104,8 @@
                     android:gravity="left|top"
                     android:layout_marginLeft="7dp"
                     android:layout_marginRight="17dp"
-                    android:maxWidth="120dp"/>
+                    android:maxWidth="120dp"
+                    android:maxLines="1"/>
             </LinearLayout>
 
             <LinearLayout
@@ -128,7 +129,8 @@
                     android:id="@+id/explore_list_item_collapsed_users_number"
                     android:textColor="#808080"
                     android:gravity="center|center_horizontal|center_vertical"
-                    android:layout_marginLeft="5dp"/>
+                    android:layout_marginLeft="5dp"
+                    android:maxLines="1"/>
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
@@ -151,7 +153,7 @@
             android:background="@drawable/home_card_background"
             android:layout_marginLeft="8.5dp"
             android:layout_marginRight="8.5dp"
-            android:layout_marginBottom="20dp"
+            android:layout_marginBottom="10dp"
             android:layout_marginTop="3.5dp">
             <LinearLayout
                 android:layout_width="match_parent"
@@ -287,64 +289,11 @@
                         android:src="@drawable/explore_new_hive_tag"
                         android:alpha="0.75"
                         android:layout_gravity="center"/>
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_weight="3">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textSize="12dp"
-                            android:text="sandbox"
-                            android:gravity="top"
-                            android:layout_marginLeft="5.5dp"
-                            android:textColor="#333333"
-                            android:background="@drawable/explore_tags_border"/>
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textSize="12dp"
-                            android:text="sandbox"
-                            android:gravity="top"
-                            android:layout_marginLeft="5.5dp"
-                            android:textColor="#333333"
-                            android:background="@drawable/explore_tags_border"/>
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textSize="12dp"
-                            android:text="sandbox"
-                            android:gravity="top"
-                            android:layout_marginLeft="5.5dp"
-                            android:textColor="#333333"
-                            android:background="@drawable/explore_tags_border"/>
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textSize="12dp"
-                            android:text="survival"
-                            android:layout_marginLeft="5.5dp"
-                            android:textColor="#333333"
-                            android:background="@drawable/explore_tags_border"/>
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textSize="12dp"
-                            android:text="notch"
-                            android:layout_marginLeft="5.5dp"
-                            android:textColor="#333333"
-                            android:background="@drawable/explore_tags_border"/>
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textSize="12dp"
-                            android:text="indie"
-                            android:layout_marginLeft="5.5dp"
-                            android:textColor="#333333"
-                            android:background="@drawable/explore_tags_border"/>
-                    </LinearLayout>
+<!--                    <include
+                        android:layout_width="match_parent"
+                        android:layout_height="60dp"
+                        layout="@layout/explore_tag_list"
+                        android:layout_gravity="center_horizontal" />-->
                 </LinearLayout>
                 <LinearLayout
                     android:layout_width="match_parent"

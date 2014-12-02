@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -123,6 +124,7 @@ public class ExploreListAdapter extends BaseAdapter {
         if(expanded_hive == position) {//EXPANDIR
             convertView.findViewById(R.id.explore_list_item_short).setVisibility(View.GONE);
             convertView.findViewById(R.id.explore_hive_card).setVisibility(View.VISIBLE);
+            ((ListView)parent).smoothScrollToPosition(position);
         }
         else {//CONTRAER
             convertView.findViewById(R.id.explore_hive_card).setVisibility(View.GONE);
