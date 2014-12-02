@@ -14,69 +14,98 @@
         android:orientation="horizontal"
         android:background="@drawable/home_top_bar_background">
 
-    <ImageButton
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:id="@+id/explore_tab_list_favourites_button"
-        android:paddingTop="10dp"
-        android:paddingBottom="13dp"
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_gravity="center"
+            android:id="@+id/explore_tab_list_favourites_button"
+            android:background="@drawable/explore_tab_list_no_selected_border"
+            android:layout_weight="1">
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:gravity="center"
         android:src="@drawable/explore_new_hive_for_you_alternative"
-        android:layout_weight="1"
         android:scaleType="fitCenter"
-        android:background="@drawable/explore_tab_list_no_selected_border"
-        android:alpha="1"
-        android:adjustViewBounds="true" />
-
-    <ImageButton
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:id="@+id/explore_tab_list_location_button"
-        android:paddingTop="10dp"
+        android:adjustViewBounds="true"
         android:paddingBottom="13dp"
+        android:paddingTop="10dp" />
+        </FrameLayout>
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_gravity="center"
+            android:id="@+id/explore_tab_list_location_button"
+            android:background="@drawable/explore_tab_list_no_selected_border"
+            android:layout_weight="1">
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:gravity="center"
         android:src="@drawable/pestanha_hives_historial"
-        android:layout_weight="1"
         android:scaleType="fitCenter"
-        android:background="@drawable/explore_tab_list_no_selected_border"
-        android:alpha="0.25"
-        android:adjustViewBounds="true" />
-
-    <ImageButton
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:id="@+id/explore_tab_list_recent_button"
+        android:adjustViewBounds="true"
         android:paddingTop="10dp"
-        android:paddingBottom="13dp"
+        android:paddingBottom="13dp" />
+        </FrameLayout>
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_gravity="center"
+            android:id="@+id/explore_tab_list_recent_button"
+            android:background="@drawable/explore_tab_list_no_selected_border"
+            android:layout_weight="1">
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:gravity="center"
         android:src="@drawable/explore_new_hive_trending_hives"
-        android:layout_weight="1"
         android:scaleType="fitCenter"
-        android:background="@drawable/explore_tab_list_no_selected_border"
-        android:alpha="0.25"
-        android:adjustViewBounds="true" />
-
-    <ImageButton
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
+        android:adjustViewBounds="true"
         android:paddingTop="10dp"
-        android:paddingBottom="13dp"
+        android:paddingBottom="13dp" />
+        </FrameLayout>
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_gravity="center"
+            android:id="@+id/explore_tab_list_trending_button"
+            android:background="@drawable/explore_tab_list_no_selected_border"
+            android:layout_weight="1">
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:gravity="center"
         android:src="@drawable/explore_new_hive_top_hives"
-        android:layout_weight="1"
         android:scaleType="fitCenter"
-        android:background="@drawable/explore_tab_list_no_selected_border"
-        android:id="@+id/explore_tab_list_trending_button"
-        android:alpha="0.25"
-        android:adjustViewBounds="true" />
-
+        android:adjustViewBounds="true"
+        android:paddingTop="10dp"
+        android:paddingBottom="13dp" />
+        </FrameLayout>
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_gravity="center"
+            android:id="@+id/explore_button_categories"
+            android:background="@drawable/explore_tab_list_no_selected_border"
+            android:layout_weight="0">
      <TextView
-         android:id="@+id/explore_button_categories"
          android:layout_width="wrap_content"
-         android:layout_height="48dp"
+         android:layout_height="wrap_content"
          android:text="Categories"
          android:gravity="center"
-         android:textSize="18dp"
+         android:layout_gravity="center"
+         android:textSize="18sp"
          android:textColor="#111111"
-         android:alpha="0.25"
-         android:paddingLeft="30dp"
-         android:paddingRight="24dp"
-         android:background="@drawable/explore_tab_list_no_selected_border"/>
+         android:layout_weight="1"
+         android:paddingLeft="29dp"
+         android:paddingTop="10dp"
+         android:paddingRight="23.5dp"
+         android:paddingBottom="13dp" />
+    </FrameLayout>
     </LinearLayout>
 </LinearLayout>

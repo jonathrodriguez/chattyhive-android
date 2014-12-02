@@ -66,9 +66,10 @@
         <attr name="actionBarLabelMarginRight" format="dimension"/>
 
         <attr name="allowSwipeToChangeStep" format="boolean"/>
+        <attr name="touchActionMoveDetectionDistanceThreshold" format="dimension"/>
+        <attr name="flingSpeedDetectionThreshold" format="integer" />
 
         <attr name="maxTransitionAnimationDuration" format="integer" />
         <attr name="buttonPressedTransitionAnimationDuration" format="integer" />
-        <attr name="flingSpeedDetectionThreshold" format="integer" />
     </declare-styleable>
 </resources>

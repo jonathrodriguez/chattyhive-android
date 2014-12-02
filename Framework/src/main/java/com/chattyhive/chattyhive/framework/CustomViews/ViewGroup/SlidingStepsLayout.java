@@ -11,6 +11,7 @@ import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +29,7 @@ import com.chattyhive.chattyhive.framework.CustomViews.View.ShapeArrow;
 import com.chattyhive.chattyhive.framework.R;
 
 import java.security.InvalidParameterException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.TreeSet;
 
@@ -44,11 +46,13 @@ public class SlidingStepsLayout extends ViewGroup {
     private static int defaultButtonPressedAnimationDuration = 150;
     private static int defaultFlingSpeedThreshold = 800;
 
+    private static float defaultActionMoveThresholdDP = 10;
+    private static float defaultActionMoveThreshold;
+
     private VelocityTracker velocityTracker;
     private Scroller scroller;
 
     private Boolean showActionBar;
-    private Boolean allowSwipeToChangeStep;
 
     private float actionBarHeight;
     private float actionBarArrowPointWidth;
@@ -81,7 +85,6 @@ public class SlidingStepsLayout extends ViewGroup {
 
     private int maxAnimationDuration;
     private int buttonPressedAnimationDuration;
-    private int flingSpeedThreshold;
     private boolean scrolling = false;
 
     private boolean actionBarHasToScroll;
@@ -89,7 +92,24 @@ public class SlidingStepsLayout extends ViewGroup {
     private int leftmostActionBarTag = -1;
     private int actualSelectedActionBarTag = -1;
 
+    private int directDestination = -1;
+
+    /**************************************/
+    /* Swipe VARS                         */
+    /**************************************/
+    private Boolean allowSwipeToChangeStep;
+    private int flingSpeedThreshold;
+    private float actionMoveThreshold;
+
+    private boolean moving = false;
+    private int movementDirection = 0;
+    private float StartEventX;
+    private float StartEventY;
+    private float LastEventX;
+    /**************************************/
+
     private OnInflateLayoutListener inflateLayoutListener;
+
     public void setOnInflateLayoutListener(OnInflateLayoutListener listener) {
         this.inflateLayoutListener = listener;
     }
@@ -152,6 +172,8 @@ public class SlidingStepsLayout extends ViewGroup {
         if (displayMetrics == null) {
             displayMetrics = new DisplayMetrics();
             ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getMetrics(displayMetrics);
+
+            defaultActionMoveThreshold = defaultActionMoveThresholdDP*displayMetrics.scaledDensity;
         }
 
         TypedArray a = context.obtainStyledAttributes(attrs,R.styleable.SlidingStepsLayout, defStyle, 0);
@@ -178,7 +200,9 @@ public class SlidingStepsLayout extends ViewGroup {
 
         this.maxAnimationDuration = a.getInteger(R.styleable.SlidingStepsLayout_maxTransitionAnimationDuration,defaultMaxAnimationDuration);
         this.buttonPressedAnimationDuration = a.getInteger(R.styleable.SlidingStepsLayout_buttonPressedTransitionAnimationDuration,defaultButtonPressedAnimationDuration);
+
         this.flingSpeedThreshold = a.getInteger(R.styleable.SlidingStepsLayout_flingSpeedDetectionThreshold,defaultFlingSpeedThreshold);
+        this.actionMoveThreshold = a.getDimension(R.styleable.SlidingStepsLayout_touchActionMoveDetectionDistanceThreshold,defaultActionMoveThreshold);
 
         a.recycle();
 
@@ -194,11 +218,16 @@ public class SlidingStepsLayout extends ViewGroup {
         if (this.layouts != null) return;
         this.layouts = new TreeSet<LayoutParams>();
 
-        for (int i = 0; i < this.getChildCount(); i++) {
-            View child = this.getChildAt(i);
+        ArrayList<View> children = new ArrayList<View>(this.getChildCount());
+        for (int i = 0; i < this.getChildCount(); i++)
+            children.add(this.getChildAt(i));
+
+        for (View child : children) {
             ViewGroup.LayoutParams layoutParams = child.getLayoutParams();
-            if (layoutParams instanceof LayoutParams)
-                this.layouts.add((LayoutParams)layoutParams);
+            if (layoutParams instanceof LayoutParams) {
+                this.layouts.add((LayoutParams) layoutParams);
+                this.removeView(child);
+            }
         }
         this.numberSteps = this.layouts.size();
         this.actualStep = 0;
@@ -219,10 +248,10 @@ public class SlidingStepsLayout extends ViewGroup {
             //this.attachViewToParent(child,this.getChildCount(),child.getLayoutParams());
             this.addView(child);
 
-            if (child.getId() == -1)
-                child.setId(childLayoutParams.getLayout());
-
-            childLayoutParams.setViewID(child.getId());
+            if (child.getId() <= 0)
+                child.setId(childLayoutParams.getViewID());
+            else
+                childLayoutParams.setViewID(child.getId());
 
             if (this.inflateLayoutListener != null)
                 this.inflateLayoutListener.OnInflate(child);
@@ -268,14 +297,16 @@ public class SlidingStepsLayout extends ViewGroup {
     }
 
     public View getViewByStep(int step) {
+        if ((this.layouts == null) || (this.layouts.isEmpty()))
+            this.loadChildren();
         return this.findViewById(this.layouts.toArray(new LayoutParams[this.layouts.size()])[step].getViewID());
     }
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int widestChildWidth = 0;
         int highestChildHeight = 0;
-        int actionBarHeight = (int)((this.showActionBar)?this.actionBarHeight:0);
-        int childHeightMeasureSpec = MeasureSpec.makeMeasureSpec(MeasureSpec.getSize(heightMeasureSpec) - actionBarHeight, MeasureSpec.getMode(heightMeasureSpec));
+        int effectiveActionBarHeight = (int)((this.showActionBar)?this.actionBarHeight:0);
+        int childHeightMeasureSpec = MeasureSpec.makeMeasureSpec(MeasureSpec.getSize(heightMeasureSpec) - effectiveActionBarHeight, MeasureSpec.getMode(heightMeasureSpec));
 
         this.loadChildren();
 
@@ -301,11 +332,12 @@ public class SlidingStepsLayout extends ViewGroup {
         }
 
         widestChildWidth += this.getPaddingLeft() + this.getPaddingRight();
-        highestChildHeight += this.getPaddingTop() + this.getPaddingBottom() + actionBarHeight;
+        highestChildHeight += this.getPaddingTop() + this.getPaddingBottom() + effectiveActionBarHeight;
 
         this.setMeasuredDimension(resolveSize(widestChildWidth,widthMeasureSpec),resolveSize(highestChildHeight, heightMeasureSpec));
 
-        this.calculateActionBarShowingMode();
+        if (this.showActionBar)
+            this.calculateActionBarShowingMode();
     }
 
     private void calculateActionBarShowingMode() {
@@ -481,8 +513,8 @@ public class SlidingStepsLayout extends ViewGroup {
         final int childCount = this.getChildCount();
         final int paddingLeft = this.getPaddingLeft();
         final int paddingRight = this.getPaddingRight();
-        final int paddingTop = this.getPaddingTop();
-        final int paddingBottom = this.getPaddingBottom();
+        final int paddingTop = this.getPaddingTop() - this.getTop();
+        final int paddingBottom = this.getPaddingBottom() + this.getTop();
 
         final int width = this.getMeasuredWidth();
 
@@ -493,10 +525,11 @@ public class SlidingStepsLayout extends ViewGroup {
         final LayoutParams previousStep = (this.actualStep>0)?layoutParams[this.actualStep-1]:null;
         final LayoutParams actualStep = (this.actualStep<this.numberSteps)?layoutParams[this.actualStep]:null;
         final LayoutParams nextStep = (this.actualStep<(this.numberSteps-1))?layoutParams[this.actualStep+1]:null;
+        final LayoutParams destinationStep = (this.directDestination > -1)?layoutParams[this.directDestination]:null;
 
         for (int i = 0; i < childCount; i++) {
             View child = this.getChildAt(i);
-            if ((unloadingStep > -1) && (child.getId() == layoutParams[this.unloadingStep].layout)) continue;
+            if ((unloadingStep > -1) && (child.getId() == layoutParams[this.unloadingStep].getViewID())) continue;
             ViewGroup.LayoutParams vLayoutParams = child.getLayoutParams();
             if (!(vLayoutParams instanceof MarginLayoutParams)) continue;
             MarginLayoutParams marginLayoutParams = (MarginLayoutParams) vLayoutParams;
@@ -523,6 +556,15 @@ public class SlidingStepsLayout extends ViewGroup {
             } else if ((nextStep != null) && (child.getId() == nextStep.getViewID())) {
                 childLeft += (int)(width-actualPosition);
                 childRight+= (int)(width-actualPosition);
+                willLayout=true;
+            } else if ((destinationStep != null) && (child.getId() == destinationStep.getViewID())) {
+                if (this.directDestination > this.actualStep) {
+                    childLeft += (int) ((2 * width) - actualPosition);
+                    childRight += (int) ((2 * width) - actualPosition);
+                } else {
+                    childLeft -= (int) ((2 * width) + actualPosition);
+                    childRight -= (int) ((2 * width) + actualPosition);
+                }
                 willLayout=true;
             }
 
@@ -557,50 +599,133 @@ public class SlidingStepsLayout extends ViewGroup {
             } else {
                 int previousStep = this.actualStep;
                 this.scrolling = false;
-                if (this.actualPosition > 0) {
-                    this.actualStep++;
 
-                    if (this.transitionListener != null)
-                        this.transitionListener.OnEndTransition(this.actualStep,previousStep);
+                if (this.directDestination > -1)
+                    this.actualStep = this.directDestination;
+                else if (this.actualPosition > 0)
+                    this.actualStep++;
+                else if (this.actualPosition < 0)
+                    this.actualStep--;
+
+                this.setActualPosition(0);
+
+                if (this.transitionListener != null)
+                    this.transitionListener.OnEndTransition(this.actualStep,previousStep);
+
+                if (this.directDestination > -1) {
+                    int[] steps = new int[this.numberSteps];
+
+                    steps[previousStep]--;
+
+                    if (previousStep > 0)
+                        steps[previousStep-1]--;
+
+                    if (previousStep < (this.numberSteps-1))
+                        steps[previousStep+1]--;
+
+                    if (this.actualStep > 0)
+                        steps[this.actualStep-1]++;
+
+                    if (this.actualStep < (this.numberSteps-1))
+                        steps[this.actualStep+1]++;
+
+                    for (int i=0; i < this.numberSteps; i++)
+                        if (steps[i] > 0)
+                            this.inflateChild(i);
+                        else if (steps[i] < 0)
+                            this.removeChild(i);
+
+                } else if (this.actualStep > previousStep) {
+                    if (this.actualStep < (this.numberSteps-1))
+                        this.inflateChild(this.actualStep+1);
 
                     if (this.actualStep > 1)
                         this.removeChild(this.actualStep-2);
-                    if (this.actualStep < (this.numberSteps-1))
-                        this.inflateChild(this.actualStep+1);
-                }
-                else if (this.actualPosition < 0) {
-                    this.actualStep--;
 
-                    if (this.transitionListener != null)
-                        this.transitionListener.OnEndTransition(this.actualStep,previousStep);
-
-                    if (this.actualStep < (this.numberSteps-2))
-                        this.removeChild(this.actualStep+2);
+                } else if (this.actualStep < previousStep) {
                     if (this.actualStep > 0)
                         this.inflateChild(this.actualStep-1);
+
+                    if (this.actualStep < (this.numberSteps-1))
+                        this.removeChild(this.actualStep+2);
                 }
-                this.setCurrentPosition(0);
+
+                this.directDestination = -1;
             }
         }
+    }
+    protected void setActualPosition(float newPosition) {
+        this.actualPosition = newPosition;//saturateNewPosition(newPosition);
+        invalidate();
+        requestLayout();
     }
     protected void setCurrentPosition(float newPosition) {
         this.movePanels(newPosition - this.actualPosition);
     }
     protected void movePanels (float distance) {
         this.actualPosition = saturateNewPosition(this.actualPosition+distance);
+
+        if (transitionListener != null) {
+            int[] visibleSteps = new int[2];
+            float[] visibilityAmount = new float[2];
+
+            if (this.directDestination > -1) {
+                visibleSteps[0] = this.actualStep;
+                visibleSteps[1] = this.directDestination;
+
+                if (this.actualPosition < 0) {
+                    visibilityAmount[0] = 1 - (Math.abs(this.actualPosition/getLeftBound()));
+                    visibilityAmount[1] = (Math.abs(this.actualPosition/getLeftBound()));
+                } else if (this.actualPosition > 0) {
+                    visibilityAmount[0] = 1 - (Math.abs(this.actualPosition/getRightBound()));
+                    visibilityAmount[1] = (Math.abs(this.actualPosition/getRightBound()));
+                }
+            }
+            else if (this.actualPosition < 0) {
+                visibleSteps[0] = this.actualStep - 1;
+                visibleSteps[1] = this.actualStep;
+
+                visibilityAmount[0] = (Math.abs(this.actualPosition/getLeftBound()));
+                visibilityAmount[1] = 1 - (Math.abs(this.actualPosition/getLeftBound()));
+            } else if (this.actualPosition > 0) {
+                visibleSteps[0] = this.actualStep;
+                visibleSteps[1] = this.actualStep + 1;
+
+                visibilityAmount[0] = 1 - (Math.abs(this.actualPosition/getRightBound()));
+                visibilityAmount[1] = (Math.abs(this.actualPosition/getRightBound()));
+            }
+
+            transitionListener.OnDuringTransition(visibleSteps, visibilityAmount);
+        }
+
         invalidate();
         requestLayout();
     }
-    protected float saturateNewPosition(float newPosition) {
-        LayoutParams[] layoutParams = this.layouts.toArray(new LayoutParams[this.layouts.size()]);
-        float leftBound = 0;
-        float rightBound = 0;
-        if (this.actualStep > 0)
-            leftBound = -(this.getMeasuredWidth() + ((MarginLayoutParams)this.findViewById(layoutParams[this.actualStep-1].getViewID()).getLayoutParams()).leftMargin + ((MarginLayoutParams)this.findViewById(layoutParams[this.actualStep - 1].getViewID()).getLayoutParams()).rightMargin);
-        if (this.actualStep < (this.numberSteps-1))
-            rightBound = this.getMeasuredWidth() + ((MarginLayoutParams)this.findViewById(layoutParams[this.actualStep+1].getViewID()).getLayoutParams()).leftMargin + ((MarginLayoutParams)this.findViewById(layoutParams[this.actualStep+1].getViewID()).getLayoutParams()).rightMargin;
 
-        return Math.max(Math.min(newPosition,rightBound),leftBound);
+    private float getLeftBound() {
+        LayoutParams[] layoutParams = this.layouts.toArray(new LayoutParams[this.layouts.size()]);
+        if ((this.directDestination > -1) && (this.directDestination < this.actualStep))
+            return -((2*this.getMeasuredWidth()) + ((MarginLayoutParams)this.findViewById(layoutParams[this.actualStep-1].getViewID()).getLayoutParams()).leftMargin + ((MarginLayoutParams)this.findViewById(layoutParams[this.actualStep - 1].getViewID()).getLayoutParams()).rightMargin
+                    + ((MarginLayoutParams)this.findViewById(layoutParams[this.directDestination].getViewID()).getLayoutParams()).leftMargin + ((MarginLayoutParams)this.findViewById(layoutParams[this.directDestination].getViewID()).getLayoutParams()).rightMargin);
+        else if (this.actualStep > 0)
+            return -(this.getMeasuredWidth() + ((MarginLayoutParams)this.findViewById(layoutParams[this.actualStep-1].getViewID()).getLayoutParams()).leftMargin + ((MarginLayoutParams)this.findViewById(layoutParams[this.actualStep - 1].getViewID()).getLayoutParams()).rightMargin);
+        else
+            return 0;
+    }
+    private float getRightBound() {
+        LayoutParams[] layoutParams = this.layouts.toArray(new LayoutParams[this.layouts.size()]);
+
+        if ((this.directDestination > -1) && (this.directDestination > this.actualStep))
+            return (2*this.getMeasuredWidth()) + ((MarginLayoutParams) this.findViewById(layoutParams[this.actualStep + 1].getViewID()).getLayoutParams()).leftMargin + ((MarginLayoutParams) this.findViewById(layoutParams[this.actualStep + 1].getViewID()).getLayoutParams()).rightMargin
+                    + ((MarginLayoutParams)this.findViewById(layoutParams[this.directDestination].getViewID()).getLayoutParams()).leftMargin + ((MarginLayoutParams)this.findViewById(layoutParams[this.directDestination].getViewID()).getLayoutParams()).rightMargin;
+        else if (this.actualStep < (this.numberSteps-1))
+            return this.getMeasuredWidth() + ((MarginLayoutParams)this.findViewById(layoutParams[this.actualStep+1].getViewID()).getLayoutParams()).leftMargin + ((MarginLayoutParams)this.findViewById(layoutParams[this.actualStep+1].getViewID()).getLayoutParams()).rightMargin;
+        else
+            return 0;
+    }
+
+    protected float saturateNewPosition(float newPosition) {
+        return Math.max(Math.min(newPosition,getRightBound()),getLeftBound());
     }
     protected void movePanels (float distance, int duration) {
         int animationDuration = Math.min(duration, this.maxAnimationDuration);
@@ -633,6 +758,238 @@ public class SlidingStepsLayout extends ViewGroup {
         float distance = actualPosition-rightBound;
         movePanels(distance, animationDuration);
     }
+    public void openStep(int step) {
+        if ((step < 0) || (step >= this.numberSteps) || (step == this.actualStep) || (this.directDestination > -1)) return;
+        if (step == (this.actualStep+1))
+            this.openNext();
+        else if (step == (this.actualStep-1))
+            this.openPrevious();
+        else {
+            this.directDestination = step;
+            this.inflateChild(this.directDestination);
+            if ((this.transitionListener != null) && (!this.transitionListener.OnBeginTransition(this.actualStep,this.directDestination))) return;
+            LayoutParams[] layoutParams = this.layouts.toArray(new LayoutParams[this.layouts.size()]);
+
+            float distance = 0;
+            int animationDuration = this.buttonPressedAnimationDuration * 2;
+
+            if (animationDuration > this.maxAnimationDuration)
+                animationDuration = this.maxAnimationDuration;
+
+            if (this.directDestination > this.actualStep) {
+                float rightBound = -( (2*this.getMeasuredWidth()) + ((MarginLayoutParams) this.findViewById(layoutParams[this.actualStep + 1].getViewID()).getLayoutParams()).leftMargin + ((MarginLayoutParams) this.findViewById(layoutParams[this.actualStep + 1].getViewID()).getLayoutParams()).rightMargin
+                                    + ((MarginLayoutParams)this.findViewById(layoutParams[this.directDestination].getViewID()).getLayoutParams()).leftMargin + ((MarginLayoutParams)this.findViewById(layoutParams[this.directDestination].getViewID()).getLayoutParams()).rightMargin);
+                distance = actualPosition - rightBound;
+            } else {
+                float leftBound = (2*this.getMeasuredWidth()) + ((MarginLayoutParams)this.findViewById(layoutParams[this.actualStep-1].getViewID()).getLayoutParams()).leftMargin + ((MarginLayoutParams)this.findViewById(layoutParams[this.actualStep - 1].getViewID()).getLayoutParams()).rightMargin
+                                  + ((MarginLayoutParams)this.findViewById(layoutParams[this.directDestination].getViewID()).getLayoutParams()).leftMargin + ((MarginLayoutParams)this.findViewById(layoutParams[this.directDestination].getViewID()).getLayoutParams()).rightMargin;
+                distance = actualPosition-leftBound;
+            }
+            movePanels(distance, animationDuration);
+        }
+    }
+
+    /*****************************************/
+    /* SWIPE IMPLEMENTATION                  */
+    /*****************************************/
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent ev) {
+        //Log.w("onInterceptTouchEvent_1",String.format("ev.x: %f\tev.y: %f\tev.action: %d\tmoving: %b\tallowSwipeToMovePanels: %b",ev.getX(),ev.getY(),ev.getAction(),moving,allowSwipeToMovePanels));
+        //Log.w("onInterceptTouchEvent_2",String.format("StartX: %f\tStartY: %f\tLastX: %f\tactualPosition: %f\tactionMoveThreshold: %f",StartEventX,StartEventY,LastEventX,actualPosition,actionMoveThreshold));
+        //Log.w("onInterceptTouchEvent_3",String.format("LeftMainWidth: %d\tLeftMain_leftMargin: %d\tLeftMain_rightMargin: %d",mainPanelsWidth.get("left"),((LayoutParams) mainPanels.get("left").getLayoutParams()).leftMargin,((LayoutParams) mainPanels.get("left").getLayoutParams()).rightMargin));
+        //Log.w("onInterceptTouchEvent_4",String.format("CenterMainWidth: %d\tCenterMain_leftMargin: %d\tCenterMain_rightMargin: %d",mainPanelsWidth.get("center"),((LayoutParams) mainPanels.get("center").getLayoutParams()).leftMargin,((LayoutParams) mainPanels.get("center").getLayoutParams()).rightMargin));
+        //Log.w("onInterceptTouchEvent_5",String.format("RightMainWidth: %d\tRightMain_leftMargin: %d\tRightMain_rightMargin: %d",mainPanelsWidth.get("right"),((LayoutParams) mainPanels.get("right").getLayoutParams()).leftMargin,((LayoutParams) mainPanels.get("right").getLayoutParams()).rightMargin));
+
+        if (!this.allowSwipeToChangeStep) return false;
+
+        final float x = ev.getX();
+        final float y = ev.getY();
+
+        Boolean result = false;
+
+        if (moving) {
+            result=true;
+        } else {
+            switch (ev.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    if (actualPosition == 0) {
+                        this.StartEventX = this.LastEventX = x;
+                        this.StartEventY = y;
+                    }
+                    break;
+                case MotionEvent.ACTION_MOVE:
+                    if ((this.StartEventX < 0) || (this.StartEventY < 0) || (this.LastEventX < 0)) {
+                        result = false;
+                    } else {
+                        float deltaX = x - this.StartEventX;
+                        float deltaY = y - this.StartEventY;
+
+                        if (actualPosition == 0) {
+                            result = true;
+                        }
+                        if ((Math.abs(deltaX) < Math.abs(deltaY)) || (Math.abs(deltaX) < this.actionMoveThreshold))
+                            result = false;
+                    }
+                    break;
+            }
+        }
+
+        //Log.w("onInterceptTouchEvent_6",String.format("Result: %b",result));
+
+        return result;
+    }
+
+
+    @Override
+    public boolean onTouchEvent(MotionEvent ev) {
+        //Log.w("onTouchEvent_1",String.format("ev.x: %f\tev.y: %f\tev.action: %d\tmoving: %b\tallowSwipeToMovePanels: %b",ev.getX(),ev.getY(),ev.getAction(),moving,allowSwipeToMovePanels));
+        //Log.w("onTouchEvent_2",String.format("StartX: %f\tStartY: %f\tLastX: %f\tactualPosition: %f\tactionMoveThreshold: %f",StartEventX,StartEventY,LastEventX,actualPosition,actionMoveThreshold));
+        //Log.w("onTouchEvent_3",String.format("LeftMainWidth: %d\tLeftMain_leftMargin: %d\tLeftMain_rightMargin: %d",mainPanelsWidth.get("left"),((LayoutParams) mainPanels.get("left").getLayoutParams()).leftMargin,((LayoutParams) mainPanels.get("left").getLayoutParams()).rightMargin));
+        //Log.w("onTouchEvent_4",String.format("CenterMainWidth: %d\tCenterMain_leftMargin: %d\tCenterMain_rightMargin: %d",mainPanelsWidth.get("center"),((LayoutParams) mainPanels.get("center").getLayoutParams()).leftMargin,((LayoutParams) mainPanels.get("center").getLayoutParams()).rightMargin));
+        //Log.w("onTouchEvent_5",String.format("RightMainWidth: %d\tRightMain_leftMargin: %d\tRightMain_rightMargin: %d",mainPanelsWidth.get("right"),((LayoutParams) mainPanels.get("right").getLayoutParams()).leftMargin,((LayoutParams) mainPanels.get("right").getLayoutParams()).rightMargin));
+
+        if (!this.allowSwipeToChangeStep) return false;
+
+        final float x = ev.getX();
+        final float y = ev.getY();
+
+        if ((this.StartEventX < 0) || (this.StartEventY < 0) || (this.LastEventX < 0)) return false;
+
+        switch (ev.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                Boolean result = false;
+                if (actualPosition == 0) {
+                    result = true;
+                }
+                if (!result) {
+                    velocityTracker.clear();
+                    scroller.abortAnimation();
+                    moving = false;
+                    this.StartEventX = -1;
+                    this.StartEventY = -1;
+                    this.LastEventX = -1;
+                    this.movementDirection = 0;
+                } else {
+                    velocityTracker.addMovement(ev);
+                }
+                return result;
+            case MotionEvent.ACTION_MOVE:
+                if (!moving) { // test if we have to move
+                    float deltaX = x-this.StartEventX;
+                    float deltaY = y-this.StartEventY;
+                    if ((Math.abs(deltaX) > Math.abs(deltaY)) && (Math.abs(deltaX) > this.actionMoveThreshold)) {
+                        moving = true;
+                        getParent().requestDisallowInterceptTouchEvent(true);
+                        this.transitionListener.OnBeginTransition(this.actualStep,((deltaX < 0)?this.actualStep+1:this.actualStep-1));
+                        this.movementDirection = ((deltaX < 0)?1:-1);
+                    } else {
+                        velocityTracker.addMovement(ev);
+                        return false;
+                    }
+                }
+                velocityTracker.addMovement(ev);
+
+                if ((this.movementDirection == 1) && ((x-this.StartEventX) > 0)) {
+                    this.transitionListener.OnBeginTransition(this.actualStep,this.actualStep - 1);
+                    this.movementDirection = -1;
+                } else if ((this.movementDirection == 1) && ((x-this.StartEventX) > 0)) {
+                    this.transitionListener.OnBeginTransition(this.actualStep,this.actualStep + 1);
+                    this.movementDirection = 1;
+                }
+
+                movePanels(this.LastEventX-x);
+                this.LastEventX = x;
+                break;
+            case MotionEvent.ACTION_UP:
+            case MotionEvent.ACTION_CANCEL:
+            case MotionEvent.ACTION_OUTSIDE:
+                if (!moving) { // test if we have to move
+                    float deltaX = x-this.StartEventX;
+                    float deltaY = y-this.StartEventY;
+                    if ((Math.abs(deltaX) > Math.abs(deltaY)) && (Math.abs(deltaX) > this.actionMoveThreshold)) {
+
+                        this.transitionListener.OnBeginTransition(this.actualStep,((deltaX < 0)?this.actualStep+1:this.actualStep-1));
+                        this.movementDirection = ((deltaX < 0)?1:-1);
+
+                        getParent().requestDisallowInterceptTouchEvent(true);
+                    } else {
+                        velocityTracker.clear();
+                        scroller.abortAnimation();
+                        moving = false;
+                        this.StartEventX = -1;
+                        this.StartEventY = -1;
+                        this.LastEventX = -1;
+                        this.movementDirection = 0;
+                        return false;
+                    }
+                }
+                velocityTracker.addMovement(ev);
+
+                velocityTracker.computeCurrentVelocity(1000);
+
+                float destination = 0;
+
+                int finalPosition; //center = 0, left = 1, right = 2;
+
+                //Log.w("onTouchEvent_6",String.format("XVelocity: %f\tYVelocity: %f\tflingSpeedThreshold: %d",velocityTracker.getXVelocity(),velocityTracker.getYVelocity(),this.flingSpeedThreshold));
+
+                if ((Math.abs(velocityTracker.getXVelocity()) > Math.abs(velocityTracker.getYVelocity())) && (Math.abs(velocityTracker.getXVelocity()) > this.flingSpeedThreshold)) {
+                    //It's a valid fling
+                    float velocity = velocityTracker.getXVelocity();
+                    if ((velocity > 0) && (actualPosition < 0)) { //show previous
+                        finalPosition = 1;
+                    } else if ((velocity < 0) && (actualPosition > 0)) { //show next
+                        finalPosition = 2;
+                    } else { //show actual
+                        finalPosition = 0;
+                    }
+                    if (!moving) {
+                        this.transitionListener.OnBeginTransition(this.actualStep,(((x-this.StartEventX) < 0)?this.actualStep+1:this.actualStep-1));
+                        this.movementDirection = (((x-this.StartEventX) < 0)?1:-1);
+                    }
+                } else if (!moving) { //Is not a valid fling and ev must be passed up
+                    velocityTracker.clear();
+                    scroller.abortAnimation();
+                    moving = false;
+                    this.StartEventX = -1;
+                    this.StartEventY = -1;
+                    this.LastEventX = -1;
+                    this.movementDirection = 0;
+                    return false;
+                } else if ((actualPosition < 0) && (Math.abs(actualPosition) > (this.getMeasuredWidth() / 2))) { //Go to previous
+                    finalPosition = 1;
+                } else if ((actualPosition > 0) && (Math.abs(actualPosition) > (this.getMeasuredWidth() / 2))) { // Go to next
+                    finalPosition = 2;
+                } else { //Go to actual
+                    finalPosition = 0;
+                }
+
+                int animationDuration = Math.round(3 * Math.round(1000 * Math.abs((destination-actualPosition) / velocityTracker.getXVelocity())));
+                //Log.w("onTouchEvent_7",String.format("finalPosition: %d\tanimationDuration: %d",finalPosition,animationDuration));
+                switch (finalPosition) {
+                    case 0: //center
+                        movePanels(-1*this.actualPosition,animationDuration);
+                        break;
+                    case 1: //left
+                        openPrevious(animationDuration);
+                        break;
+                    case 2: //right
+                        openNext(animationDuration);
+                        break;
+                }
+
+                velocityTracker.clear();
+                moving = false;
+                this.StartEventX = -1;
+                this.StartEventY = -1;
+                this.LastEventX = -1;
+                this.movementDirection = 0;
+                getParent().requestDisallowInterceptTouchEvent(false);
+                break;
+        }
+        return true;
+    }
+    /*********************************************************************************************/
 
     @Override
     public android.view.ViewGroup.LayoutParams generateLayoutParams(AttributeSet attrs) {
@@ -704,6 +1061,7 @@ public class SlidingStepsLayout extends ViewGroup {
             int stepOrder = -1;
             int previousStepButton = -1;
             int nextStepButton = -1;
+            int id = -2;
 
             String stepTitle = null;
             String stepSubtitle = null;
@@ -734,6 +1092,10 @@ public class SlidingStepsLayout extends ViewGroup {
                 }
             }
 
+            int[] attrsArray = new int[] { android.R.attr.id };
+            TypedArray ta = context.obtainStyledAttributes(attrs, attrsArray);
+            id = ta.getResourceId(0 /* index of attribute in attrsArray */, View.NO_ID);
+
             if ((layout >= 0) && (stepOrder >= 0)) {
                 this.setLayout(layout);
                 this.setStepOrder(stepOrder);
@@ -741,8 +1103,10 @@ public class SlidingStepsLayout extends ViewGroup {
                 this.setNextStepButton((nextStepButton >= 0) ? nextStepButton : null);
                 this.setStepTitle((stepTitle != null) ? stepTitle : "");
                 this.setStepSubtitle((stepSubtitle != null) ? stepSubtitle : "");
+                this.setViewID((id > 0)?id:layout);
             }
             a.recycle();
+            ta.recycle();
         }
         public LayoutParams(int width, int height) {
             super(width, height);

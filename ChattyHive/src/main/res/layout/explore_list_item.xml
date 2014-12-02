@@ -35,7 +35,6 @@
             android:id="@+id/explore_list_item_collapsed_hive_image"
             android:layout_width="58dp"
             android:layout_height="58dp"
-            android:src="@drawable/launcher_launcher_b"
             android:layout_marginTop="9.5dp"
             android:layout_marginLeft="9.5dp"
             android:layout_marginRight="12dp"/>
@@ -54,7 +53,6 @@
                 android:id="@+id/explore_list_item_collapsed_hive_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text=":What to do when you are very"
                 android:textSize="16dp"
                 android:textColor="#202020"
                 android:layout_marginTop="14dp"
@@ -65,7 +63,6 @@
                 android:id="@+id/explore_list_item_collapsed_hive_description"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Share your best thoughts on how to kill time when you have nothing else to do!"
                 android:textSize="12.5dp"
                 android:maxLines="2"
                 android:layout_marginBottom="5dp"
@@ -88,7 +85,6 @@
                     android:layout_width="12dp"
                     android:layout_height="12dp"
                     android:id="@+id/explore_list_item_collapsed_category_image"
-                    android:src="@drawable/pestanha_chats_arroba"
                     android:scaleType="fitCenter"
                     android:layout_gravity="center"
                     android:alpha="0.5"/>
@@ -96,7 +92,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:text="Moods"
                     android:textSize="12dp"
                     android:layout_gravity="bottom"
                     android:id="@+id/explore_list_item_collapsed_category_text"
@@ -115,7 +110,6 @@
                 <ImageView
                     android:layout_width="12dp"
                     android:layout_height="12dp"
-                    android:id="@+id/explore_list_item_category_imageview"
                     android:src="@drawable/pestanha_chats_arroba"
                     android:layout_gravity="center"
                     android:scaleType="fitCenter"
@@ -168,7 +162,6 @@
                     android:id="@+id/explore_list_item_expanded_hive_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/explore_hive_name"
                     android:textColor="#111111"
                     android:textSize="18dp"
                     android:maxLines="2"
@@ -182,8 +175,7 @@
                     <ImageView
                         android:id="@+id/explore_list_item_expanded_hive_image"
                         android:layout_width="70dp"
-                        android:layout_height="70dp"
-                        android:src="@drawable/launcher_launcher_b"/>
+                        android:layout_height="70dp"/>
 
                     <LinearLayout
                         android:layout_width="wrap_content"
@@ -201,13 +193,11 @@
                                 android:id="@+id/explore_list_item_expanded_category_image"
                                 android:layout_width="16dp"
                                 android:layout_height="16dp"
-                                android:layout_marginRight="4dp"
-                                android:src="@drawable/pestanha_chats_arroba"/>
+                                android:layout_marginRight="4dp"/>
                             <TextView
                                 android:id="@+id/explore_list_item_expanded_category_text"
                                 android:layout_width="wrap_content"
                                 android:layout_height="16dp"
-                                android:text="Videojuegos"
                                 android:textColor="#111111"
                                 android:textSize="12dp"
                                 android:layout_gravity="center"/>
@@ -268,7 +258,6 @@
                     android:id="@+id/explore_list_item_expanded_hive_description"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="This is a topic to discuss about Notch's game. News, maps, experiences... For suport and reporting problems join :Minecraft - Support"
                     android:textSize="13.25sp"
                     android:textColor="#111111"
                     android:maxLines="3"

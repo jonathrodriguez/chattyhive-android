@@ -14,9 +14,13 @@
         android:layout_marginTop="20dp"
         android:layout_marginBottom="18.5dp"
         android:layout_marginLeft="11dp"
-        android:text="Hives for you"
         android:textSize="17.5dp"
-        android:textColor="#333333"/>
+        android:textColor="#333333"
+        android:ellipsize="marquee"
+        android:lines="1"
+        android:maxLines="1"
+        android:minLines="1"
+        android:singleLine="true" />
 </LinearLayout>
 
 

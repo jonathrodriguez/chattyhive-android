@@ -15,6 +15,13 @@ public interface OnTransitionListener {
     public boolean OnBeginTransition(int actualStep,int nextStep);
 
     /**
+     * Invoked during a transition between steps, this method allows to perform visual changes based on transition. This method is invoked multiple times.
+     * @param visibleSteps Actual steps shown in screen
+     * @param visibilityAmount The amount of visibility for the step at the same index. This value is in the range 0..1 and sum of all values is 1.
+     */
+    public void OnDuringTransition(int[] visibleSteps, float[] visibilityAmount);
+
+    /**
      * Invoked at the end of a transition between steps. This methods notifies that the transition was correctly performed.
      * Notice that if transition was canceled by returning false in the OnBeginTransition method, this method will NOT be invoked.
      * @param actualStep Actual step shown in screen
