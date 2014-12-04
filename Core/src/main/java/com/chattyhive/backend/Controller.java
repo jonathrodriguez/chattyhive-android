@@ -306,6 +306,24 @@ public class Controller {
         if (this.ServerConnectionStateChanged != null)
             this.ServerConnectionStateChanged.fire(sender,eventArgs);
     }
+
+
+
+    /************************************************************************/
+    /*                    SERVER SYNC                                       */
+    /************************************************************************/
+
+    public void serverSync() {
+        ArrayList<AvailableCommands> commandSequence = new ArrayList<AvailableCommands>();
+        commandSequence.add(AvailableCommands.ChatList);
+        commandSequence.add(AvailableCommands.LocalProfile);
+
+        for(AvailableCommands command : commandSequence)
+            dataProvider.InvokeServerCommand(command,null);
+    }
+
+
+
     /************************************************************************/
     //EXPLORE
     /************************************************************************/

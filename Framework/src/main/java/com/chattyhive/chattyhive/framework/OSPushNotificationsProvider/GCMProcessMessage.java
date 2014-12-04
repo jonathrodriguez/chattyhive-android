@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.chattyhive.backend.Controller;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 /**
@@ -34,9 +35,11 @@ public class GCMProcessMessage extends IntentService {
                 Log.w("GCMProcessMessage","Send error: " + extras.toString());
             } else if (GoogleCloudMessaging.MESSAGE_TYPE_DELETED.equals(messageType)) {
                 // Call for server sync
+                Controller.GetRunningController().serverSync();
             } else if (GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE.equals(messageType)) {
                 // Get the message data.
                 // Send the json message data to core.
+
             }
         }
         // Release the wake lock provided by the WakefulBroadcastReceiver.
