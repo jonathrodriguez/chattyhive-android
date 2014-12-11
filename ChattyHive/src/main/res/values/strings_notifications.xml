@@ -4,4 +4,8 @@
     <string name="buzz_in_hive_TITLE" formatted="false">"%s"</string>
     <string name="buzz_in_hive_mainText" formatted="false">"%d new buzzes after yours."</string>
     <string name="buzz_in_hive_subText" formatted="false"><![CDATA[<b>%s:</b> %s]]></string>
+
+    <string name="new_messages_ticker" formatted="false">"You have new messages."</string>
+    <string name="new_messages_title" formatted="false">"chattyhive"</string>
+    <string name="new_messages_mainText" formatted="false">"You have %d new messages."</string>
 </resources>

@@ -5,4 +5,5 @@ package com.chattyhive.backend.businessobjects.Notifications;
  */
 public interface INotificationShower {
     public void ShowNotification(Notification notification);
+    public void ClearNotifications();
 }

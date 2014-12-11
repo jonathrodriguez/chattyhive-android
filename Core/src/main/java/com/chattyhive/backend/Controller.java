@@ -6,6 +6,7 @@ import com.chattyhive.backend.businessobjects.Chats.Hive;
 import com.chattyhive.backend.businessobjects.Chats.Messages.Message;
 import com.chattyhive.backend.businessobjects.Home.Cards.HiveMessageCard;
 import com.chattyhive.backend.businessobjects.Home.HomeCard;
+import com.chattyhive.backend.businessobjects.Notifications.INotificationShower;
 import com.chattyhive.backend.businessobjects.Notifications.Notification;
 import com.chattyhive.backend.businessobjects.Users.ProfileLevel;
 import com.chattyhive.backend.businessobjects.Users.User;
@@ -103,6 +104,16 @@ public class Controller {
 
     //COMMON STATIC
     private static Controller controller;
+    private static INotificationShower notificationShower;
+
+    public static void setNotificationShower(INotificationShower notificationShower) {
+        Controller.notificationShower = notificationShower;
+        if (controller != null)
+            if (notificationShower != null)
+                controller.notification = new Notification(notificationShower);
+            else
+                controller.notification = null;
+    }
 
     public static Event<CancelableEventArgs> DisposingRunningController;
     public static Event<EventArgs> RunningControllerDisposed;
@@ -148,6 +159,7 @@ public class Controller {
     public static void bindApp(Method getLogin, Object main) {
         if (appBounded) return;
         appBounded = true;
+
         if (AppBindingEvent != null)
             AppBindingEvent.fire(controller, EventArgs.Empty());
 
@@ -250,6 +262,8 @@ public class Controller {
         this.PubSubConnectionStateChanged = new Event<PubSubConnectionEventArgs>();
 
         this.dataProvider = DataProvider.GetDataProvider(localStorage);
+        if (notificationShower != null)
+            this.notification = new Notification(notificationShower);
 
         Conversation.Initialize(this, MessageLocalStorage);
         Chat.Initialize(this, GroupLocalStorage);
@@ -337,7 +351,7 @@ public class Controller {
     }
 
     public void onMessageReceived(Object sender, FormatReceivedEventArgs eventArgs) {
-        if (appBounded) return;
+        if ((appBounded) || (notification == null)) return;
 
         if (eventArgs.countReceivedFormats() > 0) {
             ArrayList<Format> formats = eventArgs.getReceivedFormats();
