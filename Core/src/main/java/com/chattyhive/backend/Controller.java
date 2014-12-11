@@ -6,6 +6,7 @@ import com.chattyhive.backend.businessobjects.Chats.Hive;
 import com.chattyhive.backend.businessobjects.Chats.Messages.Message;
 import com.chattyhive.backend.businessobjects.Home.Cards.HiveMessageCard;
 import com.chattyhive.backend.businessobjects.Home.HomeCard;
+import com.chattyhive.backend.businessobjects.Notifications.Notification;
 import com.chattyhive.backend.businessobjects.Users.ProfileLevel;
 import com.chattyhive.backend.businessobjects.Users.User;
 import com.chattyhive.backend.contentprovider.AvailableCommands;
@@ -22,6 +23,8 @@ import com.chattyhive.backend.contentprovider.formats.HIVE;
 import com.chattyhive.backend.contentprovider.formats.HIVE_ID;
 import com.chattyhive.backend.contentprovider.formats.HIVE_LIST;
 import com.chattyhive.backend.contentprovider.formats.LOCAL_USER_PROFILE;
+import com.chattyhive.backend.contentprovider.formats.MESSAGE;
+import com.chattyhive.backend.contentprovider.formats.MESSAGE_LIST;
 import com.chattyhive.backend.contentprovider.formats.PROFILE_ID;
 import com.chattyhive.backend.contentprovider.formats.USERNAME;
 import com.chattyhive.backend.contentprovider.formats.USER_EMAIL;
@@ -34,7 +37,9 @@ import com.chattyhive.backend.util.events.ConnectionEventArgs;
 import com.chattyhive.backend.util.events.Event;
 import com.chattyhive.backend.util.events.EventArgs;
 import com.chattyhive.backend.util.events.EventHandler;
+import com.chattyhive.backend.util.events.FormatReceivedEventArgs;
 import com.chattyhive.backend.util.events.PubSubConnectionEventArgs;
+import com.google.gson.JsonParser;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -43,6 +48,8 @@ import java.net.CookieManager;
 import java.net.CookiePolicy;
 import java.net.CookieStore;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.TreeMap;
 
@@ -256,6 +263,7 @@ public class Controller {
         this.dataProvider.ServerConnectionStateChanged.add(new EventHandler<ConnectionEventArgs>(this,"onServerConnectionStateChanged",ConnectionEventArgs.class));
 
         this.dataProvider.onHiveJoined.add(new EventHandler<CommandCallbackEventArgs>(this,"onJoinHiveCallback",CommandCallbackEventArgs.class));
+        this.dataProvider.onMessageReceived.add(new EventHandler<FormatReceivedEventArgs>(this,"onMessageReceived",FormatReceivedEventArgs.class));
     }
 
     /************************************************************************/
@@ -310,8 +318,10 @@ public class Controller {
 
 
     /************************************************************************/
-    /*                    SERVER SYNC                                       */
+    /*                    ASYNC MESSAGES                                    */
     /************************************************************************/
+
+    Notification notification;
 
     public void serverSync() {
         ArrayList<AvailableCommands> commandSequence = new ArrayList<AvailableCommands>();
@@ -322,7 +332,27 @@ public class Controller {
             dataProvider.InvokeServerCommand(command,null);
     }
 
+    public void processMessage(String message) {
+        this.dataProvider.ProcessReceivedFormats(Arrays.asList(Format.getFormat(new JsonParser().parse(message))));
+    }
 
+    public void onMessageReceived(Object sender, FormatReceivedEventArgs eventArgs) {
+        if (appBounded) return;
+
+        if (eventArgs.countReceivedFormats() > 0) {
+            ArrayList<Format> formats = eventArgs.getReceivedFormats();
+            for (Format format : formats) {
+                if (format instanceof MESSAGE) {
+                    notification.add(new Message(format));
+                    notification.push();
+                } else if (format instanceof MESSAGE_LIST) {
+                    for (MESSAGE message : ((MESSAGE_LIST) format).MESSAGES)
+                        notification.add(new Message(message));
+                    notification.push();
+                }
+            }
+        }
+    }
 
     /************************************************************************/
     //EXPLORE

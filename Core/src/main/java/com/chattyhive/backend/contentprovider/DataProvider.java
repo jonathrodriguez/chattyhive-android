@@ -352,7 +352,7 @@ public class DataProvider {
         this.ProcessReceivedFormats(eventArgs.getReceivedFormats());
     }
 
-    private void ProcessReceivedFormats(Collection<Format> receivedFormats) {
+    public void ProcessReceivedFormats(Collection<Format> receivedFormats) {
         ArrayList<Format> MessageFormats = new ArrayList<Format>();
         ArrayList<Format> UserProfileFormats = new ArrayList<Format>();
         ArrayList<Format> HiveProfileFormats = new ArrayList<Format>();

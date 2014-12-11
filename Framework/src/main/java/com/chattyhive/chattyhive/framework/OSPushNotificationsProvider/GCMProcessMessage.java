@@ -34,12 +34,12 @@ public class GCMProcessMessage extends IntentService {
             if (GoogleCloudMessaging.MESSAGE_TYPE_SEND_ERROR.equals(messageType)) {
                 Log.w("GCMProcessMessage","Send error: " + extras.toString());
             } else if (GoogleCloudMessaging.MESSAGE_TYPE_DELETED.equals(messageType)) {
-                // Call for server sync
                 Controller.GetRunningController().serverSync();
             } else if (GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE.equals(messageType)) {
                 // Get the message data.
+                Log.w("GCMProcessMessage",String.format("message = %s\textras = %s",extras.getString("message"),extras.toString()));
                 // Send the json message data to core.
-
+                Controller.GetRunningController().processMessage(extras.getString("message"));
             }
         }
         // Release the wake lock provided by the WakefulBroadcastReceiver.
