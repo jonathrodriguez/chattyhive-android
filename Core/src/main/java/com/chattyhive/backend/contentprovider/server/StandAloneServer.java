@@ -337,9 +337,6 @@ public class StandAloneServer {
         createChat(hive,"23/07/2014","trabuco","coolest_thing_21");
         createChat(hive,"30/07/2014","coolest_thing_21","cassini91");
 
-        hive = createHive("Ojos y miradas","file_hive_ojos_y_miradas.jpg","06.08","Simplemente tus mejores fotos de ojos y miradas. Pueden ser de gente, de animales o de cualquier cosa que imite a un ojo.",new String[] {"Spanish"},"fotos_de_gente","miradas","WinterIsComing");
-        subscribeHive("trabuco",hive.getNameUrl());
-
         hive = createHive("Risky jobs","file_hive_risky_jobs.jpg","24.06","Not all jobs are as safe as they should. What risks do you face everyday in your job? how do you cope with them?",new String[] {"English"},"badJobs");
         subscribeHive("cassini91",hive.getNameUrl());
         subscribeHive("trabuco",hive.getNameUrl());
