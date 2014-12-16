@@ -136,7 +136,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#ededed"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -214,14 +214,14 @@
                                 android:id="@+id/explore_list_item_expanded_users_number"
                                 android:layout_width="wrap_content"
                                 android:layout_height="16dp"
-                                android:text="20 mates"
+                                android:text="@string/explore_hive_card_expanded_n_mates"
                                 android:textColor="#111111"
                                 android:textSize="12dp"
                                 android:layout_gravity="center"/>
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="16dp"
-                                android:text=" joined the hive"
+                                android:text="@string/explore_hive_card_expanded_joined_the_hive"
                                 android:textColor="#808080"
                                 android:textSize="12dp"
                                 android:layout_gravity="center"/>
@@ -238,7 +238,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="16dp"
-                                android:text="Hive chat languages: "
+                                android:text="@string/explore_hive_card_expanded_hive_chat_langs"
                                 android:textColor="#808080"
                                 android:textSize="12dp"
                                 android:layout_gravity="center"/>
@@ -248,7 +248,8 @@
                                 android:text="English"
                                 android:textColor="#111111"
                                 android:textSize="12dp"
-                                android:layout_gravity="center"/>
+                                android:layout_gravity="center"
+                                android:id="@+id/explore_list_item_expanded_hive_chat_languages" />
                         </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
@@ -384,7 +385,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="30dp"
                                 android:gravity="center"
-                                android:text="Join hive"
+                                android:text="@string/explore_hive_card_expanded_join_hive"
                                 android:textSize="16dp"
                                 android:textColor="#E87400"
                                 android:layout_marginRight="7dp"/>
@@ -411,10 +412,37 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="30dp"
                                     android:gravity="center"
-                                    android:text="Public Chat"
+                                    android:text="@string/explore_hive_card_expanded_public_chat"
                                     android:textSize="16dp"
                                     android:textColor="#333333"
                                     android:layout_marginLeft="7dp"/>
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:id="@+id/explore_joining_frame"
+                                android:visibility="gone"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:gravity="center"
+                                android:background="@drawable/explore_button_border"
+                                android:paddingLeft="10dp"
+                                android:paddingRight="10dp" >
+
+                                <ImageView
+                                    android:layout_width="20dp"
+                                    android:layout_height="20dp"
+                                    android:src="@android:drawable/stat_notify_sync"
+                                    android:tint="#000000" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="30dp"
+                                    android:gravity="center"
+                                    android:textSize="16dp"
+                                    android:textColor="#333333"
+                                    android:layout_marginLeft="7dp"
+                                    android:text="@string/explore_hive_card_expanded_joining_hive" />
                             </LinearLayout>
                         </LinearLayout>
                     </LinearLayout>

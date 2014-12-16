@@ -18,6 +18,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.TreeMap;
@@ -114,6 +115,22 @@ public class Hive implements IContextualizable {
         this.setImageURL(data.IMAGE_URL);
 
         this.publicChat = null;
+
+        this.subscribedUsers = 0;
+        this.tags = new String[0];
+        this.chatLanguages = new String[0];
+
+        if (data.TAGS != null) {
+            this.tags = data.TAGS.toArray(new String[data.TAGS.size()]);
+        }
+
+        if (data.CHAT_LANGUAGES != null) {
+            this.chatLanguages = data.CHAT_LANGUAGES.toArray(new String[data.CHAT_LANGUAGES.size()]);
+        }
+
+        if (data.SUBSCRIBED_USERS != null) {
+            this.subscribedUsers = data.SUBSCRIBED_USERS;
+        }
 
         if (data.PUBLIC_CHAT != null) {
             this.publicChat = Chat.getChat(data.PUBLIC_CHAT.CHANNEL_UNICODE, false);
@@ -212,6 +229,9 @@ public class Hive implements IContextualizable {
     protected String name;
     protected String nameUrl;
     protected Chat publicChat;
+    protected Integer subscribedUsers;
+    protected String[] chatLanguages;
+    protected String[] tags;
 
     protected String imageURL;
     public String getImageURL() {
@@ -246,6 +266,32 @@ public class Hive implements IContextualizable {
     public Chat getPublicChat() { return this.publicChat; }
     public void setPublicChat(Chat value) { this.publicChat = value; }
 
+    public String[] getChatLanguages() {
+        return this.chatLanguages;
+    }
+    public void setChatLanguages(String[] chatLanguages) {
+        this.chatLanguages = chatLanguages;
+    }
+
+    public String[] getTags() {
+        return this.tags;
+    }
+    public void setTags(String[] tags) {
+        this.tags = tags;
+    }
+
+    public int getSubscribedUsers() {
+        if (this.subscribedUsers != null)
+            return this.subscribedUsers;
+        else
+            return 0;
+    }
+    public int incSubscribedUsers(int quantity) {
+        if (this.subscribedUsers == null)
+            this.subscribedUsers = 0;
+        return this.subscribedUsers += quantity;
+    }
+
     /*************************************/
     /*         PARSE METHODS             */
     /*************************************/
@@ -257,6 +303,16 @@ public class Hive implements IContextualizable {
             ((HIVE) format).CREATION_DATE = this.creationDate;
             ((HIVE) format).DESCRIPTION = this.description;
             ((HIVE) format).IMAGE_URL = this.imageURL;
+            ((HIVE) format).SUBSCRIBED_USERS = this.subscribedUsers;
+
+            if (this.tags != null) {
+                ((HIVE) format).TAGS = new ArrayList<String>(Arrays.asList(this.tags));
+            }
+
+            if (this.chatLanguages != null) {
+                ((HIVE) format).CHAT_LANGUAGES = new ArrayList<String>(Arrays.asList(this.chatLanguages));
+            }
+
             if (this.publicChat != null)
                 ((HIVE) format).PUBLIC_CHAT = (CHAT)this.publicChat.toFormat(new CHAT());
             else
@@ -276,6 +332,21 @@ public class Hive implements IContextualizable {
             this.creationDate = ((HIVE) format).CREATION_DATE;
             this.setImageURL(((HIVE) format).IMAGE_URL);
             this.publicChat = null;
+            this.subscribedUsers = 0;
+            this.tags = new String[0];
+            this.chatLanguages = new String[0];
+
+            if (((HIVE) format).TAGS != null) {
+                this.tags = ((HIVE) format).TAGS.toArray(new String[((HIVE) format).TAGS.size()]);
+            }
+
+            if (((HIVE) format).CHAT_LANGUAGES != null) {
+                this.chatLanguages = ((HIVE) format).CHAT_LANGUAGES.toArray(new String[((HIVE) format).CHAT_LANGUAGES.size()]);
+            }
+
+            if (((HIVE) format).SUBSCRIBED_USERS != null) {
+                this.subscribedUsers = ((HIVE) format).SUBSCRIBED_USERS;
+            }
 
             if (((HIVE) format).PUBLIC_CHAT != null) {
                 this.publicChat = Chat.getChat(((HIVE) format).PUBLIC_CHAT);

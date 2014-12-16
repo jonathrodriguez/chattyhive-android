@@ -166,7 +166,7 @@ public class StandAloneServer {
         /********************************************************************/
         /*                HIVES                                             */
         /********************************************************************/
-        hive = createHive("Minecraft - Unofficial chat","file_hive_minecraft_unofficial_hive.jpg","23.04","This is the best unofficial hive for minecraft's fans, join us and share the lates news, pictures and experiences of your favourite game.");
+        hive = createHive("Minecraft - Unofficial chat","file_hive_minecraft_unofficial_hive.jpg","23.04","This is the best unofficial hive for minecraft's fans, join us and share the lates news, pictures and experiences of your favourite game.",new String[] {"English"},"sandbox","notch");
         subscribeHive("jonathan",hive.getNameUrl());
         subscribeHive("cassini91",hive.getNameUrl());
         subscribeHive("trabuco",hive.getNameUrl());
@@ -182,7 +182,7 @@ public class StandAloneServer {
         createChat(hive,"01/01/2000","jonathan","trabuco");
         createChat(hive,"01/05/2001","coolest_thing_21","serezy");
 
-        hive = createHive("Chattyhive","file_hive_chattyhive.jpg","21.06","Official chattyhive's chat for internal communication.");
+        hive = createHive("Chattyhive","file_hive_chattyhive.jpg","21.06","Official chattyhive's chat for internal communication.",new String[] {"Spanish", "English"},"developpment","communication");
         subscribeHive("jonathan",hive.getNameUrl());
         subscribeHive("cassini91",hive.getNameUrl());
         subscribeHive("trabuco",hive.getNameUrl());
@@ -195,7 +195,7 @@ public class StandAloneServer {
         createChat(hive,"01/01/2010","jonathan","serezy");
         createChat(hive,"08/11/1955","cassini91","coolest_thing_21");
 
-        hive = createHive("The sweetest thing ever!","file_hive_the_sweetest_thing_ever.jpg","09.01","Just talk about what you believe its the sweetest thing that could happen to you... and I am not (just) talking about food");
+        hive = createHive("The sweetest thing ever!","file_hive_the_sweetest_thing_ever.jpg","09.01","Just talk about what you believe its the sweetest thing that could happen to you... and I am not (just) talking about food",new String[] {"English"},"sandbox","notch");
         subscribeHive("jonathan",hive.getNameUrl());
         subscribeHive("trabuco",hive.getNameUrl());
         subscribeHive("serezy",hive.getNameUrl());
@@ -206,15 +206,15 @@ public class StandAloneServer {
         createChat(hive,"01/01/2010","jonathan","homer_ou");
         createChat(hive,"08/11/1955","homer_ou","trabuco");
 
-        hive = createHive("\u00a1Lugares donde te gustar\u00eda perderte!","file_hive_lugares_donde_te_gustaria_perderte.jpg","22.05","Hablemos y compartamos fotos sobre aquellos rincones donde no te importar\u00eda perder, y pasar una vida entera o al menos un buen cacho de tiempo. \u00bfQu\u00e9 lugares te inspiran m\u00e1s paz?");
+        hive = createHive("\u00a1Lugares donde te gustar\u00eda perderte!","file_hive_lugares_donde_te_gustaria_perderte.jpg","22.05","Hablemos y compartamos fotos sobre aquellos rincones donde no te importar\u00eda perder, y pasar una vida entera o al menos un buen cacho de tiempo. \u00bfQu\u00e9 lugares te inspiran m\u00e1s paz?",new String[] {"Spanish"},"travel","pardise");
         subscribeHive("cassini91",hive.getNameUrl());
 
-        hive = createHive("Lets play guitar!","file_hive_lets_play_guitar.jpg","06.07","Are you a pro? still learning? doesn't matter, join this hive to learn and share about your favourite musical instrument");
+        hive = createHive("Lets play guitar!","file_hive_lets_play_guitar.jpg","06.07","Are you a pro? still learning? doesn't matter, join this hive to learn and share about your favourite musical instrument",new String[] {"English"},"learning","music","guitar hero");
         subscribeHive("cassini91",hive.getNameUrl());
         subscribeHive("trabuco",hive.getNameUrl());
         createChat(hive,"25/02/2013","cassini91","trabuco");
 
-        hive = createHive("The most beautiful planet?","file_hive_the_most_beautiful_planet.jpg","13.02","You like astronomy so I ask you the following: do you think it would be possible to find a planet as beautiful and complex as our is?");
+        hive = createHive("The most beautiful planet?","file_hive_the_most_beautiful_planet.jpg","13.02","You like astronomy so I ask you the following: do you think it would be possible to find a planet as beautiful and complex as our is?",new String[] {"English"},"sandbox","notch");
         subscribeHive("jonathan",hive.getNameUrl());
         subscribeHive("cassini91",hive.getNameUrl());
         subscribeHive("trabuco",hive.getNameUrl());
@@ -230,7 +230,7 @@ public class StandAloneServer {
         createChat(hive,"01/01/2000","jonathan","trabuco");
         createChat(hive,"01/05/2001","coolest_thing_21","serezy");
 
-        hive = createHive("PC general news and thoughts","file_hive_pc_general_news_and_thoughts.jpg","21.01","This is a general hive for PC lovers. Mac users are not welcome here (nah I am kidding)");
+        hive = createHive("PC general news and thoughts","file_hive_pc_general_news_and_thoughts.jpg","21.01","This is a general hive for PC lovers. Mac users are not welcome here (nah I am kidding)",new String[] {"English"},"sandbox","notch");
         subscribeHive("jonathan",hive.getNameUrl());
         subscribeHive("trabuco",hive.getNameUrl());
         subscribeHive("serezy",hive.getNameUrl());
@@ -241,7 +241,7 @@ public class StandAloneServer {
         createChat(hive,"01/01/2010","jonathan","homer_ou");
         createChat(hive,"08/11/1955","homer_ou","trabuco");
 
-        hive = createHive("Sustos y sorpresas","file_hive_sustos_y_sorpresas.jpg","09.05","Comparte todos esos momentos que han hecho que se te quedasen los ojos c\u00f3mo platos");
+        hive = createHive("Sustos y sorpresas","file_hive_sustos_y_sorpresas.jpg","09.05","Comparte todos esos momentos que han hecho que se te quedasen los ojos c\u00f3mo platos",new String[] {"Spanish"},"sandbox","notch");
         subscribeHive("jonathan",hive.getNameUrl());
         subscribeHive("cassini91",hive.getNameUrl());
         subscribeHive("trabuco",hive.getNameUrl());
@@ -257,7 +257,7 @@ public class StandAloneServer {
         createChat(hive,"01/01/2000","jonathan","trabuco");
         createChat(hive,"01/05/2001","coolest_thing_21","serezy");
 
-        hive = createHive("Cities are not for me, sorry","file_hive_cities_are_not_for_me.jpg","09.01","For those who can't live in a big city and enjoy life in small towns. Why can't you stand the big cities?");
+        hive = createHive("Cities are not for me, sorry","file_hive_cities_are_not_for_me.jpg","09.01","For those who can't live in a big city and enjoy life in small towns. Why can't you stand the big cities?",new String[] {"English"},"sandbox","notch");
         subscribeHive("jonathan",hive.getNameUrl());
         subscribeHive("cassini91",hive.getNameUrl());
         subscribeHive("trabuco",hive.getNameUrl());
@@ -270,7 +270,7 @@ public class StandAloneServer {
         createChat(hive,"01/01/2010","jonathan","serezy");
         createChat(hive,"08/11/1955","cassini91","coolest_thing_21");
 
-        hive = createHive("The funny hive","file_hive_the_funny_hive.jpg","06.05","Only funny stuff is allowed");
+        hive = createHive("The funny hive","file_hive_the_funny_hive.jpg","06.05","Only funny stuff is allowed",new String[] {"English"},"sandbox","notch");
         subscribeHive("jonathan",hive.getNameUrl());
         subscribeHive("trabuco",hive.getNameUrl());
         subscribeHive("serezy",hive.getNameUrl());
@@ -281,12 +281,12 @@ public class StandAloneServer {
         createChat(hive,"01/01/2010","jonathan","homer_ou");
         createChat(hive,"08/11/1955","homer_ou","trabuco");
 
-        hive = createHive("Biraz daha kalabilir misin?","file_hive_biraz_daha_kalabilir_misin.jpg","10.04","Seni \u00e7ok \u00f6zledim.");
+        hive = createHive("Biraz daha kalabilir misin?","file_hive_biraz_daha_kalabilir_misin.jpg","10.04","Seni \u00e7ok \u00f6zledim.",new String[] {"Turkish"},"coffee","milk");
         subscribeHive("cassini91",hive.getNameUrl());
         subscribeHive("serezy",hive.getNameUrl());
         createChat(hive,"25/02/2013","cassini91","serezy");
 
-        hive = createHive("\u00a1As\u00ed es imposible estar a dieta!","file_hive_asi_es_imposible_estar_a_dieta.jpg","07.03","Cuando est\u00e1s a dieta y el mundo se vuelve en tu contra...");
+        hive = createHive("\u00a1As\u00ed es imposible estar a dieta!","file_hive_asi_es_imposible_estar_a_dieta.jpg","07.03","Cuando est\u00e1s a dieta y el mundo se vuelve en tu contra...",new String[] {"Spanish"},"sandbox","notch");
         subscribeHive("jonathan",hive.getNameUrl());
         subscribeHive("cassini91",hive.getNameUrl());
         subscribeHive("trabuco",hive.getNameUrl());
@@ -482,6 +482,9 @@ public class StandAloneServer {
 
         HiveUserSubscriptions.get(hiveNameURL).add(userLogin);
         UserHiveSubscriptions.get(userLogin).add(hiveNameURL);
+
+        Hives.get(hiveNameURL).incSubscribedUsers(1);
+
         subscribeChat(userLogin,Hives.get(hiveNameURL).getPublicChat().getChannelUnicode());
     }
     private static void subscribeChat(String userLogin, String chatChannelUnicode) {
@@ -496,7 +499,7 @@ public class StandAloneServer {
         ChatUserSubscriptions.get(chatChannelUnicode).add(userLogin);
         UserChatSubscriptions.get(userLogin).add(chatChannelUnicode);
     }
-    private static Hive createHive(String name, String hiveImage,String category, String description) {
+    private static Hive createHive(String name, String hiveImage,String category, String description, String[] languages, String... tags) {
         Hive hive = new Hive(name,randomString.nextString());
         Chat publicChat = new Chat(ChatKind.HIVE,hive);
 
@@ -504,6 +507,8 @@ public class StandAloneServer {
         hive.setCategory(category);
         hive.setDescription(description);
         hive.setPublicChat(publicChat);
+        hive.setChatLanguages(languages);
+        hive.setTags(tags);
 
         publicChat.setChannelUnicode(hive.getNameUrl());
         publicChat.setPusherChannel(String.format("presence-%s",hive.getNameUrl()));
@@ -994,7 +999,9 @@ public class StandAloneServer {
                                     u2 = HiveUserSubscriptions.get(o2.getNameUrl()).size();
                             }
 
-                            return u1-u2;
+                            int res = u1-u2;
+
+                            return ((res==0)?o1.getNameUrl().compareToIgnoreCase(o2.getNameUrl()):res);
                         }
                     };
                 } else if (filter.TYPE.equalsIgnoreCase("CREATION_DATE")) {
@@ -1018,7 +1025,7 @@ public class StandAloneServer {
 
                             long res = d1-d2;
 
-                            return ((res > Integer.MAX_VALUE)?Integer.MAX_VALUE:((res < Integer.MIN_VALUE)?Integer.MIN_VALUE:(int)res));
+                            return ((res > Integer.MAX_VALUE)?Integer.MAX_VALUE:((res < Integer.MIN_VALUE)?Integer.MIN_VALUE:((res==0)?o1.getNameUrl().compareToIgnoreCase(o2.getNameUrl()):(int)res)));
                         }
                     };
                 } else if (filter.TYPE.equalsIgnoreCase("TRENDING")) {
@@ -1040,7 +1047,9 @@ public class StandAloneServer {
                             if ((o2.getPublicChat() != null) && (o2.getPublicChat().getConversation() != null))
                                 m2 = o2.getPublicChat().getConversation().getCount();
 
-                            return m1-m2;
+                            int res = m1-m2;
+
+                            return ((res==0)?o1.getNameUrl().compareToIgnoreCase(o2.getNameUrl()):res);
                         }
                     };
                 } else {
@@ -1053,16 +1062,87 @@ public class StandAloneServer {
                 else
                     resultSet = new ArrayList<Hive>();
 
+
+                String categoryFilter = "";
+                if (filter.CATEGORY != null) {
+                    categoryFilter = filter.CATEGORY;
+                    if (!categoryFilter.contains("."))
+                        categoryFilter += ".";
+                }
+
                 for (String hiveKey : allHives)
-                    resultSet.add(Hives.get(hiveKey));
+                    if ((categoryFilter == null) || (categoryFilter.isEmpty()) || (Hives.get(hiveKey).getCategory().startsWith(categoryFilter)))
+                        resultSet.add(Hives.get(hiveKey));
 
                 HIVE_LIST list = new HIVE_LIST();
                 list.LIST = new ArrayList<HIVE>();
 
                 responseFormats.add(list);
 
-                for (Hive hive : resultSet)
-                    list.LIST.add(((HIVE)hive.toFormat(new HIVE())));
+                Hive[] results = resultSet.toArray(new Hive[resultSet.size()]);
+
+                int length = results.length;
+                int start = -1;
+                int count = -1;
+                int end = -1;
+
+                if ((filter.RESULT_INTERVAL != null) && (filter.RESULT_INTERVAL.START_INDEX != null) && (!filter.RESULT_INTERVAL.START_INDEX.isEmpty()))
+                    start = ((filter.RESULT_INTERVAL.START_INDEX.equalsIgnoreCase("FIRST"))?0:((filter.RESULT_INTERVAL.START_INDEX.equalsIgnoreCase("LAST"))?length:Integer.parseInt(filter.RESULT_INTERVAL.START_INDEX)));
+
+                if ((filter.RESULT_INTERVAL != null) && (filter.RESULT_INTERVAL.END_INDEX != null) && (!filter.RESULT_INTERVAL.END_INDEX.isEmpty()))
+                    end = ((filter.RESULT_INTERVAL.END_INDEX.equalsIgnoreCase("FIRST"))?0:((filter.RESULT_INTERVAL.END_INDEX.equalsIgnoreCase("LAST"))?length:Integer.parseInt(filter.RESULT_INTERVAL.END_INDEX)));
+
+                if ((filter.RESULT_INTERVAL != null) && (filter.RESULT_INTERVAL.COUNT != null))
+                    count = filter.RESULT_INTERVAL.COUNT;
+
+                int finalStart = 0;
+                int finalEnd = length;
+
+                if ((start < 0) && (count >= 0) && (end >= 0)) {
+                    if (end < finalEnd)
+                        finalEnd = end;
+
+                    finalStart = finalEnd - count;
+                }  else if ((start >= 0) && (count >= 0) && (end < 0)) {
+                    if (start > finalStart)
+                        finalStart = start;
+
+                    finalEnd = finalStart + count;
+                } else if ((start >= 0) && (count < 0) && (end >= 0)) {
+                    finalEnd = end;
+                    finalStart = start;
+                } else if ((start >= 0) && (count >= 0) && (end >= 0)) {
+                    if (start > finalStart)
+                        finalStart = start;
+
+                    finalEnd = finalStart + count;
+
+                    if (end < finalEnd)
+                        finalEnd = end;
+                }
+
+                if (finalStart < 0)
+                    finalStart = 0;
+                else if (finalStart >= length)
+                    finalStart = length - 1;
+
+                if (finalEnd < 0)
+                    finalEnd = 0;
+                else if (finalEnd > length)
+                    finalEnd = length;
+
+                if (finalStart > finalEnd) {
+                    int tmp = finalStart;
+                    finalStart = finalEnd;
+                    finalEnd = tmp;
+                }
+
+                if ((finalEnd - finalStart) > 0) {
+                    results = Arrays.copyOfRange(results, finalStart, finalEnd);
+
+                    for (Hive hive : results)
+                        list.LIST.add(((HIVE) hive.toFormat(new HIVE())));
+                }
 
                 common.STATUS = "OK";
             } else {
