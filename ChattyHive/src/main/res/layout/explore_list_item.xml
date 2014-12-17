@@ -247,7 +247,6 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="16dp"
-                                android:text="English"
                                 android:textColor="#111111"
                                 android:textSize="12dp"
                                 android:layout_gravity="center"

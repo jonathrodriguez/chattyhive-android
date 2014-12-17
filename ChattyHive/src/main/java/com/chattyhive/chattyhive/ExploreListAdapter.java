@@ -3,6 +3,7 @@ package com.chattyhive.chattyhive;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.BitmapFactory;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -213,7 +214,9 @@ public class ExploreListAdapter extends BaseAdapter implements AbsListView.OnScr
         String chatLanguages = "";
         if (hive.getChatLanguages() != null)
             for (String language : hive.getChatLanguages())
-                chatLanguages += ((chatLanguages.isEmpty())?"":", ") + language;
+                chatLanguages = chatLanguages.concat((chatLanguages.isEmpty())?"":", ").concat(language);
+
+        Log.w("ExploreListAdapter.", String.format("Postion: %d. Langs: %s",position,chatLanguages));
 
         if (!chatLanguages.isEmpty())
             holder.expanded_hive_chatLanguages.setText(chatLanguages);

@@ -885,7 +885,10 @@ public class SlidingStepsLayout extends ViewGroup {
                 if (!moving) { // test if we have to move
                     float deltaX = x-this.StartEventX;
                     float deltaY = y-this.StartEventY;
-                    if ((Math.abs(deltaX) > Math.abs(deltaY)) && (Math.abs(deltaX) > this.actionMoveThreshold)) {
+                    if (((Math.abs(deltaX) > Math.abs(deltaY)) && (Math.abs(deltaX) > this.actionMoveThreshold)) &&
+                        (((this.actualStep == 0) && (deltaX < 0)) ||
+                         ((this.actualStep == (this.numberSteps - 1)) && (deltaX > 0)) ||
+                         ((this.actualStep > 0) && (this.actualStep < (this.numberSteps - 1))))) {
                         moving = true;
                         getParent().requestDisallowInterceptTouchEvent(true);
                         this.transitionListener.OnBeginTransition(this.actualStep,((deltaX < 0)?this.actualStep+1:this.actualStep-1));
@@ -914,7 +917,10 @@ public class SlidingStepsLayout extends ViewGroup {
                 if (!moving) { // test if we have to move
                     float deltaX = x-this.StartEventX;
                     float deltaY = y-this.StartEventY;
-                    if ((Math.abs(deltaX) > Math.abs(deltaY)) && (Math.abs(deltaX) > this.actionMoveThreshold)) {
+                    if (((Math.abs(deltaX) > Math.abs(deltaY)) && (Math.abs(deltaX) > this.actionMoveThreshold)) &&
+                        (((this.actualStep == 0) && (deltaX < 0)) ||
+                         ((this.actualStep == (this.numberSteps - 1)) && (deltaX > 0)) ||
+                         ((this.actualStep > 0) && (this.actualStep < (this.numberSteps - 1))))) {
 
                         this.transitionListener.OnBeginTransition(this.actualStep,((deltaX < 0)?this.actualStep+1:this.actualStep-1));
                         this.movementDirection = ((deltaX < 0)?1:-1);
@@ -951,7 +957,10 @@ public class SlidingStepsLayout extends ViewGroup {
                     } else { //show actual
                         finalPosition = 0;
                     }
-                    if (!moving) {
+                    if ((!moving)  &&
+                       (((this.actualStep == 0) && ((x-this.StartEventX) < 0)) ||
+                            ((this.actualStep == (this.numberSteps - 1)) && ((x-this.StartEventX) > 0)) ||
+                            ((this.actualStep > 0) && (this.actualStep < (this.numberSteps - 1))))) {
                         this.transitionListener.OnBeginTransition(this.actualStep,(((x-this.StartEventX) < 0)?this.actualStep+1:this.actualStep-1));
                         this.movementDirection = (((x-this.StartEventX) < 0)?1:-1);
                     }
