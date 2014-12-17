@@ -21,7 +21,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/login_activity_facebook_button"
-                android:layout_marginTop="@dimen/login_tab_panel_sign_up_social_networks_buttons_facebook_margin_top">
+                android:layout_marginTop="@dimen/login_tab_panel_sign_up_social_networks_buttons_facebook_margin_top"
+                android:id="@+id/login_sign_up_with_facebook">
 
                 <ImageView
                     android:layout_width="@dimen/login_tab_panel_sign_up_social_networks_buttons_image_width"

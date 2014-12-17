@@ -189,6 +189,7 @@ public class ExploreListAdapter extends BaseAdapter implements AbsListView.OnScr
         if(expanded_hive == position) {//EXPANDIR
             convertView.findViewById(R.id.explore_list_item_short).setVisibility(View.GONE);
             convertView.findViewById(R.id.explore_hive_card).setVisibility(View.VISIBLE);
+            ((ListView)parent).smoothScrollToPosition(position);
         }
         else {//CONTRAER
             convertView.findViewById(R.id.explore_hive_card).setVisibility(View.GONE);

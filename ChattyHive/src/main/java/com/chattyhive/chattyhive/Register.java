@@ -2,6 +2,7 @@ package com.chattyhive.chattyhive;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,10 +11,12 @@ import android.widget.TextView;
 
 import com.chattyhive.backend.Controller;
 import com.chattyhive.backend.StaticParameters;
+import com.chattyhive.backend.businessobjects.Image;
 import com.chattyhive.backend.businessobjects.Users.User;
 import com.chattyhive.backend.contentprovider.formats.COMMON;
 import com.chattyhive.backend.contentprovider.formats.Format;
 import com.chattyhive.backend.util.events.CommandCallbackEventArgs;
+import com.chattyhive.backend.util.events.EventArgs;
 import com.chattyhive.backend.util.events.EventHandler;
 import com.chattyhive.backend.util.formatters.DateFormatter;
 import com.chattyhive.chattyhive.framework.CustomViews.Listener.OnInflateLayoutListener;
@@ -21,6 +24,8 @@ import com.chattyhive.chattyhive.framework.CustomViews.Listener.OnRemoveLayoutLi
 import com.chattyhive.chattyhive.framework.CustomViews.Listener.OnTransitionListener;
 import com.chattyhive.chattyhive.framework.CustomViews.ViewGroup.SlidingStepsLayout;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -36,6 +41,8 @@ public class Register extends Activity {
     private String repeatPassword;
 
     private Boolean usernameValidated = false;
+
+    private Boolean fake;
 
     private Register thisActivity;
 
@@ -57,12 +64,19 @@ public class Register extends Activity {
 
         Intent intent = this.getIntent();
 
-        String email = intent.getStringExtra("email");
-        String proposedUsername = intent.getStringExtra("username");
+        fake = intent.getBooleanExtra("fake",false);
 
-        this.newUser = new User(email,this.controller);
-        this.newUser.getUserPublicProfile().setPublicName(proposedUsername);
-        this.newUser.getUserPrivateProfile().setSex("female"); //Load default value.
+        if (fake) {
+            this.newUser = this.controller.getMe();
+            password = repeatPassword = "12345678";
+        } else {
+            String email = intent.getStringExtra("email");
+            String proposedUsername = intent.getStringExtra("username");
+
+            this.newUser = new User(email, this.controller);
+            this.newUser.getUserPublicProfile().setPublicName(proposedUsername);
+            this.newUser.getUserPrivateProfile().setSex("female"); //Load default value.
+        }
     }
 
     public View.OnClickListener onEnterButtonClick = new View.OnClickListener() {
@@ -78,7 +92,12 @@ public class Register extends Activity {
 
                 if (passwordIsValid(passwordView)) {
                     if (passwordView.getText().toString().equals(repeatPasswordView.getText().toString())) {
-                        newUser.Register(passwordView.getText().toString(),new EventHandler<CommandCallbackEventArgs>(thisActivity,"onRegisterCallback",CommandCallbackEventArgs.class));
+                        if (!fake)
+                            newUser.Register(passwordView.getText().toString(),new EventHandler<CommandCallbackEventArgs>(thisActivity,"onRegisterCallback",CommandCallbackEventArgs.class));
+                        else {
+                            setResult(RESULT_OK);
+                            finish();
+                        }
                     } else {
                         repeatPasswordView.setError("Passwords must match.");
                         repeatPasswordView.requestFocus();
@@ -131,6 +150,28 @@ public class Register extends Activity {
                         ((ImageView)findViewById(R.id.register_first_step_male_radio_image)).setImageResource(R.drawable.registro_selector_deactivated);
                         ((ImageView)findViewById(R.id.register_first_step_female_radio_image)).setImageResource(R.drawable.registro_selector);
                     }
+
+                    ((TextView)view.findViewById(R.id.register_first_step_location_textView)).setText(newUser.getUserPrivateProfile().getLocation());
+
+                    String langs = "";
+                    if ((newUser.getUserPrivateProfile().getLanguages() != null) && (newUser.getUserPrivateProfile().getLanguages().size() > 0))
+                        for (String lang : newUser.getUserPrivateProfile().getLanguages())
+                            langs += ((langs.isEmpty())?"":", ") + lang;
+
+                    if (!langs.isEmpty())
+                        ((TextView)view.findViewById(R.id.register_first_step_languages_textView)).setText(langs);
+
+                    if ((newUser.getUserPrivateProfile().getImageURL() != null) && (!newUser.getUserPrivateProfile().getImageURL().isEmpty())) {
+                        Image image = null;
+                        if ((newUser != null) && (newUser.getUserPrivateProfile() != null))
+                            image = newUser.getUserPrivateProfile().getProfileImage();
+
+                        if (image != null) {
+                            image.OnImageLoaded.add(new EventHandler<EventArgs>(thisActivity,"onPrivateImageLoaded",EventArgs.class));
+                            image.loadImage(Image.ImageSize.xlarge,0);
+                        }
+                    }
+
                     break;
                 case R.id.register_second_step_layout:
                     ((TextView)view.findViewById(R.id.register_second_step_username)).setText(newUser.getUserPublicProfile().getPublicName());
@@ -146,6 +187,18 @@ public class Register extends Activity {
                     view.findViewById(R.id.register_second_step_show_gender_public_button).setOnClickListener(onCheckBoxClickListener);
                     ((ImageView)view.findViewById(R.id.register_second_step_show_gender_public_checkbox_image)).setImageResource((newUser.getUserPublicProfile().getShowSex())?R.drawable.registro_white_tick_activated_grey:R.drawable.registro_white_tick_deactivated_grey);
                     view.findViewById(R.id.register_second_step_show_gender_public_button).setTag(newUser.getUserPublicProfile().getShowSex());
+
+                    if ((newUser.getUserPublicProfile().getImageURL() != null) && (!newUser.getUserPublicProfile().getImageURL().isEmpty())) {
+                        Image image = null;
+                        if ((newUser != null) && (newUser.getUserPublicProfile() != null))
+                            image = newUser.getUserPublicProfile().getProfileImage();
+
+                        if (image != null) {
+                            image.OnImageLoaded.add(new EventHandler<EventArgs>(thisActivity,"onPublicImageLoaded",EventArgs.class));
+                            image.loadImage(Image.ImageSize.xlarge,0);
+                        }
+                    }
+
                     break;
                 case R.id.register_third_step_layout:
                     view.findViewById(R.id.register_third_step_next_button).setOnClickListener(onEnterButtonClick);
@@ -193,6 +246,60 @@ public class Register extends Activity {
             }
         }
     };
+
+    public void onPrivateImageLoaded(Object sender,EventArgs eventArgs) {
+        if (!(sender instanceof Image)) return;
+
+        final Image image = (Image)sender;
+
+        final ImageView imageView = (ImageView)findViewById(R.id.register_first_step_profile_photo);
+
+        runOnUiThread( new Runnable() {
+            @Override
+            public void run() {
+            InputStream is = image.getImage(Image.ImageSize.xlarge,0);
+            if ((is != null) && (imageView != null)) {
+                imageView.setImageBitmap(BitmapFactory.decodeStream(is));
+                try {
+                    is.reset();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            if (is != null)
+                image.OnImageLoaded.remove(new EventHandler<EventArgs>(thisActivity,"onPrivateImageLoaded",EventArgs.class));
+            //image.freeMemory();
+            }
+        });
+    }
+
+    public void onPublicImageLoaded(Object sender,EventArgs eventArgs) {
+        if (!(sender instanceof Image)) return;
+
+        final Image image = (Image)sender;
+
+        final ImageView imageView = (ImageView)findViewById(R.id.register_second_step_avatar_image);
+
+        runOnUiThread( new Runnable() {
+            @Override
+            public void run() {
+                InputStream is = image.getImage(Image.ImageSize.xlarge,0);
+                if ((is != null) && (imageView != null)) {
+                    imageView.setImageBitmap(BitmapFactory.decodeStream(is));
+                    try {
+                        is.reset();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                if (is != null)
+                    image.OnImageLoaded.remove(new EventHandler<EventArgs>(thisActivity,"onPublicImageLoaded",EventArgs.class));
+                //image.freeMemory();
+            }
+        });
+    }
 
     public OnRemoveLayoutListener onRemoveLayoutListener = new OnRemoveLayoutListener() {
         @Override
