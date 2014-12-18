@@ -92,7 +92,7 @@ public class Explore extends Activity {
 
         @Override
         public void OnDuringTransition(int[] visibleSteps, float[] visibilityAmount) {
-            setTabStatus(visibleSteps,visibilityAmount);
+            //setTabStatus(visibleSteps,visibilityAmount);
         }
 
         @Override

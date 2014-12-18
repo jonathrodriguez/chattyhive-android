@@ -329,7 +329,7 @@ public class StandAloneServer {
         subscribeHive("coolest_thing_21",hive.getNameUrl());
         subscribeHive("akamatsu",hive.getNameUrl());
 
-        hive = createHive("¿En quién te conviertes, cuando cae la noche?","file_hive_cuando_cae_la_noche.jpg","09.06","¿A quién no le ha pasado el encontrarse a un compañer@ de trabajo o clases por la noche y no parecerle la misma persona que por el día? Tanto si eres de los que se transforman como de los que sufren las transformaciones de los demás, este es tu hive.",new String[] {"Spanish"},"genteRara","borracheras","LaNocheAlbergaHorrores");
+        hive = createHive("\u00bfEn qui\u00e9n te conviertes, cuando cae la noche?","file_hive_cuando_cae_la_noche.jpg","09.06","\u00bfA qui\u00e9n no le ha pasado el encontrarse a un compa\u00f1er@ de trabajo o clases por la noche y no parecerle la misma persona que por el d\u00eda? Tanto si eres de los que se transforman como de los que sufren las transformaciones de los dem\u00e1s, este es tu hive.",new String[] {"Spanish"},"genteRara","borracheras","LaNocheAlbergaHorrores");
         subscribeHive("coolest_thing_21",hive.getNameUrl());
         subscribeHive("cassini91",hive.getNameUrl());
         subscribeHive("trabuco",hive.getNameUrl());
@@ -1090,7 +1090,7 @@ public class StandAloneServer {
                                     u2 = HiveUserSubscriptions.get(o2.getNameUrl()).size();
                             }
 
-                            int res = u1-u2;
+                            int res = u2-u1;
 
                             return ((res==0)?o1.getNameUrl().compareToIgnoreCase(o2.getNameUrl()):res);
                         }
@@ -1114,7 +1114,7 @@ public class StandAloneServer {
                             if (o2.getCreationDate() != null)
                                 d2 = o2.getCreationDate().getTime();
 
-                            long res = d1-d2;
+                            long res = d2-d1;
 
                             return ((res > Integer.MAX_VALUE)?Integer.MAX_VALUE:((res < Integer.MIN_VALUE)?Integer.MIN_VALUE:((res==0)?o1.getNameUrl().compareToIgnoreCase(o2.getNameUrl()):(int)res)));
                         }
@@ -1138,7 +1138,7 @@ public class StandAloneServer {
                             if ((o2.getPublicChat() != null) && (o2.getPublicChat().getConversation() != null))
                                 m2 = o2.getPublicChat().getConversation().getCount();
 
-                            int res = m1-m2;
+                            int res = m2-m1;
 
                             return ((res==0)?o1.getNameUrl().compareToIgnoreCase(o2.getNameUrl()):res);
                         }
