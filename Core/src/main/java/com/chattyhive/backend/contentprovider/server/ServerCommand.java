@@ -124,7 +124,7 @@ public class ServerCommand {
         returningCookies = null;
         ServerCommand.AddServerCommand(command,method,commandType,url,paramFormats,inputFormats,requiredCookies,returningCookies);
 
-        // Explore
+        // Explore //TODO: Add optional parameters
         command = AvailableCommands.Explore;
         method = Method.GET;
         commandType = CommandType.Query;
@@ -160,7 +160,7 @@ public class ServerCommand {
         ServerCommand.AddServerCommand(command,method,commandType,url,paramFormats,inputFormats,requiredCookies,returningCookies);
 
 
-        // GetMessages
+        // GetMessages //TODO: Add optional parameters
         command = AvailableCommands.GetMessages;
         method = Method.GET;
         commandType = CommandType.Pull;
@@ -299,7 +299,7 @@ public class ServerCommand {
     public String getMethod() {
         return this.method.toString();
     }
-    public String getUrl(Format... formats) {
+    public String getUrl(Format... formats) { //TODO: Edit this to support optional parameters
         String url = this.url;
         int paramIndex = url.indexOf('[');
         while (paramIndex > -1) {

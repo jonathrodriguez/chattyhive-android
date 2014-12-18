@@ -282,6 +282,7 @@
                     android:paddingTop="@dimen/menu_children_check_layout_padding_top">
 
                     <ImageView
+                        android:id="@+id/menu_friends_checkbox"
                         android:layout_width="@dimen/menu_children_check_img_dimens"
                         android:layout_height="@dimen/menu_children_check_img_dimens"
                         android:src="@drawable/menu_white_tick_activated_grey" />
@@ -311,6 +312,7 @@
                     android:paddingTop="@dimen/menu_children_check_layout_padding_top">
 
                     <ImageView
+                        android:id="@+id/menu_hivemates_checkbox"
                         android:layout_width="@dimen/menu_children_check_img_dimens"
                         android:layout_height="@dimen/menu_children_check_img_dimens"
                         android:src="@drawable/menu_white_tick_activated_grey" />
