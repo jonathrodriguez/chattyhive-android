@@ -4,9 +4,11 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.ViewSwitcher;
 
 import com.chattyhive.backend.Controller;
 import com.chattyhive.backend.businessobjects.Chats.Hive;
@@ -15,6 +17,7 @@ import com.chattyhive.backend.util.events.EventHandler;
 import com.chattyhive.chattyhive.framework.CustomViews.Listener.OnTransitionListener;
 import com.chattyhive.chattyhive.framework.CustomViews.ViewGroup.SlidingStepsLayout;
 import com.chattyhive.chattyhive.framework.Util.StaticMethods;
+import com.chattyhive.chattyhive.util.Category;
 
 import java.util.HashMap;
 
@@ -32,6 +35,8 @@ public class Explore extends Activity {
     SlidingStepsLayout slidingPanel;
     HashMap<Integer,ExploreListAdapter> exploreListAdapter;
 
+    ExploreCategoriesListAdapter exploreCategoriesListAdapter;
+
     HashMap<String,Boolean> joined_hives;
 
     @Override
@@ -42,12 +47,20 @@ public class Explore extends Activity {
     }
 
     private void loadListView(int step) {
-        if (!exploreListAdapter.containsKey(step))
-            exploreListAdapter.put(step,new ExploreListAdapter(this,this.sortTypes[step],getString(exploreListHeaders[step]),joined_hives,expandedHiveDescriptionButtonClickListener));
+        if (step < 4) {
+            if (!exploreListAdapter.containsKey(step))
+                exploreListAdapter.put(step, new ExploreListAdapter(this, this.sortTypes[step],null, getString(exploreListHeaders[step]), joined_hives, expandedHiveDescriptionButtonClickListener));
 
-        ExploreListAdapter listAdapter = exploreListAdapter.get(step);
-        ListView listView = (ListView)(this.slidingPanel.getViewByStep(step).findViewById(R.id.explore_list_listView));
-        listAdapter.setListView(listView);
+            ExploreListAdapter listAdapter = exploreListAdapter.get(step);
+            ListView listView = (ListView) (this.slidingPanel.getViewByStep(step).findViewById(R.id.explore_list_listView));
+            listAdapter.setListView(listView);
+        } else if (step == 4) {
+            if (exploreCategoriesListAdapter == null)
+                exploreCategoriesListAdapter = new ExploreCategoriesListAdapter(this,categoryClickListener);
+
+            GridView gridView = (GridView)(this.slidingPanel.getViewByStep(step).findViewById(R.id.explore_categories_list_gridView));
+            exploreCategoriesListAdapter.setGridView(gridView);
+        }
     }
 
     private void Initialize(){
@@ -84,7 +97,7 @@ public class Explore extends Activity {
     protected OnTransitionListener onTransitionListener = new OnTransitionListener() {
         @Override
         public boolean OnBeginTransition(int actualStep, int nextStep) {
-            if (nextStep < 4)
+            if (nextStep < 5)
                 loadListView(nextStep);
 
             return true;
@@ -167,6 +180,21 @@ public class Explore extends Activity {
                 data.putExtra("NameURL", hive.getNameUrl());
                 setResult(RESULT_OK, data);
                 finish();
+            }
+        }
+    };
+
+    protected View.OnClickListener categoryClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Category category = (Category)v.getTag(R.id.BO_Category);
+
+            if (category != null) {
+                ExploreListAdapter exploreFilteredListAdapter = new ExploreListAdapter(exploreCategoriesListAdapter.getContext(), sortTypes[1],category.getGroupCode(), getString(category.getCategoryNameResID()), joined_hives, expandedHiveDescriptionButtonClickListener);
+                ListView listView = (ListView) (slidingPanel.getViewByStep(4).findViewById(R.id.explore_list_listView));
+                exploreFilteredListAdapter.setListView(listView);
+                exploreFilteredListAdapter.setActive(true);
+                ((ViewSwitcher)slidingPanel.getViewByStep(4).findViewById(R.id.explore_categories_view_switcher)).showNext();
             }
         }
     };

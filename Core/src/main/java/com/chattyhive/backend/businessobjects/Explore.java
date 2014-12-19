@@ -50,6 +50,13 @@ public class Explore {
     private Controller controller;
     private DataProvider dataProvider;
 
+    private String categoryCode;
+
+    public Explore(Controller controller, SortType sortType, String categoryCode) {
+        this(controller,sortType);
+        this.categoryCode = categoryCode;
+    }
+
     public Explore(Controller controller, SortType sortType) {
         this.hasMore = true;
         this.loadingMore = false;
@@ -68,7 +75,7 @@ public class Explore {
         this.loadingMore = true;
         int howMany = ((this.nextStartIndex == 0)? StaticParameters.ExploreStart : StaticParameters.ExploreCount);
 
-        this.dataProvider.ExploreHives(nextStartIndex,howMany,sortType,new EventHandler<CommandCallbackEventArgs>(this,"onExploreHivesCallback",CommandCallbackEventArgs.class));
+        this.dataProvider.ExploreHives(nextStartIndex,howMany,sortType,this.categoryCode,new EventHandler<CommandCallbackEventArgs>(this,"onExploreHivesCallback",CommandCallbackEventArgs.class));
     }
 
     public void onExploreHivesCallback (Object sender, CommandCallbackEventArgs eventArgs) {

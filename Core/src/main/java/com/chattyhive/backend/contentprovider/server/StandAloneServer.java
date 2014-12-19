@@ -1155,14 +1155,14 @@ public class StandAloneServer {
 
 
                 String categoryFilter = "";
-                if (filter.CATEGORY != null) {
+                if ((filter.CATEGORY != null) && (!filter.CATEGORY.isEmpty())) {
                     categoryFilter = filter.CATEGORY;
                     if (!categoryFilter.contains("."))
                         categoryFilter += ".";
                 }
 
                 for (String hiveKey : allHives)
-                    if ((categoryFilter == null) || (categoryFilter.isEmpty()) || (Hives.get(hiveKey).getCategory().startsWith(categoryFilter)))
+                    if ((categoryFilter.isEmpty()) || (Hives.get(hiveKey).getCategory().startsWith(categoryFilter)))
                         resultSet.add(Hives.get(hiveKey));
 
                 HIVE_LIST list = new HIVE_LIST();

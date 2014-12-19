@@ -3,7 +3,6 @@ package com.chattyhive.chattyhive;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.BitmapFactory;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,6 +35,7 @@ public class ExploreListAdapter extends BaseAdapter implements AbsListView.OnScr
     private Controller controller;
     private String exploreListHeader;
     private Explore.SortType sortType;
+    private String categoryCode;
 
     private Explore explore;
     private ArrayList<Hive> hives_list_data;
@@ -48,11 +48,11 @@ public class ExploreListAdapter extends BaseAdapter implements AbsListView.OnScr
         this.listView = listView;
         if (this.listView == null) return;
 
-        ViewGroup header = (ViewGroup) this.inflater.inflate(R.layout.explore_hive_card, this.listView, false);
+        ViewGroup header = (ViewGroup) this.inflater.inflate(R.layout.explore_list_header, this.listView, false);
         ((TextView)header.findViewById(R.id.explore_title)).setText(this.exploreListHeader);
         listView.addHeaderView(header);
 
-        ViewGroup footer = (ViewGroup) this.inflater.inflate(R.layout.explore_list_overscroll_footer, this.listView, false);
+        ViewGroup footer = (ViewGroup) this.inflater.inflate(R.layout.explore_list_footer, this.listView, false);
         listView.addFooterView(footer);
 
         if (explore.HasMore()) {
@@ -107,10 +107,11 @@ public class ExploreListAdapter extends BaseAdapter implements AbsListView.OnScr
         });
     }
 
-    public ExploreListAdapter (Context context, Explore.SortType sortType, String exploreListHeader, HashMap<String,Boolean> joined_hives, View.OnClickListener expandedHiveDescriptionButtonClickListener) {
+    public ExploreListAdapter (Context context, Explore.SortType sortType, String categoryCode, String exploreListHeader, HashMap<String,Boolean> joined_hives, View.OnClickListener expandedHiveDescriptionButtonClickListener) {
         this.expanded_hive = -1;
         this.scroll_position = -1;
         this.active = false;
+        this.categoryCode = categoryCode;
 
         this.context = context;
         this.sortType = sortType;
@@ -120,7 +121,7 @@ public class ExploreListAdapter extends BaseAdapter implements AbsListView.OnScr
 
         this.inflater = ((Activity)this.context).getLayoutInflater();
         this.controller = ((com.chattyhive.chattyhive.Explore)this.context).controller;
-        this.explore = new Explore(this.controller,this.sortType);
+        this.explore = new Explore(this.controller,this.sortType,this.categoryCode);
 
         this.explore.onMoreResults.add(new EventHandler<EventArgs>(this,"OnAddItem",EventArgs.class));
         this.hives_list_data = new ArrayList<Hive>(this.explore.getResults());
