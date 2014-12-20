@@ -1173,66 +1173,68 @@ public class StandAloneServer {
                 Hive[] results = resultSet.toArray(new Hive[resultSet.size()]);
 
                 int length = results.length;
-                int start = -1;
-                int count = -1;
-                int end = -1;
+                if (length > 0) {
+                    int start = -1;
+                    int count = -1;
+                    int end = -1;
 
-                if ((filter.RESULT_INTERVAL != null) && (filter.RESULT_INTERVAL.START_INDEX != null) && (!filter.RESULT_INTERVAL.START_INDEX.isEmpty()))
-                    start = ((filter.RESULT_INTERVAL.START_INDEX.equalsIgnoreCase("FIRST"))?0:((filter.RESULT_INTERVAL.START_INDEX.equalsIgnoreCase("LAST"))?length:Integer.parseInt(filter.RESULT_INTERVAL.START_INDEX)));
+                    if ((filter.RESULT_INTERVAL != null) && (filter.RESULT_INTERVAL.START_INDEX != null) && (!filter.RESULT_INTERVAL.START_INDEX.isEmpty()))
+                        start = ((filter.RESULT_INTERVAL.START_INDEX.equalsIgnoreCase("FIRST")) ? 0 : ((filter.RESULT_INTERVAL.START_INDEX.equalsIgnoreCase("LAST")) ? length : Integer.parseInt(filter.RESULT_INTERVAL.START_INDEX)));
 
-                if ((filter.RESULT_INTERVAL != null) && (filter.RESULT_INTERVAL.END_INDEX != null) && (!filter.RESULT_INTERVAL.END_INDEX.isEmpty()))
-                    end = ((filter.RESULT_INTERVAL.END_INDEX.equalsIgnoreCase("FIRST"))?0:((filter.RESULT_INTERVAL.END_INDEX.equalsIgnoreCase("LAST"))?length:Integer.parseInt(filter.RESULT_INTERVAL.END_INDEX)));
+                    if ((filter.RESULT_INTERVAL != null) && (filter.RESULT_INTERVAL.END_INDEX != null) && (!filter.RESULT_INTERVAL.END_INDEX.isEmpty()))
+                        end = ((filter.RESULT_INTERVAL.END_INDEX.equalsIgnoreCase("FIRST")) ? 0 : ((filter.RESULT_INTERVAL.END_INDEX.equalsIgnoreCase("LAST")) ? length : Integer.parseInt(filter.RESULT_INTERVAL.END_INDEX)));
 
-                if ((filter.RESULT_INTERVAL != null) && (filter.RESULT_INTERVAL.COUNT != null))
-                    count = filter.RESULT_INTERVAL.COUNT;
+                    if ((filter.RESULT_INTERVAL != null) && (filter.RESULT_INTERVAL.COUNT != null))
+                        count = filter.RESULT_INTERVAL.COUNT;
 
-                int finalStart = 0;
-                int finalEnd = length;
+                    int finalStart = 0;
+                    int finalEnd = length;
 
-                if ((start < 0) && (count >= 0) && (end >= 0)) {
-                    if (end < finalEnd)
+                    if ((start < 0) && (count >= 0) && (end >= 0)) {
+                        if (end < finalEnd)
+                            finalEnd = end;
+
+                        finalStart = finalEnd - count;
+                    } else if ((start >= 0) && (count >= 0) && (end < 0)) {
+                        if (start > finalStart)
+                            finalStart = start;
+
+                        finalEnd = finalStart + count;
+                    } else if ((start >= 0) && (count < 0) && (end >= 0)) {
                         finalEnd = end;
-
-                    finalStart = finalEnd - count;
-                }  else if ((start >= 0) && (count >= 0) && (end < 0)) {
-                    if (start > finalStart)
                         finalStart = start;
+                    } else if ((start >= 0) && (count >= 0) && (end >= 0)) {
+                        if (start > finalStart)
+                            finalStart = start;
 
-                    finalEnd = finalStart + count;
-                } else if ((start >= 0) && (count < 0) && (end >= 0)) {
-                    finalEnd = end;
-                    finalStart = start;
-                } else if ((start >= 0) && (count >= 0) && (end >= 0)) {
-                    if (start > finalStart)
-                        finalStart = start;
+                        finalEnd = finalStart + count;
 
-                    finalEnd = finalStart + count;
+                        if (end < finalEnd)
+                            finalEnd = end;
+                    }
 
-                    if (end < finalEnd)
-                        finalEnd = end;
-                }
+                    if (finalStart < 0)
+                        finalStart = 0;
+                    else if (finalStart >= length)
+                        finalStart = length - 1;
 
-                if (finalStart < 0)
-                    finalStart = 0;
-                else if (finalStart >= length)
-                    finalStart = length - 1;
+                    if (finalEnd < 0)
+                        finalEnd = 0;
+                    else if (finalEnd > length)
+                        finalEnd = length;
 
-                if (finalEnd < 0)
-                    finalEnd = 0;
-                else if (finalEnd > length)
-                    finalEnd = length;
+                    if (finalStart > finalEnd) {
+                        int tmp = finalStart;
+                        finalStart = finalEnd;
+                        finalEnd = tmp;
+                    }
 
-                if (finalStart > finalEnd) {
-                    int tmp = finalStart;
-                    finalStart = finalEnd;
-                    finalEnd = tmp;
-                }
+                    if ((finalEnd - finalStart) > 0) {
+                        results = Arrays.copyOfRange(results, finalStart, finalEnd);
 
-                if ((finalEnd - finalStart) > 0) {
-                    results = Arrays.copyOfRange(results, finalStart, finalEnd);
-
-                    for (Hive hive : results)
-                        list.LIST.add(((HIVE) hive.toFormat(new HIVE())));
+                        for (Hive hive : results)
+                            list.LIST.add(((HIVE) hive.toFormat(new HIVE())));
+                    }
                 }
 
                 common.STATUS = "OK";

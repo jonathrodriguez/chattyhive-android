@@ -193,9 +193,19 @@ public class Explore extends Activity {
                 ExploreListAdapter exploreFilteredListAdapter = new ExploreListAdapter(exploreCategoriesListAdapter.getContext(), sortTypes[1],category.getGroupCode(), getString(category.getCategoryNameResID()), joined_hives, expandedHiveDescriptionButtonClickListener);
                 ListView listView = (ListView) (slidingPanel.getViewByStep(4).findViewById(R.id.explore_list_listView));
                 exploreFilteredListAdapter.setListView(listView);
+                exploreFilteredListAdapter.setHeaderBackButtonClickListener(headerBackButton);
                 exploreFilteredListAdapter.setActive(true);
                 ((ViewSwitcher)slidingPanel.getViewByStep(4).findViewById(R.id.explore_categories_view_switcher)).showNext();
             }
+        }
+    };
+
+    protected View.OnClickListener headerBackButton = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            ((ViewSwitcher)slidingPanel.getViewByStep(4).findViewById(R.id.explore_categories_view_switcher)).showNext();
+            ListView listView = (ListView) (slidingPanel.getViewByStep(4).findViewById(R.id.explore_list_listView));
+            listView.setAdapter(null);
         }
     };
 
