@@ -6,7 +6,8 @@
     android:layout_height="50dp"
     android:background="@drawable/home_top_bar_background"
     android:baselineAligned="false"
-    android:layout_gravity="top">
+    android:layout_gravity="top"
+    android:paddingRight="-1px">
 
         <FrameLayout
             android:layout_width="match_parent"
