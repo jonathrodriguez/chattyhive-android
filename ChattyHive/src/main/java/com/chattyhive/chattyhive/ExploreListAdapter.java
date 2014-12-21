@@ -6,14 +6,16 @@ import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.chattyhive.backend.Controller;
+import com.chattyhive.backend.businessobjects.*;
 import com.chattyhive.backend.businessobjects.Chats.Hive;
-import com.chattyhive.backend.businessobjects.Image;
+import com.chattyhive.backend.businessobjects.Explore;
 import com.chattyhive.backend.util.events.EventArgs;
 import com.chattyhive.backend.util.events.EventHandler;
 import com.chattyhive.chattyhive.util.Category;
@@ -21,47 +23,136 @@ import com.chattyhive.chattyhive.util.Category;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by Jonathan on 11/04/2014.
  */
 
-public class ExploreListAdapter extends BaseAdapter {
-    Controller controller;
-    private Boolean moreItems;
+public class ExploreListAdapter extends BaseAdapter implements AbsListView.OnScrollListener {
     private Context context;
-    //private ListView listView;
-    private LayoutInflater inflater;
-    private ArrayList<Hive> hives_list_data;
-    private ArrayList<Hive> hives_list_data_origin;
-    private View.OnClickListener publicChatClickListener;
-    //private Hive hive;
-    private int expanded_hive;
-    private ArrayList<Integer> joined_Hives;
 
-    public void SetPublicChatClickListener(View.OnClickListener listener) { this.publicChatClickListener = listener; notifyDataSetChanged(); }
+    private Controller controller;
+    private String exploreListHeader;
+    private Explore.SortType sortType;
+    private String categoryCode;
+
+    private Explore explore;
+    private ArrayList<Hive> hives_list_data;
+
+    private LayoutInflater inflater;
+
+    private ListView listView;
+    public void setListView (ListView listView) {
+        if (this.listView == listView) return;
+        this.listView = listView;
+        if (this.listView == null) return;
+
+        try {
+            if (listView.getHeaderViewsCount() <= 0) {
+                ViewGroup header = (ViewGroup) this.inflater.inflate(R.layout.explore_list_header, this.listView, false);
+                listView.addHeaderView(header);
+            }
+        } catch (Exception e) { }
+
+        ((TextView) this.listView.findViewById(R.id.explore_list_header_text)).setText(this.exploreListHeader);
+
+        ImageView headerBackButton = (ImageView)this.listView.findViewById(R.id.explore_list_header_back_button);
+        if (headerBackButton != null) {
+            headerBackButton.setOnClickListener(this.headerBackButtonClickListener);
+            headerBackButton.setVisibility((this.headerBackButtonClickListener != null)?View.VISIBLE:View.GONE);
+        }
+
+        try {
+            if (listView.getFooterViewsCount() <= 0) {
+                ViewGroup footer = (ViewGroup) this.inflater.inflate(R.layout.explore_list_footer, this.listView, false);
+                listView.addFooterView(footer);
+            }
+        } catch (Exception e) { }
+
+        if (explore.HasMore()) {
+            listView.findViewById(R.id.explore_list_overscroll_footer_loading_panel).setVisibility(View.VISIBLE);
+        } else {
+            listView.findViewById(R.id.explore_list_overscroll_footer_loading_panel).setVisibility(View.GONE);
+        }
+
+        this.listView.setOnScrollListener(this);
+        this.listView.setAdapter(this);
+        if (this.scroll_position != -1)
+            this.listView.smoothScrollToPosition(this.scroll_position);
+    }
+
+    private int expanded_hive;
+    private int scroll_position;
+    private HashMap<String,Boolean> joined_hives;
+
+    private View.OnClickListener expandedHiveDescriptionButtonClickListener;
+    public void SetPublicChatClickListener(View.OnClickListener listener) {
+        this.expandedHiveDescriptionButtonClickListener = listener;
+        syncNotifyDataSetChanged();
+    }
+
+    private View.OnClickListener headerBackButtonClickListener;
+    public void setHeaderBackButtonClickListener (View.OnClickListener headerBackButtonClickListener) {
+        this.headerBackButtonClickListener = headerBackButtonClickListener;
+        if (this.listView != null) {
+            ImageView headerBackButton = (ImageView)this.listView.findViewById(R.id.explore_list_header_back_button);
+            if (headerBackButton != null) {
+                headerBackButton.setOnClickListener(this.headerBackButtonClickListener);
+                headerBackButton.setVisibility((this.headerBackButtonClickListener != null)?View.VISIBLE:View.GONE);
+            }
+        }
+    }
+
+    private Boolean active;
+    public void setActive(Boolean active) {
+        if ((active) && (!this.active) && (explore.HasMore()) && (explore.getResults().size() == 0)) {
+            explore.More();
+        }
+        this.active = active;
+    }
 
     public void OnAddItem(Object sender, EventArgs args) {
         ((Activity)this.context).runOnUiThread(new Runnable(){
             public void run() {
-                hives_list_data = new ArrayList<Hive>(hives_list_data_origin);
+                hives_list_data = new ArrayList<Hive>(explore.getResults());
+                if (explore.HasMore()) {
+                    listView.findViewById(R.id.explore_list_overscroll_footer_loading_panel).setVisibility(View.VISIBLE);
+                } else {
+                    listView.findViewById(R.id.explore_list_overscroll_footer_loading_panel).setVisibility(View.GONE);
+                }
                 notifyDataSetChanged();
             }
         });
     }
 
-    public ExploreListAdapter (Context activityContext, ArrayList<Hive> hivesList, View.OnClickListener publicChatClickListener /*,ListView listView*/) {
-        this.controller = Controller.GetRunningController();
-        this.hives_list_data_origin = hivesList;
-        this.hives_list_data = new ArrayList<Hive>(this.hives_list_data_origin);
-        this.moreItems = false;
-        this.context = activityContext;
-        this.inflater = ((Activity)this.context).getLayoutInflater();
-        this.publicChatClickListener = publicChatClickListener;
-        //this.listView = listView;
-        //this.listView.setAdapter(this);
+    public void syncNotifyDataSetChanged() {
+        ((Activity)this.context).runOnUiThread(new Runnable(){
+            public void run() {
+                notifyDataSetChanged();
+            }
+        });
+    }
+
+    public ExploreListAdapter (Context context, Explore.SortType sortType, String categoryCode, String exploreListHeader, HashMap<String,Boolean> joined_hives, View.OnClickListener expandedHiveDescriptionButtonClickListener) {
         this.expanded_hive = -1;
-        this.joined_Hives = new ArrayList<Integer>();
+        this.scroll_position = -1;
+        this.active = false;
+        this.categoryCode = categoryCode;
+
+        this.context = context;
+        this.sortType = sortType;
+        this.joined_hives = joined_hives;
+        this.exploreListHeader = exploreListHeader;
+        this.expandedHiveDescriptionButtonClickListener = expandedHiveDescriptionButtonClickListener;
+
+        this.inflater = ((Activity)this.context).getLayoutInflater();
+        this.controller = ((com.chattyhive.chattyhive.Explore)this.context).controller;
+        this.explore = new Explore(this.controller,this.sortType,this.categoryCode);
+
+        this.explore.onMoreResults.add(new EventHandler<EventArgs>(this,"OnAddItem",EventArgs.class));
+        this.hives_list_data = new ArrayList<Hive>(this.explore.getResults());
+        this.setListView(null);
     }
 
     @Override
@@ -100,6 +191,7 @@ public class ExploreListAdapter extends BaseAdapter {
             holder.expanded_categoryText = (TextView)convertView.findViewById(R.id.explore_list_item_expanded_category_text);
             holder.expanded_categoryImage = (ImageView)convertView.findViewById(R.id.explore_list_item_expanded_category_image);
             holder.expanded_usersText = (TextView)convertView.findViewById(R.id.explore_list_item_expanded_users_number);
+            holder.expanded_hive_chatLanguages = (TextView)convertView.findViewById(R.id.explore_list_item_expanded_hive_chat_languages);
 
             convertView.setTag(R.id.Explore_ListViewHolder, holder);
         } else {
@@ -125,11 +217,11 @@ public class ExploreListAdapter extends BaseAdapter {
 
         if(expanded_hive == position) {//EXPANDIR
             convertView.findViewById(R.id.explore_list_item_short).setVisibility(View.GONE);
-            convertView.findViewById(R.id.explore_hive_card).setVisibility(View.VISIBLE);
+            convertView.findViewById(R.id.explore_list_header_card).setVisibility(View.VISIBLE);
             ((ListView)parent).smoothScrollToPosition(position);
         }
         else {//CONTRAER
-            convertView.findViewById(R.id.explore_hive_card).setVisibility(View.GONE);
+            convertView.findViewById(R.id.explore_list_header_card).setVisibility(View.GONE);
             convertView.findViewById(R.id.explore_list_item_short).setVisibility(View.VISIBLE);
         }
 
@@ -140,12 +232,25 @@ public class ExploreListAdapter extends BaseAdapter {
         holder.collapsed_hive_name.setText(hive.getName());
         holder.collapsed_hive_description.setText(hive.getDescription());
         Category.setCategory(hive.getCategory(),holder.collapsed_categoryImage,holder.collapsed_categoryText);
-        //holder.collapsed_usersText.setText("");
+        holder.collapsed_usersText.setText(String.valueOf(hive.getSubscribedUsers()));
 
         holder.expanded_hive_name.setText(hive.getName());
         holder.expanded_hive_description.setText(hive.getDescription());
         Category.setCategory(hive.getCategory(),holder.expanded_categoryImage,holder.expanded_categoryText);
-        //holder.collapsed_usersText.setText("");
+        holder.expanded_usersText.setText(context.getString(R.string.explore_hive_card_expanded_n_mates,hive.getSubscribedUsers()));
+
+        String chatLanguages = "";
+        if (hive.getChatLanguages() != null)
+            for (String language : hive.getChatLanguages())
+                chatLanguages = chatLanguages.concat((chatLanguages.isEmpty())?"":", ").concat(language);
+
+        // Log.w("ExploreListAdapter.", String.format("Postion: %d. Langs: %s",position,chatLanguages));
+
+        if (!chatLanguages.isEmpty()) {
+            holder.expanded_hive_chatLanguages.invalidate();
+            holder.expanded_hive_chatLanguages.setText(chatLanguages);
+            holder.expanded_hive_chatLanguages.requestLayout();
+        }
 
         holder.expanded_hiveImage.setImageResource(R.drawable.pestanha_chats_public_chat);
         holder.collapsed_hiveImage.setImageResource(R.drawable.pestanha_chats_public_chat);
@@ -169,28 +274,52 @@ public class ExploreListAdapter extends BaseAdapter {
 
                 ViewHolder holder = (ViewHolder)v.getTag(R.id.Explore_ListViewHolder);
 
-                joined_Hives.add(position);
+                //joined_hives.add(position);
 
                 ((View)v.getParent()).findViewById(R.id.explore_chat_button2).setVisibility(View.VISIBLE);
                 v.findViewById(R.id.explore_join_button).setVisibility(View.GONE);
-                controller.JoinHive(holder.hive.getNameUrl());
+                controller.JoinHive(holder.hive);
             }
         };
 
-        convertView.findViewById(R.id.explore_join_button).setVisibility(View.VISIBLE);
-        convertView.findViewById(R.id.explore_chat_button2).setVisibility(View.GONE);
-        convertView.findViewById(R.id.explore_join_button).setTag(R.id.Explore_ListViewHolder,holder);
-        convertView.findViewById(R.id.explore_chat_button2).setTag(R.id.BO_Hive,hive);
-        convertView.findViewById(R.id.explore_join_button).setOnClickListener(join_button_click);
-        convertView.findViewById(R.id.explore_chat_button2).setOnClickListener(publicChatClickListener);
+        if (!joined_hives.containsKey(hive.getNameUrl())) {
+            convertView.findViewById(R.id.explore_join_button).setVisibility(View.VISIBLE);
+            convertView.findViewById(R.id.explore_joining_frame).setVisibility(View.GONE);
+            convertView.findViewById(R.id.explore_chat_button2).setVisibility(View.GONE);
+        } else if (joined_hives.get(hive.getNameUrl())) {
+            convertView.findViewById(R.id.explore_join_button).setVisibility(View.GONE);
+            convertView.findViewById(R.id.explore_joining_frame).setVisibility(View.GONE);
+            convertView.findViewById(R.id.explore_chat_button2).setVisibility(View.VISIBLE);
+        } else {
+            convertView.findViewById(R.id.explore_join_button).setVisibility(View.GONE);
+            convertView.findViewById(R.id.explore_joining_frame).setVisibility(View.VISIBLE);
+            convertView.findViewById(R.id.explore_chat_button2).setVisibility(View.GONE);
+        }
 
-        for (Integer joined : joined_Hives)
-            if (joined == position) {
-                convertView.findViewById(R.id.explore_join_button).setVisibility(View.GONE);
-                convertView.findViewById(R.id.explore_chat_button2).setVisibility(View.VISIBLE);
-                break;
-            }
+        convertView.findViewById(R.id.explore_join_button).setTag(R.id.BO_Hive,hive);
+        convertView.findViewById(R.id.explore_joining_frame).setTag(R.id.BO_Hive,hive);
+        convertView.findViewById(R.id.explore_chat_button2).setTag(R.id.BO_Hive,hive);
+
+        convertView.findViewById(R.id.explore_join_button).setOnClickListener(expandedHiveDescriptionButtonClickListener);
+        convertView.findViewById(R.id.explore_joining_frame).setOnClickListener(expandedHiveDescriptionButtonClickListener);
+        convertView.findViewById(R.id.explore_chat_button2).setOnClickListener(expandedHiveDescriptionButtonClickListener);
+
         return convertView;
+    }
+
+    @Override
+    public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+    }
+
+    @Override
+    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+        int scroll_position = firstVisibleItem + visibleItemCount;
+        if (scroll_position != this.scroll_position)
+            this.scroll_position = scroll_position;
+
+        if ((active) && (this.explore.HasMore()) && ((this.hives_list_data == null) || (scroll_position >= (this.getCount() - 10))))
+            this.explore.More();
     }
 
     private class ViewHolder {
@@ -200,12 +329,14 @@ public class ExploreListAdapter extends BaseAdapter {
         public TextView collapsed_categoryText;
         public TextView collapsed_usersText;
         public ImageView collapsed_hiveImage;
+
         public TextView expanded_hive_name;
         public TextView expanded_hive_description;
         public ImageView expanded_categoryImage;
         public TextView expanded_categoryText;
         public TextView expanded_usersText;
         public ImageView expanded_hiveImage;
+        public TextView expanded_hive_chatLanguages;
 
         public Hive hive;
 
@@ -232,7 +363,6 @@ public class ExploreListAdapter extends BaseAdapter {
                 }
             });
         }
-
         public void loadExpandedHiveImage(Object sender,EventArgs eventArgs) {
             if (!(sender instanceof Image)) return;
 

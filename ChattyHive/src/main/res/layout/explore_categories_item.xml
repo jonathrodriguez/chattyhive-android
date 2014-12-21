@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_weight="0.5"
+    android:background="@drawable/explore_category_list_border"
+    android:gravity="center"
+    android:paddingTop="7dp"
+    android:paddingBottom="7dp"
+    android:paddingRight="2dp">
+
+        <ImageView
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:adjustViewBounds="true"
+            android:alpha="0.75"
+            android:id="@+id/explore_categories_item_image" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:textColor="#515151"
+            android:textSize="14.5dp"
+            android:layout_marginRight="5dp"
+            android:id="@+id/explore_categories_item_name" />
+</LinearLayout>
