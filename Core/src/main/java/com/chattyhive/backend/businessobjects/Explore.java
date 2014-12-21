@@ -109,13 +109,17 @@ public class Explore {
                 resultsChanged = resultsChanged || this.results.add(new Hive((HIVE) format));
                 this.nextStartIndex++;
             }
-            else if (format instanceof HIVE_LIST)
+            else if ((format instanceof HIVE_LIST) && (((HIVE_LIST) format).LIST != null))
                 for (HIVE hive : ((HIVE_LIST) format).LIST) {
                     resultsChanged = this.results.add(new Hive(hive)) || resultsChanged;
                     this.nextStartIndex++;
                 }
 
-        this.hasMore = (this.nextStartIndex == expectedNextStart);
+        Boolean newHasMore = (this.nextStartIndex == expectedNextStart);
+
+        resultsChanged = resultsChanged || (newHasMore != this.hasMore);
+
+        this.hasMore = newHasMore;
 
         if ((this.onMoreResults != null) && (resultsChanged))
             this.onMoreResults.fire(this,EventArgs.Empty());

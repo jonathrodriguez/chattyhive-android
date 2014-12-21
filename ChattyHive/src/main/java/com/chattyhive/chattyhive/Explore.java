@@ -3,6 +3,8 @@ package com.chattyhive.chattyhive;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -36,6 +38,7 @@ public class Explore extends Activity {
     HashMap<Integer,ExploreListAdapter> exploreListAdapter;
 
     ExploreCategoriesListAdapter exploreCategoriesListAdapter;
+    ExploreListAdapter exploreFilteredListAdapter;
 
     HashMap<String,Boolean> joined_hives;
 
@@ -112,6 +115,9 @@ public class Explore extends Activity {
         public void OnEndTransition(int actualStep, int previousStep) {
             setTabStatus(actualStep);
 
+            if (previousStep == 4)
+                headerBackButton.onClick(null);
+
             if (activeList < 4)
                 exploreListAdapter.get(activeList).setActive(false);
 
@@ -119,11 +125,6 @@ public class Explore extends Activity {
 
             if (activeList < 4)
                 exploreListAdapter.get(activeList).setActive(true);
-
-           /* if ((actualStep > previousStep) && (actualStep < 3))
-                loadListView(actualStep+1);
-            else if ((actualStep < previousStep) && (actualStep > 0))
-                loadListView(actualStep-1);*/
         }
     };
 
@@ -174,7 +175,10 @@ public class Explore extends Activity {
             if (!joined_hives.containsKey(hive.getNameUrl())) {
                 controller.JoinHive(hive);
                 joined_hives.put(hive.getNameUrl(),false);
-                exploreListAdapter.get(activeList).notifyDataSetChanged();
+                if (activeList < 4)
+                    exploreListAdapter.get(activeList).notifyDataSetChanged();
+                else if (activeList == 4)
+                    exploreFilteredListAdapter.notifyDataSetChanged();
             } else if (joined_hives.get(hive.getNameUrl())) {
                 Intent data = new Intent();
                 data.putExtra("NameURL", hive.getNameUrl());
@@ -190,7 +194,7 @@ public class Explore extends Activity {
             Category category = (Category)v.getTag(R.id.BO_Category);
 
             if (category != null) {
-                ExploreListAdapter exploreFilteredListAdapter = new ExploreListAdapter(exploreCategoriesListAdapter.getContext(), sortTypes[1],category.getGroupCode(), getString(category.getCategoryNameResID()), joined_hives, expandedHiveDescriptionButtonClickListener);
+                exploreFilteredListAdapter = new ExploreListAdapter(exploreCategoriesListAdapter.getContext(), sortTypes[1],category.getGroupCode(), getString(category.getCategoryNameResID()), joined_hives, expandedHiveDescriptionButtonClickListener);
                 ListView listView = (ListView) (slidingPanel.getViewByStep(4).findViewById(R.id.explore_list_listView));
                 exploreFilteredListAdapter.setListView(listView);
                 exploreFilteredListAdapter.setHeaderBackButtonClickListener(headerBackButton);
@@ -203,9 +207,11 @@ public class Explore extends Activity {
     protected View.OnClickListener headerBackButton = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            ((ViewSwitcher)slidingPanel.getViewByStep(4).findViewById(R.id.explore_categories_view_switcher)).showNext();
-            ListView listView = (ListView) (slidingPanel.getViewByStep(4).findViewById(R.id.explore_list_listView));
-            listView.setAdapter(null);
+            if (exploreFilteredListAdapter != null) {
+                exploreFilteredListAdapter = null;
+                ((ViewSwitcher)slidingPanel.getViewByStep(4).findViewById(R.id.explore_categories_view_switcher)).showPrevious();
+                ((ListView)slidingPanel.getViewByStep(4).findViewById(R.id.explore_list_listView)).setAdapter(null);
+            }
         }
     };
 
@@ -243,8 +249,26 @@ public class Explore extends Activity {
         public void onClick(View v) {
             //GOTO STEP 4:
             slidingPanel.openStep(4);
+            headerBackButton.onClick(v);
         }
     };
+
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
+            if ((event.getAction() == KeyEvent.ACTION_DOWN) && (event.getRepeatCount() == 0)) {
+                if ((activeList == 4) && (exploreFilteredListAdapter != null)) { // Tell the framework to start tracking this event.
+                    return true;
+                }
+            } else if (event.getAction() == KeyEvent.ACTION_UP) {
+                if (!event.isCanceled() && (exploreFilteredListAdapter != null)) {
+                    headerBackButton.onClick(null);
+                    return true;
+                }
+            }
+        }
+        return super.dispatchKeyEvent(event);
+    }
 
     public void onHiveJoined(final Object sender,EventArgs eventArgs) {
         this.runOnUiThread(new Runnable() {
@@ -260,7 +284,10 @@ public class Explore extends Activity {
 
                 if (sender instanceof Hive) {
                     joined_hives.put(((Hive) sender).getNameUrl(),true);
-                    exploreListAdapter.get(activeList).syncNotifyDataSetChanged();
+                    if (activeList < 4)
+                        exploreListAdapter.get(activeList).syncNotifyDataSetChanged();
+                    else if (activeList == 4)
+                        exploreFilteredListAdapter.syncNotifyDataSetChanged();
                 }
 
             }
