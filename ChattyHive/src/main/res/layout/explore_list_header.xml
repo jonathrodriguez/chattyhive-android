@@ -15,7 +15,7 @@
         android:layout_gravity="center_vertical"
         android:adjustViewBounds="true"
         android:src="@drawable/ic_action_previous_item"
-        android:background="#ffffff"
+        android:background="@drawable/explore_list_header_back_button"
         android:tint="#000" />
 
     <TextView

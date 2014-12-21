@@ -133,11 +133,11 @@ public class Explore extends Activity {
             int index = IndexOfInt(i,visibleSteps);
             if (index > -1) {
                 findViewById(this.tabButtonIDs[i]).setBackgroundResource(R.drawable.explore_tab_list_border);
-                float alpha = ((1f - 0.25f)*visibilityAmount[index]) + 0.25f;
+                float alpha = ((1f - 0.75f)*visibilityAmount[index]) + 0.75f;
                 StaticMethods.SetAlpha(findViewById(this.tabButtonIDs[i]),alpha);
             } else {
                 findViewById(this.tabButtonIDs[i]).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
-                StaticMethods.SetAlpha(findViewById(this.tabButtonIDs[i]),0.25f);
+                StaticMethods.SetAlpha(findViewById(this.tabButtonIDs[i]),0.75f);
             }
         }
     }
@@ -153,7 +153,7 @@ public class Explore extends Activity {
                 StaticMethods.SetAlpha(findViewById(this.tabButtonIDs[i]),1f);
             } else {
                 findViewById(this.tabButtonIDs[i]).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
-                StaticMethods.SetAlpha(findViewById(this.tabButtonIDs[i]),0.25f);
+                StaticMethods.SetAlpha(findViewById(this.tabButtonIDs[i]),0.75f);
             }
         }
     }

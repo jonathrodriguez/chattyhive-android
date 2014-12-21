@@ -49,8 +49,10 @@ public class ExploreListAdapter extends BaseAdapter implements AbsListView.OnScr
         if (this.listView == null) return;
 
         try {
-            ViewGroup header = (ViewGroup) this.inflater.inflate(R.layout.explore_list_header, this.listView, false);
-            listView.addHeaderView(header);
+            if (listView.getHeaderViewsCount() <= 0) {
+                ViewGroup header = (ViewGroup) this.inflater.inflate(R.layout.explore_list_header, this.listView, false);
+                listView.addHeaderView(header);
+            }
         } catch (Exception e) { }
 
         ((TextView) this.listView.findViewById(R.id.explore_list_header_text)).setText(this.exploreListHeader);
