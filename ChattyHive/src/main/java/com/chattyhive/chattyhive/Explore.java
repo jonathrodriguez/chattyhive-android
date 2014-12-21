@@ -115,7 +115,7 @@ public class Explore extends Activity {
         public void OnEndTransition(int actualStep, int previousStep) {
             setTabStatus(actualStep);
 
-            if (previousStep == 4)
+            if ((previousStep == 4) && (actualStep != 4))
                 headerBackButton.onClick(null);
 
             if (activeList < 4)
