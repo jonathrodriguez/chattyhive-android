@@ -41,7 +41,6 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/menu_layout_explora"
         android:layout_width="match_parent"
         android:layout_height="@dimen/menu_children_base_element_height"
         android:background="@drawable/borde1px"
@@ -49,6 +48,7 @@
         android:orientation="horizontal">
 
         <LinearLayout
+            android:id="@+id/menu_layout_explora"
             android:layout_width="match_parent"
             android:layout_height="@dimen/menu_children_base_element_height"
             android:layout_marginLeft="@dimen/menu_children_2img_layout_margin_left"
@@ -80,6 +80,7 @@
         </LinearLayout>
 
         <RelativeLayout
+            android:id="@+id/menu_new_hive"
             android:layout_width="@dimen/menu_children_2img_layout_width"
             android:layout_height="match_parent"
             android:paddingBottom="@dimen/menu_children_2img_layout_padding_bottom"
@@ -88,7 +89,6 @@
             android:paddingTop="@dimen/menu_children_2img_layout_padding_top">
 
             <ImageView
-                android:id="@+id/menu_icon_pluma"
                 android:layout_width="@dimen/menu_children_base_element_img_dimens"
                 android:layout_height="@dimen/menu_children_base_element_img_dimens"
                 android:src="@drawable/menu_new_hive_blanco" />

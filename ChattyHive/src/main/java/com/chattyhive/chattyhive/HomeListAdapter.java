@@ -13,6 +13,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.chattyhive.backend.Controller;
+import com.chattyhive.backend.businessobjects.Chats.Chat;
 import com.chattyhive.backend.businessobjects.Home.Cards.HiveMessageCard;
 import com.chattyhive.backend.businessobjects.Home.HomeCard;
 import com.chattyhive.backend.businessobjects.Home.HomeCardType;
@@ -31,13 +32,13 @@ import java.util.Date;
 /**
  * Created by Jonathan on 07/10/2014.
  */
+
 public class HomeListAdapter extends BaseAdapter {
 
     private Context context;
     private LayoutInflater inflater;
     private Controller controller;
     private ArrayList<HomeCard> homeCards;
-
     public HomeListAdapter(Context context) {
         this.context = context;
         this.inflater = ((Activity)context).getLayoutInflater();
@@ -147,7 +148,7 @@ public class HomeListAdapter extends BaseAdapter {
         public abstract void setCard(HomeCard card);
     }
 
-    private class ViewHolder_HiveMessage extends ViewHolder {
+    public class ViewHolder_HiveMessage extends ViewHolder {
 
         private TextView HiveName;
         private ImageView HiveImage;
@@ -155,6 +156,8 @@ public class HomeListAdapter extends BaseAdapter {
         private ImageView UserImage;
         private TextView TimeStamp;
         private TextView Message;
+
+
 
         public void setHiveName(TextView hiveName) {
             this.HiveName = hiveName;
@@ -195,7 +198,15 @@ public class HomeListAdapter extends BaseAdapter {
 
         @Override
         public void onClick(View v) {
-
+            MainChat mainChat;
+            Chat chatChat = null;
+            chatChat = ((HiveMessageCard)card).getHive().getPublicChat();
+            if (chatChat != null) {
+                System.out.println("chat hive");
+                mainChat = new MainChat(context, chatChat);
+            }
+            else
+                System.out.println("NULL CHAT");
         }
 
         private void updateFields() {

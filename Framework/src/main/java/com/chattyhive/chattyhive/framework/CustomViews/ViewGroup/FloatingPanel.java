@@ -487,10 +487,12 @@ public class FloatingPanel extends ViewGroup {
 
         if (actualPosition < 0) {
             mainPanels.get("right").setVisibility(VISIBLE);
-            actionBars.get("right").setVisibility(VISIBLE);
+            if(actionBars.containsKey("right"))
+                actionBars.get("right").setVisibility(VISIBLE);
         } else {
             mainPanels.get("right").setVisibility(GONE);
-            actionBars.get("right").setVisibility(GONE);
+            if(actionBars.containsKey("right"))
+                actionBars.get("right").setVisibility(GONE);
         }
 
     }
@@ -815,7 +817,8 @@ public class FloatingPanel extends ViewGroup {
                             break;
                         case mainPanel:
                             childLeft = childRight - mainPanels.get("right").getMeasuredWidth();
-                            childTop += actionBars.get("right").getMeasuredHeight() + ((LayoutParams)actionBars.get("right").getLayoutParams()).topMargin + ((LayoutParams)actionBars.get("right").getLayoutParams()).bottomMargin;
+                            if(actionBars.containsKey("right"))
+                                childTop += actionBars.get("right").getMeasuredHeight() + ((LayoutParams)actionBars.get("right").getLayoutParams()).topMargin + ((LayoutParams)actionBars.get("right").getLayoutParams()).bottomMargin;
                             break;
                         default:
                             continue;

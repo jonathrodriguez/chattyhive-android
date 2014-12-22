@@ -77,7 +77,6 @@ public class RightPanelExpandableListAdapter extends BaseExpandableListAdapter {
                 ImageView imgv = (ImageView) convertView.findViewById(R.id.menu_flecha_imagen);
                 imgv.setImageResource(R.drawable.ic_action_next_item_down);
                 convertView.findViewById(R.id.right_panel_items_layout).setBackgroundResource(R.drawable.borde2px);
-
             }else{
                 convertView.findViewById(R.id.menu_notexpanded_explora_img).setVisibility(View.VISIBLE);
                 convertView.findViewById(R.id.menu_notexpanded_home_img).setVisibility(View.VISIBLE);
@@ -138,7 +137,7 @@ public class RightPanelExpandableListAdapter extends BaseExpandableListAdapter {
                     ((Main) activity).ShowChats();
                 }
             });
-
+            convertView.findViewById(R.id.menu_new_hive).setOnClickListener(((Main)activity).new_hive_button_click);
             convertView.findViewById(R.id.menu_layout_explora).setOnClickListener(((Main) activity).explore_button_click);
 
             convertView.findViewById(R.id.menu_layout_logout).setOnClickListener(((Main) activity).logout_button_click);

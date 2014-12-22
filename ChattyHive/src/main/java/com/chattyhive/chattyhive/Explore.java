@@ -88,6 +88,7 @@ public class Explore extends Activity {
         this.findViewById(R.id.explore_tab_list_location_button).setOnClickListener(this.time);
         this.findViewById(R.id.explore_tab_list_recent_button).setOnClickListener(this.trending);
         this.findViewById(R.id.explore_tab_list_trending_button).setOnClickListener(this.users);
+        this.findViewById(R.id.explore_new_hive_button).setOnClickListener(this.new_hive_button_click);
 
         setTabStatus(0);
 
@@ -250,6 +251,26 @@ public class Explore extends Activity {
             //GOTO STEP 4:
             slidingPanel.openStep(4);
             headerBackButton.onClick(v);
+        }
+    };
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case Main.OP_CODE_NEW_HIVE:
+                if (resultCode == RESULT_OK){
+                    this.setResult(RESULT_OK);
+                    this.finish();
+                }
+                break;
+        }
+    }
+
+    protected View.OnClickListener new_hive_button_click = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Intent intent = new Intent(getApplicationContext(),NewHive.class);
+            startActivityForResult(intent, Main.OP_CODE_NEW_HIVE);
         }
     };
 
