@@ -4,6 +4,7 @@ import com.chattyhive.backend.contentprovider.AvailableCommands;
 import com.chattyhive.backend.contentprovider.formats.CHAT_ID;
 import com.chattyhive.backend.contentprovider.formats.EXPLORE_FILTER;
 import com.chattyhive.backend.contentprovider.formats.Format;
+import com.chattyhive.backend.contentprovider.formats.HIVE;
 import com.chattyhive.backend.contentprovider.formats.HIVE_ID;
 import com.chattyhive.backend.contentprovider.formats.LOCAL_USER_PROFILE;
 import com.chattyhive.backend.contentprovider.formats.LOGIN;
@@ -237,6 +238,17 @@ public class ServerCommand {
         url = "android.get_hive_info/[HIVE_ID.NAME_URL]";
         paramFormats = new ArrayList<Class<?>>() {{add(HIVE_ID.class);}};
         inputFormats = null;
+        requiredCookies = new ArrayList<String>() {{add(CSRFTokenCookie); add(SessionCookie);}};
+        returningCookies = null;
+        ServerCommand.AddServerCommand(command,method,commandType,url,paramFormats,inputFormats,requiredCookies,returningCookies);
+
+        // CreateHive
+        command = AvailableCommands.CreateHive;
+        method = Method.POST;
+        commandType = CommandType.ImmediateResponsePush;
+        url = "android.hives";
+        paramFormats = null;
+        inputFormats = new ArrayList<Class<?>>() {{add(HIVE.class);}};
         requiredCookies = new ArrayList<String>() {{add(CSRFTokenCookie); add(SessionCookie);}};
         returningCookies = null;
         ServerCommand.AddServerCommand(command,method,commandType,url,paramFormats,inputFormats,requiredCookies,returningCookies);
