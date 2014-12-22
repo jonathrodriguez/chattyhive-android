@@ -63,15 +63,5 @@
         custom:layout_type="mainPanel">
         <include layout="@layout/right_panel_layout"/>
     </FrameLayout>
-
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/actionRight"
-        custom:layout_position="right"
-        custom:layout_type="actionBar">
-        <include layout="@layout/right_panel_action_bar"/>
-    </FrameLayout>
-
 </com.chattyhive.chattyhive.framework.CustomViews.ViewGroup.FloatingPanel>
 </FrameLayout>

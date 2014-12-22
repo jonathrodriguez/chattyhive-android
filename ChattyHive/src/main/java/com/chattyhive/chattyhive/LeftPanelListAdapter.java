@@ -44,6 +44,7 @@ import java.util.TreeSet;
 /**
  * Created by Jonathan on 13/03/14.
  */
+
 public class LeftPanelListAdapter extends BaseAdapter {
 
     private Context context;

@@ -705,6 +705,9 @@ public class StandAloneServer {
                 case HiveInfo:
                     response = HiveInfo(server, formats);
                     break;
+                case CreateHive:
+                    response = CreateHive(server, formats);
+                    break;
             }
 
             int responseCode = (response != null)?response.getKey():500;

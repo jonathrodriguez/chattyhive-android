@@ -235,11 +235,12 @@ public class Hive implements IContextualizable {
             this.publicChat = new Chat(chat, this);
             Hive.Hives.put(hiveNameURL, this);
 
+            if (HiveListChanged != null)
+                HiveListChanged.fire(this, EventArgs.Empty());
+
             if (this.createHiveCallback != null)
                 this.createHiveCallback.Run(this,eventArgs);
 
-            if (HiveListChanged != null)
-                HiveListChanged.fire(this, EventArgs.Empty());
             //Local storage
             Hive.localStorage.StoreHive(this.nameUrl, this.toJson(new HIVE()).toString());
         }
