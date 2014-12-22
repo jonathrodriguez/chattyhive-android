@@ -39,7 +39,8 @@ import com.chattyhive.chattyhive.framework.Util.ViewPair;
 public class Main extends Activity {
     static final int OP_CODE_LOGIN = 1;
     static final int OP_CODE_EXPLORE = 2;
-
+    static final int OP_CODE_NEW_HIVE = 3;
+    static final int OP_SHOW_HIVES = 10;
 
     FloatingPanel floatingPanel;
 
@@ -170,6 +171,9 @@ public class Main extends Activity {
                         } else
                             this.ShowHives();
                     }
+                else if(resultCode == OP_SHOW_HIVES){
+                        this.ShowHives();
+                    }
                 break;
         }
     }
@@ -241,6 +245,15 @@ public class Main extends Activity {
         public void onClick(View v) {
             Intent intent = new Intent(getApplicationContext(),Explore.class);
             startActivityForResult(intent, OP_CODE_EXPLORE);
+        }
+    };
+
+    protected View.OnClickListener new_hive_button_click = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            //System.out.println("NEW HIVE!!!!");
+            Intent intent = new Intent(getApplicationContext(),NewHive.class);
+            startActivityForResult(intent,OP_CODE_NEW_HIVE);
         }
     };
 

@@ -3,9 +3,14 @@ package com.chattyhive.chattyhive;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.BitmapFactory;
+import android.graphics.Point;
+import android.os.Build;
+import android.util.DisplayMetrics;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -39,10 +44,13 @@ public class ExploreListAdapter extends BaseAdapter {
     private int expanded_hive;
     private ArrayList<Integer> joined_Hives;
 
-    public void SetPublicChatClickListener(View.OnClickListener listener) { this.publicChatClickListener = listener; notifyDataSetChanged(); }
+    public void SetPublicChatClickListener(View.OnClickListener listener) {
+        this.publicChatClickListener = listener;
+        notifyDataSetChanged();
+    }
 
     public void OnAddItem(Object sender, EventArgs args) {
-        ((Activity)this.context).runOnUiThread(new Runnable(){
+        ((Activity) this.context).runOnUiThread(new Runnable() {
             public void run() {
                 hives_list_data = new ArrayList<Hive>(hives_list_data_origin);
                 notifyDataSetChanged();
@@ -50,18 +58,45 @@ public class ExploreListAdapter extends BaseAdapter {
         });
     }
 
-    public ExploreListAdapter (Context activityContext, ArrayList<Hive> hivesList, View.OnClickListener publicChatClickListener /*,ListView listView*/) {
+    public ExploreListAdapter(Context activityContext, ArrayList<Hive> hivesList, View.OnClickListener publicChatClickListener /*,ListView listView*/) {
         this.controller = Controller.GetRunningController();
         this.hives_list_data_origin = hivesList;
         this.hives_list_data = new ArrayList<Hive>(this.hives_list_data_origin);
         this.moreItems = false;
         this.context = activityContext;
-        this.inflater = ((Activity)this.context).getLayoutInflater();
+        this.inflater = ((Activity) this.context).getLayoutInflater();
         this.publicChatClickListener = publicChatClickListener;
         //this.listView = listView;
         //this.listView.setAdapter(this);
         this.expanded_hive = -1;
         this.joined_Hives = new ArrayList<Integer>();
+    }
+
+    private String themeChecker(String input) {
+        String output = new String(input);
+        float width = (getScreenSize()[0]) / 2; // devuelve el ancho de la pantalla en dp
+        float predemade = 132.5f; // tamano ya ocupado (a narices en la pantalla)
+        float textSize = (input.length()) * 6; //tam en dp que ocupara el texto introducido
+        if (width < (predemade + textSize)) {
+            Float empty = ((width-predemade)/6);
+            output = input.substring(0,(empty.shortValue()-3));
+            output.concat("...");
+        }
+        return output;
+    }
+
+    private int[] getScreenSize() {
+        Point size = new Point();
+        WindowManager w = ((Activity) context).getWindowManager();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+            w.getDefaultDisplay().getSize(size);
+            return new int[]{size.x, size.y};
+        } else {
+            Display d = w.getDefaultDisplay();
+            //noinspection deprecation
+            return new int[]{d.getWidth(), d.getHeight()};
+        }
     }
 
     @Override
@@ -82,39 +117,38 @@ public class ExploreListAdapter extends BaseAdapter {
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         ViewHolder holder = null;
-        if(convertView==null){
+        if (convertView == null) {
             holder = new ViewHolder();
 
-            convertView = this.inflater.inflate(R.layout.explore_list_item,parent,false);
+            convertView = this.inflater.inflate(R.layout.explore_list_item, parent, false);
 //HOLDERS COLLAPSED HIVE CARD
-            holder.collapsed_hive_name = (TextView)convertView.findViewById(R.id.explore_list_item_collapsed_hive_name);
-            holder.collapsed_hive_description = (TextView)convertView.findViewById(R.id.explore_list_item_collapsed_hive_description);
-            holder.collapsed_hiveImage = (ImageView)convertView.findViewById(R.id.explore_list_item_collapsed_hive_image);
-            holder.collapsed_categoryText = (TextView)convertView.findViewById(R.id.explore_list_item_collapsed_category_text);
-            holder.collapsed_categoryImage = (ImageView)convertView.findViewById(R.id.explore_list_item_collapsed_category_image);
-            holder.collapsed_usersText = (TextView)convertView.findViewById(R.id.explore_list_item_collapsed_users_number);
+            holder.collapsed_hive_name = (TextView) convertView.findViewById(R.id.explore_list_item_collapsed_hive_name);
+            holder.collapsed_hive_description = (TextView) convertView.findViewById(R.id.explore_list_item_collapsed_hive_description);
+            holder.collapsed_hiveImage = (ImageView) convertView.findViewById(R.id.explore_list_item_collapsed_hive_image);
+            holder.collapsed_categoryText = (TextView) convertView.findViewById(R.id.explore_list_item_collapsed_category_text);
+            holder.collapsed_categoryImage = (ImageView) convertView.findViewById(R.id.explore_list_item_collapsed_category_image);
+            holder.collapsed_usersText = (TextView) convertView.findViewById(R.id.explore_list_item_collapsed_users_number);
 //HOLDERS EXPANDED HIVE CARD
-            holder.expanded_hive_name = (TextView)convertView.findViewById(R.id.explore_list_item_expanded_hive_name);
-            holder.expanded_hive_description = (TextView)convertView.findViewById(R.id.explore_list_item_expanded_hive_description);
-            holder.expanded_hiveImage = (ImageView)convertView.findViewById(R.id.explore_list_item_expanded_hive_image);
-            holder.expanded_categoryText = (TextView)convertView.findViewById(R.id.explore_list_item_expanded_category_text);
-            holder.expanded_categoryImage = (ImageView)convertView.findViewById(R.id.explore_list_item_expanded_category_image);
-            holder.expanded_usersText = (TextView)convertView.findViewById(R.id.explore_list_item_expanded_users_number);
+            holder.expanded_hive_name = (TextView) convertView.findViewById(R.id.explore_list_item_expanded_hive_name);
+            holder.expanded_hive_description = (TextView) convertView.findViewById(R.id.explore_list_item_expanded_hive_description);
+            holder.expanded_hiveImage = (ImageView) convertView.findViewById(R.id.explore_list_item_expanded_hive_image);
+            holder.expanded_categoryText = (TextView) convertView.findViewById(R.id.explore_list_item_expanded_category_text);
+            holder.expanded_categoryImage = (ImageView) convertView.findViewById(R.id.explore_list_item_expanded_category_image);
+            holder.expanded_usersText = (TextView) convertView.findViewById(R.id.explore_list_item_expanded_users_number);
 
             convertView.setTag(R.id.Explore_ListViewHolder, holder);
         } else {
-            holder = (ViewHolder)convertView.getTag(R.id.Explore_ListViewHolder);
+            holder = (ViewHolder) convertView.getTag(R.id.Explore_ListViewHolder);
         }
 
         View.OnClickListener expand_hive = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ViewHolder h = (ViewHolder)v.getTag(R.id.Explore_ListViewHolder);
+                ViewHolder h = (ViewHolder) v.getTag(R.id.Explore_ListViewHolder);
 
-                if (expanded_hive == position){//SI SE SELECCIONA EL HIVE YA EXPANDIDO SE PONE A -1
+                if (expanded_hive == position) {//SI SE SELECCIONA EL HIVE YA EXPANDIDO SE PONE A -1
                     expanded_hive = -1;
-                }
-                else {
+                } else {
                     expanded_hive = position;
                 }
 
@@ -123,12 +157,11 @@ public class ExploreListAdapter extends BaseAdapter {
         };
         convertView.setOnClickListener(expand_hive);//setOnClickListener to expand/collapse hive cards
 
-        if(expanded_hive == position) {//EXPANDIR
+        if (expanded_hive == position) {//EXPANDIR
             convertView.findViewById(R.id.explore_list_item_short).setVisibility(View.GONE);
             convertView.findViewById(R.id.explore_hive_card).setVisibility(View.VISIBLE);
-            ((ListView)parent).smoothScrollToPosition(position);
-        }
-        else {//CONTRAER
+            ((ListView) parent).smoothScrollToPosition(position);
+        } else {//CONTRAER
             convertView.findViewById(R.id.explore_hive_card).setVisibility(View.GONE);
             convertView.findViewById(R.id.explore_list_item_short).setVisibility(View.VISIBLE);
         }
@@ -139,12 +172,13 @@ public class ExploreListAdapter extends BaseAdapter {
 
         holder.collapsed_hive_name.setText(hive.getName());
         holder.collapsed_hive_description.setText(hive.getDescription());
-        Category.setCategory(hive.getCategory(),holder.collapsed_categoryImage,holder.collapsed_categoryText);
+        String hiveCategory = themeChecker(hive.getCategory());
+        Category.setCategory(hive.getCategory(), holder.collapsed_categoryImage, holder.collapsed_categoryText);
         //holder.collapsed_usersText.setText("");
 
         holder.expanded_hive_name.setText(hive.getName());
         holder.expanded_hive_description.setText(hive.getDescription());
-        Category.setCategory(hive.getCategory(),holder.expanded_categoryImage,holder.expanded_categoryText);
+        Category.setCategory(hive.getCategory(), holder.expanded_categoryImage, holder.expanded_categoryText);
         //holder.collapsed_usersText.setText("");
 
         holder.expanded_hiveImage.setImageResource(R.drawable.pestanha_chats_public_chat);
@@ -154,7 +188,8 @@ public class ExploreListAdapter extends BaseAdapter {
             hive.getHiveImage().OnImageLoaded.add(new EventHandler<EventArgs>(holder, "loadExpandedHiveImage", EventArgs.class));
             hive.getHiveImage().loadImage(Image.ImageSize.medium, 0);
             hive.getHiveImage().loadImage(Image.ImageSize.large, 0);
-        } catch (Exception e) { }
+        } catch (Exception e) {
+        }
 
        /*if ((position == (this.getCount()-1)) && (this.moreItems)) {
             ((Explore)this.context).GetMoreHives();
@@ -163,15 +198,9 @@ public class ExploreListAdapter extends BaseAdapter {
         View.OnClickListener join_button_click = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //System.out.println("join!!!!");
-                //String hiveNameURL =((String) ((TextView)v.findViewById(R.id.explore_list_item_name)).getTag());
-                //controller.JoinHive(hiveNameURL);
-
-                ViewHolder holder = (ViewHolder)v.getTag(R.id.Explore_ListViewHolder);
-
+                ViewHolder holder = (ViewHolder) v.getTag(R.id.Explore_ListViewHolder);
                 joined_Hives.add(position);
-
-                ((View)v.getParent()).findViewById(R.id.explore_chat_button2).setVisibility(View.VISIBLE);
+                ((View) v.getParent()).findViewById(R.id.explore_chat_button2).setVisibility(View.VISIBLE);
                 v.findViewById(R.id.explore_join_button).setVisibility(View.GONE);
                 controller.JoinHive(holder.hive.getNameUrl());
             }
@@ -179,8 +208,8 @@ public class ExploreListAdapter extends BaseAdapter {
 
         convertView.findViewById(R.id.explore_join_button).setVisibility(View.VISIBLE);
         convertView.findViewById(R.id.explore_chat_button2).setVisibility(View.GONE);
-        convertView.findViewById(R.id.explore_join_button).setTag(R.id.Explore_ListViewHolder,holder);
-        convertView.findViewById(R.id.explore_chat_button2).setTag(R.id.BO_Hive,hive);
+        convertView.findViewById(R.id.explore_join_button).setTag(R.id.Explore_ListViewHolder, holder);
+        convertView.findViewById(R.id.explore_chat_button2).setTag(R.id.BO_Hive, hive);
         convertView.findViewById(R.id.explore_join_button).setOnClickListener(join_button_click);
         convertView.findViewById(R.id.explore_chat_button2).setOnClickListener(publicChatClickListener);
 
@@ -209,16 +238,16 @@ public class ExploreListAdapter extends BaseAdapter {
 
         public Hive hive;
 
-        public void loadCollapsedHiveImage(Object sender,EventArgs eventArgs) {
+        public void loadCollapsedHiveImage(Object sender, EventArgs eventArgs) {
             if (!(sender instanceof Image)) return;
 
-            final Image image = (Image)sender;
+            final Image image = (Image) sender;
             final ViewHolder thisViewHolder = this;
 
-            ((Activity)context).runOnUiThread( new Runnable() {
+            ((Activity) context).runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    InputStream is = image.getImage(Image.ImageSize.medium,0);
+                    InputStream is = image.getImage(Image.ImageSize.medium, 0);
                     if (is != null) {
                         collapsed_hiveImage.setImageBitmap(BitmapFactory.decodeStream(is));
                         try {
@@ -227,22 +256,22 @@ public class ExploreListAdapter extends BaseAdapter {
                             e.printStackTrace();
                         }
                     }
-                    image.OnImageLoaded.remove(new EventHandler<EventArgs>(thisViewHolder,"loadCollapsedHiveImage",EventArgs.class));
+                    image.OnImageLoaded.remove(new EventHandler<EventArgs>(thisViewHolder, "loadCollapsedHiveImage", EventArgs.class));
                     //image.freeMemory();
                 }
             });
         }
 
-        public void loadExpandedHiveImage(Object sender,EventArgs eventArgs) {
+        public void loadExpandedHiveImage(Object sender, EventArgs eventArgs) {
             if (!(sender instanceof Image)) return;
 
-            final Image image = (Image)sender;
+            final Image image = (Image) sender;
             final ViewHolder thisViewHolder = this;
 
-            ((Activity)context).runOnUiThread( new Runnable() {
+            ((Activity) context).runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    InputStream is = image.getImage(Image.ImageSize.large,0);
+                    InputStream is = image.getImage(Image.ImageSize.large, 0);
                     if (is != null) {
                         expanded_hiveImage.setImageBitmap(BitmapFactory.decodeStream(is));
                         try {
@@ -251,7 +280,7 @@ public class ExploreListAdapter extends BaseAdapter {
                             e.printStackTrace();
                         }
                     }
-                    image.OnImageLoaded.remove(new EventHandler<EventArgs>(thisViewHolder,"loadExpandedHiveImage",EventArgs.class));
+                    image.OnImageLoaded.remove(new EventHandler<EventArgs>(thisViewHolder, "loadExpandedHiveImage", EventArgs.class));
                     //image.freeMemory();
                 }
             });

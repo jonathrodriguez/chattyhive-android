@@ -67,6 +67,7 @@
         android:layout_height="match_parent"
         android:gravity="right">
         <ImageView
+            android:id="@+id/explore_new_hive_button"
             android:layout_width="46dp"
             android:layout_height="wrap_content"
             android:src="@drawable/menu_new_hive_blanco"

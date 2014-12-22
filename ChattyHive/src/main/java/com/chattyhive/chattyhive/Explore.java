@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.chattyhive.backend.Controller;
+import com.chattyhive.backend.businessobjects.Chats.Chat;
 import com.chattyhive.backend.businessobjects.Chats.Hive;
 import com.chattyhive.backend.util.events.EventArgs;
 import com.chattyhive.backend.util.events.EventHandler;
@@ -33,9 +35,11 @@ public class Explore extends Activity {
     int lastOffset;
     int joined = 0;
 
+    static final int OP_CODE_NEW_HIVE = 3;
+
     SlidingStepsLayout slidingPanel;
 
-
+    static final int OP_SHOW_HIVES = 10;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,10 +110,24 @@ public class Explore extends Activity {
         this.findViewById(R.id.explore_tab_list_recent_button).setOnClickListener(this.trending);
         this.findViewById(R.id.explore_tab_list_trending_button).setOnClickListener(this.users);
 
+        this.findViewById(R.id.explore_new_hive_button).setOnClickListener(this.new_hive_button_click);
+
         setTabStatus(0);
 
         loadListView(0);
         loadListView(1);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case OP_CODE_NEW_HIVE:
+                if (resultCode == RESULT_OK){
+                    this.setResult(OP_SHOW_HIVES);
+                    this.finish();
+                }
+                break;
+        }
     }
 
     public void GetMoreHives() {
@@ -117,6 +135,15 @@ public class Explore extends Activity {
         this.controller.exploreHives(this.lastOffset,9, Controller.ExploreType.OUTSTANDING);
         //findViewById(R.id.explore_tab_list_favourites_button).setBackgroundResource(R.drawable.explore_tab_list_border);
     }
+
+    protected View.OnClickListener new_hive_button_click = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            System.out.println("NEW HIVE!!!!");
+            Intent intent = new Intent(getApplicationContext(),NewHive.class);
+            startActivityForResult(intent, OP_CODE_NEW_HIVE);
+        }
+    };
 
     protected OnTransitionListener onTransitionListener = new OnTransitionListener() {
         @Override

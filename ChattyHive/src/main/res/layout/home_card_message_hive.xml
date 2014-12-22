@@ -1,117 +1,126 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#00000000">
+    android:background="#00000000"
+    android:orientation="horizontal">
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/home_card_background"
-        android:layout_marginTop="@dimen/home_card_margin_top"
         android:layout_marginLeft="@dimen/home_card_margin_left"
         android:layout_marginRight="@dimen/home_card_margin_right"
+        android:layout_marginTop="@dimen/home_card_margin_top"
+        android:background="@drawable/home_card_background"
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/home_card_message_hive_card_padding_bottom"
         android:paddingLeft="@dimen/home_card_message_hive_card_padding_left"
-        android:paddingTop="@dimen/home_card_message_hive_card_padding_top"
         android:paddingRight="@dimen/home_card_message_hive_card_padding_right"
-        android:paddingBottom="@dimen/home_card_message_hive_card_padding_bottom">
+        android:paddingTop="@dimen/home_card_message_hive_card_padding_top">
 
         <LinearLayout
-            android:orientation="horizontal"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:background="#00000000">
+            android:background="#00000000"
+            android:orientation="horizontal">
 
             <ImageView
+                android:id="@+id/home_card_message_hive_image_hive"
                 android:layout_width="@dimen/home_card_message_hive_hive_image_size"
                 android:layout_height="@dimen/home_card_message_hive_hive_image_size"
-                android:id="@+id/home_card_message_hive_image_hive"
-                android:background="#00000000"
-                android:src="@drawable/pestanha_chats_public_chat"
+                android:layout_marginRight="@dimen/home_card_message_hive_hive_image_margin_right"
                 android:adjustViewBounds="true"
-                android:layout_marginRight="@dimen/home_card_message_hive_hive_image_margin_right" />
+                android:background="#00000000"
+                android:src="@drawable/pestanha_chats_public_chat" />
 
             <TextView
+                android:id="@+id/home_card_message_hive_name_hive"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="New Text"
-                android:id="@+id/home_card_message_hive_name_hive"
                 android:background="#00000000"
-                android:textColor="@color/home_card_message_hive_hive_name_color"
                 android:ellipsize="end"
+                android:lines="1"
                 android:maxLines="1"
                 android:minLines="1"
-                android:lines="1"
+                android:text="New Text"
+                android:textColor="@color/home_card_message_hive_hive_name_color"
                 android:textSize="@dimen/home_card_message_hive_hive_name_text_size" />
         </LinearLayout>
 
         <View
             android:layout_width="match_parent"
             android:layout_height="1px"
-            android:background="@color/home_card_message_hive_horizontal_divider_color"
+            android:layout_marginBottom="@dimen/home_card_message_hive_horizontal_divider_margin_bottom"
             android:layout_marginTop="@dimen/home_card_message_hive_horizontal_divider_margin_top"
-            android:layout_marginBottom="@dimen/home_card_message_hive_horizontal_divider_margin_bottom" />
+            android:background="@color/home_card_message_hive_horizontal_divider_color" />
 
         <LinearLayout
-            android:orientation="horizontal"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:background="#00000000" >
+            android:background="#00000000"
+            android:orientation="horizontal">
 
             <ImageView
+                android:id="@+id/home_card_message_hive_image_user"
                 android:layout_width="@dimen/home_card_message_hive_user_image_size"
                 android:layout_height="@dimen/home_card_message_hive_user_image_size"
-                android:id="@+id/home_card_message_hive_image_user"
-                android:background="#00000000"
-                android:src="@drawable/pestanha_chats_user"
+                android:layout_marginRight="@dimen/home_card_message_hive_user_image_margin_right"
                 android:adjustViewBounds="true"
-                android:layout_marginRight="@dimen/home_card_message_hive_user_image_margin_right" />
+                android:background="#00000000"
+                android:src="@drawable/pestanha_chats_user" />
 
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|left"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/home_card_message_hive_name_user"
+                        android:layout_width="wrap_content"
+                        android:layout_height="20dp"
+                        android:text="New Text"
+                        android:textSize="@dimen/home_card_message_hive_username_text_size"
+                        android:gravity="bottom"/>
+
+                    <LinearLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="right"
+                        android:gravity="right">
+
+                        <TextView
+                            android:id="@+id/home_card_message_hive_timestamp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="top|right"
+                            android:layout_marginTop="@dimen/home_card_message_hive_timestamp_margin_top"
+                            android:text="New Text"
+                            android:textColor="@color/home_card_message_hive_timestamp_color"
+                            android:textSize="@dimen/home_card_message_hive_timestamp_text_size" />
+                    </LinearLayout>
+                </LinearLayout>
 
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="New Text"
-                    android:id="@+id/home_card_message_hive_name_user"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentLeft="true"
-                    android:layout_marginTop="@dimen/home_card_message_hive_username_margin_top"
-                    android:layout_marginBottom="@dimen/home_card_message_hive_username_margin_bottom"
-                    android:textSize="@dimen/home_card_message_hive_username_text_size" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="New Text"
                     android:id="@+id/home_card_message_hive_message"
-                    android:layout_below="@+id/home_card_message_hive_name_user"
-                    android:layout_alignParentBottom="false"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentRight="true"
-                    android:minLines="1"
-                    android:maxLines="4"
-                    android:ellipsize="end"
-                    android:textColor="@color/home_card_message_hive_message_text_color"
-                    android:textSize="@dimen/home_card_message_hive_hive_name_text_size" />
-
-                <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="4"
+                    android:minLines="1"
                     android:text="New Text"
-                    android:id="@+id/home_card_message_hive_timestamp"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentBottom="false"
-                    android:layout_alignParentRight="true"
-                    android:textColor="@color/home_card_message_hive_timestamp_color"
-                    android:layout_marginTop="@dimen/home_card_message_hive_timestamp_margin_top"
-                    android:textSize="@dimen/home_card_message_hive_timestamp_text_size" />
-            </RelativeLayout>
+                    android:textColor="@color/home_card_message_hive_message_text_color"
+                    android:textSize="@dimen/home_card_message_hive_hive_name_text_size"
+                    android:layout_gravity="top"
+                    android:gravity="top"
+                    android:layout_marginTop="5dp"/>
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

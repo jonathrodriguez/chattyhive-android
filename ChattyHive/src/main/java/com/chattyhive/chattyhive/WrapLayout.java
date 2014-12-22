@@ -2,19 +2,30 @@ package com.chattyhive.chattyhive;
 
 import android.app.Activity;
 import android.content.Context;
+import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 
 /**
  * Created by J.Guzmán on 24/11/2014.
  */
+
 public class WrapLayout extends ViewGroup{
 
     private Context context;
 
-    public WrapLayout(Context context){
-        super(context);
+    public WrapLayout(Context context) {
+        this(context, null);
     }
+
+    public WrapLayout(Context context, AttributeSet attrs) {
+        this(context, attrs, 0);
+    }
+
+    public WrapLayout(Context context, AttributeSet attrs, int defStyle){
+        super(context,attrs,defStyle);
+    }
+
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         // TODO Auto-generated method stub
