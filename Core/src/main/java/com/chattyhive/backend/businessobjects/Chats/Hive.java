@@ -6,9 +6,11 @@ import com.chattyhive.backend.contentprovider.AvailableCommands;
 import com.chattyhive.backend.contentprovider.DataProvider;
 import com.chattyhive.backend.contentprovider.OSStorageProvider.HiveLocalStorageInterface;
 import com.chattyhive.backend.contentprovider.formats.CHAT;
+import com.chattyhive.backend.contentprovider.formats.COMMON;
 import com.chattyhive.backend.contentprovider.formats.Format;
 import com.chattyhive.backend.contentprovider.formats.HIVE;
 import com.chattyhive.backend.contentprovider.formats.HIVE_ID;
+import com.chattyhive.backend.util.events.CommandCallbackEventArgs;
 import com.chattyhive.backend.util.events.Event;
 import com.chattyhive.backend.util.events.EventArgs;
 import com.chattyhive.backend.util.events.EventHandler;
@@ -18,6 +20,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.TreeMap;
@@ -115,6 +118,22 @@ public class Hive implements IContextualizable {
 
         this.publicChat = null;
 
+        this.subscribedUsers = 0;
+        this.tags = new String[0];
+        this.chatLanguages = new String[0];
+
+        if (data.TAGS != null) {
+            this.tags = data.TAGS.toArray(new String[data.TAGS.size()]);
+        }
+
+        if (data.CHAT_LANGUAGES != null) {
+            this.chatLanguages = data.CHAT_LANGUAGES.toArray(new String[data.CHAT_LANGUAGES.size()]);
+        }
+
+        if (data.SUBSCRIBED_USERS != null) {
+            this.subscribedUsers = data.SUBSCRIBED_USERS;
+        }
+
         if (data.PUBLIC_CHAT != null) {
             this.publicChat = Chat.getChat(data.PUBLIC_CHAT.CHANNEL_UNICODE, false);
             if (this.publicChat == null) {
@@ -122,46 +141,53 @@ public class Hive implements IContextualizable {
             }
         }
     }
-    private Hive(String nameUrl) {
+    private Hive(String nameUrl,Boolean internal) {
+        if (!internal) {
+            this.name = nameUrl;
+            this.creationDate = new Date();
+        } else {
+            String localHive = Hive.localStorage.RecoverHive(nameUrl);
+            if ((localHive != null) && (!localHive.isEmpty())) {
+                Format[] formats = Format.getFormat((new JsonParser()).parse(localHive));
+                for (Format format : formats)
+                    if (format instanceof HIVE) {
+                        HIVE data = (HIVE) format;
+                        if (data.NAME_URL.equals(nameUrl)) {
+                            this.category = data.CATEGORY;
+                            this.creationDate = data.CREATION_DATE;
+                            this.description = data.DESCRIPTION;
 
-        String localHive = Hive.localStorage.RecoverHive(nameUrl);
-        if ((localHive != null) && (!localHive.isEmpty())) {
-            Format[] formats = Format.getFormat((new JsonParser()).parse(localHive));
-            for (Format format : formats)
-                if (format instanceof HIVE) {
-                    HIVE data = (HIVE) format;
-                    if (data.NAME_URL.equals(nameUrl)) {
-                        this.category = data.CATEGORY;
-                        this.creationDate = data.CREATION_DATE;
-                        this.description = data.DESCRIPTION;
+                            this.setImageURL(data.IMAGE_URL);
 
-                        this.setImageURL(data.IMAGE_URL);
+                            this.name = data.NAME;
+                            this.nameUrl = data.NAME_URL;
 
-                        this.name = data.NAME;
-                        this.nameUrl = data.NAME_URL;
-
-                        if (data.PUBLIC_CHAT != null) {
-                            this.publicChat = Chat.getChat(data.PUBLIC_CHAT.CHANNEL_UNICODE, false);
-                            if (this.publicChat == null) {
-                                this.publicChat = new Chat(data.PUBLIC_CHAT,this);
+                            if (data.PUBLIC_CHAT != null) {
+                                this.publicChat = Chat.getChat(data.PUBLIC_CHAT.CHANNEL_UNICODE, false);
+                                if (this.publicChat == null) {
+                                    this.publicChat = new Chat(data.PUBLIC_CHAT, this);
+                                }
+                            } else {
+                                this.publicChat = Chat.getChat(String.format("presence-%s", this.nameUrl));
                             }
-                        } else {
-                            this.publicChat = Chat.getChat(String.format("presence-%s", this.nameUrl));
+                            break;
                         }
-                        break;
                     }
-                }
-        }
-        if ((this.nameUrl == null) || (!this.nameUrl.equals(nameUrl))) {
-            this.nameUrl = nameUrl;
-            DataProvider.GetDataProvider().InvokeServerCommand(AvailableCommands.HiveInfo,this.toFormat(new HIVE_ID()));
+            }
+            if ((this.nameUrl == null) || (!this.nameUrl.equals(nameUrl))) {
+                this.nameUrl = nameUrl;
+                DataProvider.GetDataProvider().InvokeServerCommand(AvailableCommands.HiveInfo, this.toFormat(new HIVE_ID()));
+            }
         }
     }
 
     public Hive(String name, String nameUrl) {
-        this.name = name;
+        this(name,false);
         this.nameUrl = nameUrl;
-        this.creationDate = new Date();
+    }
+
+    public Hive(String name) {
+        this(name,false);
     }
 
     public static Hive getHive(String nameUrl) {
@@ -172,7 +198,7 @@ public class Hive implements IContextualizable {
         if (Hive.Hives.containsKey(nameUrl))
             return Hive.Hives.get(nameUrl);
         else {
-            Hive h = new Hive(nameUrl);
+            Hive h = new Hive(nameUrl,true);
             Hive.Hives.put(nameUrl,h);
             if (HiveListChanged != null)
                 HiveListChanged.fire(h,EventArgs.Empty());
@@ -180,20 +206,44 @@ public class Hive implements IContextualizable {
         }
     }
 
-    public static Hive createHive(String name, String category, String description) {
-        //TODO: implement server communication (NOT AVAILABLE)
-        String hiveName = ""; //Recovered from server.
+    private EventHandler<CommandCallbackEventArgs> createHiveCallback;
 
-        Hive h = new Hive(hiveName);
-        Hive.Hives.put(hiveName,h);
+    public void createHive(EventHandler<CommandCallbackEventArgs> callback) {
+        this.createHiveCallback = callback;
+        Controller.GetRunningController().getDataProvider().RunCommand(AvailableCommands.CreateHive,new EventHandler<CommandCallbackEventArgs>(this,"OnHiveCreated",CommandCallbackEventArgs.class),this.toFormat(new HIVE()));
+    }
 
-        if (HiveListChanged != null)
-            HiveListChanged.fire(h,EventArgs.Empty());
+    public void OnHiveCreated(Object sender, CommandCallbackEventArgs eventArgs) {
+        HIVE_ID hive_id = null;
+        CHAT chat = null;
+        Boolean joinOK = false;
 
-        //Local storage
-        Hive.localStorage.StoreHive(h.nameUrl,h.toJson(new HIVE()).toString());
+        ArrayList<Format> received = eventArgs.getReceivedFormats();
+        for (Format format : received) {
+            if ((format instanceof COMMON) && (((COMMON) format).STATUS.equalsIgnoreCase("OK")))
+                joinOK = true;
+            else if (format instanceof HIVE_ID)
+                hive_id = (HIVE_ID)format;
+            else if (format instanceof CHAT)
+                chat = (CHAT)format;
+        }
 
-        return h;
+
+        if ((joinOK) && (hive_id != null) && (chat != null)) {
+            String hiveNameURL = hive_id.NAME_URL;
+            this.nameUrl = hiveNameURL;
+            this.publicChat = new Chat(chat, this);
+            Hive.Hives.put(hiveNameURL, this);
+
+            if (HiveListChanged != null)
+                HiveListChanged.fire(this, EventArgs.Empty());
+
+            if (this.createHiveCallback != null)
+                this.createHiveCallback.Run(this,eventArgs);
+
+            //Local storage
+            Hive.localStorage.StoreHive(this.nameUrl, this.toJson(new HIVE()).toString());
+        }
     }
 
     /*****************************************
@@ -212,6 +262,9 @@ public class Hive implements IContextualizable {
     protected String name;
     protected String nameUrl;
     protected Chat publicChat;
+    protected Integer subscribedUsers;
+    protected String[] chatLanguages;
+    protected String[] tags;
 
     protected String imageURL;
     public String getImageURL() {
@@ -240,11 +293,43 @@ public class Hive implements IContextualizable {
     public String getDescription() { return this.description; }
 
     public String getName() { return this.name; }
+    public void setName(String name) {
+        if ((this.nameUrl == null) || (this.nameUrl.isEmpty()))
+            this.name = name;
+        else
+            throw new UnsupportedOperationException("It is not allowed to change a hive's name if hive is already created.");
+    }
 
     public String getNameUrl() { return this.nameUrl; }
 
     public Chat getPublicChat() { return this.publicChat; }
     public void setPublicChat(Chat value) { this.publicChat = value; }
+
+    public String[] getChatLanguages() {
+        return this.chatLanguages;
+    }
+    public void setChatLanguages(String[] chatLanguages) {
+        this.chatLanguages = chatLanguages;
+    }
+
+    public String[] getTags() {
+        return this.tags;
+    }
+    public void setTags(String[] tags) {
+        this.tags = tags;
+    }
+
+    public int getSubscribedUsers() {
+        if (this.subscribedUsers != null)
+            return this.subscribedUsers;
+        else
+            return 0;
+    }
+    public int incSubscribedUsers(int quantity) {
+        if (this.subscribedUsers == null)
+            this.subscribedUsers = 0;
+        return this.subscribedUsers += quantity;
+    }
 
     /*************************************/
     /*         PARSE METHODS             */
@@ -257,6 +342,16 @@ public class Hive implements IContextualizable {
             ((HIVE) format).CREATION_DATE = this.creationDate;
             ((HIVE) format).DESCRIPTION = this.description;
             ((HIVE) format).IMAGE_URL = this.imageURL;
+            ((HIVE) format).SUBSCRIBED_USERS = this.subscribedUsers;
+
+            if (this.tags != null) {
+                ((HIVE) format).TAGS = new ArrayList<String>(Arrays.asList(this.tags));
+            }
+
+            if (this.chatLanguages != null) {
+                ((HIVE) format).CHAT_LANGUAGES = new ArrayList<String>(Arrays.asList(this.chatLanguages));
+            }
+
             if (this.publicChat != null)
                 ((HIVE) format).PUBLIC_CHAT = (CHAT)this.publicChat.toFormat(new CHAT());
             else
@@ -276,6 +371,21 @@ public class Hive implements IContextualizable {
             this.creationDate = ((HIVE) format).CREATION_DATE;
             this.setImageURL(((HIVE) format).IMAGE_URL);
             this.publicChat = null;
+            this.subscribedUsers = 0;
+            this.tags = new String[0];
+            this.chatLanguages = new String[0];
+
+            if (((HIVE) format).TAGS != null) {
+                this.tags = ((HIVE) format).TAGS.toArray(new String[((HIVE) format).TAGS.size()]);
+            }
+
+            if (((HIVE) format).CHAT_LANGUAGES != null) {
+                this.chatLanguages = ((HIVE) format).CHAT_LANGUAGES.toArray(new String[((HIVE) format).CHAT_LANGUAGES.size()]);
+            }
+
+            if (((HIVE) format).SUBSCRIBED_USERS != null) {
+                this.subscribedUsers = ((HIVE) format).SUBSCRIBED_USERS;
+            }
 
             if (((HIVE) format).PUBLIC_CHAT != null) {
                 this.publicChat = Chat.getChat(((HIVE) format).PUBLIC_CHAT);

@@ -2,44 +2,45 @@ package com.chattyhive.chattyhive;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.view.LayoutInflater;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
-import android.view.ViewGroup;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.ViewSwitcher;
 
 import com.chattyhive.backend.Controller;
-import com.chattyhive.backend.businessobjects.Chats.Chat;
 import com.chattyhive.backend.businessobjects.Chats.Hive;
 import com.chattyhive.backend.util.events.EventArgs;
 import com.chattyhive.backend.util.events.EventHandler;
 import com.chattyhive.chattyhive.framework.CustomViews.Listener.OnTransitionListener;
 import com.chattyhive.chattyhive.framework.CustomViews.ViewGroup.SlidingStepsLayout;
 import com.chattyhive.chattyhive.framework.Util.StaticMethods;
+import com.chattyhive.chattyhive.util.Category;
+
+import java.util.HashMap;
 
 public class Explore extends Activity {
 
     Controller controller;
-    ExploreListAdapter exploreListAdapter_list0;
-    ExploreListAdapter exploreListAdapter_list1;
-    ExploreListAdapter exploreListAdapter_list2;
-    ExploreListAdapter exploreListAdapter_list3;
 
     int[] exploreListHeaders;
     int[] tabButtonIDs;
+    com.chattyhive.backend.businessobjects.Explore.SortType[] sortTypes;
 
-    int lastOffset;
-    int joined = 0;
-
-    static final int OP_CODE_NEW_HIVE = 3;
+    int activeList;
+    int joined;
 
     SlidingStepsLayout slidingPanel;
+    HashMap<Integer,ExploreListAdapter> exploreListAdapter;
 
-    static final int OP_SHOW_HIVES = 10;
+    ExploreCategoriesListAdapter exploreCategoriesListAdapter;
+    ExploreListAdapter exploreFilteredListAdapter;
+
+    HashMap<String,Boolean> joined_hives;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,57 +50,35 @@ public class Explore extends Activity {
     }
 
     private void loadListView(int step) {
-        ExploreListAdapter listAdapter;
-        switch (step) {
-            case 0:
-                listAdapter = this.exploreListAdapter_list0;
-                break;
-            case 1:
-                listAdapter = this.exploreListAdapter_list1;
-                break;
-            case 2:
-                listAdapter = this.exploreListAdapter_list2;
-                break;
-            case 3:
-                listAdapter = this.exploreListAdapter_list3;
-                break;
-            default:
-                return;
-        }
+        if (step < 4) {
+            if (!exploreListAdapter.containsKey(step))
+                exploreListAdapter.put(step, new ExploreListAdapter(this, this.sortTypes[step],null, getString(exploreListHeaders[step]), joined_hives, expandedHiveDescriptionButtonClickListener));
 
-        ListView listView = (ListView)(this.slidingPanel.getViewByStep(step).findViewById(R.id.explore_list_listView));
-        if (listView.getAdapter() == null) {
-            LayoutInflater inflater = getLayoutInflater();
-            ViewGroup header = (ViewGroup) inflater.inflate(R.layout.explore_hive_card, listView, false);
-            ((TextView)header.findViewById(R.id.explore_title)).setText(this.exploreListHeaders[step]);
-            listView.addHeaderView(header);
-            listView.setAdapter(listAdapter);
+            ExploreListAdapter listAdapter = exploreListAdapter.get(step);
+            ListView listView = (ListView) (this.slidingPanel.getViewByStep(step).findViewById(R.id.explore_list_listView));
+            listAdapter.setListView(listView);
+        } else if (step == 4) {
+            if (exploreCategoriesListAdapter == null)
+                exploreCategoriesListAdapter = new ExploreCategoriesListAdapter(this,categoryClickListener);
+
+            GridView gridView = (GridView)(this.slidingPanel.getViewByStep(step).findViewById(R.id.explore_categories_list_gridView));
+            exploreCategoriesListAdapter.setGridView(gridView);
         }
     }
 
     private void Initialize(){
+        this.exploreListAdapter = new HashMap<Integer,ExploreListAdapter>();
+        this.joined_hives = new HashMap<String,Boolean>();
+        this.joined = 0;
+        this.activeList = 0;
+
         this.exploreListHeaders = new int[] { R.string.explore_outstanding_hives, R.string.explore_hives_by_date, R.string.explore_trending_hives, R.string.explore_hives_by_users };
         this.tabButtonIDs = new int[] {R.id.explore_tab_list_favourites_button,R.id.explore_tab_list_location_button,R.id.explore_tab_list_recent_button,R.id.explore_tab_list_trending_button,R.id.explore_button_categories };
+        this.sortTypes = new com.chattyhive.backend.businessobjects.Explore.SortType[] {com.chattyhive.backend.businessobjects.Explore.SortType.OUTSTANDING, com.chattyhive.backend.businessobjects.Explore.SortType.CREATION_DATE, com.chattyhive.backend.businessobjects.Explore.SortType.TRENDING, com.chattyhive.backend.businessobjects.Explore.SortType.USERS };
         this.controller = Controller.GetRunningController();
-
-        this.controller.exploreHives(0,9, Controller.ExploreType.OUTSTANDING);
-        this.controller.exploreHives(0,9, Controller.ExploreType.CREATION_DATE);
-        this.controller.exploreHives(0,9, Controller.ExploreType.TRENDING);
-        this.controller.exploreHives(0,9, Controller.ExploreType.USERS);
 
         this.slidingPanel = (SlidingStepsLayout)findViewById(R.id.explore_slidingsteps);
         this.slidingPanel.setOnTransitionListener(onTransitionListener);
-        this.lastOffset = 0;
-
-        this.exploreListAdapter_list0 = new ExploreListAdapter(this,this.controller.getExploreHives(Controller.ExploreType.OUTSTANDING),goToPublicChat);
-        this.exploreListAdapter_list1 = new ExploreListAdapter(this,this.controller.getExploreHives(Controller.ExploreType.CREATION_DATE),goToPublicChat);
-        this.exploreListAdapter_list2 = new ExploreListAdapter(this,this.controller.getExploreHives(Controller.ExploreType.TRENDING),goToPublicChat);
-        this.exploreListAdapter_list3 = new ExploreListAdapter(this,this.controller.getExploreHives(Controller.ExploreType.USERS),goToPublicChat);
-
-        this.controller.ExploreHivesListChange.add(new EventHandler<EventArgs>(exploreListAdapter_list0, "OnAddItem", EventArgs.class));
-        this.controller.ExploreHivesListChange.add(new EventHandler<EventArgs>(exploreListAdapter_list1, "OnAddItem", EventArgs.class));
-        this.controller.ExploreHivesListChange.add(new EventHandler<EventArgs>(exploreListAdapter_list2, "OnAddItem", EventArgs.class));
-        this.controller.ExploreHivesListChange.add(new EventHandler<EventArgs>(exploreListAdapter_list3, "OnAddItem", EventArgs.class));
 
         this.controller.HiveJoined.add(new EventHandler<EventArgs>(this,"onHiveJoined", EventArgs.class));
 
@@ -109,46 +88,20 @@ public class Explore extends Activity {
         this.findViewById(R.id.explore_tab_list_location_button).setOnClickListener(this.time);
         this.findViewById(R.id.explore_tab_list_recent_button).setOnClickListener(this.trending);
         this.findViewById(R.id.explore_tab_list_trending_button).setOnClickListener(this.users);
-
         this.findViewById(R.id.explore_new_hive_button).setOnClickListener(this.new_hive_button_click);
 
         setTabStatus(0);
 
         loadListView(0);
         loadListView(1);
-    }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode) {
-            case OP_CODE_NEW_HIVE:
-                if (resultCode == RESULT_OK){
-                    this.setResult(OP_SHOW_HIVES);
-                    this.finish();
-                }
-                break;
-        }
+        exploreListAdapter.get(0).setActive(true);
     }
-
-    public void GetMoreHives() {
-        this.lastOffset += 9;
-        this.controller.exploreHives(this.lastOffset,9, Controller.ExploreType.OUTSTANDING);
-        //findViewById(R.id.explore_tab_list_favourites_button).setBackgroundResource(R.drawable.explore_tab_list_border);
-    }
-
-    protected View.OnClickListener new_hive_button_click = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            System.out.println("NEW HIVE!!!!");
-            Intent intent = new Intent(getApplicationContext(),NewHive.class);
-            startActivityForResult(intent, OP_CODE_NEW_HIVE);
-        }
-    };
 
     protected OnTransitionListener onTransitionListener = new OnTransitionListener() {
         @Override
         public boolean OnBeginTransition(int actualStep, int nextStep) {
-            if (nextStep < 4)
+            if (nextStep < 5)
                 loadListView(nextStep);
 
             return true;
@@ -156,17 +109,23 @@ public class Explore extends Activity {
 
         @Override
         public void OnDuringTransition(int[] visibleSteps, float[] visibilityAmount) {
-            setTabStatus(visibleSteps,visibilityAmount);
+            //setTabStatus(visibleSteps,visibilityAmount);
         }
 
         @Override
         public void OnEndTransition(int actualStep, int previousStep) {
             setTabStatus(actualStep);
 
-           /* if ((actualStep > previousStep) && (actualStep < 3))
-                loadListView(actualStep+1);
-            else if ((actualStep < previousStep) && (actualStep > 0))
-                loadListView(actualStep-1);*/
+            if ((previousStep == 4) && (actualStep != 4))
+                headerBackButton.onClick(null);
+
+            if (activeList < 4)
+                exploreListAdapter.get(activeList).setActive(false);
+
+            activeList = actualStep;
+
+            if (activeList < 4)
+                exploreListAdapter.get(activeList).setActive(true);
         }
     };
 
@@ -175,11 +134,11 @@ public class Explore extends Activity {
             int index = IndexOfInt(i,visibleSteps);
             if (index > -1) {
                 findViewById(this.tabButtonIDs[i]).setBackgroundResource(R.drawable.explore_tab_list_border);
-                float alpha = ((1f - 0.25f)*visibilityAmount[index]) + 0.25f;
+                float alpha = ((1f - 0.75f)*visibilityAmount[index]) + 0.75f;
                 StaticMethods.SetAlpha(findViewById(this.tabButtonIDs[i]),alpha);
             } else {
                 findViewById(this.tabButtonIDs[i]).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
-                StaticMethods.SetAlpha(findViewById(this.tabButtonIDs[i]),0.25f);
+                StaticMethods.SetAlpha(findViewById(this.tabButtonIDs[i]),0.75f);
             }
         }
     }
@@ -195,7 +154,7 @@ public class Explore extends Activity {
                 StaticMethods.SetAlpha(findViewById(this.tabButtonIDs[i]),1f);
             } else {
                 findViewById(this.tabButtonIDs[i]).setBackgroundResource(R.drawable.explore_tab_list_no_selected_border);
-                StaticMethods.SetAlpha(findViewById(this.tabButtonIDs[i]),0.25f);
+                StaticMethods.SetAlpha(findViewById(this.tabButtonIDs[i]),0.75f);
             }
         }
     }
@@ -209,16 +168,51 @@ public class Explore extends Activity {
         }
     };
 
-    protected View.OnClickListener goToPublicChat = new View.OnClickListener() {
+    protected View.OnClickListener expandedHiveDescriptionButtonClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             Hive hive = (Hive)v.getTag(R.id.BO_Hive);
 
-            Intent data = new Intent();
-            data.putExtra("NameURL",hive.getNameUrl());
-            setResult(RESULT_OK,data);
+            if (!joined_hives.containsKey(hive.getNameUrl())) {
+                controller.JoinHive(hive);
+                joined_hives.put(hive.getNameUrl(),false);
+                if (activeList < 4)
+                    exploreListAdapter.get(activeList).notifyDataSetChanged();
+                else if (activeList == 4)
+                    exploreFilteredListAdapter.notifyDataSetChanged();
+            } else if (joined_hives.get(hive.getNameUrl())) {
+                Intent data = new Intent();
+                data.putExtra("NameURL", hive.getNameUrl());
+                setResult(RESULT_OK, data);
+                finish();
+            }
+        }
+    };
 
-            finish();
+    protected View.OnClickListener categoryClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Category category = (Category)v.getTag(R.id.BO_Category);
+
+            if (category != null) {
+                exploreFilteredListAdapter = new ExploreListAdapter(exploreCategoriesListAdapter.getContext(), sortTypes[1],category.getGroupCode(), getString(category.getCategoryNameResID()), joined_hives, expandedHiveDescriptionButtonClickListener);
+                ListView listView = (ListView) (slidingPanel.getViewByStep(4).findViewById(R.id.explore_list_listView));
+                exploreFilteredListAdapter.setListView(listView);
+                exploreFilteredListAdapter.setHeaderBackButtonClickListener(headerBackButton);
+                exploreFilteredListAdapter.setActive(true);
+                ((ViewSwitcher)slidingPanel.getViewByStep(4).findViewById(R.id.explore_categories_view_switcher)).showNext();
+            }
+        }
+    };
+
+    protected View.OnClickListener headerBackButton = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (exploreFilteredListAdapter != null) {
+                exploreFilteredListAdapter = null;
+                ((ViewSwitcher)slidingPanel.getViewByStep(4).findViewById(R.id.explore_categories_view_switcher)).showPrevious();
+                ((ListView)slidingPanel.getViewByStep(4).findViewById(R.id.explore_list_listView)).setAdapter(null);
+            }
         }
     };
 
@@ -256,10 +250,48 @@ public class Explore extends Activity {
         public void onClick(View v) {
             //GOTO STEP 4:
             slidingPanel.openStep(4);
+            headerBackButton.onClick(v);
         }
     };
 
-    public void onHiveJoined(Object sender,EventArgs eventArgs) {
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case Main.OP_CODE_NEW_HIVE:
+                if (resultCode == RESULT_OK){
+                    this.setResult(RESULT_OK);
+                    this.finish();
+                }
+                break;
+        }
+    }
+
+    protected View.OnClickListener new_hive_button_click = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Intent intent = new Intent(getApplicationContext(),NewHive.class);
+            startActivityForResult(intent, Main.OP_CODE_NEW_HIVE);
+        }
+    };
+
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
+            if ((event.getAction() == KeyEvent.ACTION_DOWN) && (event.getRepeatCount() == 0)) {
+                if ((activeList == 4) && (exploreFilteredListAdapter != null)) { // Tell the framework to start tracking this event.
+                    return true;
+                }
+            } else if (event.getAction() == KeyEvent.ACTION_UP) {
+                if (!event.isCanceled() && (exploreFilteredListAdapter != null)) {
+                    headerBackButton.onClick(null);
+                    return true;
+                }
+            }
+        }
+        return super.dispatchKeyEvent(event);
+    }
+
+    public void onHiveJoined(final Object sender,EventArgs eventArgs) {
         this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -271,23 +303,44 @@ public class Explore extends Activity {
                 joined++;
                 ((TextView)findViewById(R.id.explore_action_bar_number_text)).setText(String.valueOf(joined));
 
+                if (sender instanceof Hive) {
+                    joined_hives.put(((Hive) sender).getNameUrl(),true);
+                    if (activeList < 4)
+                        exploreListAdapter.get(activeList).syncNotifyDataSetChanged();
+                    else if (activeList == 4)
+                        exploreFilteredListAdapter.syncNotifyDataSetChanged();
+                }
+
             }
         });
     }
 
     @Override
     protected void onDestroy(){
-        this.controller.ExploreHivesListChange.remove(new EventHandler<EventArgs>(exploreListAdapter_list0, "OnAddItem", EventArgs.class));
-        this.controller.ExploreHivesListChange.remove(new EventHandler<EventArgs>(exploreListAdapter_list1, "OnAddItem", EventArgs.class));
-        this.controller.ExploreHivesListChange.remove(new EventHandler<EventArgs>(exploreListAdapter_list2, "OnAddItem", EventArgs.class));
-        this.controller.ExploreHivesListChange.remove(new EventHandler<EventArgs>(exploreListAdapter_list3, "OnAddItem", EventArgs.class));
         this.controller.HiveJoined.remove(new EventHandler<EventArgs>(this, "onHiveJoined", EventArgs.class));
 
-        exploreListAdapter_list0 = null;
-        exploreListAdapter_list1 = null;
-        exploreListAdapter_list2 = null;
-        exploreListAdapter_list3 = null;
+        exploreListAdapter.clear();
         controller = null;
         super.onDestroy();
+    }
+
+    @Override
+    public void onLowMemory () {
+
+    }
+
+    @Override
+    public void onTrimMemory (int level) {
+        if (level >= TRIM_MEMORY_COMPLETE) {
+            this.onLowMemory();
+        } else {
+            if (level >= TRIM_MEMORY_UI_HIDDEN) {
+
+            } else if (level >= TRIM_MEMORY_BACKGROUND) {
+
+            } else if (level >= TRIM_MEMORY_MODERATE) {
+
+            }
+        }
     }
 }

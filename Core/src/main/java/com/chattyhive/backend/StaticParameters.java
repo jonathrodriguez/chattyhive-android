@@ -28,6 +28,13 @@ public final class StaticParameters {
     public static final int MaxLocalMessages = -1; //Maximum number of local stored messages. Any negative number indicates to save all messages. 0 indicates to not use local storage. Any positive number is interpreted as the exact number of messages to save.
     public static final int NumberMessagesQuery = 4; //Number of message to retrieve at each query. Default value will be 100.
 
+    /*******************************************************************************************/
+
+    public static final int ExploreStart = 20;
+    public static final int ExploreCount = 9;
+
+    /*******************************************************************************************/
+
     /**
      * This method provides a string with a UserAgent to be set in http/https connections. This string provides information about application version and server version supported.
      * In future server versions, this string MAY be get into account to provide responses according to supported version.

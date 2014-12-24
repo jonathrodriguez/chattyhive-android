@@ -91,7 +91,8 @@
                 android:paddingRight="6dp"
                 android:textColor="@android:color/black"
                 android:textColorHint="#808080"
-                android:textSize="16dp" />
+                android:textSize="16dp"
+                android:id="@+id/new_hive_name" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -108,7 +109,8 @@
                         android:layout_height="93dp"
                         android:layout_marginRight="10dp"
                         android:layout_weight="0.5"
-                        android:src="@drawable/explore_new_hive_hive_without_picture" />
+                        android:src="@drawable/explore_new_hive_hive_without_picture"
+                        android:id="@+id/new_hive_image" />
                 </RelativeLayout>
 
                 <EditText
@@ -123,7 +125,8 @@
                     android:paddingTop="9dp"
                     android:textColor="@android:color/black"
                     android:textColorHint="#808080"
-                    android:textSize="14.5dp" />
+                    android:textSize="14.5dp"
+                    android:id="@+id/new_hive_description" />
             </LinearLayout>
 
             <LinearLayout
@@ -180,7 +183,8 @@
                         android:paddingRight="6dp"
                         android:textColor="@android:color/black"
                         android:textColorHint="#808080"
-                        android:textSize="13.5dp" />
+                        android:textSize="13.5dp"
+                        android:id="@+id/new_hive_tags" />
 
                     <EditText
                         android:layout_width="match_parent"
@@ -193,7 +197,7 @@
                         android:paddingRight="6dp"
                         android:textColor="@android:color/black"
                         android:textColorHint="#808080"
-                        android:textSize="13.5dp" />
+                        android:textSize="13.5dp"/>
                 </LinearLayout>
 
                 <LinearLayout
@@ -234,7 +238,8 @@
                         android:paddingRight="6dp"
                         android:textColor="@android:color/black"
                         android:textColorHint="#808080"
-                        android:textSize="13.5dp" />
+                        android:textSize="13.5dp"
+                        android:id="@+id/new_hive_languages" />
 
                     <EditText
                         android:layout_width="match_parent"
@@ -247,7 +252,8 @@
                         android:paddingRight="6dp"
                         android:textColor="@android:color/black"
                         android:textColorHint="#808080"
-                        android:textSize="13.5dp" />
+                        android:textSize="13.5dp"
+                        android:id="@+id/new_hive_category" />
                 </LinearLayout>
             </LinearLayout>
 

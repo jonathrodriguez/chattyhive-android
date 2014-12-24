@@ -597,62 +597,65 @@ public class SlidingStepsLayout extends ViewGroup {
             if (this.scroller.computeScrollOffset()) {
                 setCurrentPosition(this.scroller.getCurrX());
             } else {
-                int previousStep = this.actualStep;
-                this.scrolling = false;
-
-                if (this.directDestination > -1)
-                    this.actualStep = this.directDestination;
-                else if (this.actualPosition > 0)
-                    this.actualStep++;
-                else if (this.actualPosition < 0)
-                    this.actualStep--;
-
-                this.setActualPosition(0);
-
-                if (this.transitionListener != null)
-                    this.transitionListener.OnEndTransition(this.actualStep,previousStep);
-
-                if (this.directDestination > -1) {
-                    int[] steps = new int[this.numberSteps];
-
-                    steps[previousStep]--;
-
-                    if (previousStep > 0)
-                        steps[previousStep-1]--;
-
-                    if (previousStep < (this.numberSteps-1))
-                        steps[previousStep+1]--;
-
-                    if (this.actualStep > 0)
-                        steps[this.actualStep-1]++;
-
-                    if (this.actualStep < (this.numberSteps-1))
-                        steps[this.actualStep+1]++;
-
-                    for (int i=0; i < this.numberSteps; i++)
-                        if (steps[i] > 0)
-                            this.inflateChild(i);
-                        else if (steps[i] < 0)
-                            this.removeChild(i);
-
-                } else if (this.actualStep > previousStep) {
-                    if (this.actualStep < (this.numberSteps-1))
-                        this.inflateChild(this.actualStep+1);
-
-                    if (this.actualStep > 1)
-                        this.removeChild(this.actualStep-2);
-
-                } else if (this.actualStep < previousStep) {
-                    if (this.actualStep > 0)
-                        this.inflateChild(this.actualStep-1);
-
-                    if (this.actualStep < (this.numberSteps-1))
-                        this.removeChild(this.actualStep+2);
-                }
-
-                this.directDestination = -1;
+                this.finishScroll();
             }
         }
+    }
+    protected void finishScroll() {
+        int previousStep = this.actualStep;
+        this.scrolling = false;
+
+        if (this.directDestination > -1)
+            this.actualStep = this.directDestination;
+        else if (this.actualPosition > 0)
+            this.actualStep++;
+        else if (this.actualPosition < 0)
+            this.actualStep--;
+
+        this.setActualPosition(0);
+
+        if (this.transitionListener != null)
+            this.transitionListener.OnEndTransition(this.actualStep,previousStep);
+
+        if (this.directDestination > -1) {
+            int[] steps = new int[this.numberSteps];
+
+            steps[previousStep]--;
+
+            if (previousStep > 0)
+                steps[previousStep-1]--;
+
+            if (previousStep < (this.numberSteps-1))
+                steps[previousStep+1]--;
+
+            if (this.actualStep > 0)
+                steps[this.actualStep-1]++;
+
+            if (this.actualStep < (this.numberSteps-1))
+                steps[this.actualStep+1]++;
+
+            for (int i=0; i < this.numberSteps; i++)
+                if (steps[i] > 0)
+                    this.inflateChild(i);
+                else if (steps[i] < 0)
+                    this.removeChild(i);
+
+        } else if (this.actualStep > previousStep) {
+            if (this.actualStep < (this.numberSteps-1))
+                this.inflateChild(this.actualStep+1);
+
+            if (this.actualStep > 1)
+                this.removeChild(this.actualStep-2);
+
+        } else if (this.actualStep < previousStep) {
+            if (this.actualStep > 0)
+                this.inflateChild(this.actualStep-1);
+
+            if (this.actualStep < (this.numberSteps-1))
+                this.removeChild(this.actualStep+2);
+        }
+
+        this.directDestination = -1;
     }
     protected void setActualPosition(float newPosition) {
         this.actualPosition = newPosition;//saturateNewPosition(newPosition);
@@ -729,11 +732,16 @@ public class SlidingStepsLayout extends ViewGroup {
     }
     protected void movePanels (float distance, int duration) {
         int animationDuration = Math.min(duration, this.maxAnimationDuration);
-        float finalDistance = saturateNewPosition(this.actualPosition+distance) - this.actualPosition;
         this.scroller.abortAnimation();
-        this.scrolling = true;
-        this.scroller.startScroll(Math.round(this.actualPosition), 0, Math.round(finalDistance), 0, animationDuration);
-        invalidate();
+        if (animationDuration > 0) {
+            float finalDistance = saturateNewPosition(this.actualPosition + distance) - this.actualPosition;
+            this.scrolling = true;
+            this.scroller.startScroll(Math.round(this.actualPosition), 0, Math.round(finalDistance), 0, animationDuration);
+            invalidate();
+        } else {
+            movePanels(distance);
+            this.finishScroll();
+        }
     }
 
     public void openPrevious() {
@@ -877,7 +885,10 @@ public class SlidingStepsLayout extends ViewGroup {
                 if (!moving) { // test if we have to move
                     float deltaX = x-this.StartEventX;
                     float deltaY = y-this.StartEventY;
-                    if ((Math.abs(deltaX) > Math.abs(deltaY)) && (Math.abs(deltaX) > this.actionMoveThreshold)) {
+                    if (((Math.abs(deltaX) > Math.abs(deltaY)) && (Math.abs(deltaX) > this.actionMoveThreshold)) &&
+                        (((this.actualStep == 0) && (deltaX < 0)) ||
+                         ((this.actualStep == (this.numberSteps - 1)) && (deltaX > 0)) ||
+                         ((this.actualStep > 0) && (this.actualStep < (this.numberSteps - 1))))) {
                         moving = true;
                         getParent().requestDisallowInterceptTouchEvent(true);
                         this.transitionListener.OnBeginTransition(this.actualStep,((deltaX < 0)?this.actualStep+1:this.actualStep-1));
@@ -906,7 +917,10 @@ public class SlidingStepsLayout extends ViewGroup {
                 if (!moving) { // test if we have to move
                     float deltaX = x-this.StartEventX;
                     float deltaY = y-this.StartEventY;
-                    if ((Math.abs(deltaX) > Math.abs(deltaY)) && (Math.abs(deltaX) > this.actionMoveThreshold)) {
+                    if (((Math.abs(deltaX) > Math.abs(deltaY)) && (Math.abs(deltaX) > this.actionMoveThreshold)) &&
+                        (((this.actualStep == 0) && (deltaX < 0)) ||
+                         ((this.actualStep == (this.numberSteps - 1)) && (deltaX > 0)) ||
+                         ((this.actualStep > 0) && (this.actualStep < (this.numberSteps - 1))))) {
 
                         this.transitionListener.OnBeginTransition(this.actualStep,((deltaX < 0)?this.actualStep+1:this.actualStep-1));
                         this.movementDirection = ((deltaX < 0)?1:-1);
@@ -943,7 +957,10 @@ public class SlidingStepsLayout extends ViewGroup {
                     } else { //show actual
                         finalPosition = 0;
                     }
-                    if (!moving) {
+                    if ((!moving)  &&
+                       (((this.actualStep == 0) && ((x-this.StartEventX) < 0)) ||
+                            ((this.actualStep == (this.numberSteps - 1)) && ((x-this.StartEventX) > 0)) ||
+                            ((this.actualStep > 0) && (this.actualStep < (this.numberSteps - 1))))) {
                         this.transitionListener.OnBeginTransition(this.actualStep,(((x-this.StartEventX) < 0)?this.actualStep+1:this.actualStep-1));
                         this.movementDirection = (((x-this.StartEventX) < 0)?1:-1);
                     }

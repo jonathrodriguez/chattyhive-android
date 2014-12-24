@@ -28,6 +28,8 @@ public class HIVE extends Format {
     public Date CREATION_DATE;
     public CHAT PUBLIC_CHAT;
     public ArrayList<String> TAGS;
+    public ArrayList<String> CHAT_LANGUAGES;
+    public Integer SUBSCRIBED_USERS;
     
 
     public HIVE() {
@@ -74,12 +76,12 @@ public class HIVE extends Format {
                 jsonObject.add("PUBLIC_CHAT",jsonElement);
         }
       else
-            jsonObject.add("PUBLIC_CHAT", JsonNull.INSTANCE);        
-        if (this.TAGS != null) {
+            jsonObject.add("PUBLIC_CHAT", JsonNull.INSTANCE);
+
+      if (this.TAGS != null) {
             JsonArray jsonArray = new JsonArray();
             for (String element : this.TAGS) {
-                JsonElement jsonElement =   new JsonPrimitive(element)
-  ;
+                JsonElement jsonElement =   new JsonPrimitive(element);
                 if (!jsonElement.isJsonNull())
                     jsonArray.add(jsonElement);
             }
@@ -90,8 +92,28 @@ public class HIVE extends Format {
                 jsonObject.add("TAGS", JsonNull.INSTANCE);
         }
       else
-            jsonObject.add("TAGS", JsonNull.INSTANCE);        
-      
+            jsonObject.add("TAGS", JsonNull.INSTANCE);
+
+        if (this.CHAT_LANGUAGES != null) {
+            JsonArray jsonArray = new JsonArray();
+            for (String element : this.CHAT_LANGUAGES) {
+                JsonElement jsonElement =   new JsonPrimitive(element);
+                if (!jsonElement.isJsonNull())
+                    jsonArray.add(jsonElement);
+            }
+
+            if (jsonArray.size() > 0)
+                jsonObject.add("CHAT_LANGUAGES",jsonArray);
+            else
+                jsonObject.add("CHAT_LANGUAGES", JsonNull.INSTANCE);
+        }
+        else
+            jsonObject.add("CHAT_LANGUAGES", JsonNull.INSTANCE);
+
+        if (this.SUBSCRIBED_USERS != null)
+            jsonObject.addProperty("SUBSCRIBED_USERS",this.SUBSCRIBED_USERS);
+        else
+            jsonObject.add("SUBSCRIBED_USERS", JsonNull.INSTANCE);
 
         if (jsonObject.entrySet().isEmpty())
             return JsonNull.INSTANCE;
@@ -148,10 +170,20 @@ public class HIVE extends Format {
             this.TAGS = new ArrayList<String>();
             JsonArray array = property.getAsJsonArray();
             for (JsonElement jsonElement : array)
-                this.TAGS.add(  jsonElement.getAsString()
-      );
+                this.TAGS.add(  jsonElement.getAsString() );
         }
-        
+
+        property = object.get("CHAT_LANGUAGES");
+        if ((property != null) && (property.isJsonArray())) {
+            this.CHAT_LANGUAGES = new ArrayList<String>();
+            JsonArray array = property.getAsJsonArray();
+            for (JsonElement jsonElement : array)
+                this.CHAT_LANGUAGES.add(  jsonElement.getAsString() );
+        }
+
+        property = object.get("SUBSCRIBED_USERS");
+        if ((property != null) && (property.isJsonPrimitive()) && (!property.isJsonNull()))
+            this.SUBSCRIBED_USERS = property.getAsInt();
       
     }
 }

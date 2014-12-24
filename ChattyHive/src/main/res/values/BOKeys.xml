@@ -5,4 +5,5 @@
     <item type="id" name="BO_Chat"/>
     <item type="id" name="BO_Mate"/>
     <item type="id" name="BO_Message"/>
+    <item type="id" name="BO_Category"/>
 </resources>
