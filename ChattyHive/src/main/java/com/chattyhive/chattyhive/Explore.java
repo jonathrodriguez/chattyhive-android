@@ -21,7 +21,9 @@ import com.chattyhive.chattyhive.framework.CustomViews.ViewGroup.SlidingStepsLay
 import com.chattyhive.chattyhive.framework.Util.StaticMethods;
 import com.chattyhive.chattyhive.util.Category;
 
+import java.util.Date;
 import java.util.HashMap;
+import java.util.TreeMap;
 
 public class Explore extends Activity {
 
@@ -41,6 +43,9 @@ public class Explore extends Activity {
     ExploreListAdapter exploreFilteredListAdapter;
 
     HashMap<String,Boolean> joined_hives;
+
+    TreeMap<Date,Integer> LRU_date;
+    TreeMap<Integer,Date> LRU_step;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,10 +72,16 @@ public class Explore extends Activity {
     }
 
     private void Initialize(){
+        this.LRU_date = new TreeMap<Date, Integer>();
+        this.LRU_step = new TreeMap<Integer, Date>();
+
         this.exploreListAdapter = new HashMap<Integer,ExploreListAdapter>();
         this.joined_hives = new HashMap<String,Boolean>();
         this.joined = 0;
         this.activeList = 0;
+
+        this.LRU_step.put(this.activeList,new Date());
+        this.LRU_date.put(this.LRU_step.get(this.activeList),this.activeList);
 
         this.exploreListHeaders = new int[] { R.string.explore_outstanding_hives, R.string.explore_hives_by_date, R.string.explore_trending_hives, R.string.explore_hives_by_users };
         this.tabButtonIDs = new int[] {R.id.explore_tab_list_favourites_button,R.id.explore_tab_list_location_button,R.id.explore_tab_list_recent_button,R.id.explore_tab_list_trending_button,R.id.explore_button_categories };
@@ -115,6 +126,12 @@ public class Explore extends Activity {
         @Override
         public void OnEndTransition(int actualStep, int previousStep) {
             setTabStatus(actualStep);
+
+            if (LRU_step.containsKey(actualStep))
+                LRU_date.remove(LRU_step.get(actualStep));
+
+            LRU_step.put(actualStep,new Date());
+            LRU_date.put(LRU_step.get(actualStep),actualStep);
 
             if ((previousStep == 4) && (actualStep != 4))
                 headerBackButton.onClick(null);
@@ -324,9 +341,31 @@ public class Explore extends Activity {
         super.onDestroy();
     }
 
+    protected void unloadList(int list) {
+        if (list < 4) {
+            if (exploreListAdapter.containsKey(list))
+                exploreListAdapter.get(list).Clear();
+            exploreListAdapter.remove(list);
+        } else if (list == 4) {
+            if (exploreCategoriesListAdapter != null) {
+                exploreCategoriesListAdapter.Clear();
+                exploreCategoriesListAdapter = null;
+            }
+            if (exploreFilteredListAdapter != null) {
+                exploreFilteredListAdapter.Clear();
+                exploreFilteredListAdapter = null;
+            }
+        }
+
+        this.LRU_date.remove(this.LRU_step.get(list));
+        this.LRU_step.remove(list);
+    }
+
     @Override
     public void onLowMemory () {
-
+        Log.w("Explore - Trim Memory","TRIM_MEMORY_COMPLETE");
+        for (Integer list : this.LRU_date.values())
+            unloadList(list);
     }
 
     @Override
@@ -334,12 +373,16 @@ public class Explore extends Activity {
         if (level >= TRIM_MEMORY_COMPLETE) {
             this.onLowMemory();
         } else {
-            if (level >= TRIM_MEMORY_UI_HIDDEN) {
+            /*if (level >= TRIM_MEMORY_UI_HIDDEN) {
 
-            } else if (level >= TRIM_MEMORY_BACKGROUND) {
-
+            } else*/ if (level >= TRIM_MEMORY_BACKGROUND) {
+                Log.w("Explore - Trim Memory","TRIM_MEMORY_BACKGROUND");
+                while (this.LRU_date.firstEntry().getValue() != this.activeList)
+                    unloadList(this.LRU_date.firstEntry().getValue());
             } else if (level >= TRIM_MEMORY_MODERATE) {
-
+                Log.w("Explore - Trim Memory","TRIM_MEMORY_MODERATE");
+                while (this.LRU_date.size() > 2)
+                    unloadList(this.LRU_date.firstEntry().getValue());
             }
         }
     }

@@ -134,6 +134,14 @@ public class ExploreListAdapter extends BaseAdapter implements AbsListView.OnScr
         });
     }
 
+    public void syncNotifyDataSetInvalidated() {
+        ((Activity)this.context).runOnUiThread(new Runnable(){
+            public void run() {
+                notifyDataSetInvalidated();
+            }
+        });
+    }
+
     public ExploreListAdapter (Context context, Explore.SortType sortType, String categoryCode, String exploreListHeader, HashMap<String,Boolean> joined_hives, View.OnClickListener expandedHiveDescriptionButtonClickListener) {
         this.expanded_hive = -1;
         this.scroll_position = -1;
@@ -153,6 +161,15 @@ public class ExploreListAdapter extends BaseAdapter implements AbsListView.OnScr
         this.explore.onMoreResults.add(new EventHandler<EventArgs>(this,"OnAddItem",EventArgs.class));
         this.hives_list_data = new ArrayList<Hive>(this.explore.getResults());
         this.setListView(null);
+    }
+
+    public void Clear() {
+        this.hives_list_data.clear();
+        this.syncNotifyDataSetInvalidated();
+
+        if (this.listView != null)
+            this.listView.setAdapter(null);
+        this.listView = null;
     }
 
     @Override

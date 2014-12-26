@@ -49,6 +49,23 @@ public class ExploreCategoriesListAdapter extends BaseAdapter {
        // this.categories.put(new Category(R.string.communities,R.drawable.category_19_00),null); //Add communities to list
     }
 
+    public void Clear() {
+        this.categories.clear();
+        this.syncNotifyDataSetInvalidated();
+
+        if (this.gridView != null)
+            this.gridView.setAdapter(null);
+        this.gridView = null;
+    }
+
+    public void syncNotifyDataSetInvalidated() {
+        ((Activity)this.context).runOnUiThread(new Runnable(){
+            public void run() {
+                notifyDataSetInvalidated();
+            }
+        });
+    }
+
     @Override
     public int getCount() {
         return this.categories.size();
