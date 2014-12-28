@@ -14,6 +14,8 @@
         </attr>
     </declare-styleable>
 
+    <item type="id" name="FloatingPanelCenterCoverID"/>
+
     <declare-styleable name="FloatingPanel">
         <attr name="centerMainPanelLeftVisibleWidth" format="dimension" />
         <attr name="centerActionBarLeftVisibleWidth" format="dimension" />
@@ -28,6 +30,10 @@
         <attr name="maxRightPanelWidth" format="dimension"/>
 
         <attr name="allowSwipeToMovePanels" format="boolean"/>
+        <attr name="leftSwipeCheckMainBoundaries" format="boolean"/>
+        <attr name="rightSwipeCheckMainBoundaries" format="boolean"/>
+
+        <attr name="centerMainPanelCoverColor" format="color"/>
 
         <attr name="maxAnimationDuration" format="integer" />
         <attr name="buttonPressedAnimationDuration" format="integer" />
