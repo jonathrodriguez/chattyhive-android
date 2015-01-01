@@ -35,6 +35,9 @@ public class RightPanel2{
         this.InitializeComponent();
         ((Activity)this.context).findViewById(R.id.right_panel_action_bar).setOnClickListener((new Profile(this.context)).open_profile);
         ((Main)this.context).controller.LocalUserReceived.add(new EventHandler<EventArgs>(this, "onLocalUserLoaded", EventArgs.class));
+        if (((Main)this.context).controller.getMe() != null)
+            this.onLocalUserLoaded(((Main)this.context).controller.getMe(),EventArgs.Empty());
+
         listView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
             @Override
             public void onGroupExpand(int groupPosition) {
