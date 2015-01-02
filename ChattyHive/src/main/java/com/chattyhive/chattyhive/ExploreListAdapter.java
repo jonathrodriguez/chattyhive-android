@@ -3,7 +3,6 @@ package com.chattyhive.chattyhive;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.BitmapFactory;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,6 +35,7 @@ public class ExploreListAdapter extends BaseAdapter implements AbsListView.OnScr
     private Controller controller;
     private String exploreListHeader;
     private Explore.SortType sortType;
+    private String categoryCode;
 
     private Explore explore;
     private ArrayList<Hive> hives_list_data;
@@ -48,12 +48,27 @@ public class ExploreListAdapter extends BaseAdapter implements AbsListView.OnScr
         this.listView = listView;
         if (this.listView == null) return;
 
-        ViewGroup header = (ViewGroup) this.inflater.inflate(R.layout.explore_hive_card, this.listView, false);
-        ((TextView)header.findViewById(R.id.explore_title)).setText(this.exploreListHeader);
-        listView.addHeaderView(header);
+        try {
+            if (listView.getHeaderViewsCount() <= 0) {
+                ViewGroup header = (ViewGroup) this.inflater.inflate(R.layout.explore_list_header, this.listView, false);
+                listView.addHeaderView(header);
+            }
+        } catch (Exception e) { }
 
-        ViewGroup footer = (ViewGroup) this.inflater.inflate(R.layout.explore_list_overscroll_footer, this.listView, false);
-        listView.addFooterView(footer);
+        ((TextView) this.listView.findViewById(R.id.explore_list_header_text)).setText(this.exploreListHeader);
+
+        ImageView headerBackButton = (ImageView)this.listView.findViewById(R.id.explore_list_header_back_button);
+        if (headerBackButton != null) {
+            headerBackButton.setOnClickListener(this.headerBackButtonClickListener);
+            headerBackButton.setVisibility((this.headerBackButtonClickListener != null)?View.VISIBLE:View.GONE);
+        }
+
+        try {
+            if (listView.getFooterViewsCount() <= 0) {
+                ViewGroup footer = (ViewGroup) this.inflater.inflate(R.layout.explore_list_footer, this.listView, false);
+                listView.addFooterView(footer);
+            }
+        } catch (Exception e) { }
 
         if (explore.HasMore()) {
             listView.findViewById(R.id.explore_list_overscroll_footer_loading_panel).setVisibility(View.VISIBLE);
@@ -75,6 +90,18 @@ public class ExploreListAdapter extends BaseAdapter implements AbsListView.OnScr
     public void SetPublicChatClickListener(View.OnClickListener listener) {
         this.expandedHiveDescriptionButtonClickListener = listener;
         syncNotifyDataSetChanged();
+    }
+
+    private View.OnClickListener headerBackButtonClickListener;
+    public void setHeaderBackButtonClickListener (View.OnClickListener headerBackButtonClickListener) {
+        this.headerBackButtonClickListener = headerBackButtonClickListener;
+        if (this.listView != null) {
+            ImageView headerBackButton = (ImageView)this.listView.findViewById(R.id.explore_list_header_back_button);
+            if (headerBackButton != null) {
+                headerBackButton.setOnClickListener(this.headerBackButtonClickListener);
+                headerBackButton.setVisibility((this.headerBackButtonClickListener != null)?View.VISIBLE:View.GONE);
+            }
+        }
     }
 
     private Boolean active;
@@ -107,10 +134,19 @@ public class ExploreListAdapter extends BaseAdapter implements AbsListView.OnScr
         });
     }
 
-    public ExploreListAdapter (Context context, Explore.SortType sortType, String exploreListHeader, HashMap<String,Boolean> joined_hives, View.OnClickListener expandedHiveDescriptionButtonClickListener) {
+    public void syncNotifyDataSetInvalidated() {
+        ((Activity)this.context).runOnUiThread(new Runnable(){
+            public void run() {
+                notifyDataSetInvalidated();
+            }
+        });
+    }
+
+    public ExploreListAdapter (Context context, Explore.SortType sortType, String categoryCode, String exploreListHeader, HashMap<String,Boolean> joined_hives, View.OnClickListener expandedHiveDescriptionButtonClickListener) {
         this.expanded_hive = -1;
         this.scroll_position = -1;
         this.active = false;
+        this.categoryCode = categoryCode;
 
         this.context = context;
         this.sortType = sortType;
@@ -120,11 +156,20 @@ public class ExploreListAdapter extends BaseAdapter implements AbsListView.OnScr
 
         this.inflater = ((Activity)this.context).getLayoutInflater();
         this.controller = ((com.chattyhive.chattyhive.Explore)this.context).controller;
-        this.explore = new Explore(this.controller,this.sortType);
+        this.explore = new Explore(this.controller,this.sortType,this.categoryCode);
 
         this.explore.onMoreResults.add(new EventHandler<EventArgs>(this,"OnAddItem",EventArgs.class));
         this.hives_list_data = new ArrayList<Hive>(this.explore.getResults());
         this.setListView(null);
+    }
+
+    public void Clear() {
+        this.hives_list_data.clear();
+        this.syncNotifyDataSetInvalidated();
+
+        if (this.listView != null)
+            this.listView.setAdapter(null);
+        this.listView = null;
     }
 
     @Override
@@ -189,11 +234,11 @@ public class ExploreListAdapter extends BaseAdapter implements AbsListView.OnScr
 
         if(expanded_hive == position) {//EXPANDIR
             convertView.findViewById(R.id.explore_list_item_short).setVisibility(View.GONE);
-            convertView.findViewById(R.id.explore_hive_card).setVisibility(View.VISIBLE);
+            convertView.findViewById(R.id.explore_list_header_card).setVisibility(View.VISIBLE);
             ((ListView)parent).smoothScrollToPosition(position);
         }
         else {//CONTRAER
-            convertView.findViewById(R.id.explore_hive_card).setVisibility(View.GONE);
+            convertView.findViewById(R.id.explore_list_header_card).setVisibility(View.GONE);
             convertView.findViewById(R.id.explore_list_item_short).setVisibility(View.VISIBLE);
         }
 
@@ -216,7 +261,7 @@ public class ExploreListAdapter extends BaseAdapter implements AbsListView.OnScr
             for (String language : hive.getChatLanguages())
                 chatLanguages = chatLanguages.concat((chatLanguages.isEmpty())?"":", ").concat(language);
 
-       // Log.w("ExploreListAdapter.", String.format("Postion: %d. Langs: %s",position,chatLanguages));
+        // Log.w("ExploreListAdapter.", String.format("Postion: %d. Langs: %s",position,chatLanguages));
 
         if (!chatLanguages.isEmpty()) {
             holder.expanded_hive_chatLanguages.invalidate();

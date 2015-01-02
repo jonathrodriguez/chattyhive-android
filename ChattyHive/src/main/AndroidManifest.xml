@@ -3,15 +3,12 @@
     package="com.chattyhive.chattyhive"
     android:versionCode="8"
     android:versionName="0.3.5" >
-
     <uses-sdk
         android:minSdkVersion="10"
         android:targetSdkVersion="19" />
-
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-
     <application
         android:name=".framework.Util.ApplicationContextProvider"
         android:allowBackup="true"
@@ -23,7 +20,6 @@
             android:enabled="true"
             android:exported="true" >
         </service>
-
         <receiver android:name=".backgroundservice.CHServiceLauncher" >
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
@@ -62,6 +58,13 @@
             android:windowSoftInputMode="adjustResize|stateUnchanged" >
         </activity>
         <activity
+            android:name=".NewHive"
+            android:label="NewHive"
+            android:theme="@style/AppTheme.WithNoActionBar"
+            android:windowSoftInputMode="adjustResize|stateUnchanged"
+            android:configChanges="orientation|screenSize">
+        </activity>
+        <activity
             android:name=".Register"
             android:label="@string/title_activity_register"
             android:configChanges="orientation|keyboardHidden"
@@ -70,5 +73,4 @@
             android:windowSoftInputMode="adjustResize|stateUnchanged">
         </activity>
     </application>
-
 </manifest>

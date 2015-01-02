@@ -50,6 +50,13 @@ public class Explore {
     private Controller controller;
     private DataProvider dataProvider;
 
+    private String categoryCode;
+
+    public Explore(Controller controller, SortType sortType, String categoryCode) {
+        this(controller,sortType);
+        this.categoryCode = categoryCode;
+    }
+
     public Explore(Controller controller, SortType sortType) {
         this.hasMore = true;
         this.loadingMore = false;
@@ -68,7 +75,7 @@ public class Explore {
         this.loadingMore = true;
         int howMany = ((this.nextStartIndex == 0)? StaticParameters.ExploreStart : StaticParameters.ExploreCount);
 
-        this.dataProvider.ExploreHives(nextStartIndex,howMany,sortType,new EventHandler<CommandCallbackEventArgs>(this,"onExploreHivesCallback",CommandCallbackEventArgs.class));
+        this.dataProvider.ExploreHives(nextStartIndex,howMany,sortType,this.categoryCode,new EventHandler<CommandCallbackEventArgs>(this,"onExploreHivesCallback",CommandCallbackEventArgs.class));
     }
 
     public void onExploreHivesCallback (Object sender, CommandCallbackEventArgs eventArgs) {
@@ -102,13 +109,17 @@ public class Explore {
                 resultsChanged = resultsChanged || this.results.add(new Hive((HIVE) format));
                 this.nextStartIndex++;
             }
-            else if (format instanceof HIVE_LIST)
+            else if ((format instanceof HIVE_LIST) && (((HIVE_LIST) format).LIST != null))
                 for (HIVE hive : ((HIVE_LIST) format).LIST) {
                     resultsChanged = this.results.add(new Hive(hive)) || resultsChanged;
                     this.nextStartIndex++;
                 }
 
-        this.hasMore = (this.nextStartIndex == expectedNextStart);
+        Boolean newHasMore = (this.nextStartIndex == expectedNextStart);
+
+        resultsChanged = resultsChanged || (newHasMore != this.hasMore);
+
+        this.hasMore = newHasMore;
 
         if ((this.onMoreResults != null) && (resultsChanged))
             this.onMoreResults.fire(this,EventArgs.Empty());

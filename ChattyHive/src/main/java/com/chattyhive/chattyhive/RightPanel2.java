@@ -5,7 +5,9 @@ import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.util.SparseArray;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -33,6 +35,9 @@ public class RightPanel2{
         this.InitializeComponent();
         ((Activity)this.context).findViewById(R.id.right_panel_action_bar).setOnClickListener((new Profile(this.context)).open_profile);
         ((Main)this.context).controller.LocalUserReceived.add(new EventHandler<EventArgs>(this, "onLocalUserLoaded", EventArgs.class));
+        if (((Main)this.context).controller.getMe() != null)
+            this.onLocalUserLoaded(((Main)this.context).controller.getMe(),EventArgs.Empty());
+
         listView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
             @Override
             public void onGroupExpand(int groupPosition) {
@@ -43,6 +48,7 @@ public class RightPanel2{
                 lastExpandedPosition = groupPosition;
             }
         });
+
     }
 
     public void onLocalUserLoaded(Object sender, EventArgs args){
@@ -91,7 +97,11 @@ public class RightPanel2{
 
     private void InitializeComponent(){
         crearDatos();
+
         listView = (ExpandableListView) ((Activity)this.context).findViewById(R.id.right_panel_expandable_list);
+        LayoutInflater inflater = ((Activity) this.context).getLayoutInflater();
+        ViewGroup header = (ViewGroup) inflater.inflate(R.layout.right_panel_action_bar, listView, false);
+        listView.addHeaderView(header, null, false);
         RightPanelExpandableListAdapter adapter = new RightPanelExpandableListAdapter((Activity)this.context, grupos);
         listView.setAdapter(adapter);
 

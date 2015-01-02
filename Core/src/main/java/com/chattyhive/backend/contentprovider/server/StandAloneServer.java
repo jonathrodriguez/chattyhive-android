@@ -591,6 +591,9 @@ public class StandAloneServer {
         UserChatSubscriptions.get(userLogin).add(chatChannelUnicode);
     }
     private static Hive createHive(String name, String hiveImage,String category, String description, String[] languages, String... tags) {
+        return createHive(name,hiveImage,category,description,new Date(Math.round((new Random()).nextDouble() * (new Date()).getTime())),languages,tags);
+    }
+    private static Hive createHive(String name, String hiveImage,String category, String description, Date creationDate, String[] languages, String... tags) {
         Hive hive = new Hive(name,randomString.nextString());
         Chat publicChat = new Chat(ChatKind.HIVE,hive);
 
@@ -603,7 +606,7 @@ public class StandAloneServer {
 
         publicChat.setChannelUnicode(hive.getNameUrl());
         publicChat.setPusherChannel(String.format("presence-%s",hive.getNameUrl()));
-        publicChat.setCreationDate(new Date(Math.round((new Random()).nextDouble() * (new Date()).getTime())));
+        publicChat.setCreationDate(creationDate);
 
         Hives.put(hive.getNameUrl(), hive);
         Chats.put(publicChat.getChannelUnicode(),publicChat);
@@ -701,6 +704,9 @@ public class StandAloneServer {
                     break;
                 case HiveInfo:
                     response = HiveInfo(server, formats);
+                    break;
+                case CreateHive:
+                    response = CreateHive(server, formats);
                     break;
             }
 
@@ -1155,14 +1161,14 @@ public class StandAloneServer {
 
 
                 String categoryFilter = "";
-                if (filter.CATEGORY != null) {
+                if ((filter.CATEGORY != null) && (!filter.CATEGORY.isEmpty())) {
                     categoryFilter = filter.CATEGORY;
                     if (!categoryFilter.contains("."))
                         categoryFilter += ".";
                 }
 
                 for (String hiveKey : allHives)
-                    if ((categoryFilter == null) || (categoryFilter.isEmpty()) || (Hives.get(hiveKey).getCategory().startsWith(categoryFilter)))
+                    if ((categoryFilter.isEmpty()) || (Hives.get(hiveKey).getCategory().startsWith(categoryFilter)))
                         resultSet.add(Hives.get(hiveKey));
 
                 HIVE_LIST list = new HIVE_LIST();
@@ -1173,66 +1179,68 @@ public class StandAloneServer {
                 Hive[] results = resultSet.toArray(new Hive[resultSet.size()]);
 
                 int length = results.length;
-                int start = -1;
-                int count = -1;
-                int end = -1;
+                if (length > 0) {
+                    int start = -1;
+                    int count = -1;
+                    int end = -1;
 
-                if ((filter.RESULT_INTERVAL != null) && (filter.RESULT_INTERVAL.START_INDEX != null) && (!filter.RESULT_INTERVAL.START_INDEX.isEmpty()))
-                    start = ((filter.RESULT_INTERVAL.START_INDEX.equalsIgnoreCase("FIRST"))?0:((filter.RESULT_INTERVAL.START_INDEX.equalsIgnoreCase("LAST"))?length:Integer.parseInt(filter.RESULT_INTERVAL.START_INDEX)));
+                    if ((filter.RESULT_INTERVAL != null) && (filter.RESULT_INTERVAL.START_INDEX != null) && (!filter.RESULT_INTERVAL.START_INDEX.isEmpty()))
+                        start = ((filter.RESULT_INTERVAL.START_INDEX.equalsIgnoreCase("FIRST")) ? 0 : ((filter.RESULT_INTERVAL.START_INDEX.equalsIgnoreCase("LAST")) ? length : Integer.parseInt(filter.RESULT_INTERVAL.START_INDEX)));
 
-                if ((filter.RESULT_INTERVAL != null) && (filter.RESULT_INTERVAL.END_INDEX != null) && (!filter.RESULT_INTERVAL.END_INDEX.isEmpty()))
-                    end = ((filter.RESULT_INTERVAL.END_INDEX.equalsIgnoreCase("FIRST"))?0:((filter.RESULT_INTERVAL.END_INDEX.equalsIgnoreCase("LAST"))?length:Integer.parseInt(filter.RESULT_INTERVAL.END_INDEX)));
+                    if ((filter.RESULT_INTERVAL != null) && (filter.RESULT_INTERVAL.END_INDEX != null) && (!filter.RESULT_INTERVAL.END_INDEX.isEmpty()))
+                        end = ((filter.RESULT_INTERVAL.END_INDEX.equalsIgnoreCase("FIRST")) ? 0 : ((filter.RESULT_INTERVAL.END_INDEX.equalsIgnoreCase("LAST")) ? length : Integer.parseInt(filter.RESULT_INTERVAL.END_INDEX)));
 
-                if ((filter.RESULT_INTERVAL != null) && (filter.RESULT_INTERVAL.COUNT != null))
-                    count = filter.RESULT_INTERVAL.COUNT;
+                    if ((filter.RESULT_INTERVAL != null) && (filter.RESULT_INTERVAL.COUNT != null))
+                        count = filter.RESULT_INTERVAL.COUNT;
 
-                int finalStart = 0;
-                int finalEnd = length;
+                    int finalStart = 0;
+                    int finalEnd = length;
 
-                if ((start < 0) && (count >= 0) && (end >= 0)) {
-                    if (end < finalEnd)
+                    if ((start < 0) && (count >= 0) && (end >= 0)) {
+                        if (end < finalEnd)
+                            finalEnd = end;
+
+                        finalStart = finalEnd - count;
+                    } else if ((start >= 0) && (count >= 0) && (end < 0)) {
+                        if (start > finalStart)
+                            finalStart = start;
+
+                        finalEnd = finalStart + count;
+                    } else if ((start >= 0) && (count < 0) && (end >= 0)) {
                         finalEnd = end;
-
-                    finalStart = finalEnd - count;
-                }  else if ((start >= 0) && (count >= 0) && (end < 0)) {
-                    if (start > finalStart)
                         finalStart = start;
+                    } else if ((start >= 0) && (count >= 0) && (end >= 0)) {
+                        if (start > finalStart)
+                            finalStart = start;
 
-                    finalEnd = finalStart + count;
-                } else if ((start >= 0) && (count < 0) && (end >= 0)) {
-                    finalEnd = end;
-                    finalStart = start;
-                } else if ((start >= 0) && (count >= 0) && (end >= 0)) {
-                    if (start > finalStart)
-                        finalStart = start;
+                        finalEnd = finalStart + count;
 
-                    finalEnd = finalStart + count;
+                        if (end < finalEnd)
+                            finalEnd = end;
+                    }
 
-                    if (end < finalEnd)
-                        finalEnd = end;
-                }
+                    if (finalStart < 0)
+                        finalStart = 0;
+                    else if (finalStart >= length)
+                        finalStart = length - 1;
 
-                if (finalStart < 0)
-                    finalStart = 0;
-                else if (finalStart >= length)
-                    finalStart = length - 1;
+                    if (finalEnd < 0)
+                        finalEnd = 0;
+                    else if (finalEnd > length)
+                        finalEnd = length;
 
-                if (finalEnd < 0)
-                    finalEnd = 0;
-                else if (finalEnd > length)
-                    finalEnd = length;
+                    if (finalStart > finalEnd) {
+                        int tmp = finalStart;
+                        finalStart = finalEnd;
+                        finalEnd = tmp;
+                    }
 
-                if (finalStart > finalEnd) {
-                    int tmp = finalStart;
-                    finalStart = finalEnd;
-                    finalEnd = tmp;
-                }
+                    if ((finalEnd - finalStart) > 0) {
+                        results = Arrays.copyOfRange(results, finalStart, finalEnd);
 
-                if ((finalEnd - finalStart) > 0) {
-                    results = Arrays.copyOfRange(results, finalStart, finalEnd);
-
-                    for (Hive hive : results)
-                        list.LIST.add(((HIVE) hive.toFormat(new HIVE())));
+                        for (Hive hive : results)
+                            list.LIST.add(((HIVE) hive.toFormat(new HIVE())));
+                    }
                 }
 
                 common.STATUS = "OK";
@@ -2069,6 +2077,81 @@ public class StandAloneServer {
                         responseFormats.add(hiveInfo.toFormat(new HIVE()));
                         common.STATUS = "OK";
                     }
+
+                } else {
+                    common.STATUS = "SESSION EXPIRED";
+                }
+            }
+        }
+
+        if ((responseCode != null) && (responseCode == 200) && (responseFormats.size() > 0)) {
+            responseBody = "";
+            for (Format format : responseFormats)
+                responseBody += ((responseBody.isEmpty())?"{":", ")+format.toJSON().toString().substring(1,format.toJSON().toString().length()-1);
+            responseBody += "}";
+        }
+
+        return new AbstractMap.SimpleEntry<Integer,String>((responseCode != null)?responseCode:-1,(responseBody != null)?responseBody:"");
+    }
+
+    private static AbstractMap.SimpleEntry<Integer, String> CreateHive(Server server, Format... formats) {
+        Integer responseCode = null;
+        String responseBody = null;
+
+        HIVE newHive = null;
+        if (formats != null)
+            for (Format format : formats)
+                if (format instanceof HIVE)
+                    newHive = (HIVE)format;
+
+        COMMON common = new COMMON();
+
+        ArrayList<Format> responseFormats = new ArrayList<Format>();
+        responseFormats.add(common);
+
+        if (newHive == null) {
+            common.STATUS = "ERROR";
+            common.ERROR = -1;
+        } else {
+            HttpCookie csrfCookie = checkCSRFCookie(server.getAppName());
+
+            if ((csrfCookie == null) || (csrfCookie.hasExpired()) || (!CSRFTokens.contains(csrfCookie.getValue())))
+                responseCode = 403;
+            else {
+                responseCode = 200;
+                User user = checkSessionCookie(csrfCookie,server.getAppName());
+
+                if (user != null) {
+                    //createHive(String name, String hiveImage,String category, String description, String[] languages, String... tags)
+
+                    String name = newHive.NAME;
+                    String hiveImage = newHive.IMAGE_URL;
+                    String category = newHive.CATEGORY;
+                    String description = newHive.DESCRIPTION;
+                    String[] languages = null;
+                    String[] tags = null;
+                    if ((newHive.CHAT_LANGUAGES != null) && (!newHive.CHAT_LANGUAGES.isEmpty()))
+                        languages = newHive.CHAT_LANGUAGES.toArray(new String[newHive.CHAT_LANGUAGES.size()]);
+                    else
+                        languages = new String[] {"English"};
+
+                    if ((newHive.TAGS != null) && (!newHive.TAGS.isEmpty()))
+                        tags = newHive.TAGS.toArray(new String[newHive.TAGS.size()]);
+
+                    try {
+                        Hive hive = createHive(name, hiveImage, category, description, new Date(), languages, tags);
+
+                        subscribeHive(user.getUserID(),hive.getNameUrl());
+
+                        responseFormats.add(hive.toFormat(new HIVE_ID()));
+                        responseFormats.add(hive.getPublicChat().toFormat(new CHAT()));
+
+                        common.STATUS = "OK";
+                    } catch (Exception e) {
+                        common.STATUS = "ERROR";
+                        common.ERROR = -14;
+                    }
+
 
                 } else {
                     common.STATUS = "SESSION EXPIRED";

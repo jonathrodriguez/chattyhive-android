@@ -23,15 +23,7 @@ public class Category {
     }
     public static void setCategory(String category, ImageView categoryImageView, TextView categoryTextView) {
         Category cat = new Category(category);
-        if (cat.getCategoryNameResID() != 0)
-            categoryTextView.setText(cat.getCategoryNameResID());
-        else
-            categoryTextView.setText("Category");
-
-        if (cat.getCategoryImageResID() != 0)
-            categoryImageView.setImageResource(cat.categoryImageResID);
-        else
-            categoryImageView.setImageResource(R.drawable.registro_important_note_orange);
+        cat.setCategory(categoryImageView,categoryTextView);
     }
     public static Category getCategory(String category) {
         return new Category(category);
@@ -57,7 +49,7 @@ public class Category {
                 }
             });
             for (String category : categoryCodes) {
-                String groupCode = category.split(".")[0];
+                String groupCode = category.split("\\.")[0];
                 Category group = null;
                 if (!groups.containsKey(groupCode)) {
                     group = getCategory(groupCode.concat(".00"));
@@ -95,10 +87,10 @@ public class Category {
     private int categoryImageResID;
 
     public String getCategoryCode() {
-        return this.categoryCode.split(".")[1];
+        return this.categoryCode.split("\\.")[1];
     }
     public String getGroupCode() {
-        return this.categoryCode.split(".")[0];
+        return this.categoryCode.split("\\.")[0];
     }
     public String getCompleteCode() {
         return this.categoryCode;
@@ -141,4 +133,21 @@ public class Category {
     }
 
     public Category() {}
+
+    public Category(int categoryNameResID, int categoryImageResID) {
+        this.categoryNameResID = categoryNameResID;
+        this.categoryImageResID = categoryImageResID;
+    }
+
+    public void setCategory(ImageView categoryImageView, TextView categoryTextView) {
+        if (this.getCategoryNameResID() != 0)
+            categoryTextView.setText(this.getCategoryNameResID());
+        else
+            categoryTextView.setText("Category");
+
+        if (this.getCategoryImageResID() != 0)
+            categoryImageView.setImageResource(this.categoryImageResID);
+        else
+            categoryImageView.setImageResource(R.drawable.registro_important_note_orange);
+    }
 }

@@ -623,7 +623,7 @@ public class DataProvider {
             this.PubSubConnectionStateChanged.fire(sender,args);
     }
 
-    public void ExploreHives(int offset,int length,Explore.SortType sortType,EventHandler<CommandCallbackEventArgs> Callback) {
+    public void ExploreHives(int offset,int length,Explore.SortType sortType,String categoryCode,EventHandler<CommandCallbackEventArgs> Callback) {
         // TODO: This is for server 0.5.0 which does not support list indexing for explore command.
         //this.server.RunCommand(AvailableCommands.Explore,Callback,null,null);
         EXPLORE_FILTER explore_filter = new EXPLORE_FILTER();
@@ -631,6 +631,10 @@ public class DataProvider {
         explore_filter.RESULT_INTERVAL = new INTERVAL();
         explore_filter.RESULT_INTERVAL.START_INDEX = String.valueOf(offset);
         explore_filter.RESULT_INTERVAL.COUNT = length;
+
+        if ((categoryCode != null) && (!categoryCode.isEmpty()))
+            explore_filter.CATEGORY = categoryCode;
+
         this.server.RunCommand(AvailableCommands.Explore,Callback,null,explore_filter);
     }
 

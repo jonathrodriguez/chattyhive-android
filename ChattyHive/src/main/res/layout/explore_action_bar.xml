@@ -23,29 +23,29 @@
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="12dp"
-            android:paddingLeft="5dp"
-            android:paddingRight="0dp">
+            android:paddingLeft="4dp"
+            android:paddingRight="0dp"
+            android:layout_marginTop="3dp"
+            android:gravity="center_horizontal">
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:layout_height="match_parent"
             android:id="@+id/explore_action_bar_number_text"
             android:textColor="#111111"
             android:layout_gravity="top|right"
             android:textSize="12dp"
-            android:textAlignment="center"
             android:textStyle="bold"
             android:text=""
-            android:gravity="left"
+            android:gravity="center"
             android:paddingRight="0.5dp"
             android:paddingLeft="0dp"/>
             <ImageView
                 android:id="@+id/explore_action_bar_hive_added"
-                android:layout_width="11dp"
+                android:layout_width="12dp"
                 android:layout_height="12dp"
                 android:src="@drawable/explore_new_hive_join_hive"
                 android:layout_toRightOf="@+id/explore_action_bar_number_text"
-                android:layout_marginTop="3dp"
+                android:layout_marginTop="0dp"
                 android:visibility="gone"/>
         </RelativeLayout>
     </FrameLayout>
@@ -67,6 +67,7 @@
         android:layout_height="match_parent"
         android:gravity="right">
         <ImageView
+            android:id="@+id/explore_new_hive_button"
             android:layout_width="46dp"
             android:layout_height="wrap_content"
             android:src="@drawable/menu_new_hive_blanco"

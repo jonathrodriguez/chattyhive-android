@@ -17,7 +17,8 @@
     custom:fixLeftPanel="@bool/fix_left_panel"
     custom:fixedLeftPanelWidth="@dimen/fixed_left_panel_width"
     custom:maxLeftPanelWidth="@dimen/left_panel_max_width"
-    custom:maxRightPanelWidth="@dimen/right_panel_max_width">
+    custom:maxRightPanelWidth="@dimen/right_panel_max_width"
+    custom:leftSwipeCheckMainBoundaries="@bool/left_swipe_changes_list">
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -43,7 +44,7 @@
         android:id="@+id/mainLeft"
         custom:layout_position="left"
         custom:layout_type="mainPanel">
-        <include layout="@layout/left_panel_layout"/>
+        <include layout="@layout/left_panel_main_layout"/>
     </FrameLayout>
 
     <FrameLayout
@@ -63,15 +64,5 @@
         custom:layout_type="mainPanel">
         <include layout="@layout/right_panel_layout"/>
     </FrameLayout>
-
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/actionRight"
-        custom:layout_position="right"
-        custom:layout_type="actionBar">
-        <include layout="@layout/right_panel_action_bar"/>
-    </FrameLayout>
-
 </com.chattyhive.chattyhive.framework.CustomViews.ViewGroup.FloatingPanel>
 </FrameLayout>

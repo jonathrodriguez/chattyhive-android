@@ -10,13 +10,12 @@
     <ExpandableListView
         android:id="@+id/right_panel_expandable_list"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_height="wrap_content"
         android:groupIndicator="@null"
         android:divider="@null"
         android:cacheColorHint="@color/menu_background_color"
         android:layout_marginBottom="48dp">
     </ExpandableListView>
-
     <RelativeLayout
         android:id="@+id/footer"
         android:layout_width="fill_parent"
@@ -30,3 +29,4 @@
     </RelativeLayout>
 
 </RelativeLayout>
+<!--<include layout="@layout/right_panel_action_bar"/>-->

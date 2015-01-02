@@ -4,15 +4,10 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="50dp"
-    android:background="#ffffff"
+    android:background="@drawable/home_top_bar_background"
     android:baselineAligned="false"
-    android:layout_gravity="top">
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal"
-        android:background="@drawable/home_top_bar_background">
+    android:layout_gravity="top"
+    android:paddingRight="-1px">
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -107,5 +102,4 @@
          android:paddingRight="23.5dp"
          android:paddingBottom="13dp" />
     </FrameLayout>
-    </LinearLayout>
 </LinearLayout>
