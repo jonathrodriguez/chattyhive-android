@@ -172,6 +172,7 @@ public class LoginActivity extends Activity {
 
     public void onLocalUserLoaded(Object sender,EventArgs eventArgs) {
         if (fakeMode) {
+            controller.LocalUserReceived.remove(new EventHandler<EventArgs>(this,"onLocalUserLoaded",EventArgs.class));
             Intent intent = new Intent(this, Register.class);
             intent.putExtra("fake",true);
             startActivityForResult(intent, OP_CODE_REGISTER);
