@@ -264,9 +264,11 @@ public class ExploreListAdapter extends BaseAdapter implements AbsListView.OnScr
         // Log.w("ExploreListAdapter.", String.format("Postion: %d. Langs: %s",position,chatLanguages));
 
         if (!chatLanguages.isEmpty()) {
-            holder.expanded_hive_chatLanguages.invalidate();
+            //holder.expanded_hive_chatLanguages.invalidate();
             holder.expanded_hive_chatLanguages.setText(chatLanguages);
-            holder.expanded_hive_chatLanguages.requestLayout();
+            //holder.expanded_hive_chatLanguages.requestLayout();
+        } else {
+            holder.expanded_hive_chatLanguages.setText("");
         }
 
         holder.expanded_hiveImage.setImageResource(R.drawable.pestanha_chats_public_chat);
