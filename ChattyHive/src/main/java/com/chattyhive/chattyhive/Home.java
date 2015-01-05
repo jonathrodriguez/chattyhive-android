@@ -13,14 +13,25 @@ import com.chattyhive.backend.businessobjects.Home.Cards.HiveMessageCard;
  * Created by Jonathan on 10/10/2014.
  */
 
-public class Home {
-    Context context;
+public class Home extends Window {
+    private static int HomeHierarchyLevel = 0;
     HomeListAdapter homeListAdapter;
 
-    public Home(final Context context) {
-        this.context = context;
+    public Home(Context context) {
+        super(context);
         this.homeListAdapter = new HomeListAdapter(context);
+        this.setHierarchyLevel(HomeHierarchyLevel);
         this.Reload();
+    }
+
+    @Override
+    public void Open() {
+
+    }
+
+    @Override
+    public void Close() {
+
     }
 
     public void setButtons() {
