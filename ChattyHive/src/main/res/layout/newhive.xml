@@ -24,7 +24,7 @@
                 android:layout_width="65dp"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="16dp"
-                android:layout_marginRight="14dp"
+                android:layout_marginRight="0dp"
                 android:background="@drawable/explora_border"
                 android:gravity="center_horizontal|center_vertical">
 
@@ -39,18 +39,21 @@
 
             <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="fill_parent"
                 android:gravity="center"
                 android:text="nuevo hive"
                 android:textColor="@android:color/white"
                 android:textSize="32dp"
-                android:textStyle="bold" />
+                android:layout_weight="1"
+                android:maxLines="1"
+                android:lines="1"/>
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="right"
-                android:gravity="right">
+                android:gravity="right"
+                android:layout_weight="0">
 
                 <LinearLayout
                     android:id="@+id/new_hive_make_button"
@@ -285,7 +288,12 @@
                         android:layout_marginLeft="5dp"
                         android:src="@drawable/invite_friends" />
                 </LinearLayout>
-
+                <TextView
+                    android:id="@+id/date_picker"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="asdfasdf"
+                    android:textColor="@android:color/black"/>
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
