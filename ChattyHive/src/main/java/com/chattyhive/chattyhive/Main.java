@@ -77,29 +77,12 @@ public class Main extends Activity {
     }
 
     protected void ShowHome() {
-        ViewPair pair = this.ShowLayout(R.layout.home,R.layout.home_action_bar);
-        setPanelBehaviour();
-
-        TypedValue alpha = new TypedValue();
-
-        getResources().getValue(R.color.home_action_bar_app_icon_alpha,alpha,true);
-        StaticMethods.SetAlpha(pair.getActionBarView().findViewById(R.id.appIcon),alpha.getFloat());
-
-        getResources().getValue(R.color.home_action_bar_menu_icon_alpha,alpha,true);
-        StaticMethods.SetAlpha(pair.getActionBarView().findViewById(R.id.menuIcon),alpha.getFloat());
-
-        getResources().getValue(R.color.home_top_bar_image_alpha,alpha,true);
-        StaticMethods.SetAlpha(pair.getMainView().findViewById(R.id.home_chat_button_image),alpha.getFloat());
-        StaticMethods.SetAlpha(pair.getMainView().findViewById(R.id.home_explore_button_image),alpha.getFloat());
-        StaticMethods.SetAlpha(pair.getMainView().findViewById(R.id.home_hive_button_image),alpha.getFloat());
-
         if (this.home == null)
             this.home = new Home(this);
-        else {
-            this.home.Reload();
-        }
-        if (floatingPanel.isOpen())
-            floatingPanel.close();
+        else if (!this.home.hasContext())
+            this.home.setContext(this);
+
+        this.home.Open();
     }
 
     protected void ShowChats() {
