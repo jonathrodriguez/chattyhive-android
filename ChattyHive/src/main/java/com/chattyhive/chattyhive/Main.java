@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
-import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -32,8 +31,9 @@ import com.chattyhive.chattyhive.framework.OSStorageProvider.UserLocalStorage;
 import com.chattyhive.chattyhive.backgroundservice.CHService;
 
 import com.chattyhive.chattyhive.framework.CustomViews.ViewGroup.FloatingPanel;
-import com.chattyhive.chattyhive.framework.Util.StaticMethods;
 import com.chattyhive.chattyhive.framework.Util.ViewPair;
+
+import java.util.HashMap;
 
 
 public class Main extends Activity {
@@ -51,7 +51,52 @@ public class Main extends Activity {
 
     LeftPanel leftPanel;
 
-    //TODO: Add main panel view stack
+    HashMap <Integer, Window> viewStack;
+    int lastOpenHierarchyLevel;
+
+    void OpenWindow(Window window) {
+        OpenWindow(window,window.getHierarchyLevel());
+    }
+    void OpenWindow(Window window,Integer hierarchyLevel) {
+        if (hierarchyLevel > (this.lastOpenHierarchyLevel+1))
+            throw new IllegalArgumentException("Expected at most one level over the last open hierarchy level");
+
+        if (this.lastOpenHierarchyLevel > -1) {
+            if (hierarchyLevel < this.lastOpenHierarchyLevel) {
+                for (int i = this.lastOpenHierarchyLevel; i > hierarchyLevel; i--) {
+                    this.viewStack.get(i).Close();
+                    this.viewStack.remove(i);
+                }
+            } else if (hierarchyLevel == this.lastOpenHierarchyLevel) {
+                this.viewStack.get(this.lastOpenHierarchyLevel).Close();
+            } else if (hierarchyLevel > this.lastOpenHierarchyLevel) {
+                this.viewStack.get(this.lastOpenHierarchyLevel).Hide();
+            }
+        }
+
+        if (hierarchyLevel != window.getHierarchyLevel())
+            window.setHierarchyLevel(hierarchyLevel);
+
+        this.viewStack.put(hierarchyLevel,window);
+
+        this.lastOpenHierarchyLevel = hierarchyLevel;
+
+        if (!window.hasContext())
+            window.setContext(this);
+
+        window.Open();
+    }
+
+    void Close() {
+        if (this.lastOpenHierarchyLevel >= 0)
+            this.viewStack.get(this.lastOpenHierarchyLevel).Close();
+
+        this.lastOpenHierarchyLevel--;
+
+        if (this.lastOpenHierarchyLevel >= 0)
+            this.viewStack.get(this.lastOpenHierarchyLevel).Show();
+
+    }
 
     protected ViewPair ShowLayout (int layoutID, int actionBarID) {
         FrameLayout mainPanel = ((FrameLayout)findViewById(R.id.mainCenter));
@@ -67,7 +112,6 @@ public class Main extends Activity {
 
         return actualView;
     }
-
     protected View ChangeActionBar (int actionBarID) {
         FrameLayout mainActionBar = ((FrameLayout)findViewById(R.id.actionCenter));
         mainActionBar.removeAllViews();
@@ -82,7 +126,7 @@ public class Main extends Activity {
         else if (!this.home.hasContext())
             this.home.setContext(this);
 
-        this.home.Open();
+        OpenWindow(this.home);
     }
 
     protected void ShowChats() {
@@ -106,6 +150,9 @@ public class Main extends Activity {
         Controller.Initialize(new CookieStore(),LocalStorage);
 
         this.controller = Controller.GetRunningController(com.chattyhive.chattyhive.framework.OSStorageProvider.LocalStorage.getLocalStorage());
+
+        this.viewStack = new HashMap<Integer, Window>();
+        this.lastOpenHierarchyLevel = -1;
 
         this.leftPanel = new LeftPanel(this);
         this.ShowHome();
@@ -274,15 +321,10 @@ public class Main extends Activity {
                 }
             } else if (event.getAction() == KeyEvent.ACTION_UP) {
                 findViewById(R.id.mainCenter).getKeyDispatcherState().handleUpEvent(event);
-                if (event.isTracking() && !event.isCanceled() && (!floatingPanel.isOpen())) { //TODO: Use main panel view stack.
-                    if (ActiveLayoutID == R.layout.main_panel_chat_layout) {
-                        this.controller.Leave((String) findViewById(R.id.main_panel_chat_name).getTag());
-                    }
-                    if (ActiveLayoutID != R.layout.home) {
-                        ShowHome();
-                        this.setPanelBehaviour();
+                if (event.isTracking() && !event.isCanceled() && (!floatingPanel.isOpen())) {
+                    this.Close();
+                    if (this.lastOpenHierarchyLevel >= 0)
                         return true;
-                    }
                 }
             }
         }

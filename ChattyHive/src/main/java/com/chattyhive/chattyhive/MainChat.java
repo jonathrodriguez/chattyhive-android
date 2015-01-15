@@ -211,17 +211,42 @@ public class MainChat extends Window {
     @Override
     public void finalize() throws Throwable {
         super.finalize();
-        this.context = null;
-        this.channelConversation.setChatWindowActive(false);
-        this.channelConversation = null;
-        this.channelChat = null;
-        this.textInput = null;
-        this.chatListAdapter = null;
-        this.channelChatID = null;
+
+        try {
+            this.channelConversation.setChatWindowActive(false);
+            ((Main) this.context).controller.Leave(this.channelChat.getChannelUnicode());
+            this.channelConversation.MessageListModifiedEvent.remove(new EventHandler<EventArgs>(this.chatListAdapter, "OnAddItem", EventArgs.class));
+        } catch (Exception e) {
+
+        } finally {
+            this.context = null;
+            this.channelConversation = null;
+            this.channelChat = null;
+            this.textInput = null;
+            this.chatListAdapter = null;
+            this.channelChatID = null;
+        }
     }
 
     @Override
     public void Open() {
+        if (!this.hasContext()) return;
+
+        this.Show();
+    }
+
+    @Override
+    public void Close() {
+        if (!this.hasContext()) return;
+
+        this.Hide();
+
+        this.channelChat = null;
+        this.channelConversation = null;
+    }
+
+    @Override
+    public void Show() {
         if (!this.hasContext()) return;
 
         if (this.channelChat == null) {
@@ -234,27 +259,6 @@ public class MainChat extends Window {
 
         if (this.chatListAdapter == null)
             this.chatListAdapter = new ChatListAdapter(context, this.channelConversation);
-
-        this.Show();
-    }
-
-    @Override
-    public void Close() {
-        if (!this.hasContext()) return;
-
-        this.channelConversation.setChatWindowActive(false);
-        this.channelChat = null;
-        this.channelConversation = null;
-        this.chatListAdapter = null;
-        ((ListView)mainChat.findViewById(R.id.main_panel_chat_message_list)).setAdapter(null);
-        this.mainChat = null;
-        this.textInput = null;
-        this.actionBar = null;
-    }
-
-    @Override
-    public void Show() {
-        if (!this.hasContext()) return;
 
         ViewPair viewPair = ((Main)context).ShowLayout(R.layout.main_panel_chat_layout,R.layout.chat_action_bar);
         this.actionBar = viewPair.getActionBarView();
@@ -285,6 +289,7 @@ public class MainChat extends Window {
         if (!this.hasContext()) return;
 
         this.channelConversation.setChatWindowActive(false);
+        ((Main)this.context).controller.Leave(this.channelChat.getChannelUnicode());
 
         this.channelConversation.MessageListModifiedEvent.remove(new EventHandler<EventArgs>(this.chatListAdapter,"OnAddItem",EventArgs.class));
 

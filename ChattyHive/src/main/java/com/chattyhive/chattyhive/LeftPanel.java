@@ -233,7 +233,7 @@ public class LeftPanel {
             Chat chatChat = ((Chat)v.getTag(R.id.BO_Chat));
 
             if (chatChat != null) {
-                new MainChat(context, chatChat);
+                ((Main)context).OpenWindow(new MainChat(context, chatChat));
             }
         }
     };
@@ -244,7 +244,7 @@ public class LeftPanel {
             Chat chatChat = ((Hive)v.getTag(R.id.BO_Hive)).getPublicChat();
 
             if (chatChat != null) {
-                new MainChat(context, chatChat);
+                ((Main)context).OpenWindow(new MainChat(context, chatChat));
             }
         }
     };

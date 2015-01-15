@@ -178,7 +178,14 @@ public class Profile extends Window {
         this.user = user;
         this.profileType = profileType;
 
-        this.Open();
+        ((Main)this.context).OpenWindow(this);
+    }
+
+    protected void OpenProfile(User user, ProfileType profileType, Integer hierarchyLevel) {
+        this.user = user;
+        this.profileType = profileType;
+
+        ((Main)this.context).OpenWindow(this,hierarchyLevel);
     }
 
     public void loadBigPhoto(Object sender, EventArgs eventArgs) {
