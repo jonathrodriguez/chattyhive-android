@@ -52,6 +52,8 @@ public class Explore extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.explore);
         this.Initialize();
+        if (savedInstanceState != null)
+            this.Restore(savedInstanceState);
     }
 
     private void loadListView(int step) {
@@ -72,6 +74,7 @@ public class Explore extends Activity {
     }
 
     private void Initialize(){
+        Log.w("Explore","Initialize()");
         this.LRU_date = new TreeMap<Date, Integer>();
         this.LRU_step = new TreeMap<Integer, Date>();
 
@@ -107,6 +110,30 @@ public class Explore extends Activity {
         loadListView(1);
 
         exploreListAdapter.get(0).setActive(true);
+    }
+
+    private void Restore(Bundle savedInstance) {
+        if ((savedInstance.containsKey("joined_hives_keys")) && (savedInstance.containsKey("joined_hives_values"))) {
+            String[] keys = savedInstance.getStringArray("joined_hives_keys");
+            boolean[] values = savedInstance.getBooleanArray("joined_hives_values");
+            for (int i = 0; i < keys.length; i++) {
+                joined_hives.put(keys[i], values[i]);
+                if (values[i])
+                    joined++;
+            }
+
+            if (joined > 0) {
+                findViewById(R.id.explore_action_bar_goBack_button).setBackgroundResource(R.drawable.explore_action_bar_hive_joined_border);
+                findViewById(R.id.explore_action_bar_hive_added).setVisibility(View.VISIBLE);
+                ((ImageView) findViewById(R.id.explore_action_bar_goBack_image)).setImageResource(R.drawable.explore_new_hive_back_with_subscriptions);
+                ((TextView) findViewById(R.id.explore_action_bar_number_text)).setText(String.valueOf(joined));
+
+                if (activeList < 4)
+                    exploreListAdapter.get(activeList).syncNotifyDataSetChanged();
+                else if (activeList == 4)
+                    exploreFilteredListAdapter.syncNotifyDataSetChanged();
+            }
+        }
     }
 
     protected OnTransitionListener onTransitionListener = new OnTransitionListener() {
@@ -384,6 +411,20 @@ public class Explore extends Activity {
                 while (this.LRU_date.size() > 2)
                     unloadList(this.LRU_date.firstEntry().getValue());
             }
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState (Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        if (joined_hives.size() > 0) {
+            String[] keys = joined_hives.keySet().toArray(new String[joined_hives.size()]);
+            outState.putStringArray("joined_hives_keys", keys);
+            boolean[] values = new boolean[joined_hives.size()];
+            for (int i = 0; i < keys.length; i++)
+                values[i] = joined_hives.get(keys[i]);
+            outState.putBooleanArray("joined_hives_values", values);
         }
     }
 }

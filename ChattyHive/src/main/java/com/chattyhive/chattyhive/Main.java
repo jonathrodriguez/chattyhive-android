@@ -34,6 +34,7 @@ import com.chattyhive.chattyhive.framework.CustomViews.ViewGroup.FloatingPanel;
 import com.chattyhive.chattyhive.framework.Util.ViewPair;
 
 import java.util.HashMap;
+import java.util.Map;
 
 
 public class Main extends Activity {
@@ -45,11 +46,10 @@ public class Main extends Activity {
 
     Controller controller;
 
-    int ActiveLayoutID;
-
     Home home;
 
     LeftPanel leftPanel;
+    RightPanel2 rightPanel;
 
     HashMap <Integer, Window> viewStack;
     int lastOpenHierarchyLevel;
@@ -81,7 +81,7 @@ public class Main extends Activity {
 
         this.lastOpenHierarchyLevel = hierarchyLevel;
 
-        if (!window.hasContext())
+        if ((!window.hasContext()) || (window.context != this))
             window.setContext(this);
 
         window.Open();
@@ -103,12 +103,9 @@ public class Main extends Activity {
         FrameLayout mainActionBar = ((FrameLayout)findViewById(R.id.actionCenter));
         mainPanel.removeAllViews();
         mainActionBar.removeAllViews();
-        ActiveLayoutID = layoutID;
         View actionBar = LayoutInflater.from(this).inflate(actionBarID,mainActionBar,true);
         View mainView = LayoutInflater.from(this).inflate(layoutID, mainPanel, true);
         ViewPair actualView = new ViewPair(mainView,actionBar);
-
-        //TODO: Populate/manage main panel view stack.
 
         return actualView;
     }
@@ -142,7 +139,6 @@ public class Main extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ActiveLayoutID = R.layout.home;
         setContentView(R.layout.main);
 
         //Log.w("Main","onCreate..."); //DEBUG
@@ -155,8 +151,11 @@ public class Main extends Activity {
         this.lastOpenHierarchyLevel = -1;
 
         this.leftPanel = new LeftPanel(this);
-        this.ShowHome();
-        RightPanel2 rp = new RightPanel2(this);
+
+        if (savedInstanceState == null)
+            this.ShowHome();
+
+        this.rightPanel = new RightPanel2(this);
 
         try {
             Controller.bindApp(this.getClass().getMethod("hasToLogin"),this);
@@ -165,6 +164,16 @@ public class Main extends Activity {
         }
 
         this.ConnectService();
+
+        if (savedInstanceState != null)
+            Restore(savedInstanceState);
+    }
+
+    private void Restore(Bundle savedInstanceState) {
+        this.home = ((Home)savedInstanceState.getSerializable("Home"));
+        int lastOpenHierarchyLevel = savedInstanceState.getInt("lastOpenHierarchyLevel");
+        for (int i = 0; i <= lastOpenHierarchyLevel; i++)
+            OpenWindow((Window)savedInstanceState.getSerializable(String.format("viewStackEntry_%d",i)),i);
     }
 
     public void hasToLogin() {
@@ -313,9 +322,8 @@ public class Main extends Activity {
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
         if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
-            if (event.getAction() == KeyEvent.ACTION_DOWN
-                    && event.getRepeatCount() == 0) {
-                if ((ActiveLayoutID != R.layout.home) && (!floatingPanel.isOpen())) { // Tell the framework to start tracking this event.
+            if (event.getAction() == KeyEvent.ACTION_DOWN && event.getRepeatCount() == 0) {
+                if ((this.lastOpenHierarchyLevel > 0) && (!floatingPanel.isOpen())) { // Tell the framework to start tracking this event.
                     findViewById(R.id.mainCenter).getKeyDispatcherState().startTracking(event, this);
                     return true;
                 }
@@ -331,7 +339,15 @@ public class Main extends Activity {
         return super.dispatchKeyEvent(event);
     }
 
+    @Override
+    protected void onSaveInstanceState (Bundle outState) {
+        super.onSaveInstanceState(outState);
 
+        outState.putSerializable("Home",home);
+        outState.putInt("lastOpenHierarchyLevel",lastOpenHierarchyLevel);
+        for (Map.Entry<Integer,Window> viewStackEntry : viewStack.entrySet())
+            outState.putSerializable(String.format("viewStackEntry_%d",viewStackEntry.getKey()),viewStackEntry.getValue());
+    }
 
 
 }

@@ -786,12 +786,17 @@ public class FloatingPanel extends ViewGroup {
                 case center:
                     switch (layoutParams.getType()) {
                         case actionBar:
-                            if ((actualPosition > 0) && (actualPosition >= (this.centerActionBarLeftVisibleWidth-this.centerMainPanelLeftVisibleWidth))) {
+                            Boolean leftPanelSaturatedWidth = (actionBarsWidth.containsKey("left") && (actionBarsWidth.get("left") == this.maxLeftPanelWidth));
+                            Boolean rightPanelSaturatedWidth = (actionBarsWidth.containsKey("right") && (actionBarsWidth.get("right") == this.maxRightPanelWidth));
+                            if ((actualPosition > 0) && (!leftPanelSaturatedWidth) && (actualPosition >= (this.centerActionBarLeftVisibleWidth-this.centerMainPanelLeftVisibleWidth))) {
                                 childLeft += (actualPosition - this.centerActionBarLeftVisibleWidth + this.centerMainPanelLeftVisibleWidth);
                                 childRight += (actualPosition - this.centerActionBarLeftVisibleWidth + this.centerMainPanelLeftVisibleWidth);
-                            } else if ((actualPosition <  0) && (actualPosition <= (this.centerMainPanelRightVisibleWidth-this.centerActionBarRightVisibleWidth))) {
+                            } else if ((actualPosition <  0) && (!rightPanelSaturatedWidth) && (actualPosition <= (this.centerMainPanelRightVisibleWidth-this.centerActionBarRightVisibleWidth))) {
                                 childLeft += (actualPosition + this.centerActionBarRightVisibleWidth - this.centerMainPanelRightVisibleWidth);
                                 childRight += (actualPosition + this.centerActionBarRightVisibleWidth - this.centerMainPanelRightVisibleWidth);
+                            } else if (leftPanelSaturatedWidth || rightPanelSaturatedWidth) {
+                                childLeft += actualPosition;
+                                childRight += actualPosition;
                             }
                             if (this.fixLeftPanel)
                                 childLeft += this.fixedLeftPanelWidth;
@@ -815,16 +820,24 @@ public class FloatingPanel extends ViewGroup {
                     childLeft -= (measureWidth-actualPosition);
                     switch (layoutParams.getType()) {
                         case actionBar:
-                            childLeft -= (this.centerActionBarLeftVisibleWidth-this.centerMainPanelLeftVisibleWidth);
-                            if (((actualPosition >= 0) && (actualPosition >= (this.centerActionBarLeftVisibleWidth-this.centerMainPanelLeftVisibleWidth))) ||
-                                    ((actualPosition <  0) && (actualPosition <= (this.centerMainPanelRightVisibleWidth-this.centerActionBarRightVisibleWidth)))) {
-                                childRight -= (measureWidth+(2*this.centerActionBarLeftVisibleWidth)-this.centerMainPanelLeftVisibleWidth-actualPosition);
+                            if (this.maxLeftPanelWidth != measureWidth) {
+                                childLeft -= (this.centerActionBarLeftVisibleWidth - this.centerMainPanelLeftVisibleWidth);
+
+                                if (((actualPosition >= 0) && (actualPosition >= (this.centerActionBarLeftVisibleWidth - this.centerMainPanelLeftVisibleWidth))) ||
+                                        ((actualPosition < 0) && (actualPosition <= (this.centerMainPanelRightVisibleWidth - this.centerActionBarRightVisibleWidth)))) {
+                                    childRight -= (measureWidth + (2 * this.centerActionBarLeftVisibleWidth) - this.centerMainPanelLeftVisibleWidth - actualPosition);
+                                } else {
+                                    childRight -= (measureWidth + (2 * this.centerActionBarLeftVisibleWidth) - this.centerMainPanelLeftVisibleWidth);
+                                }
                             } else {
-                                childRight -= (measureWidth+(2*this.centerActionBarLeftVisibleWidth)-this.centerMainPanelLeftVisibleWidth);
+                                childRight -= (measureWidth-actualPosition+this.centerMainPanelLeftVisibleWidth);
                             }
                             if (this.fixLeftPanel) {
                                 childLeft = Math.min(Math.round(this.actualPosition),0);
-                                childRight += measureWidth-(2*this.centerActionBarLeftVisibleWidth)+this.centerMainPanelLeftVisibleWidth;
+                                if (this.maxLeftPanelWidth != measureWidth)
+                                    childRight += measureWidth-(2*this.centerActionBarLeftVisibleWidth)+this.centerMainPanelLeftVisibleWidth;
+                                else
+                                    childRight += measureWidth-this.centerMainPanelLeftVisibleWidth;
                             }
 
                             childBottom -= mainPanels.get("left").getMeasuredHeight() + ((LayoutParams)mainPanels.get("left").getLayoutParams()).topMargin + ((LayoutParams)mainPanels.get("left").getLayoutParams()).bottomMargin;

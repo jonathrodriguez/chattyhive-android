@@ -6,8 +6,11 @@ import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -80,6 +83,7 @@ public class SlidingStepsLayout extends ViewGroup {
     private int numberSteps;
     private int actualStep;
     private int unloadingStep;
+    private boolean restoring = false;
 
     private float actualPosition;
 
@@ -108,34 +112,43 @@ public class SlidingStepsLayout extends ViewGroup {
     private float LastEventX;
     /**************************************/
 
-    private OnInflateLayoutListener inflateLayoutListener;
+    private void logCurrentMethod() {
+        //Log.w("SlidingStepsLayout", Thread.currentThread().getStackTrace()[3].toString());
+    }
 
+    private OnInflateLayoutListener inflateLayoutListener;
     public void setOnInflateLayoutListener(OnInflateLayoutListener listener) {
+        logCurrentMethod();
         this.inflateLayoutListener = listener;
     }
 
     private OnRemoveLayoutListener removeLayoutListener;
     public void setOnRemoveLayoutListener(OnRemoveLayoutListener listener) {
+        logCurrentMethod();
         this.removeLayoutListener = listener;
     }
 
     private OnTransitionListener transitionListener;
     public void setOnTransitionListener(OnTransitionListener listener) {
+        logCurrentMethod();
         this.transitionListener = listener;
     }
 
     private TreeSet<LayoutParams> layouts;
     public void addLayout (LayoutParams layout) {
+        logCurrentMethod();
         this.layouts.add(layout);
         this.numberSteps++;
         //TODO: check if actualStep changed
         //TODO: Measure and update layout
     }
     public void removeLayout(int layoutPosition) {
+        logCurrentMethod();
         if (layoutPosition < numberSteps)
             this.removeLayout(this.layouts.toArray(new LayoutParams[this.layouts.size()])[layoutPosition]);
     }
     public void removeLayout(LayoutParams layout) {
+        logCurrentMethod();
         this.layouts.remove(layout);
         this.numberSteps--;
         //TODO: check if actualStep changed
@@ -144,23 +157,30 @@ public class SlidingStepsLayout extends ViewGroup {
 
     private HashMap<Integer,Object> values;
     public void setValue (int view,Object value) {
+        logCurrentMethod();
         this.values.put(view,value);
     }
     public Object getValue (int view) {
+        logCurrentMethod();
         return this.values.get(view);
     }
     public void removeValue (int view) {
+        logCurrentMethod();
         this.values.remove(view);
     }
 
     public SlidingStepsLayout(Context context) {
         this(context, null);
+        logCurrentMethod();
     }
     public SlidingStepsLayout(Context context, AttributeSet attrs) {
         this(context, attrs, R.attr.slidingStepsLayoutStyle);
+        logCurrentMethod();
     }
     public SlidingStepsLayout(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+
+        logCurrentMethod();
 
         setWillNotDraw(false);
 
@@ -216,6 +236,9 @@ public class SlidingStepsLayout extends ViewGroup {
 
     protected void loadChildren() {
         if (this.layouts != null) return;
+
+        logCurrentMethod();
+
         this.layouts = new TreeSet<LayoutParams>();
 
         ArrayList<View> children = new ArrayList<View>(this.getChildCount());
@@ -230,22 +253,31 @@ public class SlidingStepsLayout extends ViewGroup {
             }
         }
         this.numberSteps = this.layouts.size();
-        this.actualStep = 0;
         this.unloadingStep = -1;
 
+        //if (!restoring)
+            this.actualStep = 0;
+
+       // if (this.actualStep > 0)
+       //     this.inflateChild(this.actualStep-1);
+
         this.inflateChild(this.actualStep);
-        this.inflateChild(this.actualStep+1);
+
+        if (this.actualStep < (this.numberSteps-1))
+            this.inflateChild(this.actualStep + 1);
+
+        restoring = false;
+
         invalidate();
         requestLayout();
     }
 
     protected void inflateChild(int childPosition) {
+        logCurrentMethod();
         if (childPosition < numberSteps) {
             LayoutParams childLayoutParams = this.layouts.toArray(new LayoutParams[this.layouts.size()])[childPosition];
-            //View child = inflate(this.getContext(),childLayoutParams.getLayout(),this);
             View child = inflater.inflate(childLayoutParams.getLayout(),this,false);
 
-            //this.attachViewToParent(child,this.getChildCount(),child.getLayoutParams());
             this.addView(child);
 
             if (child.getId() <= 0)
@@ -269,6 +301,7 @@ public class SlidingStepsLayout extends ViewGroup {
         }
     }
     protected void removeChild(int childPosition) {
+        logCurrentMethod();
         if (childPosition < numberSteps) {
             LayoutParams childLayoutParams = this.layouts.toArray(new LayoutParams[this.layouts.size()])[childPosition];
             final int childCount = this.getChildCount();
@@ -278,11 +311,13 @@ public class SlidingStepsLayout extends ViewGroup {
         }
     }
     protected void removeChild(View child) {
+        logCurrentMethod();
         for (int i=0; i < this.numberSteps; i++)
             if (child.getId() == this.layouts.toArray(new LayoutParams[this.layouts.size()])[i].getViewID())
                 this.internalRemoveChild(child, i);
     }
     private void internalRemoveChild(View child, int childPosition) {
+        logCurrentMethod();
         this.unloadingStep = childPosition;
 
         if (this.removeLayoutListener != null)
@@ -297,12 +332,14 @@ public class SlidingStepsLayout extends ViewGroup {
     }
 
     public View getViewByStep(int step) {
+        logCurrentMethod();
         if ((this.layouts == null) || (this.layouts.isEmpty()))
             this.loadChildren();
         return this.findViewById(this.layouts.toArray(new LayoutParams[this.layouts.size()])[step].getViewID());
     }
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        logCurrentMethod();
         int widestChildWidth = 0;
         int highestChildHeight = 0;
         int effectiveActionBarHeight = (int)((this.showActionBar)?this.actionBarHeight:0);
@@ -341,6 +378,7 @@ public class SlidingStepsLayout extends ViewGroup {
     }
 
     private void calculateActionBarShowingMode() {
+        logCurrentMethod();
         TextView textView = new TextView(this.getContext());
         int widestLabelWidth = 0;
         Rect bounds;
@@ -387,6 +425,7 @@ public class SlidingStepsLayout extends ViewGroup {
         this.computeTitlePosition();
     }
     private void computeTitlePosition() {
+        logCurrentMethod();
         if (!this.actionBarHasToScroll) {
             this.leftmostActionBarTag = 0;
             this.actualSelectedActionBarTag = this.actualStep;
@@ -408,6 +447,7 @@ public class SlidingStepsLayout extends ViewGroup {
         }
     }
     private void drawActionBar(){
+        logCurrentMethod();
         int availableWidth = this.getWidth()-this.getPaddingLeft()-this.getPaddingRight();
         Context context = this.getContext();
         LayoutParams[] layoutParams = this.layouts.toArray(new LayoutParams[this.layouts.size()]);
@@ -510,6 +550,7 @@ public class SlidingStepsLayout extends ViewGroup {
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        logCurrentMethod();
         final int childCount = this.getChildCount();
         final int paddingLeft = this.getPaddingLeft();
         final int paddingRight = this.getPaddingRight();
@@ -517,8 +558,6 @@ public class SlidingStepsLayout extends ViewGroup {
         final int paddingBottom = this.getPaddingBottom() + this.getTop();
 
         final int width = this.getMeasuredWidth();
-
-        //this.loadChildren();
 
         LayoutParams[] layoutParams = this.layouts.toArray(new LayoutParams[this.layouts.size()]);
 
@@ -581,18 +620,21 @@ public class SlidingStepsLayout extends ViewGroup {
     public OnClickListener nextButtonClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
+            logCurrentMethod();
             openNext();
         }
     };
     public OnClickListener backButtonClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
+            logCurrentMethod();
             openPrevious();
         }
     };
 
     @Override
     public void computeScroll() {
+        logCurrentMethod();
         if (this.scrolling) {
             if (this.scroller.computeScrollOffset()) {
                 setCurrentPosition(this.scroller.getCurrX());
@@ -602,6 +644,7 @@ public class SlidingStepsLayout extends ViewGroup {
         }
     }
     protected void finishScroll() {
+        logCurrentMethod();
         int previousStep = this.actualStep;
         this.scrolling = false;
 
@@ -635,7 +678,9 @@ public class SlidingStepsLayout extends ViewGroup {
                 steps[this.actualStep+1]++;
 
             for (int i=0; i < this.numberSteps; i++)
-                if (steps[i] > 0)
+                if (i == this.actualStep)
+                    continue;
+                else if (steps[i] > 0)
                     this.inflateChild(i);
                 else if (steps[i] < 0)
                     this.removeChild(i);
@@ -658,14 +703,17 @@ public class SlidingStepsLayout extends ViewGroup {
         this.directDestination = -1;
     }
     protected void setActualPosition(float newPosition) {
+        logCurrentMethod();
         this.actualPosition = newPosition;//saturateNewPosition(newPosition);
         invalidate();
         requestLayout();
     }
     protected void setCurrentPosition(float newPosition) {
+        logCurrentMethod();
         this.movePanels(newPosition - this.actualPosition);
     }
     protected void movePanels (float distance) {
+        logCurrentMethod();
         this.actualPosition = saturateNewPosition(this.actualPosition+distance);
 
         if (transitionListener != null) {
@@ -706,6 +754,7 @@ public class SlidingStepsLayout extends ViewGroup {
     }
 
     private float getLeftBound() {
+        logCurrentMethod();
         LayoutParams[] layoutParams = this.layouts.toArray(new LayoutParams[this.layouts.size()]);
         if ((this.directDestination > -1) && (this.directDestination < this.actualStep))
             return -((2*this.getMeasuredWidth()) + ((MarginLayoutParams)this.findViewById(layoutParams[this.actualStep-1].getViewID()).getLayoutParams()).leftMargin + ((MarginLayoutParams)this.findViewById(layoutParams[this.actualStep - 1].getViewID()).getLayoutParams()).rightMargin
@@ -716,6 +765,7 @@ public class SlidingStepsLayout extends ViewGroup {
             return 0;
     }
     private float getRightBound() {
+        logCurrentMethod();
         LayoutParams[] layoutParams = this.layouts.toArray(new LayoutParams[this.layouts.size()]);
 
         if ((this.directDestination > -1) && (this.directDestination > this.actualStep))
@@ -728,9 +778,11 @@ public class SlidingStepsLayout extends ViewGroup {
     }
 
     protected float saturateNewPosition(float newPosition) {
+        logCurrentMethod();
         return Math.max(Math.min(newPosition,getRightBound()),getLeftBound());
     }
     protected void movePanels (float distance, int duration) {
+        logCurrentMethod();
         int animationDuration = Math.min(duration, this.maxAnimationDuration);
         this.scroller.abortAnimation();
         if (animationDuration > 0) {
@@ -745,9 +797,11 @@ public class SlidingStepsLayout extends ViewGroup {
     }
 
     public void openPrevious() {
+        logCurrentMethod();
         openPrevious(this.buttonPressedAnimationDuration);
     }
     protected void openPrevious(int animationDuration) {
+        logCurrentMethod();
         if (this.actualStep <= 0) return;
         if ((this.transitionListener != null) && (!this.transitionListener.OnBeginTransition(this.actualStep,this.actualStep-1))) return;
         LayoutParams[] layoutParams = this.layouts.toArray(new LayoutParams[this.layouts.size()]);
@@ -756,41 +810,55 @@ public class SlidingStepsLayout extends ViewGroup {
         movePanels(distance, animationDuration);
     }
     public void openNext() {
+        logCurrentMethod();
         openNext(this.buttonPressedAnimationDuration);
     }
     protected void openNext(int animationDuration) {
         if (this.actualStep >= (this.numberSteps-1)) return;
         if ((this.transitionListener != null) && (!this.transitionListener.OnBeginTransition(this.actualStep,this.actualStep+1))) return;
+        logCurrentMethod();
+        if (this.getViewByStep(this.actualStep+1) == null)
+            this.inflateChild(this.actualStep+1);
         LayoutParams[] layoutParams = this.layouts.toArray(new LayoutParams[this.layouts.size()]);
         float rightBound = -(this.getMeasuredWidth() + ((MarginLayoutParams)this.findViewById(layoutParams[this.actualStep+1].getViewID()).getLayoutParams()).leftMargin + ((MarginLayoutParams)this.findViewById(layoutParams[this.actualStep+1].getViewID()).getLayoutParams()).rightMargin);
         float distance = actualPosition-rightBound;
         movePanels(distance, animationDuration);
     }
     public void openStep(int step) {
+        logCurrentMethod();
+        openStep(step,this.buttonPressedAnimationDuration * 2);
+    }
+    public void openStep(int step, int animationDuration) {
         if ((step < 0) || (step >= this.numberSteps) || (step == this.actualStep) || (this.directDestination > -1)) return;
-        if (step == (this.actualStep+1))
-            this.openNext();
-        else if (step == (this.actualStep-1))
-            this.openPrevious();
+        logCurrentMethod();
+        if ((!restoring) && (step == (this.actualStep+1)))
+            this.openNext((animationDuration == (this.buttonPressedAnimationDuration * 2)) ? this.buttonPressedAnimationDuration : animationDuration);
+        else if ((step == (this.actualStep-1)))
+            this.openPrevious((animationDuration == (this.buttonPressedAnimationDuration * 2))?this.buttonPressedAnimationDuration:animationDuration);
         else {
+            restoring = false;
             this.directDestination = step;
-            this.inflateChild(this.directDestination);
+            if (this.getViewByStep(this.directDestination) == null)
+                this.inflateChild(this.directDestination);
             if ((this.transitionListener != null) && (!this.transitionListener.OnBeginTransition(this.actualStep,this.directDestination))) return;
             LayoutParams[] layoutParams = this.layouts.toArray(new LayoutParams[this.layouts.size()]);
 
             float distance = 0;
-            int animationDuration = this.buttonPressedAnimationDuration * 2;
+
 
             if (animationDuration > this.maxAnimationDuration)
                 animationDuration = this.maxAnimationDuration;
 
-            if (this.directDestination > this.actualStep) {
-                float rightBound = -( (2*this.getMeasuredWidth()) + ((MarginLayoutParams) this.findViewById(layoutParams[this.actualStep + 1].getViewID()).getLayoutParams()).leftMargin + ((MarginLayoutParams) this.findViewById(layoutParams[this.actualStep + 1].getViewID()).getLayoutParams()).rightMargin
-                                    + ((MarginLayoutParams)this.findViewById(layoutParams[this.directDestination].getViewID()).getLayoutParams()).leftMargin + ((MarginLayoutParams)this.findViewById(layoutParams[this.directDestination].getViewID()).getLayoutParams()).rightMargin);
+            if (this.directDestination > (this.actualStep+1)) {
+                float rightBound = -((2 * this.getMeasuredWidth()) + ((MarginLayoutParams) this.findViewById(layoutParams[this.actualStep + 1].getViewID()).getLayoutParams()).leftMargin + ((MarginLayoutParams) this.findViewById(layoutParams[this.actualStep + 1].getViewID()).getLayoutParams()).rightMargin
+                        + ((MarginLayoutParams) this.findViewById(layoutParams[this.directDestination].getViewID()).getLayoutParams()).leftMargin + ((MarginLayoutParams) this.findViewById(layoutParams[this.directDestination].getViewID()).getLayoutParams()).rightMargin);
+                distance = actualPosition - rightBound;
+            } else if (this.directDestination == (this.actualStep+1)) {
+                float rightBound = -(this.getMeasuredWidth() + ((MarginLayoutParams) this.findViewById(layoutParams[this.directDestination].getViewID()).getLayoutParams()).leftMargin + ((MarginLayoutParams) this.findViewById(layoutParams[this.directDestination].getViewID()).getLayoutParams()).rightMargin);
                 distance = actualPosition - rightBound;
             } else {
                 float leftBound = (2*this.getMeasuredWidth()) + ((MarginLayoutParams)this.findViewById(layoutParams[this.actualStep-1].getViewID()).getLayoutParams()).leftMargin + ((MarginLayoutParams)this.findViewById(layoutParams[this.actualStep - 1].getViewID()).getLayoutParams()).rightMargin
-                                  + ((MarginLayoutParams)this.findViewById(layoutParams[this.directDestination].getViewID()).getLayoutParams()).leftMargin + ((MarginLayoutParams)this.findViewById(layoutParams[this.directDestination].getViewID()).getLayoutParams()).rightMargin;
+                        + ((MarginLayoutParams)this.findViewById(layoutParams[this.directDestination].getViewID()).getLayoutParams()).leftMargin + ((MarginLayoutParams)this.findViewById(layoutParams[this.directDestination].getViewID()).getLayoutParams()).rightMargin;
                 distance = actualPosition-leftBound;
             }
             movePanels(distance, animationDuration);
@@ -807,7 +875,7 @@ public class SlidingStepsLayout extends ViewGroup {
         //Log.w("onInterceptTouchEvent_3",String.format("LeftMainWidth: %d\tLeftMain_leftMargin: %d\tLeftMain_rightMargin: %d",mainPanelsWidth.get("left"),((LayoutParams) mainPanels.get("left").getLayoutParams()).leftMargin,((LayoutParams) mainPanels.get("left").getLayoutParams()).rightMargin));
         //Log.w("onInterceptTouchEvent_4",String.format("CenterMainWidth: %d\tCenterMain_leftMargin: %d\tCenterMain_rightMargin: %d",mainPanelsWidth.get("center"),((LayoutParams) mainPanels.get("center").getLayoutParams()).leftMargin,((LayoutParams) mainPanels.get("center").getLayoutParams()).rightMargin));
         //Log.w("onInterceptTouchEvent_5",String.format("RightMainWidth: %d\tRightMain_leftMargin: %d\tRightMain_rightMargin: %d",mainPanelsWidth.get("right"),((LayoutParams) mainPanels.get("right").getLayoutParams()).leftMargin,((LayoutParams) mainPanels.get("right").getLayoutParams()).rightMargin));
-
+        logCurrentMethod();
         if (!this.allowSwipeToChangeStep) return false;
 
         final float x = ev.getX();
@@ -855,7 +923,7 @@ public class SlidingStepsLayout extends ViewGroup {
         //Log.w("onTouchEvent_3",String.format("LeftMainWidth: %d\tLeftMain_leftMargin: %d\tLeftMain_rightMargin: %d",mainPanelsWidth.get("left"),((LayoutParams) mainPanels.get("left").getLayoutParams()).leftMargin,((LayoutParams) mainPanels.get("left").getLayoutParams()).rightMargin));
         //Log.w("onTouchEvent_4",String.format("CenterMainWidth: %d\tCenterMain_leftMargin: %d\tCenterMain_rightMargin: %d",mainPanelsWidth.get("center"),((LayoutParams) mainPanels.get("center").getLayoutParams()).leftMargin,((LayoutParams) mainPanels.get("center").getLayoutParams()).rightMargin));
         //Log.w("onTouchEvent_5",String.format("RightMainWidth: %d\tRightMain_leftMargin: %d\tRightMain_rightMargin: %d",mainPanelsWidth.get("right"),((LayoutParams) mainPanels.get("right").getLayoutParams()).leftMargin,((LayoutParams) mainPanels.get("right").getLayoutParams()).rightMargin));
-
+        logCurrentMethod();
         if (!this.allowSwipeToChangeStep) return false;
 
         final float x = ev.getX();
@@ -1010,6 +1078,7 @@ public class SlidingStepsLayout extends ViewGroup {
 
     @Override
     public android.view.ViewGroup.LayoutParams generateLayoutParams(AttributeSet attrs) {
+        logCurrentMethod();
         return new LayoutParams(getContext(), attrs);
     }
 
@@ -1158,5 +1227,58 @@ public class SlidingStepsLayout extends ViewGroup {
             if (!(o instanceof LayoutParams)) throw new InvalidParameterException("Specified object is not an instance of SlidingStepsLayout.LayoutParams.");
             return this.getStepOrder() - ((LayoutParams) o).getStepOrder();
         }
+    }
+
+    @Override
+    protected Parcelable onSaveInstanceState() {
+        logCurrentMethod();
+        SavedState savedState = new SavedState(super.onSaveInstanceState());
+
+        savedState.actualStep = actualStep;
+
+        return savedState;
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Parcelable state) {
+        logCurrentMethod();
+        SavedState savedState = (SavedState) state;
+        super.onRestoreInstanceState(savedState.getSuperState());
+
+        restoring = true;
+        openStep(savedState.actualStep,0);
+    }
+
+    public static class SavedState extends BaseSavedState {
+        private int actualStep;
+
+        SavedState(Parcelable superState) {
+            super(superState);
+        }
+
+        private SavedState(Parcel in) {
+            super(in);
+
+            actualStep = in.readInt();
+        }
+
+        @Override
+        public void writeToParcel(Parcel out, int flags) {
+            super.writeToParcel(out, flags);
+
+            out.writeInt(actualStep);
+        }
+
+        public static final Parcelable.Creator<SavedState> CREATOR = new Parcelable.Creator<SavedState>() {
+            @Override
+            public SavedState createFromParcel(Parcel in) {
+                return new SavedState(in);
+            }
+
+            @Override
+            public SavedState[] newArray(int size) {
+                return new SavedState[size];
+            }
+        };
     }
 }
