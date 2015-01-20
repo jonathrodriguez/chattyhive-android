@@ -49,8 +49,6 @@ public class Register extends Activity {
 
     private Boolean usernameValidated = false;
 
-    private Boolean fake;
-
     private Register thisActivity;
 
     private Controller controller;
@@ -97,19 +95,12 @@ public class Register extends Activity {
 
         Intent intent = this.getIntent();
 
-        //fake = intent.getBooleanExtra("fake",false);
+        String email = intent.getStringExtra("email");
+        String proposedUsername = intent.getStringExtra("username");
 
-        /*if (fake) {
-            this.newUser = this.controller.getMe();
-            password = repeatPassword = "12345678";
-        } else {*/
-            String email = intent.getStringExtra("email");
-            String proposedUsername = intent.getStringExtra("username");
-
-            this.newUser = new User(email, this.controller);
-            this.newUser.getUserPublicProfile().setPublicName(proposedUsername);
-            this.newUser.getUserPrivateProfile().setSex("female"); //Load default value.
-        //}
+        this.newUser = new User(email, this.controller);
+        this.newUser.getUserPublicProfile().setPublicName(proposedUsername);
+        this.newUser.getUserPrivateProfile().setSex("female"); //Load default value.
     }
 
     public View.OnClickListener onEnterButtonClick = new View.OnClickListener() {
@@ -125,12 +116,7 @@ public class Register extends Activity {
 
                 if (passwordIsValid(passwordView)) {
                     if (passwordView.getText().toString().equals(repeatPasswordView.getText().toString())) {
-                        //if (!fake)
-                            newUser.Register(passwordView.getText().toString(),new EventHandler<CommandCallbackEventArgs>(thisActivity,"onRegisterCallback",CommandCallbackEventArgs.class));
-                        /*else {
-                            setResult(RESULT_OK);
-                            finish();
-                        }*/
+                        newUser.Register(passwordView.getText().toString(),new EventHandler<CommandCallbackEventArgs>(thisActivity,"onRegisterCallback",CommandCallbackEventArgs.class));
                     } else {
                         repeatPasswordView.setError("Passwords must match.");
                         repeatPasswordView.requestFocus();
