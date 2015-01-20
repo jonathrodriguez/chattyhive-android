@@ -202,11 +202,8 @@ public class HomeListAdapter extends BaseAdapter {
             Chat chatChat = null;
             chatChat = ((HiveMessageCard)card).getHive().getPublicChat();
             if (chatChat != null) {
-                System.out.println("chat hive");
-                mainChat = new MainChat(context, chatChat);
+                ((Main)context).OpenWindow(new MainChat(context, chatChat));
             }
-            else
-                System.out.println("NULL CHAT");
         }
 
         private void updateFields() {

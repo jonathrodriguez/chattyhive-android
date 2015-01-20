@@ -27,46 +27,34 @@ import java.util.Date;
 /**
  * Created by Jonathan on 27/03/14.
  */
-public class MainChat {
-    Context context;
-    TextView textInput;
-    Chat channelChat;
-    Conversation channelConversation;
+public class MainChat extends Window {
+    private static int ChatHierarchyLevel = 1;
 
-    View mainChat;
-    View actionBar;
+    private transient TextView textInput;
 
-    ChatListAdapter chatListAdapter;
+    private String channelChatID;
+    private transient Chat channelChat;
+    private transient Conversation channelConversation;
 
+    private transient View mainChat;
+    private transient View actionBar;
+
+    private transient ChatListAdapter chatListAdapter;
+
+    private MainChat (Context context) {
+        super(context);
+        this.setHierarchyLevel(ChatHierarchyLevel);
+    }
     public MainChat (Context context, Chat channelChat) {
-        this.context = context;
+        this(context);
+
+        this.channelChatID = channelChat.getChannelUnicode();
         this.channelChat = channelChat;
-        this.channelConversation = this.channelChat.getConversation();
+    }
+    public MainChat (Context context, String channelUnicode) {
+        this(context);
 
-        ViewPair viewPair = ((Main)context).ShowLayout(R.layout.main_panel_chat_layout,R.layout.chat_action_bar);
-        this.actionBar = viewPair.getActionBarView();
-        this.mainChat = viewPair.getMainView();
-
-        this.loadActionBarData();
-
-        this.mainChat.findViewById(R.id.main_panel_chat_send_icon).setOnClickListener(this.send_button_click);
-
-        ((Main)context).floatingPanel.close();
-
-        this.textInput = ((TextView)mainChat.findViewById(R.id.main_panel_chat_textBox));
-
-        this.channelConversation.setChatWindowActive(true);
-
-        this.chatListAdapter = new ChatListAdapter(context,this.channelConversation);
-        ((ListView)mainChat.findViewById(R.id.main_panel_chat_message_list)).setAdapter(chatListAdapter);
-
-        this.channelConversation.MessageListModifiedEvent.add(new EventHandler<EventArgs>(this.chatListAdapter,"OnAddItem",EventArgs.class));
-
-        if(((TextView)mainChat.findViewById(R.id.main_panel_chat_textBox)).didTouchFocusSelect()){////????????????????????????????????????
-            ((ImageView)mainChat.findViewById(R.id.main_panel_chat_smyles_icon)).setBackgroundResource(R.drawable.launcher_launcher_a);
-        }else{
-            ((ImageView)mainChat.findViewById(R.id.main_panel_chat_smyles_icon)).setBackgroundResource(R.drawable.chats_attachment3);
-        }
+        this.channelChatID = channelUnicode;
     }
 
     protected void loadActionBarData() {
@@ -183,16 +171,20 @@ public class MainChat {
         ((Activity)context).runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                InputStream is = image.getImage(Image.ImageSize.small,0);
-                if (is != null) {
-                    ((ImageView)actionBar.findViewById(R.id.main_panel_chat_icon)).setImageBitmap(BitmapFactory.decodeStream(is));
-                    ((ImageView)actionBar.findViewById(R.id.main_panel_chat_icon)).clearColorFilter();
-                    try {
-                        is.reset();
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                try {
+                    InputStream is = image.getImage(Image.ImageSize.small,0);
+                    if (is != null) {
+                        ((ImageView) actionBar.findViewById(R.id.main_panel_chat_icon)).setImageBitmap(BitmapFactory.decodeStream(is));
+                        ((ImageView) actionBar.findViewById(R.id.main_panel_chat_icon)).clearColorFilter();
+                        try {
+                            is.reset();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
-
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
                     image.OnImageLoaded.remove(new EventHandler<EventArgs>(thisMainChat, "onImageLoaded", EventArgs.class));
                 }
             }
@@ -207,7 +199,7 @@ public class MainChat {
             if ((text_to_send == null) || (text_to_send.isEmpty())) return;
 
             try {
-                new Message(Controller.GetRunningController().getMe(), channelConversation,new MessageContent("TEXT",text_to_send),new Date()).SendMessage();
+                new Message(((Main)context).controller.getMe(), channelConversation,new MessageContent("TEXT",text_to_send),new Date()).SendMessage();
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {
@@ -219,11 +211,92 @@ public class MainChat {
     @Override
     public void finalize() throws Throwable {
         super.finalize();
-        this.context = null;
-        this.channelConversation.setChatWindowActive(false);
-        this.channelConversation = null;
+
+        try {
+            this.channelConversation.setChatWindowActive(false);
+            ((Main) this.context).controller.Leave(this.channelChat.getChannelUnicode());
+            this.channelConversation.MessageListModifiedEvent.remove(new EventHandler<EventArgs>(this.chatListAdapter, "OnAddItem", EventArgs.class));
+        } catch (Exception e) {
+
+        } finally {
+            this.context = null;
+            this.channelConversation = null;
+            this.channelChat = null;
+            this.textInput = null;
+            this.chatListAdapter = null;
+            this.channelChatID = null;
+        }
+    }
+
+    @Override
+    public void Open() {
+        if (!this.hasContext()) return;
+
+        this.Show();
+    }
+
+    @Override
+    public void Close() {
+        if (!this.hasContext()) return;
+
+        this.Hide();
+
         this.channelChat = null;
-        this.textInput = null;
+        this.channelConversation = null;
+    }
+
+    @Override
+    public void Show() {
+        if (!this.hasContext()) return;
+
+        if (this.channelChat == null) {
+            this.channelChat = Chat.getChat(this.channelChatID);
+            this.channelConversation = this.channelChat.getConversation();
+        }
+
+        if (this.channelConversation == null)
+            this.channelConversation = this.channelChat.getConversation();
+
+        if (this.chatListAdapter == null)
+            this.chatListAdapter = new ChatListAdapter(context, this.channelConversation);
+
+        ViewPair viewPair = ((Main)context).ShowLayout(R.layout.main_panel_chat_layout,R.layout.chat_action_bar);
+        this.actionBar = viewPair.getActionBarView();
+        this.mainChat = viewPair.getMainView();
+        this.textInput = ((TextView)mainChat.findViewById(R.id.main_panel_chat_textBox));
+        this.mainChat.findViewById(R.id.main_panel_chat_send_icon).setOnClickListener(this.send_button_click);
+
+        this.loadActionBarData();
+
+        if (((Main)context).floatingPanel.isOpen())
+            ((Main)context).floatingPanel.close();
+
+        ((ListView)mainChat.findViewById(R.id.main_panel_chat_message_list)).setAdapter(chatListAdapter);
+
+        this.channelConversation.MessageListModifiedEvent.add(new EventHandler<EventArgs>(this.chatListAdapter,"OnAddItem",EventArgs.class));
+
+        if(((TextView)mainChat.findViewById(R.id.main_panel_chat_textBox)).didTouchFocusSelect()){////????????????????????????????????????
+            ((ImageView)mainChat.findViewById(R.id.main_panel_chat_smyles_icon)).setBackgroundResource(R.drawable.launcher_launcher_a);
+        }else{
+            ((ImageView)mainChat.findViewById(R.id.main_panel_chat_smyles_icon)).setBackgroundResource(R.drawable.chats_attachment3);
+        }
+
+        this.channelConversation.setChatWindowActive(true);
+    }
+
+    @Override
+    public void Hide() {
+        if (!this.hasContext()) return;
+
+        this.channelConversation.setChatWindowActive(false);
+        ((Main)this.context).controller.Leave(this.channelChat.getChannelUnicode());
+
+        this.channelConversation.MessageListModifiedEvent.remove(new EventHandler<EventArgs>(this.chatListAdapter,"OnAddItem",EventArgs.class));
+
         this.chatListAdapter = null;
+        ((ListView)mainChat.findViewById(R.id.main_panel_chat_message_list)).setAdapter(null);
+        this.mainChat = null;
+        this.textInput = null;
+        this.actionBar = null;
     }
 }

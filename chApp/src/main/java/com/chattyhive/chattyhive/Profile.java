@@ -18,55 +18,77 @@ import com.chattyhive.backend.businessobjects.Users.User;
 import com.chattyhive.backend.contentprovider.formats.COMMON;
 import com.chattyhive.backend.contentprovider.formats.Format;
 import com.chattyhive.backend.contentprovider.formats.LOCAL_USER_PROFILE;
+import com.chattyhive.backend.contentprovider.formats.USER_PROFILE;
 import com.chattyhive.backend.util.events.CommandCallbackEventArgs;
 import com.chattyhive.backend.util.events.EventArgs;
 import com.chattyhive.backend.util.events.EventHandler;
 import com.chattyhive.backend.util.formatters.DateFormatter;
 import com.chattyhive.chattyhive.framework.Util.StaticMethods;
 import com.chattyhive.chattyhive.framework.Util.ViewPair;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.Normalizer;
 import java.util.ArrayList;
 
 /**
  * Created by Jonathan on 20/05/2014.
  */
-public class Profile {
-    Context context;
-    View profileView;
-    View actionBar;
+public class Profile extends Window {
+    private static int ProfileHierarchyLevel = 1;
+
+    private transient View profileView;
+    private transient View actionBar;
 
     private enum ProfileType {Private, Public}
     private enum ProfileView {Private, Public, Own, Edit}
     private enum ShowInProfile { None, Private, Public, Both}
 
-    private User user;
-    private User modifiedUser; //This is for profile edition.
+    private transient User user;
+    private transient User modifiedUser; //This is for profile edition.
     private ProfileType profileType;
     private ProfileView profileViewType;
 
     public Profile(Context context) {
-        this.context = context;
+        super(context);
+        this.setHierarchyLevel(ProfileHierarchyLevel);
     }
 
-    protected View.OnClickListener open_profile = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            OpenProfile(((Main)context).controller.getMe(),ProfileType.Private);
-        }
-    };
+    @Override
+    public void Open() {
+        if (!this.hasContext()) return;
+        if ((this.user == null) || (this.profileType == null)) return;
 
-    protected void OpenProfile(User user, ProfileType profileType) {
+        this.profileViewType = (this.user.isMe())?ProfileView.Own:((this.profileType == ProfileType.Private)?ProfileView.Private:ProfileView.Public);
+
+        this.Show();
+    }
+
+    @Override
+    public void Close() {
+        if (!this.hasContext()) return;
+
+        this.Hide();
+
+        this.user = null;
+        this.modifiedUser = null;
+        this.profileType = null;
+        this.profileViewType = null;
+    }
+
+    @Override
+    public void Show() {
+        if (!this.hasContext()) return;
+        if ((this.user == null) || (this.profileType == null)) return;
+
+        if (this.profileViewType == null)
+            this.profileViewType = (this.user.isMe())?ProfileView.Own:((this.profileType == ProfileType.Private)?ProfileView.Private:ProfileView.Public);
+
         ViewPair profileViewPair = ((Main)context).ShowLayout(R.layout.main_panel_profile_layout,R.layout.profile_action_bar);
-
-        profileView = profileViewPair.getMainView();
-        actionBar = profileViewPair.getActionBarView();
-
-        this.user = user;
-        this.profileType = profileType;
-
-        this.profileViewType = (user.isMe())?ProfileView.Own:((profileType == ProfileType.Private)?ProfileView.Private:ProfileView.Public);
+        this.profileView = profileViewPair.getMainView();
+        this.actionBar = profileViewPair.getActionBarView();
 
         adjustView();
         setData();
@@ -82,6 +104,90 @@ public class Profile {
         }
     }
 
+    @Override
+    public void Hide() {
+        if (!this.hasContext()) return;
+
+        this.profileView = null;
+        this.actionBar = null;
+    }
+
+    public void setContext(Context context) {
+        super.setContext(context);
+        if ((this.user != null) && (!this.user.hasController()))
+           this.user.setController(((Main)context).controller);
+
+        if ((this.modifiedUser != null) && (!this.modifiedUser.hasController()))
+            this.modifiedUser.setController(((Main)context).controller);
+    }
+
+
+    private void writeObject(java.io.ObjectOutputStream out) throws IOException {
+        // write 'this' to 'out'...
+        out.writeObject(this.profileType);
+        out.writeObject(this.profileViewType);
+        if (this.user.isMe())
+            out.writeUTF(this.user.toJson(new LOCAL_USER_PROFILE()).toString());
+        else
+            out.writeUTF(this.user.toJson(new USER_PROFILE()).toString());
+
+        if (this.modifiedUser != null) {
+            out.writeBoolean(true);
+            if (this.modifiedUser.isMe())
+                out.writeUTF(this.modifiedUser.toJson(new LOCAL_USER_PROFILE()).toString());
+            else
+                out.writeUTF(this.modifiedUser.toJson(new USER_PROFILE()).toString());
+        } else
+            out.writeBoolean(false);
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
+        this.profileType = (ProfileType) in.readObject();
+        this.profileViewType = (ProfileView) in.readObject();
+
+        String userS = in.readUTF();
+        if (!userS.isEmpty()) {
+            Format[] formats = Format.getFormat(new JsonParser().parse(userS));
+            for (Format format : formats)
+                if ((format instanceof LOCAL_USER_PROFILE) || (format instanceof USER_PROFILE))
+                    this.user = new User(format);
+        }
+
+        Boolean hasModifiedUser = in.readBoolean();
+        if (hasModifiedUser) {
+            String modifiedUserS = in.readUTF();
+            if (!modifiedUserS.isEmpty()) {
+                Format[] formats = Format.getFormat(new JsonParser().parse(modifiedUserS));
+                for (Format format : formats)
+                    if ((format instanceof LOCAL_USER_PROFILE) || (format instanceof USER_PROFILE))
+                        this.modifiedUser = new User(format);
+            }
+        }
+    }
+
+    protected View.OnClickListener open_profile = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            OpenProfile(((Main)context).controller.getMe(),ProfileType.Private);
+        }
+    };
+
+
+
+    protected void OpenProfile(User user, ProfileType profileType) {
+        this.user = user;
+        this.profileType = profileType;
+
+        ((Main)this.context).OpenWindow(this);
+    }
+
+    protected void OpenProfile(User user, ProfileType profileType, Integer hierarchyLevel) {
+        this.user = user;
+        this.profileType = profileType;
+
+        ((Main)this.context).OpenWindow(this,hierarchyLevel);
+    }
+
     public void loadBigPhoto(Object sender, EventArgs eventArgs) {
         if (!(sender instanceof Image)) return;
 
@@ -91,24 +197,29 @@ public class Profile {
         ((Activity)this.context).runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                InputStream is = image.getImage(Image.ImageSize.xlarge, 0);
-                if (is != null) {
-                    ((ImageView) profileView.findViewById(R.id.profile_big_photo_thumbnail)).setImageBitmap(BitmapFactory.decodeStream(is));
-                    try {
-                        is.reset();
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                try {
+                    InputStream is = image.getImage(Image.ImageSize.xlarge, 0);
+                    if (is != null) {
+                        ((ImageView) profileView.findViewById(R.id.profile_big_photo_thumbnail)).setImageBitmap(BitmapFactory.decodeStream(is));
+                        try {
+                            is.reset();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        if (profileViewType != ProfileView.Edit)
+                            ((ImageView) actionBar.findViewById(R.id.profile_action_bar_myPhoto_button)).setImageBitmap(BitmapFactory.decodeStream(is));
+                        try {
+                            is.reset();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
-                    if (profileViewType != ProfileView.Edit)
-                        ((ImageView)actionBar.findViewById(R.id.profile_action_bar_myPhoto_button)).setImageBitmap(BitmapFactory.decodeStream(is));
-                    try {
-                        is.reset();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    image.OnImageLoaded.remove(new EventHandler<EventArgs>(thisProfile, "loadBigPhoto", EventArgs.class));
+                    image.freeMemory();
                 }
-                image.OnImageLoaded.remove(new EventHandler<EventArgs>(thisProfile, "loadBigPhoto", EventArgs.class));
-                image.freeMemory();
             }
         });
 
@@ -122,6 +233,7 @@ public class Profile {
         ((Activity)this.context).runOnUiThread( new Runnable() {
             @Override
             public void run() {
+                try {
                 InputStream is = image.getImage(Image.ImageSize.medium,0);
                 if (is != null) {
                     ((ImageView) profileView.findViewById(R.id.profile_small_photo_thumbnail)).setImageBitmap(BitmapFactory.decodeStream(is));
@@ -131,9 +243,12 @@ public class Profile {
                         e.printStackTrace();
                     }
                 }
-
-                image.OnImageLoaded.remove(new EventHandler<EventArgs>(thisProfile,"loadSmallPhoto",EventArgs.class));
-                image.freeMemory();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    image.OnImageLoaded.remove(new EventHandler<EventArgs>(thisProfile,"loadSmallPhoto",EventArgs.class));
+                    image.freeMemory();
+                }
             }
         });
     }
@@ -888,7 +1003,8 @@ public class Profile {
         if ((common != null) && (common.STATUS != null) && (common.STATUS.equalsIgnoreCase("OK"))) {
             ((Activity)this.context).runOnUiThread(new Runnable(){
                 public void run() {
-                    setData();
+                    if ((profileView != null) && (actionBar != null))
+                        setData();
                 }
             });
         }

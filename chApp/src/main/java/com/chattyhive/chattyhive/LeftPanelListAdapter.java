@@ -264,10 +264,18 @@ public class LeftPanelListAdapter extends BaseAdapter {
         }
 
         if (type == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Hives)) {
-            ((HiveViewHolder)holder).hiveName.setText(context.getResources().getString(R.string.hivename_identifier_character).concat(((Hive) item).getName()));
+            if ((((Hive) item).getName() != null) && (!((Hive) item).getName().isEmpty()))
+                ((HiveViewHolder)holder).hiveName.setText(context.getResources().getString(R.string.hivename_identifier_character).concat(((Hive) item).getName()));
+            else
+                ((HiveViewHolder)holder).hiveName.setText(context.getResources().getString(R.string.hivename_identifier_character).concat("<empty_hive_name>"));
             ((HiveViewHolder)holder).hiveDescription.setText(((Hive)item).getDescription());
-            Category.setCategory(((Hive) item).getCategory(), ((HiveViewHolder) holder).hiveCategoryImage, ((HiveViewHolder) holder).hiveCategoryName);
-            ((HiveViewHolder)holder).hiveSubscribedUsers.setText("Unknown");
+            if ((((Hive)item).getCategory() != null) && (!((Hive)item).getCategory().isEmpty()))
+                Category.setCategory(((Hive) item).getCategory(), ((HiveViewHolder) holder).hiveCategoryImage, ((HiveViewHolder) holder).hiveCategoryName);
+            else {
+                ((HiveViewHolder) holder).hiveCategoryImage.setImageResource(R.drawable.registro_important_note_orange);
+                ((HiveViewHolder) holder).hiveCategoryName.setText("Unknown category");
+            }
+            ((HiveViewHolder)holder).hiveSubscribedUsers.setText(String.valueOf(((Hive) item).getSubscribedUsers()));
             ((HiveViewHolder)holder).hiveItem.setTag(R.id.BO_Hive,item);
             ((HiveViewHolder)holder).hiveImage.setImageResource(R.drawable.pestanha_chats_public_chat);
             try {

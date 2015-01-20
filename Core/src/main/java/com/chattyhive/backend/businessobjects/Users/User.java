@@ -47,6 +47,9 @@ public class User {
     private PublicProfile userPublicProfile; //Public profile for any user.
     private PrivateProfile userPrivateProfile; //Private profile for any user.
 
+    public Boolean hasController() {
+        return (this.controller != null);
+    }
     public void setController(Controller controller) {
         this.controller = controller;
     }
