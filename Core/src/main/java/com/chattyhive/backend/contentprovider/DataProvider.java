@@ -4,6 +4,7 @@ import com.chattyhive.backend.Controller;
 import com.chattyhive.backend.StaticParameters;
 import com.chattyhive.backend.businessobjects.Chats.Chat;
 import com.chattyhive.backend.businessobjects.Chats.Hive;
+import com.chattyhive.backend.businessobjects.Explore;
 import com.chattyhive.backend.contentprovider.OSStorageProvider.ChatLocalStorageInterface;
 import com.chattyhive.backend.contentprovider.OSStorageProvider.HiveLocalStorageInterface;
 import com.chattyhive.backend.contentprovider.OSStorageProvider.LoginLocalStorageInterface;
@@ -477,6 +478,7 @@ public class DataProvider {
         ArrayList<Format> receivedFormats = eventArgs.getReceivedFormats();
 
         HIVE_ID hive_id = null;
+        Hive hive = null;
 
         for(Format format : receivedFormats)
             if (format instanceof COMMON) {
@@ -492,18 +494,18 @@ public class DataProvider {
         if (hive_id != null)
             for (Format format : receivedFormats)
                 if (format instanceof CHAT) {
-                    Hive h = Hive.getHive(hive_id.NAME_URL);
-                    Chat g = h.getPublicChat();
+                    hive = Hive.getHive(hive_id.NAME_URL);
+                    Chat g = hive.getPublicChat();
                     if (g != null)
                         g.fromFormat(format);
                     else {
                         g = Chat.getChat(format);
-                        h.setPublicChat(g);
+                        hive.setPublicChat(g);
                     }
                 }
 
         if (onHiveJoined != null)
-            onHiveJoined.fire(sender,eventArgs);
+            onHiveJoined.fire(hive,eventArgs);
     }
 
     public void Join(String channel) {
@@ -621,11 +623,18 @@ public class DataProvider {
             this.PubSubConnectionStateChanged.fire(sender,args);
     }
 
-    public void ExploreHives(int offset,int length,Controller.ExploreType exploreType,EventHandler<CommandCallbackEventArgs> Callback) {
+    public void ExploreHives(int offset,int length,Explore.SortType sortType,String categoryCode,EventHandler<CommandCallbackEventArgs> Callback) {
         // TODO: This is for server 0.5.0 which does not support list indexing for explore command.
         //this.server.RunCommand(AvailableCommands.Explore,Callback,null,null);
         EXPLORE_FILTER explore_filter = new EXPLORE_FILTER();
-        explore_filter.TYPE = exploreType.name();
+        explore_filter.TYPE = sortType.name();
+        explore_filter.RESULT_INTERVAL = new INTERVAL();
+        explore_filter.RESULT_INTERVAL.START_INDEX = String.valueOf(offset);
+        explore_filter.RESULT_INTERVAL.COUNT = length;
+
+        if ((categoryCode != null) && (!categoryCode.isEmpty()))
+            explore_filter.CATEGORY = categoryCode;
+
         this.server.RunCommand(AvailableCommands.Explore,Callback,null,explore_filter);
     }
 

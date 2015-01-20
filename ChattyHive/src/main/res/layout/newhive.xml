@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:fillViewport="true"
+    tools:context="${packageName}.${activityClass}">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="@android:color/black">
+
+            <LinearLayout
+                android:id="@+id/new_hive_back_button"
+                android:layout_width="65dp"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="0dp"
+                android:background="@drawable/explora_border"
+                android:gravity="center_horizontal|center_vertical">
+
+                <ImageView
+                    android:id="@+id/new_hive_action_bar_goBack_image"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:layout_gravity="center"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/explore_new_hive_back" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:gravity="center"
+                android:text="nuevo hive"
+                android:textColor="@android:color/white"
+                android:textSize="32dp"
+                android:layout_weight="1"
+                android:maxLines="1"
+                android:lines="1"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="right"
+                android:gravity="right"
+                android:layout_weight="0">
+
+                <LinearLayout
+                    android:id="@+id/new_hive_make_button"
+                    android:layout_width="65dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="17dp"
+                    android:background="@drawable/new_hive_acept"
+                    android:gravity="center_horizontal|center_vertical">
+
+                    <ImageView
+                        android:id="@+id/new_hive_action_bar_check_image"
+                        android:layout_width="42dp"
+                        android:layout_height="42dp"
+                        android:layout_gravity="center"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/accept_new_hive" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/background_new_hive"
+            android:orientation="vertical"
+            android:paddingLeft="22.5dp"
+            android:paddingRight="22.5dp"
+            android:paddingTop="20dp">
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="32dp"
+                android:background="@drawable/new_hive_input_border"
+                android:gravity="center_vertical|left"
+                android:hint="Nombre del hive"
+                android:paddingLeft="6dp"
+                android:paddingRight="6dp"
+                android:textColor="@android:color/black"
+                android:textColorHint="#808080"
+                android:textSize="16dp"
+                android:id="@+id/new_hive_name" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="93dp"
+                android:layout_marginTop="13dp"
+                android:orientation="horizontal">
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:layout_width="93dp"
+                        android:layout_height="93dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_weight="0.5"
+                        android:src="@drawable/explore_new_hive_hive_without_picture"
+                        android:id="@+id/new_hive_image" />
+                </RelativeLayout>
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="right"
+                    android:background="@drawable/new_hive_input_border"
+                    android:gravity="top"
+                    android:hint="Descripcion breve..."
+                    android:paddingLeft="8dp"
+                    android:paddingRight="8dp"
+                    android:paddingTop="9dp"
+                    android:textColor="@android:color/black"
+                    android:textColorHint="#808080"
+                    android:textSize="14.5dp"
+                    android:id="@+id/new_hive_description" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/new_hive_variable_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:id="@+id/new_hive_variable_layout_sup"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.5"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="22dp"
+                        android:layout_marginBottom="11dp"
+                        android:layout_marginTop="16dp"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            android:id="@+id/test"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:layout_gravity="center"
+                            android:text="Indica hasta 5 tags"
+                            android:textColor="@android:color/black"
+                            android:textSize="14.5dp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:layout_gravity="center"
+                            android:text=" (el hive será más visible)"
+                            android:textColor="#808080"
+                            android:textSize="12dp"
+                            android:maxLines="1"
+                            android:lines="1"
+                            android:singleLine="true"
+                            android:ellipsize="end"/>
+                    </LinearLayout>
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="32dp"
+                        android:background="@drawable/new_hive_input_border"
+                        android:gravity="center_vertical|left"
+                        android:hint="Separa los tags con comas o espacios"
+                        android:paddingLeft="6dp"
+                        android:paddingRight="6dp"
+                        android:textColor="@android:color/black"
+                        android:textColorHint="#808080"
+                        android:textSize="13.5dp"
+                        android:id="@+id/new_hive_tags" />
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="32dp"
+                        android:layout_marginTop="14dp"
+                        android:background="@drawable/new_hive_input_border"
+                        android:gravity="center_vertical|left"
+                        android:hint="Visible en todo el mundo"
+                        android:paddingLeft="6dp"
+                        android:paddingRight="6dp"
+                        android:textColor="@android:color/black"
+                        android:textColorHint="#808080"
+                        android:textSize="13.5dp"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/new_hive_variable_layout_inf"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.5"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="22dp"
+                        android:layout_marginBottom="11dp"
+                        android:layout_marginTop="16dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="Idiomas del chat público"
+                            android:textColor="@android:color/black"
+                            android:textSize="14.5dp" />
+
+                        <ImageView
+                            android:layout_width="22dp"
+                            android:layout_height="22dp"
+                            android:layout_marginLeft="9dp"
+                            android:src="@drawable/menu_help" />
+                    </LinearLayout>
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="32dp"
+                        android:background="@drawable/new_hive_input_border"
+                        android:gravity="center_vertical|left"
+                        android:hint=""
+                        android:paddingLeft="6dp"
+                        android:paddingRight="6dp"
+                        android:textColor="@android:color/black"
+                        android:textColorHint="#808080"
+                        android:textSize="13.5dp"
+                        android:id="@+id/new_hive_languages" />
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="32dp"
+                        android:layout_marginTop="14dp"
+                        android:background="@drawable/new_hive_input_border"
+                        android:gravity="center_vertical|left"
+                        android:hint="Categoria"
+                        android:paddingLeft="6dp"
+                        android:paddingRight="6dp"
+                        android:textColor="@android:color/black"
+                        android:textColorHint="#808080"
+                        android:textSize="13.5dp"
+                        android:id="@+id/new_hive_category" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="37dp"
+                android:layout_marginTop="14dp"
+                android:gravity="right"
+                android:layout_marginBottom="20dp">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/new_hive_invite"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:text="Invitar a amigos"
+                        android:textColor="#FD6721"
+                        android:textSize="16dp"
+                        android:textStyle="bold" />
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginLeft="5dp"
+                        android:src="@drawable/invite_friends" />
+                </LinearLayout>
+                <TextView
+                    android:id="@+id/date_picker"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="asdfasdf"
+                    android:textColor="@android:color/black"/>
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

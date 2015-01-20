@@ -4,6 +4,7 @@ import com.chattyhive.backend.contentprovider.AvailableCommands;
 import com.chattyhive.backend.contentprovider.formats.CHAT_ID;
 import com.chattyhive.backend.contentprovider.formats.EXPLORE_FILTER;
 import com.chattyhive.backend.contentprovider.formats.Format;
+import com.chattyhive.backend.contentprovider.formats.HIVE;
 import com.chattyhive.backend.contentprovider.formats.HIVE_ID;
 import com.chattyhive.backend.contentprovider.formats.LOCAL_USER_PROFILE;
 import com.chattyhive.backend.contentprovider.formats.LOGIN;
@@ -124,7 +125,7 @@ public class ServerCommand {
         returningCookies = null;
         ServerCommand.AddServerCommand(command,method,commandType,url,paramFormats,inputFormats,requiredCookies,returningCookies);
 
-        // Explore
+        // Explore //TODO: Add optional parameters
         command = AvailableCommands.Explore;
         method = Method.GET;
         commandType = CommandType.Query;
@@ -160,7 +161,7 @@ public class ServerCommand {
         ServerCommand.AddServerCommand(command,method,commandType,url,paramFormats,inputFormats,requiredCookies,returningCookies);
 
 
-        // GetMessages
+        // GetMessages //TODO: Add optional parameters
         command = AvailableCommands.GetMessages;
         method = Method.GET;
         commandType = CommandType.Pull;
@@ -240,6 +241,17 @@ public class ServerCommand {
         requiredCookies = new ArrayList<String>() {{add(CSRFTokenCookie); add(SessionCookie);}};
         returningCookies = null;
         ServerCommand.AddServerCommand(command,method,commandType,url,paramFormats,inputFormats,requiredCookies,returningCookies);
+
+        // CreateHive
+        command = AvailableCommands.CreateHive;
+        method = Method.POST;
+        commandType = CommandType.ImmediateResponsePush;
+        url = "android.hives";
+        paramFormats = null;
+        inputFormats = new ArrayList<Class<?>>() {{add(HIVE.class);}};
+        requiredCookies = new ArrayList<String>() {{add(CSRFTokenCookie); add(SessionCookie);}};
+        returningCookies = null;
+        ServerCommand.AddServerCommand(command,method,commandType,url,paramFormats,inputFormats,requiredCookies,returningCookies);
     }
 
     private static void AddServerCommand(AvailableCommands command, Method method, CommandType commandType, String url,ArrayList<Class<?>> paramFormats, ArrayList<Class<?>> inputFormats, ArrayList<String> requiredCookies, ArrayList<String> returningCookies) {
@@ -299,7 +311,7 @@ public class ServerCommand {
     public String getMethod() {
         return this.method.toString();
     }
-    public String getUrl(Format... formats) {
+    public String getUrl(Format... formats) { //TODO: Edit this to support optional parameters
         String url = this.url;
         int paramIndex = url.indexOf('[');
         while (paramIndex > -1) {

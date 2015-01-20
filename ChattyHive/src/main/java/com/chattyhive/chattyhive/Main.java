@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
-import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -32,42 +31,84 @@ import com.chattyhive.chattyhive.framework.OSStorageProvider.UserLocalStorage;
 import com.chattyhive.chattyhive.backgroundservice.CHService;
 
 import com.chattyhive.chattyhive.framework.CustomViews.ViewGroup.FloatingPanel;
-import com.chattyhive.chattyhive.framework.Util.StaticMethods;
 import com.chattyhive.chattyhive.framework.Util.ViewPair;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class Main extends Activity {
     static final int OP_CODE_LOGIN = 1;
     static final int OP_CODE_EXPLORE = 2;
-
+    static final int OP_CODE_NEW_HIVE = 3;
 
     FloatingPanel floatingPanel;
 
     Controller controller;
 
-    int ActiveLayoutID;
-
     Home home;
 
     LeftPanel leftPanel;
+    RightPanel2 rightPanel;
 
-    //TODO: Add main panel view stack
+    HashMap <Integer, Window> viewStack;
+    int lastOpenHierarchyLevel;
+
+    void OpenWindow(Window window) {
+        OpenWindow(window,window.getHierarchyLevel());
+    }
+    void OpenWindow(Window window,Integer hierarchyLevel) {
+        if (hierarchyLevel > (this.lastOpenHierarchyLevel+1))
+            throw new IllegalArgumentException("Expected at most one level over the last open hierarchy level");
+
+        if (this.lastOpenHierarchyLevel > -1) {
+            if (hierarchyLevel < this.lastOpenHierarchyLevel) {
+                for (int i = this.lastOpenHierarchyLevel; i > hierarchyLevel; i--) {
+                    this.viewStack.get(i).Close();
+                    this.viewStack.remove(i);
+                }
+            } else if (hierarchyLevel == this.lastOpenHierarchyLevel) {
+                this.viewStack.get(this.lastOpenHierarchyLevel).Close();
+            } else if (hierarchyLevel > this.lastOpenHierarchyLevel) {
+                this.viewStack.get(this.lastOpenHierarchyLevel).Hide();
+            }
+        }
+
+        if (hierarchyLevel != window.getHierarchyLevel())
+            window.setHierarchyLevel(hierarchyLevel);
+
+        this.viewStack.put(hierarchyLevel,window);
+
+        this.lastOpenHierarchyLevel = hierarchyLevel;
+
+        if ((!window.hasContext()) || (window.context != this))
+            window.setContext(this);
+
+        window.Open();
+    }
+
+    void Close() {
+        if (this.lastOpenHierarchyLevel >= 0)
+            this.viewStack.get(this.lastOpenHierarchyLevel).Close();
+
+        this.lastOpenHierarchyLevel--;
+
+        if (this.lastOpenHierarchyLevel >= 0)
+            this.viewStack.get(this.lastOpenHierarchyLevel).Show();
+
+    }
 
     protected ViewPair ShowLayout (int layoutID, int actionBarID) {
         FrameLayout mainPanel = ((FrameLayout)findViewById(R.id.mainCenter));
         FrameLayout mainActionBar = ((FrameLayout)findViewById(R.id.actionCenter));
         mainPanel.removeAllViews();
         mainActionBar.removeAllViews();
-        ActiveLayoutID = layoutID;
         View actionBar = LayoutInflater.from(this).inflate(actionBarID,mainActionBar,true);
         View mainView = LayoutInflater.from(this).inflate(layoutID, mainPanel, true);
         ViewPair actualView = new ViewPair(mainView,actionBar);
 
-        //TODO: Populate/manage main panel view stack.
-
         return actualView;
     }
-
     protected View ChangeActionBar (int actionBarID) {
         FrameLayout mainActionBar = ((FrameLayout)findViewById(R.id.actionCenter));
         mainActionBar.removeAllViews();
@@ -77,29 +118,12 @@ public class Main extends Activity {
     }
 
     protected void ShowHome() {
-        ViewPair pair = this.ShowLayout(R.layout.home,R.layout.home_action_bar);
-        setPanelBehaviour();
-
-        TypedValue alpha = new TypedValue();
-
-        getResources().getValue(R.color.home_action_bar_app_icon_alpha,alpha,true);
-        StaticMethods.SetAlpha(pair.getActionBarView().findViewById(R.id.appIcon),alpha.getFloat());
-
-        getResources().getValue(R.color.home_action_bar_menu_icon_alpha,alpha,true);
-        StaticMethods.SetAlpha(pair.getActionBarView().findViewById(R.id.menuIcon),alpha.getFloat());
-
-        getResources().getValue(R.color.home_top_bar_image_alpha,alpha,true);
-        StaticMethods.SetAlpha(pair.getMainView().findViewById(R.id.home_chat_button_image),alpha.getFloat());
-        StaticMethods.SetAlpha(pair.getMainView().findViewById(R.id.home_explore_button_image),alpha.getFloat());
-        StaticMethods.SetAlpha(pair.getMainView().findViewById(R.id.home_hive_button_image),alpha.getFloat());
-
         if (this.home == null)
             this.home = new Home(this);
-        else {
-            this.home.Reload();
-        }
-        if (floatingPanel.isOpen())
-            floatingPanel.close();
+        else if (!this.home.hasContext())
+            this.home.setContext(this);
+
+        OpenWindow(this.home);
     }
 
     protected void ShowChats() {
@@ -115,7 +139,6 @@ public class Main extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ActiveLayoutID = R.layout.home;
         setContentView(R.layout.main);
 
         //Log.w("Main","onCreate..."); //DEBUG
@@ -124,9 +147,15 @@ public class Main extends Activity {
 
         this.controller = Controller.GetRunningController(com.chattyhive.chattyhive.framework.OSStorageProvider.LocalStorage.getLocalStorage());
 
+        this.viewStack = new HashMap<Integer, Window>();
+        this.lastOpenHierarchyLevel = -1;
+
         this.leftPanel = new LeftPanel(this);
-        this.ShowHome();
-        RightPanel2 rp = new RightPanel2(this);
+
+        if (savedInstanceState == null)
+            this.ShowHome();
+
+        this.rightPanel = new RightPanel2(this);
 
         try {
             Controller.bindApp(this.getClass().getMethod("hasToLogin"),this);
@@ -135,6 +164,16 @@ public class Main extends Activity {
         }
 
         this.ConnectService();
+
+        if (savedInstanceState != null)
+            Restore(savedInstanceState);
+    }
+
+    private void Restore(Bundle savedInstanceState) {
+        this.home = ((Home)savedInstanceState.getSerializable("Home"));
+        int lastOpenHierarchyLevel = savedInstanceState.getInt("lastOpenHierarchyLevel");
+        for (int i = 0; i <= lastOpenHierarchyLevel; i++)
+            OpenWindow((Window)savedInstanceState.getSerializable(String.format("viewStackEntry_%d",i)),i);
     }
 
     public void hasToLogin() {
@@ -154,19 +193,26 @@ public class Main extends Activity {
             case OP_CODE_EXPLORE:
                     if (resultCode == RESULT_OK) {
                         String nameURL = null;
-                        if (data.hasExtra("NameURL"))
+                        if ((data != null) && (data.hasExtra("NameURL")))
                             nameURL = data.getStringExtra("NameURL");
+
                         if ((nameURL != null) && (!nameURL.isEmpty())) {
                             Hive h = Hive.getHive(nameURL);
                             Chat c = null;
                             if (h != null)
                                 c = h.getPublicChat();
+
                             if (c != null)
                                 new MainChat(this, c);
                             else
                                 this.ShowHives();
                         } else
                             this.ShowHives();
+                    }
+                    break;
+            case OP_CODE_NEW_HIVE:
+                if(resultCode == RESULT_OK){
+                        this.ShowHives();
                     }
                 break;
         }
@@ -242,6 +288,14 @@ public class Main extends Activity {
         }
     };
 
+    protected View.OnClickListener new_hive_button_click = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Intent intent = new Intent(getApplicationContext(),NewHive.class);
+            startActivityForResult(intent,OP_CODE_NEW_HIVE);
+        }
+    };
+
     protected View.OnClickListener logout_button_click = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -268,30 +322,32 @@ public class Main extends Activity {
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
         if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
-            if (event.getAction() == KeyEvent.ACTION_DOWN
-                    && event.getRepeatCount() == 0) {
-                if ((ActiveLayoutID != R.layout.home) && (!floatingPanel.isOpen())) { // Tell the framework to start tracking this event.
+            if (event.getAction() == KeyEvent.ACTION_DOWN && event.getRepeatCount() == 0) {
+                if ((this.lastOpenHierarchyLevel > 0) && (!floatingPanel.isOpen())) { // Tell the framework to start tracking this event.
                     findViewById(R.id.mainCenter).getKeyDispatcherState().startTracking(event, this);
                     return true;
                 }
             } else if (event.getAction() == KeyEvent.ACTION_UP) {
                 findViewById(R.id.mainCenter).getKeyDispatcherState().handleUpEvent(event);
-                if (event.isTracking() && !event.isCanceled() && (!floatingPanel.isOpen())) { //TODO: Use main panel view stack.
-                    if (ActiveLayoutID == R.layout.main_panel_chat_layout) {
-                        this.controller.Leave((String) findViewById(R.id.main_panel_chat_name).getTag());
-                    }
-                    if (ActiveLayoutID != R.layout.home) {
-                        ShowHome();
-                        this.setPanelBehaviour();
+                if (event.isTracking() && !event.isCanceled() && (!floatingPanel.isOpen())) {
+                    this.Close();
+                    if (this.lastOpenHierarchyLevel >= 0)
                         return true;
-                    }
                 }
             }
         }
         return super.dispatchKeyEvent(event);
     }
 
+    @Override
+    protected void onSaveInstanceState (Bundle outState) {
+        super.onSaveInstanceState(outState);
 
+        outState.putSerializable("Home",home);
+        outState.putInt("lastOpenHierarchyLevel",lastOpenHierarchyLevel);
+        for (Map.Entry<Integer,Window> viewStackEntry : viewStack.entrySet())
+            outState.putSerializable(String.format("viewStackEntry_%d",viewStackEntry.getKey()),viewStackEntry.getValue());
+    }
 
 
 }

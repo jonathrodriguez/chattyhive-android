@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="explore_search_hint">Start or search a hive&#8230;</string>
-    <string name="explore_hive_name">:Minecraft - A game about building anything you can imagine</string>
-    <string name="explore_category_art">Art &amp; Cultural Events</string>
+    <string name="explore_outstanding_hives">Hives for you</string>
+    <string name="explore_hives_by_date">Recent hives</string>
+    <string name="explore_trending_hives">Trending hives</string>
+    <string name="explore_hives_by_users">Most popular hives</string>
+
+    <string name="explore_hive_card_expanded_n_mates" formatted="false">"%d mates "</string>
+    <string name="explore_hive_card_expanded_joined_the_hive">"joined the hive"</string>
+    <string name="explore_hive_card_expanded_hive_chat_langs">"Hive chat languages: "</string>
+    <string name="explore_hive_card_expanded_join_hive">"Join hive"</string>
+    <string name="explore_hive_card_expanded_joining_hive">"Joining hive&#8230;"</string>
+    <string name="explore_hive_card_expanded_public_chat">"Public Chat"</string>
+
+    <string name="explore_list_footer_loading_hives">Loading more hives &#8230;</string>
 </resources>

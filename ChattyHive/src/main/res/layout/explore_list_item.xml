@@ -20,8 +20,8 @@
             android:orientation="vertical"
             android:layout_marginLeft="8.5dp"
             android:layout_marginRight="8.5dp"
-            android:layout_marginBottom="20dp"
-            android:layout_marginTop="3.5dp">
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="1.75dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -35,7 +35,6 @@
             android:id="@+id/explore_list_item_collapsed_hive_image"
             android:layout_width="58dp"
             android:layout_height="58dp"
-            android:src="@drawable/launcher_launcher_b"
             android:layout_marginTop="9.5dp"
             android:layout_marginLeft="9.5dp"
             android:layout_marginRight="12dp"/>
@@ -54,7 +53,6 @@
                 android:id="@+id/explore_list_item_collapsed_hive_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text=":What to do when you are very"
                 android:textSize="16dp"
                 android:textColor="#202020"
                 android:layout_marginTop="14dp"
@@ -65,7 +63,6 @@
                 android:id="@+id/explore_list_item_collapsed_hive_description"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Share your best thoughts on how to kill time when you have nothing else to do!"
                 android:textSize="12.5dp"
                 android:maxLines="2"
                 android:layout_marginBottom="5dp"
@@ -74,7 +71,7 @@
 
         <LinearLayout
             android:orientation="horizontal"
-            android:layout_width="fill_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="left"
             android:layout_marginBottom="10dp">
@@ -82,13 +79,13 @@
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="wrap_content"
-                android:layout_height="fill_parent">
+                android:layout_height="fill_parent"
+                android:layout_weight="1">
 
                 <ImageView
                     android:layout_width="12dp"
                     android:layout_height="12dp"
                     android:id="@+id/explore_list_item_collapsed_category_image"
-                    android:src="@drawable/pestanha_chats_arroba"
                     android:scaleType="fitCenter"
                     android:layout_gravity="center"
                     android:alpha="0.5"/>
@@ -96,25 +93,28 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:text="Moods"
                     android:textSize="12dp"
                     android:layout_gravity="bottom"
                     android:id="@+id/explore_list_item_collapsed_category_text"
                     android:textColor="#808080"
                     android:gravity="left|top"
                     android:layout_marginLeft="7dp"
-                    android:layout_marginRight="17dp"
-                    android:maxWidth="120dp"/>
+                    android:maxLines="1"
+                    android:lines="1"
+                    android:singleLine="true"
+                    android:ellipsize="end"/>
             </LinearLayout>
 
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="wrap_content"
-                android:layout_height="fill_parent">
+                android:layout_height="fill_parent"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="15dp"
+                android:layout_weight="0">
                 <ImageView
                     android:layout_width="12dp"
                     android:layout_height="12dp"
-                    android:id="@+id/explore_list_item_category_imageview"
                     android:src="@drawable/pestanha_chats_arroba"
                     android:layout_gravity="center"
                     android:scaleType="fitCenter"
@@ -128,7 +128,8 @@
                     android:id="@+id/explore_list_item_collapsed_users_number"
                     android:textColor="#808080"
                     android:gravity="center|center_horizontal|center_vertical"
-                    android:layout_marginLeft="5dp"/>
+                    android:layout_marginLeft="5dp"
+                    android:maxLines="1"/>
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
@@ -137,12 +138,12 @@
 
     </LinearLayout>
     <LinearLayout
-        android:id="@+id/explore_hive_card"
+        android:id="@+id/explore_list_header_card"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#ededed"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -151,7 +152,7 @@
             android:background="@drawable/home_card_background"
             android:layout_marginLeft="8.5dp"
             android:layout_marginRight="8.5dp"
-            android:layout_marginBottom="20dp"
+            android:layout_marginBottom="10dp"
             android:layout_marginTop="3.5dp">
             <LinearLayout
                 android:layout_width="match_parent"
@@ -166,7 +167,6 @@
                     android:id="@+id/explore_list_item_expanded_hive_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/explore_hive_name"
                     android:textColor="#111111"
                     android:textSize="18dp"
                     android:maxLines="2"
@@ -180,8 +180,7 @@
                     <ImageView
                         android:id="@+id/explore_list_item_expanded_hive_image"
                         android:layout_width="70dp"
-                        android:layout_height="70dp"
-                        android:src="@drawable/launcher_launcher_b"/>
+                        android:layout_height="70dp"/>
 
                     <LinearLayout
                         android:layout_width="wrap_content"
@@ -199,13 +198,11 @@
                                 android:id="@+id/explore_list_item_expanded_category_image"
                                 android:layout_width="16dp"
                                 android:layout_height="16dp"
-                                android:layout_marginRight="4dp"
-                                android:src="@drawable/pestanha_chats_arroba"/>
+                                android:layout_marginRight="4dp"/>
                             <TextView
                                 android:id="@+id/explore_list_item_expanded_category_text"
                                 android:layout_width="wrap_content"
                                 android:layout_height="16dp"
-                                android:text="Videojuegos"
                                 android:textColor="#111111"
                                 android:textSize="12dp"
                                 android:layout_gravity="center"/>
@@ -224,20 +221,20 @@
                                 android:id="@+id/explore_list_item_expanded_users_number"
                                 android:layout_width="wrap_content"
                                 android:layout_height="16dp"
-                                android:text="20 mates"
+                                android:text="@string/explore_hive_card_expanded_n_mates"
                                 android:textColor="#111111"
                                 android:textSize="12dp"
                                 android:layout_gravity="center"/>
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="16dp"
-                                android:text=" joined the hive"
+                                android:text="@string/explore_hive_card_expanded_joined_the_hive"
                                 android:textColor="#808080"
                                 android:textSize="12dp"
                                 android:layout_gravity="center"/>
                         </LinearLayout>
                         <LinearLayout
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="horizontal">
                             <ImageView
@@ -248,17 +245,17 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="16dp"
-                                android:text="Hive chat languages: "
+                                android:text="@string/explore_hive_card_expanded_hive_chat_langs"
                                 android:textColor="#808080"
                                 android:textSize="12dp"
-                                android:layout_gravity="center"/>
+                                android:layout_gravity="top" />
                             <TextView
                                 android:layout_width="wrap_content"
-                                android:layout_height="16dp"
-                                android:text="English"
+                                android:layout_height="wrap_content"
                                 android:textColor="#111111"
                                 android:textSize="12dp"
-                                android:layout_gravity="center"/>
+                                android:id="@+id/explore_list_item_expanded_hive_chat_languages"
+                                android:layout_gravity="top" />
                         </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
@@ -266,7 +263,6 @@
                     android:id="@+id/explore_list_item_expanded_hive_description"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="This is a topic to discuss about Notch's game. News, maps, experiences... For suport and reporting problems join :Minecraft - Support"
                     android:textSize="13.25sp"
                     android:textColor="#111111"
                     android:maxLines="3"
@@ -287,64 +283,11 @@
                         android:src="@drawable/explore_new_hive_tag"
                         android:alpha="0.75"
                         android:layout_gravity="center"/>
-                    <LinearLayout
-                        android:layout_width="wrap_content"
+                    <include
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_weight="3">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textSize="12dp"
-                            android:text="sandbox"
-                            android:gravity="top"
-                            android:layout_marginLeft="5.5dp"
-                            android:textColor="#333333"
-                            android:background="@drawable/explore_tags_border"/>
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textSize="12dp"
-                            android:text="sandbox"
-                            android:gravity="top"
-                            android:layout_marginLeft="5.5dp"
-                            android:textColor="#333333"
-                            android:background="@drawable/explore_tags_border"/>
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textSize="12dp"
-                            android:text="sandbox"
-                            android:gravity="top"
-                            android:layout_marginLeft="5.5dp"
-                            android:textColor="#333333"
-                            android:background="@drawable/explore_tags_border"/>
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textSize="12dp"
-                            android:text="survival"
-                            android:layout_marginLeft="5.5dp"
-                            android:textColor="#333333"
-                            android:background="@drawable/explore_tags_border"/>
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textSize="12dp"
-                            android:text="notch"
-                            android:layout_marginLeft="5.5dp"
-                            android:textColor="#333333"
-                            android:background="@drawable/explore_tags_border"/>
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textSize="12dp"
-                            android:text="indie"
-                            android:layout_marginLeft="5.5dp"
-                            android:textColor="#333333"
-                            android:background="@drawable/explore_tags_border"/>
-                    </LinearLayout>
+                        layout="@layout/explore_tag_list"
+                        android:layout_gravity="center_horizontal" />
                 </LinearLayout>
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -395,7 +338,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="30dp"
                                 android:gravity="center"
-                                android:text="Join hive"
+                                android:text="@string/explore_hive_card_expanded_join_hive"
                                 android:textSize="16dp"
                                 android:textColor="#E87400"
                                 android:layout_marginRight="7dp"/>
@@ -422,10 +365,37 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="30dp"
                                     android:gravity="center"
-                                    android:text="Public Chat"
+                                    android:text="@string/explore_hive_card_expanded_public_chat"
                                     android:textSize="16dp"
                                     android:textColor="#333333"
                                     android:layout_marginLeft="7dp"/>
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:id="@+id/explore_joining_frame"
+                                android:visibility="gone"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:gravity="center"
+                                android:background="@drawable/explore_button_border"
+                                android:paddingLeft="10dp"
+                                android:paddingRight="10dp" >
+
+                                <ImageView
+                                    android:layout_width="20dp"
+                                    android:layout_height="20dp"
+                                    android:src="@android:drawable/stat_notify_sync"
+                                    android:tint="#000000" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="30dp"
+                                    android:gravity="center"
+                                    android:textSize="16dp"
+                                    android:textColor="#333333"
+                                    android:layout_marginLeft="7dp"
+                                    android:text="@string/explore_hive_card_expanded_joining_hive" />
                             </LinearLayout>
                         </LinearLayout>
                     </LinearLayout>

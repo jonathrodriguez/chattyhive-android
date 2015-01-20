@@ -19,12 +19,14 @@ import com.chattyhive.backend.contentprovider.formats.Format;
 import com.chattyhive.backend.contentprovider.server.ServerUser;
 import com.chattyhive.backend.util.events.CommandCallbackEventArgs;
 import com.chattyhive.backend.util.events.ConnectionEventArgs;
+import com.chattyhive.backend.util.events.EventArgs;
 import com.chattyhive.backend.util.events.EventHandler;
 
 public class LoginActivity extends Activity {
     static final int OP_CODE_REGISTER = 3;
 
     private Boolean connecting;
+    private Boolean fakeMode;
     private DataProvider dataProvider;
     private Controller controller;
 
@@ -49,11 +51,26 @@ public class LoginActivity extends Activity {
             }
         });
 
+        findViewById(R.id.login_sign_up_with_facebook).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                facebookButtonFakeSignUp("jonathan","12345678");
+            }
+        });
+
         connecting = false;
+        fakeMode = false;
 
             dataProvider = DataProvider.GetDataProvider();
             controller = Controller.GetRunningController();
             dataProvider.ServerConnectionStateChanged.add(new EventHandler<ConnectionEventArgs>(this,"onServerConnectionStateChanged",ConnectionEventArgs.class));
+    }
+
+    public void facebookButtonFakeSignUp(String username, String password) {
+        fakeMode = true;
+        controller.LocalUserReceived.add(new EventHandler<EventArgs>(this,"onLocalUserLoaded",EventArgs.class));
+        dataProvider.setUser(new ServerUser(username, password));
+        dataProvider.Connect();
     }
 
     protected void setTabButtonsBehaviour() {
@@ -153,12 +170,22 @@ public class LoginActivity extends Activity {
         }
     }
 
+    public void onLocalUserLoaded(Object sender,EventArgs eventArgs) {
+        if (fakeMode) {
+            Intent intent = new Intent(this, Register.class);
+            intent.putExtra("fake",true);
+            startActivityForResult(intent, OP_CODE_REGISTER);
+        }
+    }
+
     public void onServerConnectionStateChanged(Object sender,ConnectionEventArgs eventArgs) {
         connecting = false;
         //First hide animation
         if (eventArgs.getConnected()) {
-            setResult(RESULT_OK);
-            finish();
+            if (!fakeMode) {
+                setResult(RESULT_OK);
+                finish();
+            }
         } else {
             //Show some kind of error
             TextView usernameView = ((TextView)findViewById(R.id.login_activity_login_username));

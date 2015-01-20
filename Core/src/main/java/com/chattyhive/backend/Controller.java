@@ -4,6 +4,7 @@ import com.chattyhive.backend.businessobjects.Chats.Chat;
 import com.chattyhive.backend.businessobjects.Chats.Conversation;
 import com.chattyhive.backend.businessobjects.Chats.Hive;
 import com.chattyhive.backend.businessobjects.Chats.Messages.Message;
+import com.chattyhive.backend.businessobjects.Explore;
 import com.chattyhive.backend.businessobjects.Home.Cards.HiveMessageCard;
 import com.chattyhive.backend.businessobjects.Home.HomeCard;
 import com.chattyhive.backend.businessobjects.Users.ProfileLevel;
@@ -16,6 +17,7 @@ import com.chattyhive.backend.contentprovider.OSStorageProvider.LoginLocalStorag
 import com.chattyhive.backend.contentprovider.OSStorageProvider.MessageLocalStorageInterface;
 import com.chattyhive.backend.contentprovider.OSStorageProvider.UserLocalStorageInterface;
 import com.chattyhive.backend.contentprovider.formats.COMMON;
+import com.chattyhive.backend.contentprovider.formats.EXPLORE_FILTER;
 import com.chattyhive.backend.contentprovider.formats.Format;
 import com.chattyhive.backend.contentprovider.formats.HIVE;
 import com.chattyhive.backend.contentprovider.formats.HIVE_ID;
@@ -314,11 +316,78 @@ public class Controller {
     // BusinessObjects
 
 
-    private ArrayList<Hive> exploreHives = new ArrayList<Hive>();
-    public ArrayList<Hive> getExploreHives() { return exploreHives; }
+    private TreeMap<Explore.SortType,ArrayList<Hive>> exploreHives = new TreeMap<Explore.SortType, ArrayList<Hive>>();
 
     public Event<EventArgs> ExploreHivesListChange;
     public Event<EventArgs> HiveJoined;
+
+    /**
+     * This method permits application to recover some hives from explore server list.
+     * @param
+     */
+
+
+
+/*    public void onExploreHivesCallback(Object sender,CommandCallbackEventArgs eventArgs) {
+        ArrayList<Format> receivedFormats = eventArgs.getReceivedFormats();
+        ArrayList<Format> sentFormats = eventArgs.getSentFormats();
+
+        Explore.SortType sortType = null;
+
+        for (Format format : sentFormats)
+            if (format instanceof EXPLORE_FILTER) {
+                if (((EXPLORE_FILTER) format).TYPE.equalsIgnoreCase(Explore.SortType.OUTSTANDING.toString()))
+                    sortType = Explore.SortType.OUTSTANDING;
+                else if (((EXPLORE_FILTER) format).TYPE.equalsIgnoreCase(Explore.SortType.USERS.toString()))
+                    sortType = Explore.SortType.USERS;
+                else if (((EXPLORE_FILTER) format).TYPE.equalsIgnoreCase(Explore.SortType.TRENDING.toString()))
+                    sortType = Explore.SortType.TRENDING;
+                else if (((EXPLORE_FILTER) format).TYPE.equalsIgnoreCase(Explore.SortType.CREATION_DATE.toString()))
+                    sortType = Explore.SortType.CREATION_DATE;
+            }
+
+        if (sortType == null) return;
+
+        if ((!this.exploreHives.containsKey(sortType)) || (this.exploreHives.get(sortType) == null))
+            this.exploreHives.put(sortType,new ArrayList<Hive>());
+
+        for (Format format : receivedFormats)
+            if (format instanceof HIVE)
+                this.exploreHives.get(sortType).add(new Hive((HIVE)format));
+            else if (format instanceof HIVE_LIST)
+                for (HIVE hive : ((HIVE_LIST) format).LIST)
+                    this.exploreHives.get(sortType).add(new Hive(hive));
+
+        if (this.ExploreHivesListChange != null)
+            this.ExploreHivesListChange.fire(this.exploreHives,EventArgs.Empty());
+    }*/
+
+    public void JoinHive(Hive hive) {
+        this.dataProvider.JoinHive(hive);
+        /*for (Explore.SortType sortType : exploreHives.keySet())
+            for (Hive h : exploreHives.get(sortType))
+                if (h.getNameUrl().equalsIgnoreCase(hive)) {
+                    this.dataProvider.JoinHive(h);
+                    return;
+                }*/
+    }
+
+    public void onJoinHiveCallback(Object sender, CommandCallbackEventArgs eventArgs)  {
+        ArrayList<Format> receivedFormats = eventArgs.getReceivedFormats();
+
+        Boolean hiveJoined = false;
+
+        for(Format format : receivedFormats)
+            if (format instanceof COMMON) {
+                if (((COMMON) format).STATUS.equalsIgnoreCase("OK")) {
+                    hiveJoined = true;
+                }
+                break;
+            }
+
+        if ((hiveJoined) && (HiveJoined != null))
+            HiveJoined.fire(sender,EventArgs.Empty());
+    }
 
     /**
      * Establishes the server user.
@@ -340,30 +409,6 @@ public class Controller {
         return (this.dataProvider.isServerConnected() && this.dataProvider.isServerConnected());
     }
 
-
-    public void JoinHive(String hive) {
-        for (Hive h : exploreHives)
-            if (h.getNameUrl().equalsIgnoreCase(hive))
-                this.dataProvider.JoinHive(h);
-    }
-
-    public void onJoinHiveCallback(Object sender, CommandCallbackEventArgs eventArgs)  {
-        ArrayList<Format> receivedFormats = eventArgs.getReceivedFormats();
-
-        Boolean hiveJoined = false;
-
-        for(Format format : receivedFormats)
-            if (format instanceof COMMON) {
-                if (((COMMON) format).STATUS.equalsIgnoreCase("OK")) {
-                    hiveJoined = true;
-                }
-                break;
-            }
-
-        if ((hiveJoined) && (HiveJoined != null))
-            HiveJoined.fire(exploreHives,EventArgs.Empty());
-    }
-
     public void JoinTMP (String channel) {
         this.dataProvider.Join(channel);
     }
@@ -374,35 +419,6 @@ public class Controller {
 
     public void Leave(String channel) {
         //this.dataProvider.Leave(channel);
-    }
-
-    /**
-     * This method permits application to recover some hives from explore server list.
-     * @param
-     */
-    public enum ExploreType {
-        OUTSTANDING,
-        USERS,
-        CREATION_DATE,
-        TRENDING
-    }
-    public void exploreHives(int offset,int length, ExploreType exploreType) {
-        if (offset == 0) { exploreHives.clear(); }
-        this.dataProvider.ExploreHives(offset,length, exploreType,new EventHandler<CommandCallbackEventArgs>(this,"onExploreHivesCallback",CommandCallbackEventArgs.class));
-    }
-
-    public void onExploreHivesCallback(Object sender,CommandCallbackEventArgs eventArgs) {
-        ArrayList<Format> receivedFormats = eventArgs.getReceivedFormats();
-
-        for (Format format : receivedFormats)
-            if (format instanceof HIVE)
-                this.exploreHives.add(new Hive((HIVE)format));
-            else if (format instanceof HIVE_LIST)
-                for (HIVE hive : ((HIVE_LIST) format).LIST)
-                    this.exploreHives.add(new Hive(hive));
-
-        if (this.ExploreHivesListChange != null)
-            this.ExploreHivesListChange.fire(this.exploreHives,EventArgs.Empty());
     }
 
     public void clearUserData() {
