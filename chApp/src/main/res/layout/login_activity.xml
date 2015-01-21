@@ -1,0 +1,82 @@
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="match_parent"
+    tools:context="com.chattyhive.chattyhive.LoginActivity$PlaceholderFragment"
+    android:background="@color/login_background_color"
+    android:fillViewport="true">
+<LinearLayout
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/login_activity_master_frame"
+    android:baselineAligned="false"
+    android:background="#00000000">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/login_logo_height"
+        android:layout_gravity="center_horizontal"
+        android:id="@+id/imageView"
+        android:src="@drawable/logo_con_isotipo_para_fondo_negro"
+        android:scaleType="centerInside"
+        android:layout_marginTop="@dimen/login_logo_margin_top"
+        android:layout_marginBottom="@dimen/login_logo_margin_bottom"
+        android:adjustViewBounds="true"
+        android:contentDescription="@string/app_name" />
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="309dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:baselineAligned="false"
+            android:background="#00000000">
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="#00000000">
+
+                <Button
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/login_tab_panel_sign_up_tab_button"
+                    android:id="@+id/login_activity_signup_tab_button"
+                    android:background="@drawable/login_activity_tab_button_background_selector"
+                    android:textColor="@color/login_tab_panel_not_selected_button_text_color"
+                    android:paddingLeft="@dimen/login_tab_panel_buttons_padding_left"
+                    android:paddingRight="@dimen/login_tab_panel_buttons_padding_right"
+                    android:paddingTop="@dimen/login_tab_panel_buttons_padding_top"
+                    android:paddingBottom="@dimen/login_tab_panel_buttons_padding_bottom"
+                    android:textSize="@dimen/login_tab_panel_buttons_text_size"
+                    android:layout_weight="1" />
+
+                <Button
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/login_tab_panel_login_tab_button"
+                    android:id="@+id/login_activity_login_tab_button"
+                    android:background="@drawable/login_activity_tab_button_background_selector"
+                    android:textColor="@color/login_tab_panel_not_selected_button_text_color"
+                    android:paddingLeft="@dimen/login_tab_panel_buttons_padding_left"
+                    android:paddingRight="@dimen/login_tab_panel_buttons_padding_right"
+                    android:paddingTop="@dimen/login_tab_panel_buttons_padding_top"
+                    android:paddingBottom="@dimen/login_tab_panel_buttons_padding_bottom"
+                    android:textSize="@dimen/login_tab_panel_buttons_text_size"
+                    android:layout_weight="1" />
+            </LinearLayout>
+
+            <ViewSwitcher
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/viewSwitcher"
+                android:background="#00000000" />
+
+        </LinearLayout>
+
+</LinearLayout>
+</ScrollView>

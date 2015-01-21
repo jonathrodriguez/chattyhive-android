@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/right_panel_options"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="right"
+    android:baselineAligned="false"
+    android:weightSum="1"
+    android:divider="@null"
+    android:background="@drawable/borde2px">
+
+        <LinearLayout
+            android:id="@+id/menu_punto_expandible2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="left"
+            android:orientation="horizontal">
+            <RelativeLayout
+                android:id="@+id/menu_menu_flecha2"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:gravity="left"
+                android:paddingLeft="@dimen/options_parent_arrow_padding_left"
+                android:paddingRight="@dimen/options_parent_arrow_padding_right"
+                android:paddingTop="@dimen/options_parent_arrow_padding_top"
+                android:paddingBottom="@dimen/options_parent_arrow_padding_bottom">
+
+                <ImageView
+                    android:id="@+id/menu_flecha_imagen2"
+                    android:layout_width="@dimen/options_parent_arrow_img"
+                    android:layout_height="@dimen/options_parent_arrow_img"
+                    android:src="@drawable/ic_action_next_item"
+                    android:tint="@color/menu_text_white"
+                    />
+            </RelativeLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/options_parent_text_height"
+                android:text="@string/options_options"
+                android:textSize="16dp"
+                android:gravity="left"
+                android:paddingTop="@dimen/options_parent_text_padding_top"
+                android:paddingBottom="@dimen/options_parent_text_padding_bottom"
+                android:textColor="@color/menu_text_white"/>
+        </LinearLayout>
+    </LinearLayout>
+
+

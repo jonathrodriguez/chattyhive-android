@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="login_activity_title">Login</string>
+
+    <!-- LOGIN STRINGS -->
+    <!-- ___________________________________________________________________________ -->
+    <!-- Strings related with server -->
+    <string name="login_server_prompt">Select server</string>
+    <string-array name="login_server_names_array">
+        <item>chdev1</item>
+        <item>chdev2</item>
+        <item>chdev3</item>
+        <item>chtest1</item>
+        <item>chtest2</item>
+        <item>chtest3</item>
+        <item>chprivate</item>
+        <item>chpublic</item>
+    </string-array>
+
+    <!-- General strings -->
+    <string name="login_progress_signing_in">Signing in&#8230;</string>
+
+    <string name="login_tab_panel_login_tab_button">Login</string>
+    <string name="login_tab_panel_sign_up_tab_button">Sign Up</string>
+
+    <!-- Login tab -->
+    <string name="login_tab_panel_login_email_field_hint">email/username</string>
+    <string name="login_tab_panel_login_password_field_hint">password</string>
+    <string name="login_tab_panel_login_login_button">Login to chattyhive</string>
+    <string name="login_tab_panel_login_other_social_networks">You can also login with&#8230;</string>
+    <string name="login_tab_panel_login_bottom_text">Did you forget your password?</string>
+
+    <!-- Register tab -->
+    <string name="login_tab_panel_sign_up_sign_with_facebook">Connect with Facebook</string>
+    <string name="login_tab_panel_sign_up_sign_with_twitter">Connect with Twitter</string>
+    <string name="login_tab_panel_sign_up_sign_with_google_plus">Connect with Google +</string>
+    <string name="login_tab_panel_sign_up_sign_with_email">Or sign up with your email&#8230;</string>
+    <string name="login_tab_panel_sign_up_email_field_hint">Enter your email&#8230;</string>
+    <string name="login_tab_panel_sign_up_go_button">GO</string>
+    <string name="login_tab_panel_sign_up_bottom_text">What is chattyhive and how it works?</string>
+</resources>

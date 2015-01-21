@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- ________________________________ -->
+    <!--            ACTION BAR            -->
+    <!-- ________________________________ -->
+
+    <color name="register_action_bar_selected_text">#111111</color>
+    <color name="register_action_bar_selected_background">#feb615</color>
+
+    <color name="register_action_bar_unselected_text">#808080</color>
+    <color name="register_action_bar_unselected_background">#111111</color>
+
+    <color name="register_action_bar_shadow">#FF000000</color>
+    <color name="register_action_bar_shadow_border">#AA010101</color>
+
+    <!-- ________________________________ -->
+    <!--             GENERAL              -->
+    <!-- ________________________________ -->
+    <color name="register_general_background_start">#000000</color>
+    <color name="register_general_background_end">#111111</color>
+    <item name="register_general_background_gradient_angle" type="color" format="integer">270</item>
+
+    <color name="register_general_main_block_background">#242424</color>
+    <color name="register_general_main_block_border">#404040</color>
+
+    <color name="register_general_buttons_next_background">#ffb615</color>
+    <color name="register_general_buttons_next_border">#ffc94a</color>
+    <color name="register_general_buttons_next_shadow">#FF010101</color>
+    <color name="register_general_buttons_next_shadow_border">#AA010101</color>
+    <color name="register_general_buttons_next_text">#111111</color>
+    <item name="register_general_buttons_next_img_alpha" format="float" type="color">0.9</item>
+
+    <color name="register_general_buttons_back_background">#242424</color>
+    <color name="register_general_buttons_back_border">#404040</color>
+    <color name="register_general_buttons_back_shadow">#FF010101</color>
+    <color name="register_general_buttons_back_shadow_border">#AA010101</color>
+    <color name="register_general_buttons_back_text">#eeeeee</color>
+
+    <!-- ________________________________ -->
+    <!--            FIRST STEP            -->
+    <!-- ________________________________ -->
+
+    <color name="register_first_step_name_label_text">#f0feff</color>
+    <color name="register_first_step_name_field_text">#404040</color>
+    <color name="register_first_step_name_field_hint">#808080</color>
+    <color name="register_first_step_name_field_background">#ffffff</color>
+    <color name="register_first_step_name_field_border">#c8c8c8</color>
+
+    <color name="register_first_step_surname_label_text">#f0feff</color>
+    <color name="register_first_step_surname_field_text">#404040</color>
+    <color name="register_first_step_surname_field_hint">#808080</color>
+    <color name="register_first_step_surname_field_background">#ffffff</color>
+    <color name="register_first_step_surname_field_border">#c8c8c8</color>
+
+    <color name="register_first_step_photo_label_text">#f0feff</color>
+    <color name="register_first_step_photo_border">#404040</color>
+
+    <color name="register_first_step_birthday_label_text">#f0feff</color>
+    <color name="register_first_step_birthday_field_text">#828282</color>
+    <color name="register_first_step_birthday_field_hint">#828282</color>
+
+    <color name="register_first_step_checkbox_text">#c0c0c0</color>
+    <item name="register_first_step_checkbox_img_alpha" format="float" type="color">1.0</item>
+
+    <color name="register_first_step_gender_label_text">#f0feff</color>
+    <color name="register_first_step_gender_radio_button_text">#c0c0c0</color>
+    <item name="register_first_step_gender_radio_button_img_alpha" format="float" type="color">1.0</item>
+
+    <color name="register_first_step_location_label_text">#f0feff</color>
+    <item name="register_first_step_location_img_alpha" format="float" type="color">1.0</item>
+    <color name="register_first_step_location_field_text">#c0c0c0</color>
+
+    <color name="register_first_step_languages_label_text">#f0feff</color>
+    <color name="register_first_step_languages_field_text">#c0c0c0</color>
+
+    <color name="register_first_step_private_note_text">#ffffff</color>
+    <item name="register_first_step_private_note_img_alpha" format="float" type="color">1.0</item>
+
+    <!-- ________________________________ -->
+    <!--           SECOND STEP            -->
+    <!-- ________________________________ -->
+
+    <color name="register_second_step_username_label_text">#f0feff</color>
+    <color name="register_second_step_username_field_text">#404040</color>
+    <color name="register_second_step_username_field_hint">#808080</color>
+    <color name="register_second_step_username_field_background">#ffffff</color>
+    <color name="register_second_step_username_field_border">#c8c8c8</color>
+
+    <color name="register_second_step_avatar_label_text">#f0feff</color>
+    <color name="register_second_step_avatar_border">#404040</color>
+    <color name="register_second_step_avatar_options_text">#f0feff</color>
+    <item name="register_second_step_avatar_options_img_alpha" type="color" format="float">1.0</item>
+
+    <color name="register_second_step_checkbox_text">#bdc7c8</color>
+    <item name="register_second_step_checkbox_img_alpha" format="float" type="color">1.0</item>
+
+    <color name="register_first_step_public_note_text">#ffffff</color>
+    <item name="register_first_step_public_note_img_alpha" format="float" type="color">1.0</item>
+
+    <!-- ________________________________ -->
+    <!--            THIRD STEP            -->
+    <!-- ________________________________ -->
+
+    <color name="register_third_step_email_label_text">#f0feff</color>
+    <color name="register_third_step_email_field_text">#404040</color>
+    <color name="register_third_step_email_field_hint">#808080</color>
+    <color name="register_third_step_email_field_background">#ffffff</color>
+    <color name="register_third_step_email_field_border">#c8c8c8</color>
+
+    <color name="register_third_step_password_label_text">#f0feff</color>
+    <color name="register_third_step_password_field_text">#404040</color>
+    <color name="register_third_step_password_field_hint">#808080</color>
+    <color name="register_third_step_password_field_background">#ffffff</color>
+    <color name="register_third_step_password_field_border">#c8c8c8</color>
+
+    <color name="register_third_step_repeat_password_label_text">#f0feff</color>
+    <color name="register_third_step_repeat_password_field_text">#404040</color>
+    <color name="register_third_step_repeat_password_field_hint">#808080</color>
+    <color name="register_third_step_repeat_password_field_background">#ffffff</color>
+    <color name="register_third_step_repeat_password_field_border">#c8c8c8</color>
+
+    <color name="register_third_step_email_confirmation_note_text">#d29918</color>
+    <item name="register_third_step_email_confirmation_note_img_alpha" format="float" type="color">1.0</item>
+
+    <color name="register_third_step_tos_note_text">#c0c0c0</color>
+    <color name="register_third_step_tos_note_highlighted_text">#ffb615</color>
+</resources>

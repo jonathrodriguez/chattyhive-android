@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="rectangle"  android:bottom="@dimen/my_profile_action_bar_border_bottom">
+            <stroke android:width="@dimen/my_profile_action_bar_border_top" android:color="@color/my_profile_action_bar_border_top" />
+            <!--stroke android:width="@dimen/my_profile_action_bar_border_top" android:color="#FFFF00" /-->
+            <padding android:top="@dimen/my_profile_action_bar_border_top"/>
+        </shape>
+    </item>
+    <item android:top="@dimen/my_profile_action_bar_border_top">
+        <shape android:shape="rectangle">
+            <stroke android:width="@dimen/my_profile_action_bar_border_bottom" android:color="@color/my_profile_action_bar_border_bottom"/>
+            <!--stroke android:width="@dimen/my_profile_action_bar_border_bottom" android:color="#0000FF"/-->
+            <padding android:bottom="@dimen/my_profile_action_bar_border_bottom"/>
+        </shape>
+    </item>
+    <item android:top="@dimen/my_profile_action_bar_border_top" android:bottom="@dimen/my_profile_action_bar_border_bottom" android:right="@dimen/my_profile_action_bar_border_right">
+        <shape android:shape="rectangle">
+            <stroke android:width="@dimen/my_profile_action_bar_border_left" android:color="@color/my_profile_action_bar_border_left"/>
+            <!--stroke android:width="@dimen/my_profile_action_bar_border_left" android:color="#FF0000"/-->
+            <padding android:left="@dimen/my_profile_action_bar_border_left"/>
+        </shape>
+    </item>
+    <item android:top="@dimen/my_profile_action_bar_border_top" android:left="@dimen/my_profile_action_bar_border_left"  android:bottom="@dimen/my_profile_action_bar_border_bottom">
+        <shape android:shape="rectangle">
+            <stroke android:width="@dimen/my_profile_action_bar_border_right" android:color="@color/my_profile_action_bar_border_right"/>
+            <!--stroke android:width="@dimen/my_profile_action_bar_border_right" android:color="#00FF00"/-->
+            <padding android:right="@dimen/my_profile_action_bar_border_right"/>
+        </shape>
+    </item>
+</layer-list>

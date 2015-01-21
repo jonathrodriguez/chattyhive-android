@@ -1,0 +1,60 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Register">
+
+<com.chattyhive.chattyhive.framework.CustomViews.ViewGroup.SlidingStepsLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/slidingsteps"
+    custom:actionBarArrowPointWidth="@dimen/register_action_bar_arrow_point_width"
+    custom:actionBarHeight="@dimen/register_action_bar_height"
+    custom:showActionBar="true"
+    custom:actionBarTitleTextSize="@dimen/register_action_bar_step_title_text"
+    custom:actionBarSubTitleTextSize="@dimen/register_action_bar_step_subtitle_text"
+    custom:actionBarTitleMarginBottom="@dimen/register_action_bar_step_title_margin_bottom"
+    custom:actionBarSelectedTitleColor="@color/register_action_bar_selected_text"
+    custom:actionBarSelectedSubtitleColor="@color/register_action_bar_selected_text"
+    custom:actionBarUnselectedTitleColor="@color/register_action_bar_unselected_text"
+    custom:actionBarUnselectedSubtitleColor="@color/register_action_bar_unselected_text"
+    custom:actionBarBackground="@drawable/register_action_bar_background"
+    custom:actionBarMarkerBackgroundColor="@color/register_action_bar_selected_background"
+    custom:buttonPressedTransitionAnimationDuration="250"
+    custom:maxTransitionAnimationDuration="250"
+    custom:flingSpeedDetectionThreshold="800">
+
+    <View
+        android:layout_height="0dp"
+        android:layout_width="0dp"
+        custom:layout="@layout/register_first_step"
+        custom:stepOrder="0"
+        custom:nextStepButton="@+id/register_first_step_next_button"
+        custom:stepTitle="@string/register_first_step_title"
+        custom:stepSubtitle="@string/register_first_step_subtitle"
+        />
+
+    <View
+        android:layout_height="0dp"
+        android:layout_width="0dp"
+        custom:layout="@layout/register_second_step"
+        custom:stepOrder="1"
+        custom:previousStepButton="@+id/register_second_step_back_button"
+        custom:nextStepButton="@+id/register_second_step_next_button"
+        custom:stepTitle="@string/register_second_step_title"
+        custom:stepSubtitle="@string/register_second_step_subtitle"
+        />
+
+    <View
+        android:layout_height="0dp"
+        android:layout_width="0dp"
+        custom:layout="@layout/register_third_step"
+        custom:stepOrder="2"
+        custom:previousStepButton="@+id/register_third_step_back_button"
+        custom:stepTitle="@string/register_third_step_title"
+        custom:stepSubtitle="@string/register_third_step_subtitle"
+        />
+
+</com.chattyhive.chattyhive.framework.CustomViews.ViewGroup.SlidingStepsLayout>
+</FrameLayout>

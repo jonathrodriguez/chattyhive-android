@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="@dimen/home_action_bar_height"
+    android:gravity="center|center_vertical|center_horizontal"
+    android:background="@color/home_action_bar_background">
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:id="@+id/appIcon"
+        android:background="#00000000"
+        android:src="@drawable/home_isotipo_puro_blanco_derecho"
+        android:scaleType="centerInside"
+        android:adjustViewBounds="true"
+        android:cropToPadding="false"
+        android:padding="@dimen/home_action_bar_app_icon_padding" />
+
+    <ImageButton
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/appName"
+        android:layout_weight="1"
+        android:background="#00000000"
+        android:src="@drawable/logo_sin_isotipo_para_fondo_negro"
+        android:scaleType="centerInside"
+        android:adjustViewBounds="true"
+        android:padding="@dimen/home_action_bar_app_name_padding" />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:id="@+id/menuIcon"
+        android:background="#00000000"
+        android:src="@drawable/home_menu"
+        android:scaleType="centerInside"
+        android:adjustViewBounds="true"
+        android:padding="@dimen/home_action_bar_menu_icon_padding" />
+</LinearLayout>
