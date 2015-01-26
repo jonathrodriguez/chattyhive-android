@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <stroke android:width="@dimen/my_profile_edit_button_border" android:color="@color/my_profile_edit_button_border"/>
+    <solid android:color="@color/my_profile_edit_button"/>
+    <padding android:top="@dimen/my_profile_edit_button_border" android:bottom="@dimen/my_profile_edit_button_border" android:left="@dimen/my_profile_edit_button_border" android:right="@dimen/my_profile_edit_button_border"/>
+</shape>

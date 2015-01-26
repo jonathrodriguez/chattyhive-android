@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content" android:layout_gravity="center_horizontal"
+    android:background="#00000000">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center_horizontal"
+            android:background="@drawable/login_activity_tab_panel"
+            android:paddingLeft="@dimen/login_tab_panel_padding_left"
+            android:paddingRight="@dimen/login_tab_panel_padding_right"
+            android:layout_marginBottom="@dimen/login_tab_panel_margin_bottom">
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/login_activity_facebook_button"
+                android:layout_marginTop="@dimen/login_tab_panel_sign_up_social_networks_buttons_facebook_margin_top"
+                android:id="@+id/login_sign_up_with_facebook">
+
+                <ImageView
+                    android:layout_width="@dimen/login_tab_panel_sign_up_social_networks_buttons_image_width"
+                    android:layout_height="match_parent"
+                    android:id="@+id/imageView"
+                    android:src="@drawable/redes_sociales_logueo_inicial_facebook_blanco"
+                    android:scaleType="centerInside"
+                    android:adjustViewBounds="true"
+                    android:layout_marginTop="@dimen/login_tab_panel_sign_up_social_networks_buttons_image_padding_top"
+                    android:layout_marginBottom="@dimen/login_tab_panel_sign_up_social_networks_buttons_image_padding_bottom"
+                    android:paddingLeft="@dimen/login_tab_panel_sign_up_social_networks_buttons_facebook_padding_left"
+                    android:background="#00000000"
+                    android:contentDescription="@string/login_tab_panel_sign_up_sign_with_facebook"/>
+
+                <View
+                    android:layout_width="@dimen/login_tab_panel_sign_up_social_networks_buttons_image_separator_width"
+                    android:layout_height="match_parent"
+                    android:background="@color/login_tab_panel_social_networks_buttons_vertical_separator_color"
+                    android:layout_marginTop="@dimen/login_tab_panel_sign_up_social_networks_buttons_image_padding_top"
+                    android:layout_marginBottom="@dimen/login_tab_panel_sign_up_social_networks_buttons_image_padding_bottom"
+                    android:visibility="visible" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/login_tab_panel_sign_up_sign_with_facebook"
+                    android:id="@+id/textView3"
+                    android:layout_marginLeft="@dimen/login_tab_panel_sign_up_social_networks_buttons_text_padding_left"
+                    android:layout_marginTop="@dimen/login_tab_panel_sign_up_social_networks_buttons_text_padding_top"
+                    android:layout_marginRight="@dimen/login_tab_panel_sign_up_social_networks_buttons_text_padding_top"
+                    android:layout_marginBottom="@dimen/login_tab_panel_sign_up_social_networks_buttons_text_padding_bottom"
+                    android:textSize="@dimen/login_tab_panel_sign_up_social_networks_buttons_text_size"
+                    android:background="#00000000"
+                    android:textColor="@color/login_tab_panel_social_networks_buttons_text_color" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/login_activity_twitter_button"
+                android:layout_marginTop="@dimen/login_tab_panel_sign_up_social_networks_buttons_twitter_margin_top">
+
+                <ImageView
+                    android:layout_width="@dimen/login_tab_panel_sign_up_social_networks_buttons_image_width"
+                    android:layout_height="match_parent"
+                    android:id="@+id/imageView2"
+                    android:src="@drawable/redes_sociales_logueo_inicial_twitter_blanco"
+                    android:scaleType="centerInside"
+                    android:adjustViewBounds="true"
+                    android:layout_marginTop="@dimen/login_tab_panel_sign_up_social_networks_buttons_image_padding_top"
+                    android:layout_marginBottom="@dimen/login_tab_panel_sign_up_social_networks_buttons_image_padding_bottom"
+                    android:paddingLeft="@dimen/login_tab_panel_sign_up_social_networks_buttons_twitter_padding_left"
+                    android:background="#00000000"
+                    android:contentDescription="@string/login_tab_panel_sign_up_sign_with_twitter"/>
+
+                <View
+                    android:layout_width="@dimen/login_tab_panel_sign_up_social_networks_buttons_image_separator_width"
+                    android:layout_height="match_parent"
+                    android:background="@color/login_tab_panel_social_networks_buttons_vertical_separator_color"
+                    android:layout_marginTop="@dimen/login_tab_panel_sign_up_social_networks_buttons_image_padding_top"
+                    android:layout_marginBottom="@dimen/login_tab_panel_sign_up_social_networks_buttons_image_padding_bottom"
+                    android:visibility="visible" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/login_tab_panel_sign_up_sign_with_twitter"
+                    android:id="@+id/textView4"
+                    android:layout_marginLeft="@dimen/login_tab_panel_sign_up_social_networks_buttons_text_padding_left"
+                    android:layout_marginTop="@dimen/login_tab_panel_sign_up_social_networks_buttons_text_padding_top"
+                    android:layout_marginRight="@dimen/login_tab_panel_sign_up_social_networks_buttons_text_padding_top"
+                    android:layout_marginBottom="@dimen/login_tab_panel_sign_up_social_networks_buttons_text_padding_bottom"
+                    android:textSize="@dimen/login_tab_panel_sign_up_social_networks_buttons_text_size"
+                    android:background="#00000000"
+                    android:textColor="@color/login_tab_panel_social_networks_buttons_text_color" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/login_activity_google_plus_button"
+                android:layout_marginTop="@dimen/login_tab_panel_sign_up_social_networks_buttons_google_plus_margin_top">
+
+                <ImageView
+                    android:layout_width="@dimen/login_tab_panel_sign_up_social_networks_buttons_image_width"
+                    android:layout_height="match_parent"
+                    android:id="@+id/imageView3"
+                    android:src="@drawable/redes_sociales_logueo_inicial_google_plus_blanco"
+                    android:scaleType="centerInside"
+                    android:adjustViewBounds="true"
+                    android:layout_marginTop="@dimen/login_tab_panel_sign_up_social_networks_buttons_image_padding_top"
+                    android:layout_marginBottom="@dimen/login_tab_panel_sign_up_social_networks_buttons_image_padding_bottom"
+                    android:paddingLeft="@dimen/login_tab_panel_sign_up_social_networks_buttons_google_plus_padding_left"
+                    android:background="#00000000"
+                    android:contentDescription="@string/login_tab_panel_sign_up_sign_with_google_plus"/>
+
+                <View
+                    android:layout_width="@dimen/login_tab_panel_sign_up_social_networks_buttons_image_separator_width"
+                    android:layout_height="match_parent"
+                    android:background="@color/login_tab_panel_social_networks_buttons_vertical_separator_color"
+                    android:layout_marginTop="@dimen/login_tab_panel_sign_up_social_networks_buttons_image_padding_top"
+                    android:layout_marginBottom="@dimen/login_tab_panel_sign_up_social_networks_buttons_image_padding_bottom"
+                    android:visibility="visible" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/login_tab_panel_sign_up_sign_with_google_plus"
+                    android:id="@+id/textView5"
+                    android:layout_marginLeft="@dimen/login_tab_panel_sign_up_social_networks_buttons_text_padding_left"
+                    android:layout_marginTop="@dimen/login_tab_panel_sign_up_social_networks_buttons_text_padding_top"
+                    android:layout_marginRight="@dimen/login_tab_panel_sign_up_social_networks_buttons_text_padding_top"
+                    android:layout_marginBottom="@dimen/login_tab_panel_sign_up_social_networks_buttons_text_padding_bottom"
+                    android:textSize="@dimen/login_tab_panel_sign_up_social_networks_buttons_text_size"
+                    android:background="#00000000"
+                    android:textColor="@color/login_tab_panel_social_networks_buttons_text_color" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="@string/login_tab_panel_sign_up_sign_with_email"
+                android:id="@+id/textView2"
+                android:background="#00000000"
+                android:textColor="@color/login_tab_panel_sign_up_email_text_text_color"
+                android:layout_gravity="left"
+                android:layout_marginTop="@dimen/login_tab_panel_sign_up_sign_with_email_text_margin_top"
+                android:textSize="@dimen/login_tab_panel_sign_up_sign_with_email_text_size" />
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#00000000"
+                android:layout_marginBottom="@dimen/login_tab_panel_sign_up_sign_with_email_margin_bottom">
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/login_activity_signup_email"
+                    android:layout_weight="1"
+                    android:background="@color/login_tab_panel_sign_up_email_field_background_color"
+                    android:paddingLeft="@dimen/login_tab_panel_sign_up_sign_with_email_email_field_padding_left"
+                    android:paddingRight="@dimen/login_tab_panel_sign_up_sign_with_email_email_field_padding_right"
+                    android:hint="@string/login_tab_panel_sign_up_email_field_hint"
+                    android:textColor="@color/login_tab_panel_sign_up_email_field_text_color"
+                    android:paddingTop="@dimen/login_tab_panel_sign_up_sign_with_email_email_field_padding_top"
+                    android:paddingBottom="@dimen/login_tab_panel_sign_up_sign_with_email_email_field_padding_bottom"
+                    android:textSize="@dimen/login_tab_panel_sign_up_sign_with_email_email_field_text_size"
+                    android:layout_marginTop="@dimen/login_tab_panel_sign_up_sign_with_email_email_field_margin_top"
+                    android:layout_marginBottom="@dimen/login_tab_panel_sign_up_sign_with_email_email_field_margin_bottom"
+                    android:textColorHint="@color/login_tab_panel_sign_up_email_field_hint_color" />
+
+                <Button
+                    android:layout_width="@dimen/login_tab_panel_sign_up_go_button_width"
+                    android:layout_height="@dimen/login_tab_panel_sign_up_go_button_height"
+                    android:text="@string/login_tab_panel_sign_up_go_button"
+                    android:id="@+id/login_activity_signup_go_button"
+                    android:background="@drawable/login_activity_go_button"
+                    android:layout_weight="0"
+                    android:gravity="center|center_vertical|center_horizontal"
+                    android:textColor="@color/login_tab_panel_sign_up_go_button_text_color"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="@dimen/login_tab_panel_sign_up_go_button_margin_right"
+                    android:textSize="@dimen/login_tab_panel_sign_up_go_button_text_size" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/login_tab_panel_sign_up_bottom_text"
+            android:id="@+id/textView"
+            android:layout_gravity="right"
+            android:layout_marginBottom="@dimen/login_bottom_text_margin_bottom"
+            android:textSize="@dimen/login_bottom_text_size"
+            android:background="#00000000"
+            android:textColor="@color/login_bottom_text_color" />
+    </LinearLayout>

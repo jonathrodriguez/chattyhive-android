@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="home_action_bar_height">48dp</dimen>
+    <dimen name="home_action_bar_app_icon_padding">10dp</dimen>
+    <dimen name="home_action_bar_app_name_padding">6.5dp</dimen>
+    <dimen name="home_action_bar_menu_icon_padding">10dp</dimen>
+
+    <dimen name="home_top_bar_height">40dp</dimen>
+    <dimen name="home_top_bar_border_thick">1px</dimen>
+    <dimen name="home_top_bar_shadow_thick">2px</dimen>
+    <dimen name="home_top_bar_shadow_border_thick">1px</dimen>
+    <dimen name="home_top_bar_vertical_divider_height">25dp</dimen>
+    <dimen name="home_top_bar_vertical_divider_thick">1px</dimen>
+    <dimen name="home_top_bar_text_size">13sp</dimen>
+    <dimen name="home_top_bar_icon_size">17sp</dimen>
+    <dimen name="home_top_bar_image_text_spacing">6sp</dimen>
+
+    <dimen name="home_card_margin_top">11dp</dimen>
+    <dimen name="home_card_margin_left">8.5dp</dimen>
+    <dimen name="home_card_margin_right">8.5dp</dimen>
+    <dimen name="home_list_padding_bottom">13dp</dimen>
+    <dimen name="home_card_corner_radius">4dp</dimen>
+    <dimen name="home_card_bottom_border">4px</dimen>
+
+    <dimen name="home_card_message_hive_card_padding_left">9.5dp</dimen>
+    <dimen name="home_card_message_hive_card_padding_top">6dp</dimen>
+    <dimen name="home_card_message_hive_card_padding_bottom">9.5dp</dimen>
+    <dimen name="home_card_message_hive_card_padding_right">9.5dp</dimen>
+    <dimen name="home_card_message_hive_horizontal_divider_margin_top">6dp</dimen>
+    <dimen name="home_card_message_hive_horizontal_divider_margin_bottom">9.5dp</dimen>
+    <dimen name="home_card_message_hive_timestamp_margin_top">-2dp</dimen>
+    <dimen name="home_card_message_hive_username_margin_top">2dp</dimen>
+    <dimen name="home_card_message_hive_username_margin_bottom">7dp</dimen>
+    <dimen name="home_card_message_hive_user_image_margin_right">11dp</dimen>
+    <dimen name="home_card_message_hive_hive_image_margin_right">7.5dp</dimen>
+    <dimen name="home_card_message_hive_hive_image_size">18sp</dimen>
+    <dimen name="home_card_message_hive_user_image_size">40dp</dimen>
+    <dimen name="home_card_message_hive_hive_name_text_size">13.5sp</dimen>
+    <dimen name="home_card_message_hive_username_text_size">15sp</dimen>
+    <dimen name="home_card_message_hive_timestamp_text_size">12sp</dimen>
+    <dimen name="home_card_message_hive_message_text_size">13.5sp</dimen>
+
+</resources>

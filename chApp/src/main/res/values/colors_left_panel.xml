@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- ACTION BAR COLORS -->
+    <!-- _________________ -->
+    <color name="left_panel_action_bar_background">#292929</color>
+
+    <color name="left_panel_action_bar_unselected_button_background">#292929</color>
+    <color name="left_panel_action_bar_unselected_button_border_bottom">#292929</color>
+    <item name="left_panel_action_bar_unselected_button_alpha" format="float" type="color">0.63137254901960784313725490196078</item>
+    <color name="left_panel_action_bar_unselected_button_text">#3a3a3a</color>
+
+    <color name="left_panel_action_bar_selected_button_background">#f8f8f8</color>
+    <color name="left_panel_action_bar_selected_button_border_bottom">#c0c0c0</color>
+    <item name="left_panel_action_bar_selected_button_alpha" format="float" type="color">0.75686274509803921568627450980392</item>
+    <color name="left_panel_action_bar_selected_button_text">#3a3a3a</color>
+
+    <color name="left_panel_action_bar_search_button_background">#292929</color>
+    <item name="left_panel_action_bar_search_button_alpha" format="float" type="color">0.5</item>
+
+    <!--    LIST COLORS    -->
+    <!-- _________________ -->
+    <color name="left_panel_list_filter_background_start">#fff9ea</color>
+    <color name="left_panel_list_filter_background_center">#fffcf2</color>
+    <color name="left_panel_list_filter_background_end">#fff9ea</color>
+    <integer name="left_panel_list_filter_background_angle">270</integer> <!-- With this angle, start is top and end is bottom -->
+    <color name="left_panel_list_filter_border_right">#c0c0c0</color>
+    <color name="left_panel_list_filter_border_bottom">#c1a56a</color>
+    <color name="left_panel_list_filter_selected_text">#ff8000</color>
+    <color name="left_panel_list_filter_unselected_text">#333333</color>
+    <item name="left_panel_list_filter_image_alpha" format="float" type="color">0.35</item>
+
+    <color name="left_panel_list_border_right">#c0c0c0</color>
+    <color name="left_panel_list_background">#d8d8d8</color> <!-- #d8d8d8 -->
+
+    <!--  CHAT ITEM COLORS -->
+    <!-- _________________ -->
+    <color name="left_panel_chat_list_item_background">#ffffff</color>
+    <color name="left_panel_chat_list_item_last_message_text">#404040</color>
+    <color name="left_panel_chat_list_item_chat_name_text">#000000</color>
+    <color name="left_panel_chat_list_item_timestamp_text">#404040</color>
+    <color name="left_panel_chat_list_item_hive_messages_number_text">#ff8c00</color>
+    <color name="left_panel_chat_list_item_number_messages_text">#333333</color>
+    <color name="left_panel_chat_list_item_number_messages_background">#edc97a</color>
+    <color name="left_panel_chat_list_item_number_messages_border">#ff8000</color>
+    <item name="left_panel_chat_list_item_item_type_img_alpha" format="float" type="color">0.35</item>
+
+
+    <!--  HIVE ITEM COLORS -->
+    <!-- _________________ -->
+    <color name="left_panel_hive_list_item_background">#ffffff</color>
+    <color name="left_panel_hive_list_item_hive_name">#202020</color>
+    <color name="left_panel_hive_list_item_hive_description">#333333</color>
+    <color name="left_panel_hive_list_item_hive_category_text">#808080</color>
+    <color name="left_panel_hive_list_item_hive_subscribed_users_text">#808080</color>
+    <item name="left_panel_hive_list_item_hive_category_img_alpha" format="float" type="color">0.35</item>
+    <item name="left_panel_hive_list_item_hive_subscribed_users_img_alpha" format="float" type="color">0.35</item>
+
+</resources>

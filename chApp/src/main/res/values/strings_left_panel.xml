@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--   ACTION BAR STRINGS   -->
+    <!-- ______________________ -->
+    <string name="left_panel_chats_button">Chats</string>
+    <string name="left_panel_hives_button">Hives</string>
+    <string name="left_panel_friends_button">Friends</string>
+    <string name="left_panel_search_button">Search</string>
+
+    <!--      LIST STRINGS      -->
+    <!-- ______________________ -->
+    <string name="left_panel_filter_all">All</string>
+    <string name="left_panel_filter_friends">Friends</string>
+    <string name="left_panel_filter_hivemates">Mates</string>
+    <string name="left_panel_filter_hive_chats">Public</string>
+    <string name="left_panel_filter_help_button_description">Help</string>
+
+    <string name="left_panel_imprecise_time_now">NOW</string>
+    <string name="left_panel_imprecise_time_yesterday">YESTERDAY</string>
+
+    <string name="left_panel_chats_empty_list">You have no chats at this time.</string>
+    <string name="left_panel_hives_empty_list">You haven\'t subscribed to any Hive yet.</string>
+    <string name="left_panel_friends_empty_list">You haven\'t any friends yet. Try meeting somebody.</string>
+</resources>

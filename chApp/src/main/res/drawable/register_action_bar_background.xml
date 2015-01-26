@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item >
+        <shape android:shape="rectangle">
+            <stroke android:width="@dimen/register_action_bar_shadow_border_thick" android:color="@color/register_action_bar_shadow_border" />
+            <solid android:color="@color/register_action_bar_shadow" />
+        </shape>
+    </item>
+    <item android:bottom="@dimen/register_action_bar_shadow_thick">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/register_action_bar_unselected_background" />
+        </shape>
+    </item>
+</layer-list>

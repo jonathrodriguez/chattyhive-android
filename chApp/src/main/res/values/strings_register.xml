@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- ________________________________ -->
+    <!--            ACTION BAR            -->
+    <!-- ________________________________ -->
+
+    <string name="register_first_step_title">Step 1</string>
+    <string name="register_first_step_subtitle">Private profile</string>
+
+    <string name="register_second_step_title">Step 2</string>
+    <string name="register_second_step_subtitle">Public profile</string>
+
+    <string name="register_third_step_title">Step 3</string>
+    <string name="register_third_step_subtitle">Account info</string>
+
+    <!-- ________________________________ -->
+    <!--            FIRST STEP            -->
+    <!-- ________________________________ -->
+
+    <string name="register_first_step_buttons_back">Back to start</string>
+    <string name="register_first_step_buttons_next">Go to step 2</string>
+
+    <string name="register_first_step_name_label">Your first name:</string>
+    <string name="register_first_step_name_hint">Name</string>
+
+    <string name="register_first_step_surname_label">Your last name:</string>
+    <string name="register_first_step_surname_hint">Last name</string>
+
+    <string name="register_first_step_photo_label">Your photo:</string>
+
+    <string name="register_first_step_birthday_label">Birthday:</string>
+    <string name="register_first_step_birthday_hint">Choose a date</string>
+
+    <string name="register_first_step_checkbox_label">Show age to  friends</string>
+
+    <string name="register_first_step_gender_label">Gender:</string>
+    <string name="register_first_step_gender_male">Man</string>
+    <string name="register_first_step_gender_female">Woman</string>
+
+    <string name="register_first_step_location_label">Your location:</string>
+    <string name="register_first_step_location_hint">Choose a location</string>
+
+    <string name="register_first_step_languages_label">Your languages:</string>
+    <string name="register_first_step_languages_hint">Choose languages</string>
+
+    <string name="register_first_step_private_note">This information will be seen only by those users you add as friends.</string>
+
+    <!-- ________________________________ -->
+    <!--           SECOND STEP            -->
+    <!-- ________________________________ -->
+
+    <string name="register_second_step_buttons_back">Back to step 1</string>
+    <string name="register_second_step_buttons_next">Go to step 3</string>
+
+    <string name="register_second_step_username_label">Your username:</string>
+    <string name="register_second_step_username_hint">username</string>
+
+    <string name="register_second_step_avatar_label">Your avatar:</string>
+    <string name="register_second_step_avatar_random">Random avatar</string>
+    <string name="register_second_step_avatar_gallery">View avatar gallery</string>
+    <string name="register_second_step_avatar_choose_from_local">Upload from your phone</string>
+
+    <string name="register_second_step_show_age">Show your age</string>
+    <string name="register_second_step_show_location">Show your location</string>
+    <string name="register_second_step_show_gender">Show gender</string>
+
+    <string name="register_second_step_public_note">This information will be seen by all users</string>
+
+    <!-- ________________________________ -->
+    <!--            THIRD STEP            -->
+    <!-- ________________________________ -->
+
+    <string name="register_third_step_buttons_back">Back to step 2</string>
+    <string name="register_third_step_buttons_next">Enter</string>
+
+    <string name="register_third_step_email_label">Your email:</string>
+    <string name="register_third_step_email_hint">email</string>
+
+    <string name="register_third_step_password_label">Your password:</string>
+    <string name="register_third_step_password_hint">(min. 8 characters)</string>
+
+    <string name="register_third_step_repeat_password_label">Repeat your password:</string>
+    <string name="register_third_step_repeat_password_hint">(min. 8 characters)</string>
+
+    <string name="register_third_step_email_confirmation_note">We\'ll send you an email with a link to confirm your account.Do not forget!</string>
+
+    <string name="register_third_step_tos_note"><html>By clicking "Enter" you agree to the <font color="@color/register_third_step_tos_note_highlighted_text"><u>terms and conditions</u></font> of service&#8230;</html></string>
+</resources>

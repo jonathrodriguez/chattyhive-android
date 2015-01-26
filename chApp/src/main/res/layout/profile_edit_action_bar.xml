@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="@dimen/my_profile_action_bar_height"
+    android:background="#ffffff"
+    android:id="@+id/edit_profile_action_bar_root">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/private_profile_tab_button"
+        android:gravity="center_vertical|center_horizontal"
+        android:paddingTop="@dimen/edit_profile_action_bar_type_button_top_padding"
+        android:paddingBottom="@dimen/edit_profile_action_bar_type_button_bottom_padding"
+        android:background="@drawable/edit_profile_action_bar_type_button_selected_background"
+        android:layout_weight="1">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/edit_profile_action_bar_type_button_image_size"
+            android:src="@drawable/my_profile_private_profile"
+            android:adjustViewBounds="true"
+            android:scaleType="centerInside" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/edit_profile_action_bar_private"
+            android:layout_marginLeft="@dimen/edit_profile_action_bar_type_button_image_text_separation"
+            android:textSize="@dimen/edit_profile_action_bar_type_button_text_size"
+            android:textColor="@color/edit_profile_action_bar_type_button_text" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/public_profile_tab_button"
+        android:gravity="center_vertical|center_horizontal"
+        android:paddingTop="@dimen/edit_profile_action_bar_type_button_top_padding"
+        android:paddingBottom="@dimen/edit_profile_action_bar_type_button_bottom_padding"
+        android:background="@drawable/edit_profile_action_bar_type_button_unselected_background"
+        android:layout_weight="1">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/edit_profile_action_bar_type_button_image_size"
+            android:src="@drawable/my_profile_public_profile"
+            android:adjustViewBounds="true"
+            android:scaleType="centerInside" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/edit_profile_action_bar_public"
+            android:layout_marginLeft="@dimen/edit_profile_action_bar_type_button_image_text_separation"
+            android:textSize="@dimen/edit_profile_action_bar_type_button_text_size"
+            android:textColor="@color/edit_profile_action_bar_type_button_text" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:id="@+id/save_button"
+        android:gravity="center_vertical|center_horizontal"
+        android:paddingTop="@dimen/edit_profile_action_bar_accept_button_top_padding"
+        android:paddingBottom="@dimen/edit_profile_action_bar_accept_button_bottom_padding"
+        android:background="@drawable/edit_profile_action_bar_type_button_unselected_background"
+        android:layout_weight="0"
+        android:paddingLeft="@dimen/edit_profile_action_bar_accept_button_left_padding"
+        android:paddingRight="@dimen/edit_profile_action_bar_accept_button_right_padding">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/explore_new_hive_accept_new_hive"
+            android:adjustViewBounds="true"
+            android:scaleType="centerInside" />
+
+    </LinearLayout>
+</LinearLayout>

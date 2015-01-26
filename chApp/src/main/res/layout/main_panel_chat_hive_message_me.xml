@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main_panel_chat_item"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/border_hive_message_me"
+    android:focusableInTouchMode="false"
+    android:orientation="horizontal"
+    android:paddingBottom="10dp"
+    android:paddingLeft="7dp"
+    android:paddingRight="7dp"
+    android:paddingTop="10dp">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal|top"
+        android:layout_weight="1"
+        android:gravity="center_vertical"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/main_panel_chat_timeStamp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left|top"
+                android:text="99:99"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="#808080"
+                android:textSize="12dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2.5dp"
+                android:gravity="right|bottom"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/main_panel_chat_username"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:text="\@me"
+                    android:textAlignment="gravity"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="#808040"
+                    android:textSize="14.75dp"
+                    android:layout_marginRight="1.5dp"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|top"
+            android:layout_marginLeft="6dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="4dp"
+            android:gravity="right|top"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/main_panel_chat_messageText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text='"Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est.'
+                android:textAlignment="gravity"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#333333"
+                android:textSize="14.5sp"
+                android:gravity="left"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/main_panel_chat_avatarThumbnail"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_gravity="right|top"
+        android:layout_marginLeft="7.5dp"
+        android:background="#fff0e4"
+        android:contentDescription="my_image"
+        android:src="@drawable/my_profile_private_profile_simple" />
+
+</LinearLayout>

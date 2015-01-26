@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="home_action_bar_background">#111111</color>
+    <item name="home_action_bar_app_icon_alpha" format="float" type="color">0.75</item>
+    <item name="home_action_bar_menu_icon_alpha" format="float" type="color">0.75</item>
+
+    <color name="home_top_bar_background">#ffffff</color>
+    <color name="home_top_bar_border">#808080</color>
+    <color name="home_top_bar_vertical_divider">#dbdbdb</color>
+    <color name="home_top_bar_shadow">#ddCCCCCC</color>
+    <color name="home_top_bar_shadow_border">#80CCCCCC</color>
+    <color name="home_top_bar_text">#5a4f49</color>
+    <item name="home_top_bar_image_alpha" format="float" type="color">0.75</item>
+
+    <color name="home_list_background">#ededed</color>
+    <color name="home_card_background">#ffffff</color>
+    <color name="home_card_border">#dedede</color>
+
+    <color name="home_card_message_hive_hive_name_color">#404040</color>
+    <color name="home_card_message_hive_horizontal_divider_color">#ededed</color>
+    <color name="home_card_message_hive_timestamp_color">#808080</color>
+    <color name="home_card_message_hive_message_text_color">#333333</color>
+</resources>

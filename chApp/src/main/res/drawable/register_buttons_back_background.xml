@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item >
+        <shape android:shape="rectangle">
+            <stroke android:width="@dimen/register_general_buttons_shadow_border_thick" android:color="@color/register_general_buttons_back_shadow_border" />
+            <corners android:radius="@dimen/register_general_buttons_corner_radius" />
+            <solid android:color="@color/register_general_buttons_back_shadow" />
+        </shape>
+    </item>
+    <item android:bottom="@dimen/register_general_buttons_shadow_bottom_thick" android:left="@dimen/register_general_buttons_shadow_left_thick">
+        <shape android:shape="rectangle">
+            <stroke android:width="@dimen/register_general_buttons_border_thick" android:color="@color/register_general_buttons_back_border" />
+            <corners android:radius="@dimen/register_general_buttons_corner_radius" />
+            <solid android:color="@color/register_general_buttons_back_background" />
+        </shape>
+    </item>
+</layer-list>
