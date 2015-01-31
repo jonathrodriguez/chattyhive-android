@@ -5,38 +5,39 @@ import com.chattyhive.backend.contentprovider.formats.LOGIN;
 import com.google.gson.JsonElement;
 
 import java.util.AbstractMap;
+import java.util.HashMap;
 
 /**
  * Created by Jonathan on 11/12/13.
  * This class defines a server user. A server user contains information to authenticate the user, it also contains
  * cookies provided by server to this user and the server connection status.
  */
-public class ServerUser {
+public class UserSession {
     // Login data
-    private String _login;
-    private String _password;
+    private String login;
+    private String password;
 
-//    private HashMap<String, HttpCookie> _cookies;
-    private ServerStatus _status;
-
-    public ServerUser(LoginLocalStorageInterface loginLocalStorage) {
-        AbstractMap.SimpleEntry<String,String> userData = loginLocalStorage.RecoverLoginPassword();
-
-        this._login = userData.getKey();
-        this._password = userData.getValue();
-//        this._cookies = new HashMap<String, HttpCookie>();
-    }
+    // Session data
+    private HashMap<String, String> authTokens;
+    private SessionStatus status;
 
     /**
      * Public constructor.
      * @param login the user login. It can be a username or a email address.
      * @param password the user password to login.
      */
-    public ServerUser(String login, String password) {
-        this._login = (login != null)?login:"";
-        this._password = (password != null)?password:"";
-//        this._cookies = new HashMap<String, HttpCookie>();
-        this._status = ServerStatus.DISCONNECTED;
+    public UserSession(String login, String password) {
+        this.login = (login != null)?login:"";
+        this.password = (password != null)?password:"";
+        this.authTokens = new HashMap<String, String>();
+        this.status = SessionStatus.DISCONNECTED;
+    }
+
+    public UserSession(String login, String password, HashMap<String,String> authTokens) {
+        this.login = (login != null)?login:"";
+        this.password = (password != null)?password:"";
+        this.authTokens = new HashMap<String, String>(authTokens);
+        this.status = SessionStatus.CONNECTED;
     }
 
     /**
@@ -44,7 +45,7 @@ public class ServerUser {
      * @return a string containing the user login.
      */
     public String getLogin() {
-        return this._login;
+        return this.login;
     }
 
     /**
@@ -52,7 +53,7 @@ public class ServerUser {
      * @return a string containing the user password.
      */
     public String getPassword() {
-        return this._password;
+        return this.password;
     }
 
     /**
@@ -60,7 +61,7 @@ public class ServerUser {
      * @param cookie the HttpCookie to be associated.
      */
 /*    public void setCookie (HttpCookie cookie) {
-        this._cookies.put(cookie.getName(),cookie);
+        this.cookies.put(cookie.getName(),cookie);
     }*/
 
     /**
@@ -70,7 +71,7 @@ public class ServerUser {
 /*    public String getCookies() {
         String cookies = "";
 
-        Iterator<HttpCookie> it = this._cookies.values().iterator();
+        Iterator<HttpCookie> it = this.cookies.values().iterator();
         while (it.hasNext()) {
             HttpCookie cookie = it.next();
             cookies = cookies.concat(cookie.toString());
@@ -89,8 +90,8 @@ public class ServerUser {
 /*    public HttpCookie getCookie(String name) {
         HttpCookie cookie = null;
 
-        if (this._cookies.containsKey(name))
-            cookie = this._cookies.get(name);
+        if (this.cookies.containsKey(name))
+            cookie = this.cookies.get(name);
 
         return cookie;
     }*/
@@ -99,16 +100,16 @@ public class ServerUser {
      * Returns the server status of this user.
      * @return a value from the server status enum.
      */
-    public ServerStatus getStatus() {
-        return this._status;
+    public SessionStatus getStatus() {
+        return this.status;
     }
 
     /**
      * Sets the server status of this user.
      * @param status a value from the server status enum.
      */
-    public void setStatus(ServerStatus status) {
-        this._status = status;
+    public void setStatus(SessionStatus status) {
+        this.status = status;
     }
 
     /**
@@ -119,8 +120,8 @@ public class ServerUser {
      */
     public JsonElement toJson() {
         LOGIN loginFormat = new LOGIN();
-        loginFormat.USER = this._login;
-        loginFormat.PASS = this._password;
+        loginFormat.USER = this.login;
+        loginFormat.PASS = this.password;
         return loginFormat.toJSON();
     }
 }

@@ -17,18 +17,14 @@ import com.chattyhive.backend.contentprovider.OSStorageProvider.LoginLocalStorag
 import com.chattyhive.backend.contentprovider.OSStorageProvider.MessageLocalStorageInterface;
 import com.chattyhive.backend.contentprovider.OSStorageProvider.UserLocalStorageInterface;
 import com.chattyhive.backend.contentprovider.formats.COMMON;
-import com.chattyhive.backend.contentprovider.formats.EXPLORE_FILTER;
 import com.chattyhive.backend.contentprovider.formats.Format;
-import com.chattyhive.backend.contentprovider.formats.HIVE;
-import com.chattyhive.backend.contentprovider.formats.HIVE_ID;
-import com.chattyhive.backend.contentprovider.formats.HIVE_LIST;
 import com.chattyhive.backend.contentprovider.formats.LOCAL_USER_PROFILE;
 import com.chattyhive.backend.contentprovider.formats.PROFILE_ID;
 import com.chattyhive.backend.contentprovider.formats.USERNAME;
 import com.chattyhive.backend.contentprovider.formats.USER_EMAIL;
 import com.chattyhive.backend.contentprovider.formats.USER_PROFILE;
 import com.chattyhive.backend.contentprovider.local.LocalStorageInterface;
-import com.chattyhive.backend.contentprovider.server.ServerUser;
+import com.chattyhive.backend.contentprovider.server.UserSession;
 import com.chattyhive.backend.util.events.CancelableEventArgs;
 import com.chattyhive.backend.util.events.CommandCallbackEventArgs;
 import com.chattyhive.backend.util.events.ConnectionEventArgs;
@@ -393,7 +389,7 @@ public class Controller {
      * Establishes the server user.
      * @param user
      */
-    public void setServerUser(ServerUser user) {
+    public void setServerUser(UserSession user) {
         this.dataProvider.setUser(user);
     }
 

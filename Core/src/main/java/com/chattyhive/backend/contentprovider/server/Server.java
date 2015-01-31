@@ -45,7 +45,7 @@ public class Server {
     public Event<FormatReceivedEventArgs> responseEvent;
     public Event<EventArgs> CsrfTokenChanged;
 
-    private ServerUser serverUser;
+    private UserSession userSession;
 
     private String appName = "";
     private String appProtocol = "";
@@ -58,11 +58,11 @@ public class Server {
         this.appName = appName;
     }
 
-    public void setServerUser(ServerUser serverUser) {
-        this.serverUser = serverUser;
+    public void setUserSession(UserSession userSession) {
+        this.userSession = userSession;
     }
-    public ServerUser getServerUser() {
-        return this.serverUser;
+    public UserSession getUserSession() {
+        return this.userSession;
     }
     /************************************************************************/
     /*                           CONSTRUCTORS                               */
@@ -70,7 +70,7 @@ public class Server {
 
     public Server(AbstractMap.SimpleEntry<String, String> loginInfo, String appName) {
         if (loginInfo != null)
-            this.serverUser = new ServerUser(loginInfo.getKey(),loginInfo.getValue());
+            this.userSession = new UserSession(loginInfo.getKey(),loginInfo.getValue());
         this.appName = appName;
         this.appProtocol = StaticParameters.DefaultServerAppProtocol;
         this.host = StaticParameters.DefaultServerHost;
@@ -91,8 +91,8 @@ public class Server {
         RunCommand(AvailableCommands.StartSession, null, null, true, null);
     }
     public void Login() {
-        if (serverUser == null) return;
-        final Format[] loginFormats = Format.getFormat(this.serverUser.toJson());
+        if (userSession == null) return;
+        final Format[] loginFormats = Format.getFormat(this.userSession.toJson());
         RunCommand(AvailableCommands.Login,null,null,true,loginFormats);
     }
 
@@ -108,8 +108,8 @@ public class Server {
     private Boolean recursiveTestCookiePrerequisites(final ServerCommand serverCommand, final Format... formats) {
         if (!serverCommand.checkCookies()) {
             List<Format> formatList = Arrays.asList(formats);
-            if (this.serverUser != null)
-                formatList.addAll(Arrays.asList(Format.getFormat(this.serverUser.toJson())));
+            if (this.userSession != null)
+                formatList.addAll(Arrays.asList(Format.getFormat(this.userSession.toJson())));
             Format[] newFormats = formatList.toArray(new Format[formatList.size()]);
 
             ArrayList<String> unsatisfyingCookies = serverCommand.getUnsatisfyingCookies();
@@ -289,12 +289,12 @@ public class Server {
                                 return true;
                             }
                         } else if (((COMMON) format).STATUS.equalsIgnoreCase("SESSION EXPIRED")) {
-                            serverUser.setStatus(ServerStatus.EXPIRED);
+                            userSession.setStatus(ServerStatus.EXPIRED);
                             Login();
                             result = RunCommand(serverCommand, Callback, CallbackAdditionalData, retryCount + 1, formats);
                         } else {
                             //TODO: Check COMMON for operation Error and set result here.
-                            serverUser.setStatus(ServerStatus.ERROR);
+                            userSession.setStatus(ServerStatus.ERROR);
                         }
                         break;
                     }

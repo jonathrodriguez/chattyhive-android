@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -12,14 +11,12 @@ import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
 import com.chattyhive.backend.Controller;
-import com.chattyhive.backend.StaticParameters;
 import com.chattyhive.backend.contentprovider.DataProvider;
 import com.chattyhive.backend.contentprovider.formats.COMMON;
 import com.chattyhive.backend.contentprovider.formats.Format;
-import com.chattyhive.backend.contentprovider.server.ServerUser;
+import com.chattyhive.backend.contentprovider.server.UserSession;
 import com.chattyhive.backend.util.events.CommandCallbackEventArgs;
 import com.chattyhive.backend.util.events.ConnectionEventArgs;
-import com.chattyhive.backend.util.events.EventArgs;
 import com.chattyhive.backend.util.events.EventHandler;
 
 public class LoginActivity extends Activity {
@@ -149,7 +146,7 @@ public class LoginActivity extends Activity {
         } else {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
-            dataProvider.setUser(new ServerUser(username, password));
+            dataProvider.setUser(new UserSession(username, password));
             dataProvider.Connect();
         }
     }

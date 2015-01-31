@@ -29,7 +29,7 @@ import com.chattyhive.backend.contentprovider.local.LocalStorageInterface;
 import com.chattyhive.backend.contentprovider.pubsubservice.ConnectionState;
 import com.chattyhive.backend.contentprovider.pubsubservice.ConnectionStateChange;
 import com.chattyhive.backend.contentprovider.server.Server;
-import com.chattyhive.backend.contentprovider.server.ServerUser;
+import com.chattyhive.backend.contentprovider.server.UserSession;
 import com.chattyhive.backend.contentprovider.pubsubservice.PubSub;
 
 import com.chattyhive.backend.util.events.CancelableEventArgs;
@@ -61,6 +61,30 @@ import java.util.List;
  * from where data comes from. Possible data origins are local, server and pusher.
  */
 public class DataProvider {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /*******************************************************************************************/
+    /*******************************************************************************************/
+    /*******************************************************************************************/
+    /*******************************************************************************************/
+    /*******************************************************************************************/
+
+
     /************************************************************************/
     /*                       STATIC MANAGEMENT                              */
     /************************************************************************/
@@ -267,11 +291,11 @@ public class DataProvider {
 
     public void Connect() {
         if (connectionAvailable) {
-            if (this.serverUser == null) {
-                this.serverUser = new ServerUser(LoginLocalStorage);
+            if (this.userSession == null) {
+                this.userSession = new UserSession(LoginLocalStorage);
             }
             if ((!this.csrfTokenValid) || (StaticParameters.StandAlone)) this.server.StartSession();
-            if ((!this.sessionValid) || (StaticParameters.StandAlone)) this.RunCommand(AvailableCommands.Login,null,Format.getFormat(this.serverUser.toJson()));
+            if ((!this.sessionValid) || (StaticParameters.StandAlone)) this.RunCommand(AvailableCommands.Login,null,Format.getFormat(this.userSession.toJson()));
 
             if (!StaticParameters.StandAlone) {
                 this.targetState = ConnectionState.CONNECTED;
@@ -438,7 +462,7 @@ public class DataProvider {
     }
 
     /************************************************************************/
-    private ServerUser serverUser;
+    private UserSession userSession;
 
     private PubSub pubSub;
     private ConnectionState targetState;
@@ -449,9 +473,9 @@ public class DataProvider {
      * Changes the server user.
      * @param newUser the new server user.
      */
-    public void setUser(ServerUser newUser) {
-        this.serverUser = newUser;
-        this.server.setServerUser(this.serverUser);
+    public void setUser(UserSession newUser) {
+        this.userSession = newUser;
+        this.server.setUserSession(this.userSession);
     }
 
     /**
@@ -587,7 +611,7 @@ public class DataProvider {
                 lup = (LOCAL_USER_PROFILE) format;
 
         if ((common != null) && (lup != null) && (common.STATUS.equalsIgnoreCase("OK"))) {
-            this.setUser(new ServerUser(lup.USER_BASIC_PUBLIC_PROFILE.PUBLIC_NAME,lup.PASS));
+            this.setUser(new UserSession(lup.USER_BASIC_PUBLIC_PROFILE.PUBLIC_NAME,lup.PASS));
         }
     }
 
