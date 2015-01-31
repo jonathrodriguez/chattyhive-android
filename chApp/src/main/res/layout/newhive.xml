@@ -23,10 +23,12 @@
                 android:id="@+id/new_hive_back_button"
                 android:layout_width="65dp"
                 android:layout_height="match_parent"
+                android:layout_gravity="center"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="0dp"
                 android:background="@drawable/explora_border"
-                android:gravity="center_horizontal|center_vertical">
+                android:gravity="center"
+                android:paddingTop="6dp">
 
                 <ImageView
                     android:id="@+id/new_hive_action_bar_goBack_image"
@@ -40,20 +42,20 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="fill_parent"
+                android:layout_weight="1"
                 android:gravity="center"
+                android:lines="1"
+                android:maxLines="1"
                 android:text="nuevo hive"
                 android:textColor="@android:color/white"
-                android:textSize="32dp"
-                android:layout_weight="1"
-                android:maxLines="1"
-                android:lines="1"/>
+                android:textSize="32dp" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="right"
-                android:gravity="right"
-                android:layout_weight="0">
+                android:layout_weight="0"
+                android:gravity="right">
 
                 <LinearLayout
                     android:id="@+id/new_hive_make_button"
@@ -85,6 +87,7 @@
             android:paddingTop="20dp">
 
             <EditText
+                android:id="@+id/new_hive_name"
                 android:layout_width="match_parent"
                 android:layout_height="32dp"
                 android:background="@drawable/new_hive_input_border"
@@ -94,8 +97,7 @@
                 android:paddingRight="6dp"
                 android:textColor="@android:color/black"
                 android:textColorHint="#808080"
-                android:textSize="16dp"
-                android:id="@+id/new_hive_name" />
+                android:textSize="16dp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -104,19 +106,30 @@
                 android:orientation="horizontal">
 
                 <RelativeLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_width="93dp"
+                    android:layout_height="93dp"
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/new_hive_input_border">
 
                     <ImageView
+                        android:id="@+id/new_hive_image"
                         android:layout_width="93dp"
                         android:layout_height="93dp"
-                        android:layout_marginRight="10dp"
-                        android:layout_weight="0.5"
-                        android:src="@drawable/explore_new_hive_hive_without_picture"
-                        android:id="@+id/new_hive_image" />
+                        android:layout_weight="1"
+                        android:src="@drawable/explore_new_hive_hive_without_picture" />
+
+                    <TextView
+                        android:layout_width="93dp"
+                        android:layout_height="93dp"
+                        android:gravity="center"
+                        android:text="Sube una foto (opcional)"
+                        android:textAlignment="center"
+                        android:textColor="#808080"
+                        android:textSize="15dp" />
                 </RelativeLayout>
 
                 <EditText
+                    android:id="@+id/new_hive_description"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="right"
@@ -128,8 +141,7 @@
                     android:paddingTop="9dp"
                     android:textColor="@android:color/black"
                     android:textColorHint="#808080"
-                    android:textSize="14.5dp"
-                    android:id="@+id/new_hive_description" />
+                    android:textSize="14.5dp" />
             </LinearLayout>
 
             <LinearLayout
@@ -156,8 +168,8 @@
                             android:id="@+id/test"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
-                            android:gravity="center"
                             android:layout_gravity="center"
+                            android:gravity="center"
                             android:text="Indica hasta 5 tags"
                             android:textColor="@android:color/black"
                             android:textSize="14.5dp" />
@@ -165,18 +177,19 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
-                            android:gravity="center"
                             android:layout_gravity="center"
+                            android:ellipsize="end"
+                            android:gravity="center"
+                            android:lines="1"
+                            android:maxLines="1"
+                            android:singleLine="true"
                             android:text=" (el hive será más visible)"
                             android:textColor="#808080"
-                            android:textSize="12dp"
-                            android:maxLines="1"
-                            android:lines="1"
-                            android:singleLine="true"
-                            android:ellipsize="end"/>
+                            android:textSize="12dp" />
                     </LinearLayout>
 
                     <EditText
+                        android:id="@+id/new_hive_tags"
                         android:layout_width="match_parent"
                         android:layout_height="32dp"
                         android:background="@drawable/new_hive_input_border"
@@ -186,21 +199,44 @@
                         android:paddingRight="6dp"
                         android:textColor="@android:color/black"
                         android:textColorHint="#808080"
-                        android:textSize="13.5dp"
-                        android:id="@+id/new_hive_tags" />
+                        android:textSize="13.5dp" />
 
-                    <EditText
+                    <LinearLayout
+                        android:id="@+id/new_hive_location_layout"
                         android:layout_width="match_parent"
                         android:layout_height="32dp"
+                        android:layout_gravity="center"
                         android:layout_marginTop="14dp"
                         android:background="@drawable/new_hive_input_border"
-                        android:gravity="center_vertical|left"
-                        android:hint="Visible en todo el mundo"
-                        android:paddingLeft="6dp"
-                        android:paddingRight="6dp"
-                        android:textColor="@android:color/black"
-                        android:textColorHint="#808080"
-                        android:textSize="13.5dp"/>
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="15dp"
+                            android:layout_height="15dp"
+                            android:layout_marginLeft="7.5dp"
+                            android:src="@drawable/pestanha_hives_location" />
+
+                        <TextView
+                            android:id="@+id/new_hive_location_text"
+                            android:layout_width="match_parent"
+                            android:layout_height="fill_parent"
+                            android:layout_weight="1"
+                            android:gravity="center_vertical|left"
+                            android:hint="Visible en todo el mundo"
+                            android:paddingLeft="6dp"
+                            android:paddingRight="6dp"
+                            android:textColor="@android:color/black"
+                            android:textColorHint="#111111"
+                            android:textSize="13.5dp" />
+
+                        <ImageView
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:layout_marginRight="7.5dp"
+                            android:alpha="0.5"
+                            android:src="@drawable/explore_new_hive_arrow_down" />
+                    </LinearLayout>
                 </LinearLayout>
 
                 <LinearLayout
@@ -231,41 +267,69 @@
                             android:src="@drawable/menu_help" />
                     </LinearLayout>
 
-                    <EditText
+                    <LinearLayout
+                        android:id="@+id/new_hive_languages"
                         android:layout_width="match_parent"
-                        android:layout_height="32dp"
+                        android:layout_height="wrap_content"
                         android:background="@drawable/new_hive_input_border"
-                        android:gravity="center_vertical|left"
-                        android:hint=""
-                        android:paddingLeft="6dp"
-                        android:paddingRight="6dp"
-                        android:textColor="@android:color/black"
-                        android:textColorHint="#808080"
-                        android:textSize="13.5dp"
-                        android:id="@+id/new_hive_languages" />
+                        android:minHeight="32dp"
+                        android:gravity="center_vertical">
 
-                    <EditText
+                        <LinearLayout
+                            android:id="@+id/new_hive_languages_layout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:visibility="visible"
+                            android:orientation="vertical"
+                            android:gravity="center_vertical"
+                            android:layout_gravity="center_vertical">
+
+                            <include
+                                android:id="@+id/explore_wrap_layout_tags"
+                                layout="@layout/explore_tag_list"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_horizontal" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="32dp"
                         android:layout_marginTop="14dp"
                         android:background="@drawable/new_hive_input_border"
-                        android:gravity="center_vertical|left"
-                        android:hint="Categoria"
-                        android:paddingLeft="6dp"
-                        android:paddingRight="6dp"
-                        android:textColor="@android:color/black"
-                        android:textColorHint="#808080"
-                        android:textSize="13.5dp"
-                        android:id="@+id/new_hive_category" />
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/new_hive_category"
+                            android:layout_width="fill_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:gravity="center_vertical|left"
+                            android:hint="Categoria"
+                            android:paddingLeft="6dp"
+                            android:textColor="@android:color/black"
+                            android:textColorHint="#111111"
+                            android:textSize="13.5dp" />
+
+                        <ImageView
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:layout_marginRight="7.5dp"
+                            android:alpha="0.5"
+                            android:src="@drawable/explore_new_hive_arrow_down" />
+                    </LinearLayout>
+
                 </LinearLayout>
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="37dp"
+                android:layout_marginBottom="20dp"
                 android:layout_marginTop="14dp"
-                android:gravity="right"
-                android:layout_marginBottom="20dp">
+                android:gravity="right">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -288,12 +352,6 @@
                         android:layout_marginLeft="5dp"
                         android:src="@drawable/invite_friends" />
                 </LinearLayout>
-                <TextView
-                    android:id="@+id/date_picker"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:text="asdfasdf"
-                    android:textColor="@android:color/black"/>
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
