@@ -36,6 +36,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Locale;
 
@@ -371,6 +372,29 @@ public class Register extends Activity {
         return null;
     }
 
+    @Override
+    protected void onPrepareDialog(int id, Dialog dialog) {
+        super.onPrepareDialog(id, dialog);
+        switch (id) {
+            case LOCATION_DIALOG1_ID:
+                ((AlertDialog)dialog).setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        removeDialog(LOCATION_DIALOG1_ID);
+                    }
+                });
+                break;
+            case LOCATION_DIALOG2_ID:
+                ((AlertDialog)dialog).setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        removeDialog(LOCATION_DIALOG2_ID);
+                    }
+                });
+                break;
+        }
+    }
+
     private void getLanguages(){
         languages = new String[4];
         languages[0] = "English";
@@ -384,32 +408,27 @@ public class Register extends Activity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         getLanguages();
         builder.setTitle("Select your languages")
-                // Specify the list array, the items to be selected by default (null for none),
-                // and the listener through which to receive callbacks when items are selected
                 .setMultiChoiceItems(languages, null,
                         new DialogInterface.OnMultiChoiceClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which, boolean isChecked) {
                                 if (isChecked) {
-                                    // If the user checked the item, add it to the selected items
                                     mSelectedItems.add(languages[which]);
                                 } else if (mSelectedItems.contains(languages[which])) {
-                                    // Else, if the item is already in the array, remove it
                                     mSelectedItems.remove(languages[which]);
                                 }
                             }
                         })
-                        // Set the action buttons
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-                        // User clicked OK, so save the mSelectedItems results somewhere
-                        // or return them to the component that opened the dialog
                         if (mSelectedItems.size() != 0) {
                             String languagesString = mSelectedItems.get(0);
                             for (int i = 1; i < mSelectedItems.size(); i++) {
-                                languagesString = languagesString +", "+mSelectedItems.get(i);
+                                languagesString = languagesString + ", " + mSelectedItems.get(i);
                             }
+                            newUser.getUserPrivateProfile().setLanguages(mSelectedItems);
+                            newUser.getUserPublicProfile().setLanguages(mSelectedItems);
                             ((TextView) findViewById(R.id.register_first_step_languages_textView)).setText(languagesString);
                         }
                     }
@@ -494,6 +513,7 @@ public class Register extends Activity {
                     public void onClick(DialogInterface dialog, int which) {
                         locationString = locationString +", "+ cities.get(locationIndex)[which];
                         newUser.getUserPrivateProfile().setLocation(locationString);
+                        newUser.getUserPublicProfile().setLocation(locationString);
                         ((TextView) findViewById(R.id.register_first_step_location_textView)).setText(locationString);
                     }
                 });
@@ -510,7 +530,6 @@ public class Register extends Activity {
             month = selectedMonth;
             day = selectedDay;
 
-            // set selected date into textview
             birthdayView.setText(new StringBuilder().append(day)
                     .append("/").append(month + 1).append("/").append(year)
                     .append(" "));
