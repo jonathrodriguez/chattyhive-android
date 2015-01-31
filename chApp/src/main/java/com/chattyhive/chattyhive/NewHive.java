@@ -3,7 +3,6 @@ package com.chattyhive.chattyhive;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.graphics.Color;
@@ -39,7 +38,7 @@ public class NewHive extends Activity{
     ArrayList<String[]> listaSubcats = null;
     private int subcatIndex = -1;
     private String[] languages = null;
-    private ArrayList<String> mSelectedItems = null;
+    private ArrayList<String> selectedLanguages = null;
     private String[] countries = null;
     private String[] region = null;
     private String[] city = null;
@@ -78,8 +77,14 @@ public class NewHive extends Activity{
             Hive newHive = new Hive(((TextView)findViewById(R.id.new_hive_name)).getText().toString());
 
             newHive.setDescription(((TextView) findViewById(R.id.new_hive_description)).getText().toString());
+
+            //TODO: Corregir aquí para asociar el código de categoria (formato: XX.YY)
+            //Dónde XX es el código del grupo e YY es el código de la subcategoria.
+            //Para grupos sin subcategorias, YY toma el valor 00.
             newHive.setCategory(((TextView) findViewById(R.id.new_hive_category)).getText().toString());
 
+            //SELECCIÓN DE TAGS
+            //TODO: Sustituir esto por una lista de tags a asociar al hive.
 
             TreeSet<String> tags = new TreeSet<String>();
             String[] tags_tmp;
@@ -93,7 +98,10 @@ public class NewHive extends Activity{
             if (tags.size() > 0)
                 newHive.setTags(tags.toArray(new String[tags.size()]));
 
-            TreeSet<String> languages = new TreeSet<String>();
+
+            //SELECCIÓN DE IDIOMAS
+
+            /*TreeSet<String> languages = new TreeSet<String>();
             String[] languages_tmp;
             String languages_string = ((TextView)findViewById(R.id.new_hive_tags)).getText().toString();
             languages_tmp = languages_string.split("[, ]+");
@@ -103,7 +111,9 @@ public class NewHive extends Activity{
                         languages.add(language);
             }
             if (languages.size() > 0)
-                newHive.setChatLanguages(languages.toArray(new String[languages.size()]));
+                newHive.setChatLanguages(languages.toArray(new String[languages.size()])); */
+            if ((selectedLanguages != null) && (selectedLanguages.size() > 0))
+                newHive.setChatLanguages(selectedLanguages.toArray(new String[selectedLanguages.size()]));
 
             newHive.createHive(new EventHandler<CommandCallbackEventArgs>(thisNewHive,"onHiveCreatedCallback",CommandCallbackEventArgs.class));
         }
@@ -255,7 +265,7 @@ public class NewHive extends Activity{
     }
 
     public Dialog languagesDialog(){
-        mSelectedItems = new ArrayList();  // Where we track the selected items
+        selectedLanguages = new ArrayList();  // Where we track the selected items
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         getLanguages();
         builder.setTitle("Select your languages")
@@ -264,16 +274,16 @@ public class NewHive extends Activity{
                             @Override
                             public void onClick(DialogInterface dialog, int which, boolean isChecked) {
                                 if (isChecked) {
-                                    mSelectedItems.add(languages[which]);
-                                } else if (mSelectedItems.contains(languages[which])) {
-                                    mSelectedItems.remove(languages[which]);
+                                    selectedLanguages.add(languages[which]);
+                                } else if (selectedLanguages.contains(languages[which])) {
+                                    selectedLanguages.remove(languages[which]);
                                 }
                             }
                         })
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int id) {
-                                if (mSelectedItems.size() != 0) {
+                                if (selectedLanguages.size() != 0) {
                                     ((LinearLayout)findViewById(R.id.new_hive_languages_layout)).setVisibility(View.VISIBLE);
                                     WrapLayout expanded_hive_tagsLayout = (WrapLayout) findViewById(R.id.explore_wrap_layout_tags);
                                     LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
@@ -281,21 +291,21 @@ public class NewHive extends Activity{
                                     params.setMargins(3, 3, 3, 3);
                                     expanded_hive_tagsLayout.removeAllViews();
                                     expanded_hive_tagsLayout.invalidate();
-                                    for (int i = 0; i < mSelectedItems.size(); i++) {
+                                    for (int i = 0; i < selectedLanguages.size(); i++) {
                                         LinearLayout textContainer = new LinearLayout(getApplicationContext());
                                         textContainer.setLayoutParams(params);
                                         textContainer.setGravity(View.TEXT_ALIGNMENT_CENTER);
                                         TextView tv = new TextView(getApplicationContext());
                                         tv.setLayoutParams(params);
                                         tv.setBackgroundResource(R.drawable.explore_tags_border);
-                                        tv.setText(mSelectedItems.get(i));
+                                        tv.setText(selectedLanguages.get(i));
                                         tv.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12);
                                         tv.setTextColor(Color.BLACK);
                                         textContainer.addView(tv);
                                         expanded_hive_tagsLayout.addView(textContainer);
                                     }
                                     expanded_hive_tagsLayout.requestLayout();
-                                }else if (mSelectedItems.size() == 0){
+                                }else if (selectedLanguages.size() == 0){
                                     WrapLayout expanded_hive_tagsLayout = (WrapLayout) findViewById(R.id.explore_wrap_layout_tags);
                                     ((LinearLayout)findViewById(R.id.new_hive_languages_layout)).setVisibility(View.GONE);
                                     expanded_hive_tagsLayout.removeAllViews();
