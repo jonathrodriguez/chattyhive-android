@@ -15,7 +15,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.chattyhive.backend.Controller;
-import com.chattyhive.backend.StaticParameters;
 import com.chattyhive.backend.businessobjects.Image;
 import com.chattyhive.backend.businessobjects.Users.User;
 import com.chattyhive.backend.contentprovider.formats.COMMON;
@@ -31,12 +30,10 @@ import com.chattyhive.chattyhive.framework.CustomViews.ViewGroup.SlidingStepsLay
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Array;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Date;
 import java.util.Locale;
 
@@ -66,18 +63,20 @@ public class Register extends Activity {
 
     TextView birthdayView;
     String birthday;
+
+    //Locations
     int locationStep = 0;
     int locationIndex = -1;
-    String locationString;
-
     private String[] countries;
     private String[] region;
     private String[] city;
     private String[] titles;
     private ArrayList<String[]> regions;
     private ArrayList<String[]> cities;
+    private String locationString = null;
 
-    private ArrayList<String> mSelectedItems;
+    //Languages
+    private ArrayList<String> selectedLanguages;
     String[] languages;
 
     @Override
@@ -175,7 +174,8 @@ public class Register extends Activity {
                         ((ImageView)findViewById(R.id.register_first_step_female_radio_image)).setImageResource(R.drawable.registro_selector);
                     }
 
-                    //((TextView)view.findViewById(R.id.register_first_step_location_textView)).setText(newUser.getUserPrivateProfile().getLocation());
+                    if ((newUser.getUserPrivateProfile().getLocation() != null) && (!newUser.getUserPrivateProfile().getLocation().isEmpty()))
+                        ((TextView)view.findViewById(R.id.register_first_step_location_textView)).setText(newUser.getUserPrivateProfile().getLocation());
 
                     String langs = "";
                     if ((newUser.getUserPrivateProfile().getLanguages() != null) && (newUser.getUserPrivateProfile().getLanguages().size() > 0))
@@ -404,7 +404,7 @@ public class Register extends Activity {
     }
 
     public Dialog languagesDialog(){
-        mSelectedItems = new ArrayList();  // Where we track the selected items
+        selectedLanguages = new ArrayList();  // Where we track the selected items
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         getLanguages();
         builder.setTitle("Select your languages")
@@ -413,22 +413,21 @@ public class Register extends Activity {
                             @Override
                             public void onClick(DialogInterface dialog, int which, boolean isChecked) {
                                 if (isChecked) {
-                                    mSelectedItems.add(languages[which]);
-                                } else if (mSelectedItems.contains(languages[which])) {
-                                    mSelectedItems.remove(languages[which]);
+                                    selectedLanguages.add(languages[which]);
+                                } else if (selectedLanguages.contains(languages[which])) {
+                                    selectedLanguages.remove(languages[which]);
                                 }
                             }
                         })
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-                        if (mSelectedItems.size() != 0) {
-                            String languagesString = mSelectedItems.get(0);
-                            for (int i = 1; i < mSelectedItems.size(); i++) {
-                                languagesString = languagesString + ", " + mSelectedItems.get(i);
+                        if (selectedLanguages.size() != 0) {
+                            String languagesString = selectedLanguages.get(0);
+                            for (int i = 1; i < selectedLanguages.size(); i++) {
+                                languagesString = languagesString + ", " + selectedLanguages.get(i);
                             }
-                            newUser.getUserPrivateProfile().setLanguages(mSelectedItems);
-                            newUser.getUserPublicProfile().setLanguages(mSelectedItems);
+                            newUser.getUserPrivateProfile().setLanguages(selectedLanguages);
                             ((TextView) findViewById(R.id.register_first_step_languages_textView)).setText(languagesString);
                         }
                     }
@@ -513,7 +512,6 @@ public class Register extends Activity {
                     public void onClick(DialogInterface dialog, int which) {
                         locationString = locationString +", "+ cities.get(locationIndex)[which];
                         newUser.getUserPrivateProfile().setLocation(locationString);
-                        newUser.getUserPublicProfile().setLocation(locationString);
                         ((TextView) findViewById(R.id.register_first_step_location_textView)).setText(locationString);
                     }
                 });
