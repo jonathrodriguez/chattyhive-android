@@ -3,12 +3,16 @@ package com.chattyhive.chattyhive;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -192,6 +196,7 @@ public class ExploreListAdapter extends BaseAdapter implements AbsListView.OnScr
             holder.expanded_categoryImage = (ImageView)convertView.findViewById(R.id.explore_list_item_expanded_category_image);
             holder.expanded_usersText = (TextView)convertView.findViewById(R.id.explore_list_item_expanded_users_number);
             holder.expanded_hive_chatLanguages = (TextView)convertView.findViewById(R.id.explore_list_item_expanded_hive_chat_languages);
+            holder.expanded_hive_tagsLayout = (WrapLayout)convertView.findViewById(R.id.explore_wrap_layout_tags);
 
             convertView.setTag(R.id.Explore_ListViewHolder, holder);
         } else {
@@ -235,7 +240,10 @@ public class ExploreListAdapter extends BaseAdapter implements AbsListView.OnScr
         holder.collapsed_usersText.setText(String.valueOf(hive.getSubscribedUsers()));
 
         holder.expanded_hive_name.setText(hive.getName());
-        holder.expanded_hive_description.setText(hive.getDescription());
+        if (hive.getDescription() != null)
+            holder.expanded_hive_description.setText(hive.getDescription());
+        else if (hive.getDescription() == null || hive.getDescription() == "")
+            holder.expanded_hive_description.setVisibility(View.GONE);
         Category.setCategory(hive.getCategory(),holder.expanded_categoryImage,holder.expanded_categoryText);
         holder.expanded_usersText.setText(context.getString(R.string.explore_hive_card_expanded_n_mates,hive.getSubscribedUsers()));
 
@@ -250,6 +258,33 @@ public class ExploreListAdapter extends BaseAdapter implements AbsListView.OnScr
             holder.expanded_hive_chatLanguages.invalidate();
             holder.expanded_hive_chatLanguages.setText(chatLanguages);
             holder.expanded_hive_chatLanguages.requestLayout();
+        }
+
+        String[] tagsArray = hive.getTags();
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        params.setMargins(3, 3, 3, 3);
+        if (tagsArray != null || tagsArray.length > 0) {
+            ((LinearLayout)convertView.findViewById(R.id.explore_list_item_expanded_tags_layout)).setVisibility(View.VISIBLE);
+            holder.expanded_hive_tagsLayout.removeAllViews();
+            holder.expanded_hive_tagsLayout.invalidate();
+            for (int i = 0; i < tagsArray.length; i++) {
+                //System.out.println(i+" "+tagsArray[i]);
+                LinearLayout textContainer = new LinearLayout(context);
+                textContainer.setLayoutParams(params);
+                TextView tv = new TextView(context);
+                tv.setLayoutParams(params);
+                tv.setBackgroundResource(R.drawable.explore_tags_border);
+                tv.setText(tagsArray[i]);
+                tv.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12);
+                tv.setTextColor(Color.BLACK);
+                textContainer.addView(tv);
+                holder.expanded_hive_tagsLayout.addView(textContainer);
+            }
+            holder.expanded_hive_tagsLayout.requestLayout();
+        }
+        if (tagsArray.length == 0){
+            ((LinearLayout)convertView.findViewById(R.id.explore_list_item_expanded_tags_layout)).setVisibility(View.GONE);
         }
 
         holder.expanded_hiveImage.setImageResource(R.drawable.pestanha_chats_public_chat);
@@ -337,6 +372,7 @@ public class ExploreListAdapter extends BaseAdapter implements AbsListView.OnScr
         public TextView expanded_usersText;
         public ImageView expanded_hiveImage;
         public TextView expanded_hive_chatLanguages;
+        public WrapLayout expanded_hive_tagsLayout;
 
         public Hive hive;
 
