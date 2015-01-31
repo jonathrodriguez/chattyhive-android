@@ -51,7 +51,8 @@ public class Conversation { //TODO: implements SortedSet<Message>
                 if (format instanceof MESSAGE) {
                     Chat.getChat(((MESSAGE) format).CHANNEL_UNICODE).getConversation().addMessage(new Message(format));
                 } else if (format instanceof MESSAGE_LIST) {
-                    Conversation.onFormatReceived(sender, new FormatReceivedEventArgs(((MESSAGE_LIST) format).MESSAGES));
+                    if (((MESSAGE_LIST) format).NUMBER_MESSAGES > 0)
+                        Conversation.onFormatReceived(sender, new FormatReceivedEventArgs(((MESSAGE_LIST) format).MESSAGES));
                 }
             }
         }

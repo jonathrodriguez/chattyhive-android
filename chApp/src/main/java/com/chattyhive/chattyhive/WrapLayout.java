@@ -86,10 +86,10 @@ public class WrapLayout extends ViewGroup{
             }
         }
 
-        int desiredWidth = 100;
-        int desiredHeight = 100;
+        int desiredWidth = curLeft + this.getPaddingRight();
+        int desiredHeight = lineHeight + this.getPaddingTop() + this.getPaddingBottom();
 
-        int widthMode = MeasureSpec.getMode(widthMeasureSpec);
+        /*int widthMode = MeasureSpec.getMode(widthMeasureSpec);
         int widthSize = MeasureSpec.getSize(widthMeasureSpec);
         int heightMode = MeasureSpec.getMode(heightMeasureSpec);
         int heightSize = MeasureSpec.getSize(heightMeasureSpec);
@@ -123,7 +123,8 @@ public class WrapLayout extends ViewGroup{
         }else{
             height = desiredHeight;
         }
-        setMeasuredDimension(width, height);
+        setMeasuredDimension(width, height);*/
+        setMeasuredDimension(resolveSize(desiredWidth,widthMeasureSpec),resolveSize(desiredHeight,heightMeasureSpec));
     }
 
     @Override
