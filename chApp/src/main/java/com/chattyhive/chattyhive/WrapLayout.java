@@ -1,22 +1,19 @@
 package com.chattyhive.chattyhive;
 
-import android.app.Activity;
 import android.content.Context;
-import android.text.Layout;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
+
+import java.util.ArrayList;
 
 /**
  * Created by J.Guzmán on 24/11/2014.
  */
 
-public class WrapLayout extends ViewGroup{
+public class WrapLayout extends ViewGroup {
 
-    private int counter;
-    private int lineHeight;
-
-    private Context context;
+    private ArrayList<ContentLine> lines;
 
     public WrapLayout(Context context) {
         this(context, null);
@@ -32,142 +29,138 @@ public class WrapLayout extends ViewGroup{
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 
-        final int count = getChildCount();
-        int curWidth, curHeight, curLeft, curTop, maxHeight;
+        //Max dimensions for parent.
+        //TODO: Handle PaddingStart and PaddingEnd for compatibility with RTL languages.
+        int horizontalPadding = this.getPaddingLeft()+this.getPaddingRight();
+        int verticalPadding = this.getPaddingTop()+this.getPaddingBottom();
 
-        //get the available size of child view
-        int childLeft = this.getPaddingLeft();
-        int childTop = this.getPaddingTop();
-        int childRight = this.getMeasuredWidth() - this.getPaddingRight();
-        int childBottom = this.getMeasuredHeight() - this.getPaddingBottom();
-        int childWidth = childRight - childLeft;
-        int childHeight = childBottom - childTop;
+        int maxWidth = ((MeasureSpec.getMode(widthMeasureSpec) == MeasureSpec.UNSPECIFIED)?Integer.MAX_VALUE:(MeasureSpec.getSize(widthMeasureSpec)));
+        maxWidth -= horizontalPadding;
 
-        //System.out.println("LINE: "+childHeight);
+        //Computed required dimensions for children and temporal positioning vars.
+        int requiredHeight = 0;
+        int requiredWidth = 0;
+        int accumulatedWidth = 0;
+        int maxLineHeight = 0;
 
-        counter = 1;
+        //Child variables. We allocate them here to avoid reallocating in each loop.
+        final int childCount = this.getChildCount();
+        View childView;
+        Child child;
+        ContentLine line = new ContentLine();
 
-        maxHeight = 0;
-        curLeft = childLeft;//inicializa con el padding izquierdo
-        curTop = childTop;//inicializa con el padding top
+        if (childCount > 0)
+            this.lines = new ArrayList<ContentLine>();
+        else
+            this.lines = null;
 
+        for (int i = 0; i < childCount; i++) {
+            childView = this.getChildAt(i);
+            if (childView.getVisibility() == View.GONE) continue; //If child's visibility is GONE then skip this child.
 
-        for (int i = 0; i < count; i++) { //walk through each child, and arrange it from left to right
-            View child = getChildAt(i); //cada hijo
-            if (child.getVisibility() != GONE) { // si no tiene visibilidad GONE
-                child.measure(MeasureSpec.makeMeasureSpec(childWidth, MeasureSpec.AT_MOST),
-                        MeasureSpec.makeMeasureSpec(childHeight, MeasureSpec.AT_MOST));//Get the maximum size of the child y lo asigna a las variables --->
-                curWidth = child.getMeasuredWidth(); // ancho y alto maximo del hijo
-                curHeight = child.getMeasuredHeight();
-                //System.out.println("curheight "+curHeight);
+            child = new Child(childView,widthMeasureSpec,heightMeasureSpec);
 
-                //wrap is reach to the end
-                if (curLeft + curWidth >= childRight) { //si espacio ocupado a la izq hasta ahora + ancho del hijo >= ancho disponible
-                    curLeft = childLeft; //se vuelve a inicializar el margen a la izq
-                    curTop += maxHeight;  //se suma a la altura utilizada el alto consumido (alto de la fila de textview)
-                    //System.out.println("maxHeight "+maxHeight);
-                    lineHeight = curTop;
-                    //System.out.println("CURTOP"+curTop);
-                    maxHeight = 0; //inicializa a 0
-                    counter++;
-                    System.out.println("Counter: "+counter+" "+i);
-                }
-                lineHeight = curTop + curHeight;
-                //do the layout
-                //child.layout(curLeft, curTop, curLeft + curWidth, curTop + curHeight); // lo posiciona dentro del layout
-                if (maxHeight < curHeight) { //store the max height
-                    //System.out.println("maxHeight second if before"+maxHeight);
-                    maxHeight = curHeight;
-                    //System.out.println("maxHeight second if after"+maxHeight);
-                }
-                curLeft += curWidth; //incrementa el espacio ocupado a la derecha en cada iteracion
+            int childWidth = child.renderWidth + child.marginLeft + child.marginRight;
+            int childHeight = child.renderHeight + child.marginTop + child.marginBottom;
+
+            //We compute child distribution across the layout to get the real required size.
+            if (((accumulatedWidth+childWidth) > maxWidth) && (maxWidth > 0)) {
+                //This child does not fit in this line so we take next line.
+                line.lineWidth = accumulatedWidth;
+                line.lineHeight = maxLineHeight;
+                this.lines.add(line);
+                line = new ContentLine();
+
+                requiredWidth = Math.max(requiredWidth,accumulatedWidth);
+                requiredHeight += maxLineHeight;
+
+                maxLineHeight = 0;
+                accumulatedWidth = 0;
             }
+                //Child always fits in current line.
+            maxLineHeight = Math.max(maxLineHeight,childHeight);
+            accumulatedWidth += childWidth;
+            line.children.add(child);
         }
 
-        int desiredWidth = 100;
-        int desiredHeight = 100;
-
-        int widthMode = MeasureSpec.getMode(widthMeasureSpec);
-        int widthSize = MeasureSpec.getSize(widthMeasureSpec);
-        int heightMode = MeasureSpec.getMode(heightMeasureSpec);
-        int heightSize = MeasureSpec.getSize(heightMeasureSpec);
-
-        int width;
-        int height;
-
-        //Measure Width
-        if (widthMode == MeasureSpec.EXACTLY) {
-            //Must be this size
-            width = widthSize;
-        } else if (widthMode == MeasureSpec.AT_MOST) {
-            //Can't be bigger than...
-            width = Math.min(desiredWidth, widthSize);
-        } else {
-            //Be whatever you want
-            width = desiredWidth;
+        //We compute the last line of the layout.
+        if (accumulatedWidth > 0) {
+            line.lineWidth = accumulatedWidth;
+            line.lineHeight = maxLineHeight;
+            this.lines.add(line);
         }
-        //Measure Height
-        if (heightMode == MeasureSpec.EXACTLY) {
-            //Must be this size
-            height = heightSize;
-        } else if (heightMode == MeasureSpec.AT_MOST) {
-            //Can't be bigger than...
-            height = counter*(12 + MeasureSpec.makeMeasureSpec(40, MeasureSpec.EXACTLY)) +(getPaddingTop() + getPaddingBottom());//getMeasuredHeight(); //Math.min(desiredHeight, heightSize);
-        } else if (heightMode == MeasureSpec.UNSPECIFIED){//used--> wrap content
-            //Be whatever you want
-            //TODO: height line
-            height = counter*(12 + MeasureSpec.makeMeasureSpec(40, MeasureSpec.EXACTLY)) +(getPaddingTop() + getPaddingBottom());//desiredHeight;
-            //System.out.println("Count: "+counter+" Line: "+lineHeight);
-        }else{
-            height = desiredHeight;
-        }
-        setMeasuredDimension(width, height);
+
+        if ((this.lines != null) && (this.lines.isEmpty()))
+            this.lines = null;
+
+        requiredWidth = Math.max(requiredWidth,accumulatedWidth);
+        requiredHeight += maxLineHeight;
+
+        //We take padding into account.
+        requiredWidth += horizontalPadding;
+        requiredHeight += verticalPadding;
+
+        setMeasuredDimension(resolveSize(requiredWidth,widthMeasureSpec),resolveSize(requiredHeight,heightMeasureSpec));
     }
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        // TODO Auto-generated method stub
-        final int count = getChildCount();
-        int curWidth, curHeight, curLeft, curTop, maxHeight;
+        if (this.lines == null) return; //Nothing to layout.
 
+        //TODO: Handle compatibility with RTL languages.
+        final int left = this.getPaddingLeft();
 
-        //get the available size of child view
-        int childLeft = this.getPaddingLeft();
-        int childTop = this.getPaddingTop();
-        int childRight = this.getMeasuredWidth() - this.getPaddingRight();
-        int childBottom = this.getMeasuredHeight() - this.getPaddingBottom();
-        int childWidth = childRight - childLeft;
-        int childHeight = childBottom - childTop;
+        int currentLeft = left;
+        int currentTop = this.getPaddingTop();
+        int currentBottom;
 
-        maxHeight = 0;
-        curLeft = childLeft;//inicializa con el padding izquierdo
-        curTop = childTop;//inicializa con el padding top
+        for (ContentLine line : this.lines) {
+            currentBottom = currentTop + line.lineHeight;
+            for (Child child : line.children) {
+                currentLeft += child.marginLeft;
+                child.childView.layout(currentLeft,currentTop+child.marginTop,currentLeft+child.renderWidth,currentBottom-child.marginBottom);
+                currentLeft += child.renderWidth + child.marginRight;
+            }
+            currentTop = currentBottom;
+            currentLeft = left;
+        }
+    }
 
-        for (int i = 0; i < count; i++) { //walk through each child, and arrange it from left to right
-            View child = getChildAt(i); //cada hijo
-            //int widthMargins = ((MarginLayoutParams)child.getLayoutParams()).leftMargin + ((MarginLayoutParams)child.getLayoutParams()).rightMargin;
-            if (child.getVisibility() != GONE) { // si no tiene visibilidad GONE
-                child.measure(MeasureSpec.makeMeasureSpec(childWidth , MeasureSpec.AT_MOST),
-                        MeasureSpec.makeMeasureSpec(childHeight, MeasureSpec.AT_MOST));//Get the maximum size of the child y lo asigna a las variables --->
-                curWidth = child.getMeasuredWidth(); // ancho y alto maximo del hijo
-                curHeight = child.getMeasuredHeight();
-                //System.out.println("onlayout curHeight: "+curHeight);
-                //lineHeight = curHeight;
-                //wrap is reach to the end
-                if (curLeft + curWidth >= childRight) { //si espacio ocupado a la izq hasta ahora + ancho del hijo >= ancho disponible
-                    curLeft = childLeft; //se vuelve a inicializar el margen a la izq
-                    curTop += maxHeight;  //se suma a la altura utilizada el alto consumido (alto de la fila de textview)
-                    //System.out.println("onlayout curTop: "+curTop);
-                    maxHeight = 0; //inicializa a 0
-                    //counter++;
-                }
-                //do the layout
-                child.layout(curLeft, curTop, curLeft + curWidth, curTop + curHeight); // lo posiciona dentro del layout
-                if (maxHeight < curHeight) //store the max height
-                    maxHeight = curHeight;
-                curLeft += curWidth; //incrementa el espacio ocupado a la derecha en cada iteracion
+    private class ContentLine {
+        int lineWidth;
+        int lineHeight;
+
+        ArrayList<Child> children;
+
+        ContentLine() {
+            this.children = new ArrayList<Child>();
+        }
+    }
+    private class Child {
+        int renderWidth;
+        int renderHeight;
+
+        int marginLeft = 0;
+        int marginRight = 0;
+        int marginTop = 0;
+        int marginBottom = 0;
+
+        View childView;
+
+        Child (View childView, int parentWidthMeasureSpec, int parentHeightMeasureSpec) {
+            measureChild(childView,parentWidthMeasureSpec,parentHeightMeasureSpec);
+            this.childView = childView;
+            this.renderWidth = this.childView.getMeasuredWidth();
+            this.renderHeight = this.childView.getMeasuredHeight();
+
+            LayoutParams layoutParams = this.childView.getLayoutParams();
+            if (layoutParams instanceof MarginLayoutParams) {
+                this.marginLeft = ((MarginLayoutParams) layoutParams).leftMargin;
+                this.marginRight = ((MarginLayoutParams) layoutParams).rightMargin;
+                this.marginBottom = ((MarginLayoutParams) layoutParams).bottomMargin;
+                this.marginTop = ((MarginLayoutParams) layoutParams).topMargin;
+                //TODO: Handle MarginStart and MarginEnd for compatibility with RTL languages.
             }
         }
     }

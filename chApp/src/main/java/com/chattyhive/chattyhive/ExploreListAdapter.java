@@ -238,13 +238,17 @@ public class ExploreListAdapter extends BaseAdapter implements AbsListView.OnScr
         convertView.setOnClickListener(expand_hive);//setOnClickListener to expand/collapse hive cards
 
         if(expanded_hive == position) {//EXPANDIR
+            convertView.invalidate();
             convertView.findViewById(R.id.explore_list_item_short).setVisibility(View.GONE);
             convertView.findViewById(R.id.explore_list_header_card).setVisibility(View.VISIBLE);
+            convertView.requestLayout();
             ((ListView)parent).smoothScrollToPosition(position);
         }
         else {//CONTRAER
+            convertView.invalidate();
             convertView.findViewById(R.id.explore_list_header_card).setVisibility(View.GONE);
             convertView.findViewById(R.id.explore_list_item_short).setVisibility(View.VISIBLE);
+            convertView.requestLayout();
         }
 
         Hive hive = this.hives_list_data.get(position);

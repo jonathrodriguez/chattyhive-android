@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -34,11 +35,19 @@ public class NewHive extends Activity{
     private static final int HIVE_LOCATION2 = 105;
 
 
+    //Categories
     private String[] catList = null;
-    ArrayList<String[]> listaSubcats = null;
+    private String[] catListCode = null;
+    private ArrayList<String[]> listaSubcats = null;
+    private ArrayList<String[]> listaSubcatsCode = null;
+    private String categoryCode = null;
     private int subcatIndex = -1;
+
+    //Languages
     private String[] languages = null;
     private ArrayList<String> selectedLanguages = null;
+
+    //Locations
     private String[] countries = null;
     private String[] region = null;
     private String[] city = null;
@@ -48,6 +57,9 @@ public class NewHive extends Activity{
     private String locationString = null;
     private int locationStep = 0;
     private int locationIndex = -1;
+
+    //Tags
+    private ArrayList<String> tags = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,10 +90,10 @@ public class NewHive extends Activity{
 
             newHive.setDescription(((TextView) findViewById(R.id.new_hive_description)).getText().toString());
 
-            //TODO: Corregir aquí para asociar el código de categoria (formato: XX.YY)
-            //Dónde XX es el código del grupo e YY es el código de la subcategoria.
-            //Para grupos sin subcategorias, YY toma el valor 00.
-            newHive.setCategory(((TextView) findViewById(R.id.new_hive_category)).getText().toString());
+            if ((categoryCode != null) && (!categoryCode.isEmpty()) && (categoryCode.matches("^[0-9]{2}\\.[0-9]{2}$")))
+                newHive.setCategory(categoryCode);
+            else if ((categoryCode != null) && (!categoryCode.isEmpty()))
+                Log.w("NewHive", String.format("CategoryCode: %s", categoryCode));
 
             //SELECCIÓN DE TAGS
             //TODO: Sustituir esto por una lista de tags a asociar al hive.
@@ -100,18 +112,6 @@ public class NewHive extends Activity{
 
 
             //SELECCIÓN DE IDIOMAS
-
-            /*TreeSet<String> languages = new TreeSet<String>();
-            String[] languages_tmp;
-            String languages_string = ((TextView)findViewById(R.id.new_hive_tags)).getText().toString();
-            languages_tmp = languages_string.split("[, ]+");
-            if (languages_tmp.length > 0) {
-                for (String language : languages_tmp)
-                    if ((language != null) && (!language.isEmpty()))
-                        languages.add(language);
-            }
-            if (languages.size() > 0)
-                newHive.setChatLanguages(languages.toArray(new String[languages.size()])); */
             if ((selectedLanguages != null) && (selectedLanguages.size() > 0))
                 newHive.setChatLanguages(selectedLanguages.toArray(new String[selectedLanguages.size()]));
 
@@ -207,23 +207,30 @@ public class NewHive extends Activity{
         TreeMap<Category,TreeSet<Category>> categoriesTreeMap = new TreeMap<Category, TreeSet<Category>>(Category.listCategories());
         Object[] objList = categoriesTreeMap.keySet().toArray();
         catList = new String[objList.length];
+        catListCode = new String[objList.length];
         for (int i = 0; i < catList.length; i++) {
             int res = ((Category) objList[i]).getCategoryNameResID();
             catList[i] = getResources().getString(res);
+            catListCode[i] = ((Category) objList[i]).getCompleteCode();
         }
         listaSubcats = new ArrayList<String[]>();
+        listaSubcatsCode = new ArrayList<String[]>();
         TreeSet<Category> subCats;
         Object[] subcatobj;
         String[] stringsubcat;
+        String[] stringsubcatCode;
         for (int i = 0; i <objList.length ; i++) {
             subCats = categoriesTreeMap.get(objList[i]);
             subcatobj = subCats.toArray();
             stringsubcat = new String[subcatobj.length];
+            stringsubcatCode = new String[subcatobj.length];
             for (int j = 0; j < stringsubcat.length; j++) {
                 int res = ((Category) subcatobj[j]).getCategoryNameResID();
                 stringsubcat[j] = getResources().getString(res);
+                stringsubcatCode[j] = ((Category) subcatobj[j]).getCompleteCode();
             }
             listaSubcats.add(stringsubcat);
+            listaSubcatsCode.add(stringsubcatCode);
         }
     }
 
@@ -237,6 +244,7 @@ public class NewHive extends Activity{
                 }
                 else if (listaSubcats.get(which).length == 1){
                     ((TextView)findViewById(R.id.new_hive_category)).setText(catList[which]);
+                    categoryCode = catListCode[which];
                 }
                 else {
                     showDialog(SUB_CATEGORY_ID);
@@ -251,6 +259,7 @@ public class NewHive extends Activity{
         builder.setTitle("Subcategorías").setItems(listaSubcats.get(subcatIndex), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 ((TextView)findViewById(R.id.new_hive_category)).setText(listaSubcats.get(subcatIndex)[which]);
+                categoryCode = listaSubcatsCode.get(subcatIndex)[which];
             }
         });
         return builder.create();
