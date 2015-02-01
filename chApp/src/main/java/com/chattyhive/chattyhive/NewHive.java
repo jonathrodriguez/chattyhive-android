@@ -15,6 +15,8 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.chattyhive.backend.businessobjects.Chats.Hive;
 import com.chattyhive.backend.util.events.CommandCallbackEventArgs;
 import com.chattyhive.backend.util.events.EventHandler;
@@ -80,7 +82,7 @@ public class NewHive extends Activity{
         this.findViewById(R.id.new_hive_languages).setOnClickListener(this.languagesListener);
         this.findViewById(R.id.new_hive_location_layout).setOnClickListener(this.locationListener);
 
-        this.findViewById(R.id.new_hive_make_button).setEnabled(allRequiredFieldsOk);
+        this.findViewById(R.id.new_hive_make_button).setSelected(allRequiredFieldsOk);
 
         ((EditText)this.findViewById(R.id.new_hive_name)).addTextChangedListener(validator);
         ((EditText)this.findViewById(R.id.new_hive_description)).addTextChangedListener(validator);
@@ -110,7 +112,7 @@ public class NewHive extends Activity{
         boolean hasCategory = ((categoryCode != null) && (!categoryCode.isEmpty()) && (categoryCode.matches("^[0-9]{2}\\.[0-9]{2}$")));
 
         allRequiredFieldsOk = (hasName && hasCategory && hasDescription && hasLanguages);
-        ((LinearLayout)findViewById(R.id.new_hive_make_button)).setEnabled(allRequiredFieldsOk);
+        ((LinearLayout)findViewById(R.id.new_hive_make_button)).setSelected(allRequiredFieldsOk);
     }
 
     protected View.OnClickListener backButton = new View.OnClickListener() {
@@ -124,7 +126,11 @@ public class NewHive extends Activity{
         @Override
         public void onClick(View v) {
 
-            if (!allRequiredFieldsOk) return;
+            if (!allRequiredFieldsOk) {
+                Toast toast = Toast.makeText(thisNewHive,"Deben cubrirse todos los campos no opcionales.",Toast.LENGTH_LONG);
+                toast.show();
+                return;
+            }
 
             Hive newHive = new Hive(((TextView)findViewById(R.id.new_hive_name)).getText().toString());
 
