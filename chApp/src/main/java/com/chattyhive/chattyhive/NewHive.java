@@ -7,9 +7,12 @@ import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.chattyhive.backend.businessobjects.Chats.Hive;
@@ -34,6 +37,8 @@ public class NewHive extends Activity{
     private static final int HIVE_LOCATION1 = 104;
     private static final int HIVE_LOCATION2 = 105;
 
+    //Required fields
+    private boolean allRequiredFieldsOk = false;
 
     //Categories
     private String[] catList = null;
@@ -74,6 +79,38 @@ public class NewHive extends Activity{
         this.findViewById(R.id.new_hive_category).setOnClickListener(this.categories);
         this.findViewById(R.id.new_hive_languages).setOnClickListener(this.languagesListener);
         this.findViewById(R.id.new_hive_location_layout).setOnClickListener(this.locationListener);
+
+        this.findViewById(R.id.new_hive_make_button).setEnabled(allRequiredFieldsOk);
+
+        ((EditText)this.findViewById(R.id.new_hive_name)).addTextChangedListener(validator);
+        ((EditText)this.findViewById(R.id.new_hive_description)).addTextChangedListener(validator);
+    }
+
+    private TextWatcher validator = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            verify();
+        }
+    };
+
+    private void verify() {
+        boolean hasName = (((TextView)this.findViewById(R.id.new_hive_name)).getText().length() > 0);
+        boolean hasDescription = (((TextView)this.findViewById(R.id.new_hive_description)).getText().length() > 0);
+        boolean hasLanguages = ((selectedLanguages != null) && (!selectedLanguages.isEmpty()));
+        boolean hasCategory = ((categoryCode != null) && (!categoryCode.isEmpty()) && (categoryCode.matches("^[0-9]{2}\\.[0-9]{2}$")));
+
+        allRequiredFieldsOk = (hasName && hasCategory && hasDescription && hasLanguages);
+        ((LinearLayout)findViewById(R.id.new_hive_make_button)).setEnabled(allRequiredFieldsOk);
     }
 
     protected View.OnClickListener backButton = new View.OnClickListener() {
@@ -86,6 +123,9 @@ public class NewHive extends Activity{
     protected View.OnClickListener make_new_hive =new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+
+            if (!allRequiredFieldsOk) return;
+
             Hive newHive = new Hive(((TextView)findViewById(R.id.new_hive_name)).getText().toString());
 
             newHive.setDescription(((TextView) findViewById(R.id.new_hive_description)).getText().toString());
@@ -245,6 +285,7 @@ public class NewHive extends Activity{
                 else if (listaSubcats.get(which).length == 1){
                     ((TextView)findViewById(R.id.new_hive_category)).setText(catList[which]);
                     categoryCode = catListCode[which];
+                    verify();
                 }
                 else {
                     showDialog(SUB_CATEGORY_ID);
@@ -260,6 +301,7 @@ public class NewHive extends Activity{
             public void onClick(DialogInterface dialog, int which) {
                 ((TextView)findViewById(R.id.new_hive_category)).setText(listaSubcats.get(subcatIndex)[which]);
                 categoryCode = listaSubcatsCode.get(subcatIndex)[which];
+                verify();
             }
         });
         return builder.create();
@@ -320,6 +362,7 @@ public class NewHive extends Activity{
                                     expanded_hive_tagsLayout.removeAllViews();
                                     expanded_hive_tagsLayout.invalidate();
                                 }
+                                verify();
                             }
                         }
 
