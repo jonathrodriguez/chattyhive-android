@@ -30,6 +30,7 @@ import com.chattyhive.chattyhive.framework.CustomViews.Listener.OnRemoveLayoutLi
 import com.chattyhive.chattyhive.framework.CustomViews.Listener.OnTransitionListener;
 import com.chattyhive.chattyhive.framework.CustomViews.View.ShapeArrow;
 import com.chattyhive.chattyhive.framework.R;
+import com.chattyhive.chattyhive.framework.Util.Keyboard;
 
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
@@ -111,6 +112,8 @@ public class SlidingStepsLayout extends ViewGroup {
     private float StartEventY;
     private float LastEventX;
     /**************************************/
+
+    private boolean keyboardHidden = false;
 
     private void logCurrentMethod() {
         //Log.w("SlidingStepsLayout", Thread.currentThread().getStackTrace()[3].toString());
@@ -321,7 +324,7 @@ public class SlidingStepsLayout extends ViewGroup {
         this.unloadingStep = childPosition;
 
         if (this.removeLayoutListener != null)
-            this.removeLayoutListener.OnRemove(child);
+            this.removeLayoutListener.OnRemove(child,childPosition);
 
         //TODO: Save child fields
 
@@ -701,6 +704,7 @@ public class SlidingStepsLayout extends ViewGroup {
         }
 
         this.directDestination = -1;
+        this.keyboardHidden = false;
     }
     protected void setActualPosition(float newPosition) {
         logCurrentMethod();
@@ -714,6 +718,12 @@ public class SlidingStepsLayout extends ViewGroup {
     }
     protected void movePanels (float distance) {
         logCurrentMethod();
+
+        if (!this.keyboardHidden) {
+            Keyboard.HideKeyboard(this.getRootView().findFocus());
+            this.keyboardHidden = true;
+        }
+
         this.actualPosition = saturateNewPosition(this.actualPosition+distance);
 
         if (transitionListener != null) {
@@ -783,6 +793,7 @@ public class SlidingStepsLayout extends ViewGroup {
     }
     protected void movePanels (float distance, int duration) {
         logCurrentMethod();
+
         int animationDuration = Math.min(duration, this.maxAnimationDuration);
         this.scroller.abortAnimation();
         if (animationDuration > 0) {

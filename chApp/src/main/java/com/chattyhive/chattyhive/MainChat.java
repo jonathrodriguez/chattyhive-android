@@ -192,7 +192,7 @@ public class MainChat extends Window {
     }
 
 
-    protected View.OnClickListener send_button_click = new View.OnClickListener() {
+    protected transient View.OnClickListener send_button_click = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             String text_to_send = textInput.getText().toString();

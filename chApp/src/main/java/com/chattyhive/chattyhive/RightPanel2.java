@@ -62,8 +62,10 @@ public class RightPanel2{
                 ((TextView)((Activity)context).findViewById(R.id.menu_public_profile_name)).setText(name);
                 ((ImageView)((Activity)context).findViewById(R.id.menu_profile_photo_image)).setImageResource(R.drawable.pestanha_chats_user);
                 ((ImageView)((Activity)context).findViewById(R.id.menu_profile_photo_image)).setColorFilter(Color.parseColor("#ffffff"));
-                ((Main) context).controller.getMe().getUserPrivateProfile().getProfileImage().OnImageLoaded.add(new EventHandler<EventArgs>(thisPanel,"loadImage",EventArgs.class));
-                ((Main) context).controller.getMe().getUserPrivateProfile().getProfileImage().loadImage(Image.ImageSize.medium,0);
+                if (((Main) context).controller.getMe().getUserPrivateProfile().getProfileImage() != null) {
+                    ((Main) context).controller.getMe().getUserPrivateProfile().getProfileImage().OnImageLoaded.add(new EventHandler<EventArgs>(thisPanel, "loadImage", EventArgs.class));
+                    ((Main) context).controller.getMe().getUserPrivateProfile().getProfileImage().loadImage(Image.ImageSize.medium, 0);
+                }
             }
         });
     }

@@ -18,6 +18,7 @@ import android.view.WindowManager;
 import android.widget.Scroller;
 
 import com.chattyhive.chattyhive.framework.R;
+import com.chattyhive.chattyhive.framework.Util.Keyboard;
 
 import java.util.Map;
 import java.util.TreeMap;
@@ -112,6 +113,8 @@ public class FloatingPanel extends ViewGroup {
     private View mainPanelCover;
     private int centerMainPanelCoverColor;
 
+    private View focusedView;
+
     public FloatingPanel(Context context) {
         this(context, null);
     }
@@ -190,11 +193,23 @@ public class FloatingPanel extends ViewGroup {
 
     public void openLeft() {
         if (this.fixLeftPanel) return;
+        Keyboard.HideKeyboard(this.getRootView().findFocus());
         openLeft(this.buttonPressedAnimationDuration);
     }
 
     public void openLeft(int animationDuration) {
-        if (this.fixLeftPanel) return;
+        if (this.fixLeftPanel) {
+            if ((this.focusedView != null) && (this.actualState == 0))
+                Keyboard.ShowKeyboard(this.focusedView);
+            this.focusedView = null;
+
+            return;
+        }
+
+        if ((this.focusedView != null) && (this.actualState == 1))
+            Keyboard.ShowKeyboard(this.focusedView);
+        this.focusedView = null;
+
         float leftWidth = mainPanels.get("left").getMeasuredWidth();
         int leftMargin = ((LayoutParams)mainPanels.get("left").getLayoutParams()).leftMargin;
         int rightMargin = ((LayoutParams)mainPanels.get("left").getLayoutParams()).rightMargin;
@@ -203,10 +218,15 @@ public class FloatingPanel extends ViewGroup {
     }
 
     public void openRight() {
+        Keyboard.HideKeyboard(this.getRootView().findFocus());
         openRight(this.buttonPressedAnimationDuration);
     }
 
     public void openRight(int animationDuration) {
+        if ((this.focusedView != null) && (this.actualState == 2))
+            Keyboard.ShowKeyboard(this.focusedView);
+        this.focusedView = null;
+
         float rightWidth = mainPanels.get("right").getMeasuredWidth();
         int leftMargin = ((LayoutParams)mainPanels.get("right").getLayoutParams()).leftMargin;
         int rightMargin = ((LayoutParams)mainPanels.get("right").getLayoutParams()).rightMargin;
@@ -215,10 +235,15 @@ public class FloatingPanel extends ViewGroup {
     }
 
     public void close() {
+        Keyboard.HideKeyboard(this.getRootView().findFocus());
         close(this.buttonPressedAnimationDuration);
     }
 
     public void close(int animationDuration) {
+        if ((this.focusedView != null) && (this.actualState == 0))
+            Keyboard.ShowKeyboard(this.focusedView);
+        this.focusedView = null;
+
         movePanels(-actualPosition,animationDuration);
     }
 
@@ -417,7 +442,10 @@ public class FloatingPanel extends ViewGroup {
                     }
                 }
                 velocityTracker.addMovement(ev);
-
+                if (this.focusedView == null) {
+                    this.focusedView = this.getRootView().findFocus();
+                    Keyboard.HideKeyboard(this.focusedView);
+                }
                 movePanels(x-this.LastEventX);
                 this.LastEventX = x;
                 break;

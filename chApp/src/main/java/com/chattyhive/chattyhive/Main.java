@@ -32,6 +32,7 @@ import com.chattyhive.chattyhive.backgroundservice.CHService;
 
 import com.chattyhive.chattyhive.framework.CustomViews.ViewGroup.FloatingPanel;
 import com.chattyhive.chattyhive.framework.Util.ViewPair;
+import com.chattyhive.chattyhive.framework.Util.Keyboard;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -61,6 +62,8 @@ public class Main extends Activity {
         if (hierarchyLevel > (this.lastOpenHierarchyLevel+1))
             throw new IllegalArgumentException("Expected at most one level over the last open hierarchy level");
 
+        Keyboard.HideKeyboard(this);
+
         if (this.lastOpenHierarchyLevel > -1) {
             if (hierarchyLevel < this.lastOpenHierarchyLevel) {
                 for (int i = this.lastOpenHierarchyLevel; i > hierarchyLevel; i--) {
@@ -88,6 +91,8 @@ public class Main extends Activity {
     }
 
     void Close() {
+        Keyboard.HideKeyboard(this);
+
         if (this.lastOpenHierarchyLevel >= 0) {
             this.viewStack.get(this.lastOpenHierarchyLevel).Close();
             this.viewStack.remove(this.lastOpenHierarchyLevel);
