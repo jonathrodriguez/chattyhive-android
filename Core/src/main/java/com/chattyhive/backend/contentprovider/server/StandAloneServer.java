@@ -1436,9 +1436,10 @@ public class StandAloneServer {
                             for (Message msg : resultList)
                                 list.MESSAGES.add((MESSAGE) msg.toFormat(new MESSAGE()));
 
-                            if ((firstMessage > -1) || (filter.START_MESSAGE_ID.equalsIgnoreCase("FIRST"))) {
+                            /*if ((firstMessage > -1) || (filter.START_MESSAGE_ID.equalsIgnoreCase("FIRST"))) {
                                 list.NUMBER_MESSAGES = lastMessage - firstMessage - messageCount;
-                            }
+                            }*/
+                            list.NUMBER_MESSAGES = list.MESSAGES.size();
                         } else {
                             list.MESSAGES = null;
                             list.NUMBER_MESSAGES = 0;

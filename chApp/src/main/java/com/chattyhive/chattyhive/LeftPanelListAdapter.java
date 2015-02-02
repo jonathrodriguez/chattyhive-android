@@ -337,11 +337,12 @@ public class LeftPanelListAdapter extends BaseAdapter {
             }
             ((HiveViewHolder)holder).hiveSubscribedUsers.setText(String.valueOf(((Hive) item).getSubscribedUsers()));
             ((HiveViewHolder)holder).hiveItem.setTag(R.id.BO_Hive,item);
-            ((HiveViewHolder)holder).hiveImage.setImageResource(R.drawable.pestanha_chats_public_chat);
-            try {
+            if (((Hive) item).getHiveImage() == null)
+                ((HiveViewHolder)holder).hiveImage.setImageResource(R.drawable.default_hive_image);
+            else {
                 ((Hive) item).getHiveImage().OnImageLoaded.add(new EventHandler<EventArgs>(holder, "loadHiveImage", EventArgs.class));
                 ((Hive) item).getHiveImage().loadImage(Image.ImageSize.medium, 0);
-            } catch (Exception e) { }
+            }
         } else if (type == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Chats)) {
             String GroupName = "";
             SpannableString LastMessage = new SpannableString("");
@@ -368,6 +369,8 @@ public class LeftPanelListAdapter extends BaseAdapter {
                 //Log.w("ChatItem","Unable to recover last message: "+e.getMessage());
             }
             if (((Chat)item).getChatKind() == null) return null;
+
+            ((ChatViewHolder)holder).chatHiveImage.setImageResource(R.drawable.default_hive_image);
 
             switch (((Chat)item).getChatKind()) {
                 case PUBLIC_SINGLE:
@@ -442,7 +445,7 @@ public class LeftPanelListAdapter extends BaseAdapter {
                 case HIVE:
                     ((ChatViewHolder)holder).chatHiveImage.setVisibility(View.GONE);
                     ((ChatViewHolder)holder).chatTypeImage.setImageResource(R.drawable.pestanha_chats_public_chat);
-                    ((ChatViewHolder)holder).chatImage.setImageResource(R.drawable.pestanha_chats_public_chat);
+                    ((ChatViewHolder)holder).chatImage.setImageResource(R.drawable.default_hive_image);
                     try {
                         ((Chat)item).getParentHive().getHiveImage().OnImageLoaded.add(new EventHandler<EventArgs>(holder,"loadChatImage",EventArgs.class));
                         ((Chat)item).getParentHive().getHiveImage().loadImage(Image.ImageSize.medium,0);
@@ -460,15 +463,18 @@ public class LeftPanelListAdapter extends BaseAdapter {
                 case PRIVATE_SINGLE:
                     ((ChatViewHolder)holder).chatHiveImage.setVisibility(View.GONE);
                     ((ChatViewHolder)holder).chatTypeImage.setImageResource(R.drawable.pestanha_chats_user);
-                    ((ChatViewHolder)holder).chatImage.setImageResource(R.drawable.chats_users_online);
+                    ((ChatViewHolder)holder).chatImage.setImageResource(R.drawable.default_profile_image_male);
                     for (User user : ((Chat) item).getMembers())
                         if (!user.isMe()) {
                             if ((user.getUserPrivateProfile() != null) && (user.getUserPrivateProfile().getShowingName() != null)) {
                                 GroupName = user.getUserPrivateProfile().getShowingName();
-                                try {
+                                if (user.getUserPrivateProfile().getProfileImage() == null) {
+                                    if ((user.getUserPrivateProfile().getSex() != null) && (user.getUserPrivateProfile().getSex().equalsIgnoreCase("female")))
+                                        ((ChatViewHolder)holder).chatImage.setImageResource(R.drawable.default_profile_image_female);
+                                } else {
                                     user.getUserPrivateProfile().getProfileImage().OnImageLoaded.add(new EventHandler<EventArgs>(holder,"loadChatImage",EventArgs.class));
                                     user.getUserPrivateProfile().getProfileImage().loadImage(Image.ImageSize.medium,0);
-                                } catch (Exception e) { e.printStackTrace(); }
+                                }
                             } else
                                 user.UserLoaded.add(new EventHandler<EventArgs>(this, "OnAddItem", EventArgs.class));
                         }

@@ -74,25 +74,27 @@ public class Controller {
         return (Initialized = true);
     }
     public static void Initialize() {
-        Controller.PrivateInitialize();
-        CookieHandler.setDefault(new CookieManager());
+        if (Controller.PrivateInitialize())
+            CookieHandler.setDefault(new CookieManager());
     }
     public static void Initialize(Object... LocalStorage) {
-        PrivateInitialize();
-        setLocalStorage(LocalStorage);
-        DataProvider.Initialize(LocalStorage);
-        CookieHandler.setDefault(new CookieManager());
+        if (Controller.PrivateInitialize()) {
+            setLocalStorage(LocalStorage);
+            DataProvider.Initialize(LocalStorage);
+            CookieHandler.setDefault(new CookieManager());
+        }
     }
     public static void Initialize(CookieStore cookieStore) {
-        PrivateInitialize();
-        CookieHandler.setDefault(new CookieManager(cookieStore, CookiePolicy.ACCEPT_ALL));
+        if (Controller.PrivateInitialize()) {
+            CookieHandler.setDefault(new CookieManager(cookieStore, CookiePolicy.ACCEPT_ALL));
+        }
     }
     public static void Initialize(CookieStore cookieStore, Object... LocalStorage) {
-        PrivateInitialize();
-        setLocalStorage(LocalStorage);
-        DataProvider.Initialize(LocalStorage);
-
-        CookieHandler.setDefault(new CookieManager(cookieStore, CookiePolicy.ACCEPT_ALL));
+        if (Controller.PrivateInitialize()) {
+            setLocalStorage(LocalStorage);
+            DataProvider.Initialize(LocalStorage);
+            CookieHandler.setDefault(new CookieManager(cookieStore, CookiePolicy.ACCEPT_ALL));
+        }
     }
 
     //COMMON STATIC

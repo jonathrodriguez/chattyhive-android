@@ -271,6 +271,8 @@ public class HomeListAdapter extends BaseAdapter {
             if ((this.HiveImage != null) && (hc.getHive().getHiveImage() != null)) {
                 hc.getHive().getHiveImage().OnImageLoaded.add(new EventHandler<EventArgs>(this,"onHiveImageLoaded",EventArgs.class));
                 hc.getHive().getHiveImage().loadImage(Image.ImageSize.small,0);
+            } else if (this.HiveImage != null) {
+                this.HiveImage.setImageResource(R.drawable.default_hive_image);
             }
         }
 

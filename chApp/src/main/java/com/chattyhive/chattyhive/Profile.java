@@ -850,10 +850,15 @@ public class Profile extends Window {
                     profileView.findViewById(R.id.profile_information_gender).setVisibility(View.GONE);
                 else {
                     profileView.findViewById(R.id.profile_information_gender).setVisibility(View.VISIBLE);
-                    if (user.getUserPrivateProfile().getSex().equalsIgnoreCase("male"))
+                    if (user.getUserPrivateProfile().getSex().equalsIgnoreCase("male")) {
                         ((TextView) profileView.findViewById(R.id.profile_information_gender_value)).setText(R.string.profile_information_gender_male_value);
-                    else
+                        if (user.getUserPrivateProfile().getProfileImage() == null)
+                            ((ImageView) profileView.findViewById(R.id.profile_big_photo_thumbnail)).setImageResource(R.drawable.default_profile_image_male);
+                    } else {
                         ((TextView) profileView.findViewById(R.id.profile_information_gender_value)).setText(R.string.profile_information_gender_female_value);
+                        if (user.getUserPrivateProfile().getProfileImage() == null)
+                            ((ImageView) profileView.findViewById(R.id.profile_big_photo_thumbnail)).setImageResource(R.drawable.default_profile_image_female);
+                    }
                 }
 
                 if ((user.getUserPrivateProfile().getLanguages() == null) || (user.getUserPrivateProfile().getLanguages().isEmpty()))
@@ -953,10 +958,15 @@ public class Profile extends Window {
                     ((TextView) profileView.findViewById(R.id.profile_information_gender_value)).setText("");
                 } else {
                     profileView.findViewById(R.id.profile_information_gender).setVisibility(View.VISIBLE);
-                    if (user.getUserPrivateProfile().getSex().equalsIgnoreCase("male"))
+                    if (user.getUserPrivateProfile().getSex().equalsIgnoreCase("male")) {
                         ((TextView) profileView.findViewById(R.id.profile_information_gender_value)).setText(R.string.profile_information_gender_male_value);
-                    else
+                        if (user.getUserPrivateProfile().getProfileImage() == null)
+                            ((ImageView) profileView.findViewById(R.id.profile_big_photo_thumbnail)).setImageResource(R.drawable.default_profile_image_male);
+                    } else {
                         ((TextView) profileView.findViewById(R.id.profile_information_gender_value)).setText(R.string.profile_information_gender_female_value);
+                        if (user.getUserPrivateProfile().getProfileImage() == null)
+                            ((ImageView) profileView.findViewById(R.id.profile_big_photo_thumbnail)).setImageResource(R.drawable.default_profile_image_female);
+                    }
                 }
 
                 if ((user.getUserPrivateProfile().getLanguages() == null) || (user.getUserPrivateProfile().getLanguages().isEmpty())) {
@@ -1034,10 +1044,15 @@ public class Profile extends Window {
                     ((TextView) profileView.findViewById(R.id.profile_information_gender_value)).setText("");
                 } else {
                     profileView.findViewById(R.id.profile_information_gender).setVisibility(View.VISIBLE);
-                    if (modifiedUser.getUserPrivateProfile().getSex().equalsIgnoreCase("male"))
+                    if (modifiedUser.getUserPrivateProfile().getSex().equalsIgnoreCase("male")) {
                         ((TextView) profileView.findViewById(R.id.profile_information_gender_value)).setText(R.string.profile_information_gender_male_value);
-                    else
+                        if (modifiedUser.getUserPrivateProfile().getProfileImage() == null)
+                            ((ImageView) profileView.findViewById(R.id.profile_big_photo_thumbnail)).setImageResource(R.drawable.default_profile_image_male);
+                    } else {
                         ((TextView) profileView.findViewById(R.id.profile_information_gender_value)).setText(R.string.profile_information_gender_female_value);
+                        if (modifiedUser.getUserPrivateProfile().getProfileImage() == null)
+                            ((ImageView) profileView.findViewById(R.id.profile_big_photo_thumbnail)).setImageResource(R.drawable.default_profile_image_female);
+                    }
                 }
 
                 if ((modifiedUser.getUserPrivateProfile().getLanguages() == null) || (modifiedUser.getUserPrivateProfile().getLanguages().isEmpty())) {

@@ -60,7 +60,12 @@ public class RightPanel2{
                 ((TextView)((Activity)context).findViewById(R.id.menu_private_profile_name)).setText(name);
                 name = context.getResources().getString(R.string.public_username_identifier_character).concat(((Main) context).controller.getMe().getUserPublicProfile().getShowingName().toString());
                 ((TextView)((Activity)context).findViewById(R.id.menu_public_profile_name)).setText(name);
-                ((ImageView)((Activity)context).findViewById(R.id.menu_profile_photo_image)).setImageResource(R.drawable.pestanha_chats_user);
+
+                if (((Main) context).controller.getMe().getUserPrivateProfile().getSex().equalsIgnoreCase("male"))
+                    ((ImageView)((Activity)context).findViewById(R.id.menu_profile_photo_image)).setImageResource(R.drawable.default_profile_image_male);
+                else
+                    ((ImageView)((Activity)context).findViewById(R.id.menu_profile_photo_image)).setImageResource(R.drawable.default_profile_image_female);
+
                 ((ImageView)((Activity)context).findViewById(R.id.menu_profile_photo_image)).setColorFilter(Color.parseColor("#ffffff"));
                 if (((Main) context).controller.getMe().getUserPrivateProfile().getProfileImage() != null) {
                     ((Main) context).controller.getMe().getUserPrivateProfile().getProfileImage().OnImageLoaded.add(new EventHandler<EventArgs>(thisPanel, "loadImage", EventArgs.class));
