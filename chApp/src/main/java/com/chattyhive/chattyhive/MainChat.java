@@ -279,6 +279,7 @@ public class MainChat extends Window {
             ((ImageView)mainChat.findViewById(R.id.main_panel_chat_smyles_icon)).setBackgroundResource(R.drawable.launcher_launcher_a);
         }else{
             ((ImageView)mainChat.findViewById(R.id.main_panel_chat_smyles_icon)).setBackgroundResource(R.drawable.chats_isotipo_puro_recto_01);
+            
         }
 
         this.channelConversation.setChatWindowActive(true);
