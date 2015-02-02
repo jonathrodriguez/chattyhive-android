@@ -272,18 +272,24 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@drawable/new_hive_input_border"
-                        android:minHeight="32dp"
-                        android:gravity="center_vertical">
+                        android:gravity="center_vertical"
+                        android:minHeight="32dp">
 
+                        <TextView
+                            android:id="@+id/new_hive_languages_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:paddingLeft="6dp"
+                            android:text="Toca aquí para escoger idioma/s"
+                            android:textSize="13.5dp"/>
                         <LinearLayout
                             android:id="@+id/new_hive_languages_layout"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:visibility="visible"
-                            android:orientation="vertical"
+                            android:layout_gravity="center_vertical"
                             android:gravity="center_vertical"
-                            android:layout_gravity="center_vertical">
-
+                            android:orientation="vertical"
+                            android:visibility="visible">                         cb
                             <include
                                 android:id="@+id/explore_wrap_layout_tags"
                                 layout="@layout/explore_tag_list"
