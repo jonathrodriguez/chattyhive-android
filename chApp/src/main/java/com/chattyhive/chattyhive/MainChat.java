@@ -68,14 +68,14 @@ public class MainChat extends Window {
         String userPublicNameIdentifier = context.getResources().getString(R.string.public_username_identifier_character);
         String hiveNameIdentifier = context.getResources().getString(R.string.hivename_identifier_character);
 
-        ((ImageView)actionBar.findViewById(R.id.main_panel_chat_icon)).setImageResource(R.drawable.chats_users_online);
-        ((ImageView)actionBar.findViewById(R.id.main_panel_chat_icon)).setColorFilter(Color.parseColor("#ffffff"));
+        ((ImageView)actionBar.findViewById(R.id.main_panel_chat_icon)).setImageResource(R.drawable.default_profile_image_male);
+        //((ImageView)actionBar.findViewById(R.id.main_panel_chat_icon)).setColorFilter(Color.parseColor("#ffffff"));
 
         User otherUser = null;
 
         switch (channelChat.getChatKind()) {
             case HIVE:
-                ((ImageView)actionBar.findViewById(R.id.main_panel_chat_icon)).setImageResource(R.drawable.pestanha_chats_public_chat);
+                ((ImageView)actionBar.findViewById(R.id.main_panel_chat_icon)).setImageResource(R.drawable.default_hive_image);
 
                 if ((this.channelChat.getParentHive() != null) && (this.channelChat.getParentHive().getImageURL() != null) && (!this.channelChat.getParentHive().getImageURL().isEmpty())) {
                     this.channelChat.getParentHive().getHiveImage().OnImageLoaded.add(new EventHandler<EventArgs>(this,"onImageLoaded",EventArgs.class));
@@ -95,7 +95,9 @@ public class MainChat extends Window {
                 if ((otherUser != null) && (otherUser.getUserPublicProfile() != null) && (otherUser.getUserPublicProfile().getImageURL() != null) && (!otherUser.getUserPublicProfile().getImageURL().isEmpty())) {
                     otherUser.getUserPublicProfile().getProfileImage().OnImageLoaded.add(new EventHandler<EventArgs>(this,"onImageLoaded",EventArgs.class));
                     otherUser.getUserPublicProfile().getProfileImage().loadImage(Image.ImageSize.small,0);
-                }
+                } else if ((otherUser != null) && (otherUser.getUserPublicProfile() != null) && (otherUser.getUserPublicProfile().getSex() != null) && (otherUser.getUserPublicProfile().getSex().equalsIgnoreCase("female")))
+                    ((ImageView)actionBar.findViewById(R.id.main_panel_chat_icon)).setImageResource(R.drawable.default_profile_image_female);
+
 
                 if ((this.channelChat.getName() != null) && (!this.channelChat.getName().isEmpty()))
                     mainName = this.channelChat.getName();
@@ -127,7 +129,8 @@ public class MainChat extends Window {
                 if ((otherUser != null) && (otherUser.getUserPrivateProfile() != null) && (otherUser.getUserPrivateProfile().getImageURL() != null) && (!otherUser.getUserPrivateProfile().getImageURL().isEmpty())) {
                     otherUser.getUserPrivateProfile().getProfileImage().OnImageLoaded.add(new EventHandler<EventArgs>(this,"onImageLoaded",EventArgs.class));
                     otherUser.getUserPrivateProfile().getProfileImage().loadImage(Image.ImageSize.small,0);
-                }
+                } else if ((otherUser != null) && (otherUser.getUserPrivateProfile() != null) && (otherUser.getUserPrivateProfile().getSex() != null) && (otherUser.getUserPrivateProfile().getSex().equalsIgnoreCase("female")))
+                    ((ImageView)actionBar.findViewById(R.id.main_panel_chat_icon)).setImageResource(R.drawable.default_profile_image_female);
 
                 if ((this.channelChat.getName() != null) && (!this.channelChat.getName().isEmpty()))
                     mainName = this.channelChat.getName();

@@ -210,7 +210,7 @@ public class Main extends Activity {
                                 c = h.getPublicChat();
 
                             if (c != null)
-                                new MainChat(this, c);
+                                this.OpenWindow(new MainChat(this, c));
                             else
                                 this.ShowHives();
                         } else

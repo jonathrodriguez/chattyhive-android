@@ -425,7 +425,7 @@ public class StandAloneServer {
     private static void randomMessageSender(Boolean continuous) {
 
         final Random random = new Random();
-        int initialMessageNumber = random.nextInt(1000)+2000;
+        int initialMessageNumber = random.nextInt(1000)+1000;
 
         for (int messageNumber = 0; messageNumber < initialMessageNumber; messageNumber++)
             sendRandomMessage(random,true,false);
@@ -473,12 +473,12 @@ public class StandAloneServer {
             for (int wordCount = 0; wordCount < messageLength; wordCount++)
                 messageContent = messageContent.concat(((messageContent.isEmpty())?"":" ")).concat(Words[random.nextInt(Words.length)]);
 
-            long minDate = chat.getCreationDate().getTime();
+            long minDate = (new Date()).getTime() - (30L*24*60*60*1000);//chat.getCreationDate().getTime();
             if ((chat.getConversation().getCount() > 0) && (chat.getConversation().getLastMessage() != null))
                 minDate = chat.getConversation().getLastMessage().getServerTimeStamp().getTime();
             long maxDate = (new Date()).getTime();
 
-            long date = Math.round((Math.min(Math.abs((new Random()).nextGaussian() * 0.17),0.99) * (maxDate - minDate)) + minDate);
+            long date = Math.min(Math.round((Math.min(Math.abs((new Random()).nextGaussian() * 0.17),0.99) * (maxDate - minDate)) + minDate),maxDate);
 
 
             MESSAGE message = new MESSAGE();
@@ -1062,14 +1062,15 @@ public class StandAloneServer {
 
             if (user != null) {
                 //Lets EXPLORE
-                ArrayList<String> userHives =  null;
-                if (UserHiveSubscriptions.containsKey(user.getUserID()))
-                    userHives = UserHiveSubscriptions.get(user.getUserID());
 
                 ArrayList<String> allHives = new ArrayList<String>(Hives.keySet());
 
+                /*ArrayList<String> userHives =  null;
+                if (UserHiveSubscriptions.containsKey(user.getUserID()))
+                    userHives = UserHiveSubscriptions.get(user.getUserID());
+
                 if ((userHives != null) && (!filter.TYPE.equalsIgnoreCase("CREATION_DATE")))
-                    allHives.removeAll(userHives);
+                    allHives.removeAll(userHives);*/
 
                 Comparator<Hive> comparator = null;
 

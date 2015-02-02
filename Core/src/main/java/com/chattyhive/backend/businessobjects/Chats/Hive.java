@@ -86,6 +86,14 @@ public class Hive implements IContextualizable {
     public static Collection<Hive> getHives() {
         return Hives.values();
     }
+
+    public static boolean isHiveJoined(String nameUrl) {
+        if (Hive.Hives == null) throw new IllegalStateException("Hives must be initialized.");
+        else if (nameUrl == null) throw new NullPointerException("NameUrl must not be null.");
+        else if (nameUrl.isEmpty()) throw  new IllegalArgumentException("NameUrl must not be empty.");
+
+        return Hive.Hives.containsKey(nameUrl);
+    }
     /***********************************/
     /*        STATIC CALLBACKS         */
     /***********************************/

@@ -238,26 +238,26 @@ public class HomeListAdapter extends BaseAdapter {
         }
 
         private void updateTimeStamp(HiveMessageCard hc) {
-            if (hc == null) return;
-            if (this.TimeStamp != null) {
-                String LastMessageTimestamp = "";
-                Date timeStamp = hc.getMessage().getOrdinationTimeStamp();
-                Date fiveMinutesAgo = new Date((new Date()).getTime() - 5*60*1000);
-                Date today = DateFormatter.toDate(DateFormatter.toString(timeStamp));
-                Calendar yesterday = Calendar.getInstance();
-                yesterday.setTime(today);
-                yesterday.roll(Calendar.DAY_OF_MONTH, false);
-                if (timeStamp.after( fiveMinutesAgo ))
-                    LastMessageTimestamp = context.getString(R.string.left_panel_imprecise_time_now);
-                else if (timeStamp.after(today))
-                    LastMessageTimestamp = TimestampFormatter.toLocaleString(timeStamp);
-                else if (timeStamp.after(yesterday.getTime()))
-                    LastMessageTimestamp = context.getString(R.string.left_panel_imprecise_time_yesterday);
-                else
-                    LastMessageTimestamp = DateFormatter.toHumanReadableString(timeStamp);
+            if ((hc == null) || (this.TimeStamp == null)) return;
 
-                this.TimeStamp.setText(LastMessageTimestamp);
-            }
+            String LastMessageTimestamp = "";
+            Date timeStamp = hc.getMessage().getOrdinationTimeStamp();
+            Date fiveMinutesAgo = new Date((new Date()).getTime() - 5*60*1000);
+            Date today = DateFormatter.toDate(DateFormatter.toString(new Date()));
+            Calendar yesterday = Calendar.getInstance();
+            yesterday.setTime(today);
+            yesterday.roll(Calendar.DAY_OF_MONTH, false);
+            if (timeStamp.after( fiveMinutesAgo ))
+                LastMessageTimestamp = context.getString(R.string.left_panel_imprecise_time_now);
+            else if (timeStamp.after(today))
+                LastMessageTimestamp = TimestampFormatter.toLocaleString(timeStamp);
+            else if (timeStamp.after(yesterday.getTime()))
+                LastMessageTimestamp = context.getString(R.string.left_panel_imprecise_time_yesterday);
+            else
+                LastMessageTimestamp = DateFormatter.toShortHumanReadableString(timeStamp);
+
+            this.TimeStamp.setText(LastMessageTimestamp);
+
         }
 
         private void updateMessage(HiveMessageCard hc) {

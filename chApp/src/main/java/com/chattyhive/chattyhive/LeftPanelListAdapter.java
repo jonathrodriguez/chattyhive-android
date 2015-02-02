@@ -103,7 +103,7 @@ public class LeftPanelListAdapter extends BaseAdapter {
                     res = 1;
                 else if ((lhs != null) && (rhs == null))
                     res = -1;
-                else if ((lhs == null) && (rhs == null))
+                else if (lhs == null) //&& (rhs == null)) <- Which is always true
                     res = 0;
                 else {
                     Date lhsDate = null;
@@ -119,7 +119,7 @@ public class LeftPanelListAdapter extends BaseAdapter {
                         res = 1;
                     else if ((lhsDate != null) && (rhsDate == null))
                         res = -1;
-                    else if ((lhsDate != null) && (rhsDate != null))
+                    else if (lhsDate != null) //&& (rhsDate != null)) <- Which is always true
                         res = rhsDate.compareTo(lhsDate);
                     else {
                         lhsDate = lhs.getCreationDate();
@@ -129,7 +129,7 @@ public class LeftPanelListAdapter extends BaseAdapter {
                             res = 1;
                         else if ((lhsDate != null) && (rhsDate == null))
                             res = -1;
-                        else if ((lhsDate != null) && (rhsDate != null))
+                        else if (lhsDate != null) //&& (rhsDate != null)) <- Which is always true
                             res = rhsDate.compareTo(lhsDate);
                         else {
                             res = 0;
@@ -153,7 +153,7 @@ public class LeftPanelListAdapter extends BaseAdapter {
                     res = 1;
                 else if ((lhs != null) && (rhs == null))
                     res = -1;
-                else if ((lhs == null) && (rhs == null))
+                else if (lhs == null) //&& (rhs == null)) <- Which is always true
                     res = 0;
                 else {
                     Date lhsDate = null;
@@ -175,7 +175,7 @@ public class LeftPanelListAdapter extends BaseAdapter {
                         res = 1;
                     else if ((lhsDate != null) && (rhsDate == null))
                         res = -1;
-                    else if ((lhsDate != null) && (rhsDate != null))
+                    else if (lhsDate != null) //&& (rhsDate != null)) <- Which is always true
                         res = rhsDate.compareTo(lhsDate);
                     else {
                         lhsDate = lhs.getCreationDate();
