@@ -76,57 +76,11 @@ public class LeftPanelListAdapter extends BaseAdapter {
                 chatList = null;
                 if (visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Hives)) {
                     while (hiveList == null)
-                        try { hiveList = new ArrayList<Hive>(Hive.getHives()); } catch (Exception e) { hiveList = null; }
+                        try { CaptureHives(); } catch (Exception e) { hiveList = null; }
                 } else if (visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Chats)) {
                     while (chatList == null)
                         try {
-                            TreeSet<Chat> list = new TreeSet<Chat>(new Comparator<Chat>() {
-                                @Override
-                                public int compare(Chat lhs, Chat rhs) { // lhs < rhs => return < 0 | lhs = rhs => return = 0 | lhs > rhs => return > 0
-                                    int res = 0;
-                                    if ((lhs == null) && (rhs != null))
-                                        res = 1;
-                                    else if ((lhs != null) && (rhs == null))
-                                        res = -1;
-                                    else if ((lhs == null) && (rhs == null))
-                                        res = 0;
-                                    else {
-                                        Date lhsDate = null;
-                                        Date rhsDate = null;
-
-                                        if ((lhs.getConversation() != null) && (lhs.getConversation().getLastMessage() != null))
-                                            lhsDate = lhs.getConversation().getLastMessage().getOrdinationTimeStamp();
-
-                                        if ((rhs.getConversation() != null) && (rhs.getConversation().getLastMessage() != null))
-                                            rhsDate = rhs.getConversation().getLastMessage().getOrdinationTimeStamp();
-
-                                        if ((lhsDate == null) && (rhsDate != null))
-                                            res = 1;
-                                        else if ((lhsDate != null) && (rhsDate == null))
-                                            res = -1;
-                                        else if ((lhsDate != null) && (rhsDate != null))
-                                            res = rhsDate.compareTo(lhsDate);
-                                        else {
-                                            lhsDate = lhs.getCreationDate();
-                                            rhsDate = rhs.getCreationDate();
-
-                                            if ((lhsDate == null) && (rhsDate != null))
-                                                res = 1;
-                                            else if ((lhsDate != null) && (rhsDate == null))
-                                                res = -1;
-                                            else if ((lhsDate != null) && (rhsDate != null))
-                                                res = rhsDate.compareTo(lhsDate);
-                                            else {
-                                                res = 0;
-                                            }
-                                        }
-                                    }
-
-                                    return res;
-                                }
-                            });
-                            list.addAll(Chat.getChats());
-                            chatList = new ArrayList<Chat>(list);
+                            CaptureChats();
                         } catch (Exception e) { chatList = null; }
                 } else if (visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Mates)) {
                     hiveList = null;
@@ -140,6 +94,112 @@ public class LeftPanelListAdapter extends BaseAdapter {
         });
     }
 
+    private void CaptureChats() {
+        TreeSet<Chat> list = new TreeSet<Chat>(new Comparator<Chat>() {
+            @Override
+            public int compare(Chat lhs, Chat rhs) { // lhs < rhs => return < 0 | lhs = rhs => return = 0 | lhs > rhs => return > 0
+                int res = 0;
+                if ((lhs == null) && (rhs != null))
+                    res = 1;
+                else if ((lhs != null) && (rhs == null))
+                    res = -1;
+                else if ((lhs == null) && (rhs == null))
+                    res = 0;
+                else {
+                    Date lhsDate = null;
+                    Date rhsDate = null;
+
+                    if ((lhs.getConversation() != null) && (lhs.getConversation().getLastMessage() != null))
+                        lhsDate = lhs.getConversation().getLastMessage().getOrdinationTimeStamp();
+
+                    if ((rhs.getConversation() != null) && (rhs.getConversation().getLastMessage() != null))
+                        rhsDate = rhs.getConversation().getLastMessage().getOrdinationTimeStamp();
+
+                    if ((lhsDate == null) && (rhsDate != null))
+                        res = 1;
+                    else if ((lhsDate != null) && (rhsDate == null))
+                        res = -1;
+                    else if ((lhsDate != null) && (rhsDate != null))
+                        res = rhsDate.compareTo(lhsDate);
+                    else {
+                        lhsDate = lhs.getCreationDate();
+                        rhsDate = rhs.getCreationDate();
+
+                        if ((lhsDate == null) && (rhsDate != null))
+                            res = 1;
+                        else if ((lhsDate != null) && (rhsDate == null))
+                            res = -1;
+                        else if ((lhsDate != null) && (rhsDate != null))
+                            res = rhsDate.compareTo(lhsDate);
+                        else {
+                            res = 0;
+                        }
+                    }
+                }
+
+                return res;
+            }
+        });
+        list.addAll(Chat.getChats());
+        chatList = new ArrayList<Chat>(list);
+    }
+
+    private void CaptureHives() {
+        TreeSet<Hive> list = new TreeSet<Hive>(new Comparator<Hive>() {
+            @Override
+            public int compare(Hive lhs, Hive rhs) { // lhs < rhs => return < 0 | lhs = rhs => return = 0 | lhs > rhs => return > 0
+                int res = 0;
+                if ((lhs == null) && (rhs != null))
+                    res = 1;
+                else if ((lhs != null) && (rhs == null))
+                    res = -1;
+                else if ((lhs == null) && (rhs == null))
+                    res = 0;
+                else {
+                    Date lhsDate = null;
+                    Date rhsDate = null;
+
+                    //TODO: Change comparison method. Instead of creation date use lastLocalUserActivityDate. Find a way to determine this value.
+
+                    /*if ((lhs.getPublicChat().getConversation() != null) && (lhs.getPublicChat().getConversation().getCount() > 0) && (lhs.getPublicChat().getConversation().getLastMessage() != null))
+                        lhsDate = lhs.getPublicChat().getConversation().getLastMessage().getOrdinationTimeStamp();
+                    else if (lhs.getCreationDate() != null)*/
+                        lhsDate = lhs.getCreationDate();
+
+                   /* if ((rhs.getPublicChat().getConversation() != null) && (rhs.getPublicChat().getConversation().getCount() > 0) && (rhs.getPublicChat().getConversation().getLastMessage() != null))
+                        rhsDate = rhs.getPublicChat().getConversation().getLastMessage().getOrdinationTimeStamp();
+                    else if (rhs.getCreationDate() != null)*/
+                        rhsDate = rhs.getCreationDate();
+
+                    if ((lhsDate == null) && (rhsDate != null))
+                        res = 1;
+                    else if ((lhsDate != null) && (rhsDate == null))
+                        res = -1;
+                    else if ((lhsDate != null) && (rhsDate != null))
+                        res = rhsDate.compareTo(lhsDate);
+                    else {
+                        lhsDate = lhs.getCreationDate();
+                        rhsDate = rhs.getCreationDate();
+
+                        if ((lhsDate == null) && (rhsDate != null))
+                            res = 1;
+                        else if ((lhsDate != null) && (rhsDate == null))
+                            res = -1;
+                        else if ((lhsDate != null) && (rhsDate != null))
+                            res = rhsDate.compareTo(lhsDate);
+                        else {
+                            res = 0;
+                        }
+                    }
+                }
+
+                return res;
+            }
+        });
+        list.addAll(Hive.getHives());
+        hiveList = new ArrayList<Hive>(list);
+    }
+
     public LeftPanelListAdapter (Context activityContext) {
         super();
         this.context = activityContext;
@@ -149,11 +209,11 @@ public class LeftPanelListAdapter extends BaseAdapter {
         //this.listView.setAdapter(this);
 
         if (visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Hives)) {
-            hiveList = new ArrayList<Hive>(Hive.getHives());
+            CaptureHives();
             chatList = null;
         } else if (visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Chats)) {
             hiveList = null;
-            chatList = new ArrayList<Chat>(Chat.getChats());
+            CaptureChats();
         } else if (visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Mates)) {
             hiveList = null;
             chatList = null;

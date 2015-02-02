@@ -233,6 +233,7 @@ public class Hive implements IContextualizable {
             String hiveNameURL = hive_id.NAME_URL;
             this.nameUrl = hiveNameURL;
             this.publicChat = new Chat(chat, this);
+            this.subscribedUsers = 1;
             Hive.Hives.put(hiveNameURL, this);
 
             if (HiveListChanged != null)
