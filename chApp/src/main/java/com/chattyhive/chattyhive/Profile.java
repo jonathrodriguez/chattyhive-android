@@ -298,6 +298,7 @@ public class Profile extends Window {
                 profileView.findViewById(R.id.profile_edit_full_name).setOnClickListener(null);
                 profileView.findViewById(R.id.profile_edit_full_name).setClickable(false);
                 profileView.findViewById(R.id.profile_public_name).setVisibility(View.VISIBLE);
+                ((TextView)profileView.findViewById(R.id.profile_public_name)).setTextSize(context.getResources().getDimension(R.dimen.my_profile_nickname_text_size_private));
                 profileView.findViewById(R.id.profile_edit_color).setVisibility(View.GONE);
                 //Status
                 profileView.findViewById(R.id.profile_status_message_header).setVisibility(View.GONE);
@@ -356,6 +357,7 @@ public class Profile extends Window {
                 profileView.findViewById(R.id.profile_edit_full_name).setOnClickListener(null);
                 profileView.findViewById(R.id.profile_edit_full_name).setClickable(false);
                 profileView.findViewById(R.id.profile_public_name).setVisibility(View.VISIBLE);
+                ((TextView)profileView.findViewById(R.id.profile_public_name)).setTextSize(context.getResources().getDimension(R.dimen.my_profile_nickname_text_size_public));
                 profileView.findViewById(R.id.profile_edit_color).setVisibility(View.GONE);
                 //Status
                 profileView.findViewById(R.id.profile_status_message_header).setVisibility(View.GONE);
@@ -418,6 +420,7 @@ public class Profile extends Window {
                 profileView.findViewById(R.id.profile_edit_full_name).setOnClickListener(null);
                 profileView.findViewById(R.id.profile_edit_full_name).setClickable(false);
                 profileView.findViewById(R.id.profile_public_name).setVisibility(View.VISIBLE);
+                ((TextView)profileView.findViewById(R.id.profile_public_name)).setTextSize(context.getResources().getDimension(R.dimen.my_profile_nickname_text_size_private));
                 profileView.findViewById(R.id.profile_edit_color).setVisibility(View.GONE);
                 //Status
                 profileView.findViewById(R.id.profile_status_message_header).setVisibility(View.VISIBLE);
@@ -503,6 +506,7 @@ public class Profile extends Window {
                         profileView.findViewById(R.id.profile_edit_full_name).setVisibility(View.VISIBLE);
                         profileView.findViewById(R.id.profile_edit_full_name).setOnClickListener(edit_name_click_listener);
                         profileView.findViewById(R.id.profile_public_name).setVisibility(View.VISIBLE);
+                        ((TextView)profileView.findViewById(R.id.profile_public_name)).setTextSize(context.getResources().getDimension(R.dimen.my_profile_nickname_text_size_private));
                         profileView.findViewById(R.id.profile_edit_color).setVisibility(View.GONE);
                         //Status
                         profileView.findViewById(R.id.profile_status_message_header).setVisibility(View.VISIBLE);
@@ -576,6 +580,7 @@ public class Profile extends Window {
                         profileView.findViewById(R.id.profile_edit_full_name).setOnClickListener(null);
                         profileView.findViewById(R.id.profile_edit_full_name).setClickable(false);
                         profileView.findViewById(R.id.profile_public_name).setVisibility(View.VISIBLE);
+                        ((TextView)profileView.findViewById(R.id.profile_public_name)).setTextSize(context.getResources().getDimension(R.dimen.my_profile_nickname_text_size_public));
                         profileView.findViewById(R.id.profile_edit_color).setVisibility(View.VISIBLE);
                         //Status
                         profileView.findViewById(R.id.profile_status_message_header).setVisibility(View.VISIBLE);

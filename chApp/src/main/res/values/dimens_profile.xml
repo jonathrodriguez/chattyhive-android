@@ -47,8 +47,9 @@
     <dimen name="my_profile_full_name_margin_top">19dp</dimen>
     <dimen name="my_profile_full_name_text_size">16sp</dimen>
     <dimen name="my_profile_nickname_margin_top">3dp</dimen>
-    <dimen name="my_profile_nickname_text_size">13sp</dimen>
-    <dimen name="my_profile_nickname_margin_bottom">12.5dp</dimen>
+    <dimen name="my_profile_nickname_text_size_private">13sp</dimen>
+    <dimen name="my_profile_nickname_text_size_public">16sp</dimen>
+    <dimen name="my_profile_nickname_margin_bottom">6dp</dimen>
 
     <dimen name="my_profile_status_title_text_size">15sp</dimen>
     <dimen name="my_profile_status_margin_top">12.5dp</dimen>

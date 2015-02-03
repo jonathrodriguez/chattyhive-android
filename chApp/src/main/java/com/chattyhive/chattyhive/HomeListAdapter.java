@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -198,11 +199,17 @@ public class HomeListAdapter extends BaseAdapter {
 
         @Override
         public void onClick(View v) {
+            Log.w("HomeCargItem","onClick()");
             MainChat mainChat;
             Chat chatChat = null;
+            if (((HiveMessageCard)card).getHive() == null)
+                Log.w("HomeCargItem","Hive is null.");
             chatChat = ((HiveMessageCard)card).getHive().getPublicChat();
             if (chatChat != null) {
+                Log.w("HomeCargItem","Opening chat...");
                 ((Main)context).OpenWindow(new MainChat(context, chatChat));
+            } else {
+                Log.w("HomeCargItem","Chat is null.");
             }
         }
 

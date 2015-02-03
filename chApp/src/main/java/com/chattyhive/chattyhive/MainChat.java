@@ -291,10 +291,14 @@ public class MainChat extends Window {
     public void Hide() {
         if (!this.hasContext()) return;
 
-        this.channelConversation.setChatWindowActive(false);
-        ((Main)this.context).controller.Leave(this.channelChat.getChannelUnicode());
+        if (this.channelConversation != null)
+            this.channelConversation.setChatWindowActive(false);
 
-        this.channelConversation.MessageListModifiedEvent.remove(new EventHandler<EventArgs>(this.chatListAdapter,"OnAddItem",EventArgs.class));
+        if (this.channelChat != null)
+            ((Main)this.context).controller.Leave(this.channelChat.getChannelUnicode());
+
+        if (this.channelConversation != null)
+            this.channelConversation.MessageListModifiedEvent.remove(new EventHandler<EventArgs>(this.chatListAdapter,"OnAddItem",EventArgs.class));
 
         this.chatListAdapter = null;
         ((ListView)mainChat.findViewById(R.id.main_panel_chat_message_list)).setAdapter(null);
