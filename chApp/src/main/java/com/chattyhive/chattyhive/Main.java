@@ -57,17 +57,17 @@ public class Main extends Activity {
     int lastOpenHierarchyLevel;
 
     void OpenWindow(Window window) {
-        Log.w("Main", "OpenWindow(Window).Start");
+        //Log.w("Main", "OpenWindow(Window).Start");
         OpenWindow(window,window.getHierarchyLevel());
-        Log.w("Main", "OpenWindow(Window).End");
+        //Log.w("Main", "OpenWindow(Window).End");
     }
     void OpenWindow(Window window,Integer hierarchyLevel) {
-        Log.w("Main", "OpenWindow(Window,Integer).Start");
+        //Log.w("Main", "OpenWindow(Window,Integer).Start");
         if (hierarchyLevel > (this.lastOpenHierarchyLevel+1))
             throw new IllegalArgumentException("Expected at most one level over the last open hierarchy level");
-        Log.w("Main", "HideKeyboard");
+        //Log.w("Main", "HideKeyboard");
         Keyboard.HideKeyboard(this);
-        Log.w("Main", "Close/Hide other windows.");
+        //Log.w("Main", "Close/Hide other windows.");
         if (this.lastOpenHierarchyLevel > -1) {
             if (hierarchyLevel < this.lastOpenHierarchyLevel) {
                 for (int i = this.lastOpenHierarchyLevel; i > hierarchyLevel; i--) {
@@ -80,19 +80,19 @@ public class Main extends Activity {
                 this.viewStack.get(this.lastOpenHierarchyLevel).Hide();
             }
         }
-        Log.w("Main", "Adjust hierarchy level.");
+        //Log.w("Main", "Adjust hierarchy level.");
         if (hierarchyLevel != window.getHierarchyLevel())
             window.setHierarchyLevel(hierarchyLevel);
-        Log.w("Main", "Put window in viewStack.");
+        //Log.w("Main", "Put window in viewStack.");
         this.viewStack.put(hierarchyLevel,window);
-        Log.w("Main", "Remember hierarchy level.");
+        //Log.w("Main", "Remember hierarchy level.");
         this.lastOpenHierarchyLevel = hierarchyLevel;
-        Log.w("Main", "Set context if needed.");
+        //Log.w("Main", "Set context if needed.");
         if ((!window.hasContext()) || (window.context != this))
             window.setContext(this);
-        Log.w("Main", "Open window.");
+        //Log.w("Main", "Open window.");
         window.Open();
-        Log.w("Main", "OpenWindow(Window,Integer).End");
+        //Log.w("Main", "OpenWindow(Window,Integer).End");
     }
 
     void Close() {
@@ -111,29 +111,29 @@ public class Main extends Activity {
     }
 
     protected ViewPair ShowLayout (int layoutID, int actionBarID) {
-        Log.w("Main", "ShowLayout(Integer,Integer).Start");
+        //Log.w("Main", "ShowLayout(Integer,Integer).Start");
         FrameLayout mainPanel = ((FrameLayout)findViewById(R.id.mainCenter));
         FrameLayout mainActionBar = ((FrameLayout)findViewById(R.id.actionCenter));
-        Log.w("Main", String.format("mainPanel captured: %b. mainActionBar captured: %b.",(mainPanel!=null),(mainActionBar!=null)));
+        //Log.w("Main", String.format("mainPanel captured: %b. mainActionBar captured: %b.",(mainPanel!=null),(mainActionBar!=null)));
         View actionBar = null;
         View mainView = null;
-        Log.w("Main", "process main panel if available");
+        //Log.w("Main", "process main panel if available");
         if (mainPanel != null) {
-            Log.w("Main", "remove main panel views");
+            //Log.w("Main", "remove main panel views");
             mainPanel.removeAllViews();
-            Log.w("Main", "inflate main layout");
+            //Log.w("Main", "inflate main layout");
             mainView = LayoutInflater.from(this).inflate(layoutID, mainPanel, true);
         }
-        Log.w("Main", "process action bar if available");
+        //Log.w("Main", "process action bar if available");
         if (mainActionBar != null) {
-            Log.w("Main", "remove action bar views");
+            //Log.w("Main", "remove action bar views");
             mainActionBar.removeAllViews();
-            Log.w("Main", "inflate action bar layout");
+            //Log.w("Main", "inflate action bar layout");
             actionBar = LayoutInflater.from(this).inflate(actionBarID,mainActionBar,true);
         }
-        Log.w("Main", "prepare result.");
+        //Log.w("Main", "prepare result.");
         ViewPair actualView = new ViewPair(mainView,actionBar);
-        Log.w("Main", "ShowLayout(Integer,Integer).End");
+        //Log.w("Main", "ShowLayout(Integer,Integer).End");
         return actualView;
     }
     protected View ChangeActionBar (int actionBarID) {
@@ -200,9 +200,14 @@ public class Main extends Activity {
     }
 
     private void Restore(Bundle savedInstanceState) {
-        this.home = ((Home)savedInstanceState.getSerializable("Home"));
         int lastOpenHierarchyLevel = savedInstanceState.getInt("lastOpenHierarchyLevel");
-        for (int i = 0; i <= lastOpenHierarchyLevel; i++)
+
+        if (lastOpenHierarchyLevel >= 0) {
+            this.home = ((Home)savedInstanceState.getSerializable("viewStackEntry_0"));
+            OpenWindow(this.home,0);
+        }
+
+        for (int i = 1; i <= lastOpenHierarchyLevel; i++)
             OpenWindow((Window)savedInstanceState.getSerializable(String.format("viewStackEntry_%d",i)),i);
     }
 
@@ -387,7 +392,7 @@ public class Main extends Activity {
     protected void onSaveInstanceState (Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        outState.putSerializable("Home",home);
+        //outState.putSerializable("Home",home);
         outState.putInt("lastOpenHierarchyLevel",lastOpenHierarchyLevel);
         for (Map.Entry<Integer,Window> viewStackEntry : viewStack.entrySet())
             outState.putSerializable(String.format("viewStackEntry_%d",viewStackEntry.getKey()),viewStackEntry.getValue());

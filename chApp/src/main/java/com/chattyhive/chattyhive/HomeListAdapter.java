@@ -199,18 +199,17 @@ public class HomeListAdapter extends BaseAdapter {
 
         @Override
         public void onClick(View v) {
-            Log.w("HomeCardItem","onClick()");
-            MainChat mainChat;
+            //Log.w("HomeCardItem","onClick()");
             Chat chatChat = null;
             if (((HiveMessageCard)card).getHive() == null)
-                Log.w("HomeCardItem","Hive is null.");
+                //Log.w("HomeCardItem","Hive is null.");
             chatChat = ((HiveMessageCard)card).getHive().getPublicChat();
             if (chatChat != null) {
-                Log.w("HomeCardItem","Opening chat...");
+                //Log.w("HomeCardItem","Opening chat...");
                 ((Main)context).OpenWindow(new MainChat(context, chatChat));
-                Log.w("HomeCardItem","Chat open.");
+                //Log.w("HomeCardItem","Chat open.");
             } else {
-                Log.w("HomeCardItem","Chat is null.");
+                //Log.w("HomeCardItem","Chat is null.");
             }
         }
 
