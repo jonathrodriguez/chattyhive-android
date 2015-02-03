@@ -638,12 +638,20 @@ public class FloatingPanel extends ViewGroup {
     }
 
     protected void movePanels (float distance, int duration) {
-        int animationDuration = Math.min(duration,this.maxAnimationDuration);
-        float finalDistance = saturateNewPosition(actualPosition+distance) - actualPosition;
-        scroller.abortAnimation();
-        scrolling = true;
-        scroller.startScroll(Math.round(actualPosition), 0, Math.round(finalDistance), 0, animationDuration);
-        invalidate();
+        if (duration > 0) {
+            int animationDuration = Math.min(duration, this.maxAnimationDuration);
+            float finalDistance = saturateNewPosition(actualPosition + distance) - actualPosition;
+            scroller.abortAnimation();
+            scrolling = true;
+            scroller.startScroll(Math.round(actualPosition), 0, Math.round(finalDistance), 0, animationDuration);
+            invalidate();
+        } else {
+            scroller.abortAnimation();
+            scrolling = false;
+            actualPosition = saturateNewPosition(actualPosition+distance);
+            computePosition();
+            setStaticPosition();
+        }
     }
 
     @Override

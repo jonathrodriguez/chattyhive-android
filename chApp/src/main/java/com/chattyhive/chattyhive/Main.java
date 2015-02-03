@@ -155,12 +155,15 @@ public class Main extends Activity {
 
     protected void ShowChats() {
         this.leftPanel.OpenChats();
-        floatingPanel.openLeft();
+        if (floatingPanel.isOpen())
+            floatingPanel.openLeft(0);
+        else
+            floatingPanel.openLeft();
     }
 
     protected void ShowHives() {
         this.leftPanel.OpenHives();
-        floatingPanel.openLeft();
+        floatingPanel.openLeft(0);
     }
 
     @Override
@@ -212,6 +215,8 @@ public class Main extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             case OP_CODE_LOGIN:
+                    if (floatingPanel.isOpen())
+                        floatingPanel.close(0);
                     if (resultCode != RESULT_OK) {
                         Controller.DisposeRunningController();
                         this.finish();
@@ -229,8 +234,11 @@ public class Main extends Activity {
                             if (h != null)
                                 c = h.getPublicChat();
 
-                            if (c != null)
+                            if (c != null) {
+                                if (floatingPanel.isOpen())
+                                    floatingPanel.close(0);
                                 this.OpenWindow(new MainChat(this, c));
+                            }
                             else
                                 this.ShowHives();
                         } else
@@ -312,6 +320,9 @@ public class Main extends Activity {
         public void onClick(View v) {
             Intent intent = new Intent(getApplicationContext(),Explore.class);
             startActivityForResult(intent, OP_CODE_EXPLORE);
+
+            /*if (floatingPanel.isOpen())
+                floatingPanel.close(0);*/
         }
     };
 
@@ -320,6 +331,9 @@ public class Main extends Activity {
         public void onClick(View v) {
             Intent intent = new Intent(getApplicationContext(),NewHive.class);
             startActivityForResult(intent,OP_CODE_NEW_HIVE);
+
+            if (floatingPanel.isOpen())
+                floatingPanel.close(0);
         }
     };
 
@@ -327,6 +341,8 @@ public class Main extends Activity {
         @Override
         public void onClick(View v) {
             controller.clearUserData();
+            controller.clearAllChats();
+
             hasToLogin();
         }
     };
@@ -356,10 +372,9 @@ public class Main extends Activity {
                 }
             } else if (event.getAction() == KeyEvent.ACTION_UP) {
                 findViewById(R.id.mainCenter).getKeyDispatcherState().handleUpEvent(event);
-                if (event.isTracking() && !event.isCanceled() && (!floatingPanel.isOpen())) {
+                if (event.isTracking() && !event.isCanceled() && (!floatingPanel.isOpen()) && (this.lastOpenHierarchyLevel > 0)) {
                     this.Close();
-                    if (this.lastOpenHierarchyLevel >= 0)
-                        return true;
+                    return true;
                 }
             }
         }

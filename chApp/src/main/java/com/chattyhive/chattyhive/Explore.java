@@ -75,6 +75,7 @@ public class Explore extends Activity {
 
     private void Initialize(){
         Log.w("Explore","Initialize()");
+
         this.LRU_date = new TreeMap<Date, Integer>();
         this.LRU_step = new TreeMap<Integer, Date>();
 
