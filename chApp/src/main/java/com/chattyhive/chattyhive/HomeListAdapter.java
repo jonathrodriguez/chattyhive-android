@@ -201,16 +201,16 @@ public class HomeListAdapter extends BaseAdapter {
         public void onClick(View v) {
             //Log.w("HomeCardItem","onClick()");
             Chat chatChat = null;
-            if (((HiveMessageCard)card).getHive() == null)
+            //if (((HiveMessageCard)card).getHive() == null)
                 //Log.w("HomeCardItem","Hive is null.");
             chatChat = ((HiveMessageCard)card).getHive().getPublicChat();
             if (chatChat != null) {
                 //Log.w("HomeCardItem","Opening chat...");
                 ((Main)context).OpenWindow(new MainChat(context, chatChat));
                 //Log.w("HomeCardItem","Chat open.");
-            } else {
+            } //else {
                 //Log.w("HomeCardItem","Chat is null.");
-            }
+            //}
         }
 
         private void updateFields() {
