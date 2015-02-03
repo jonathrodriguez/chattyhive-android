@@ -152,6 +152,11 @@ public class Profile extends Window {
         out.writeObject(this.profileType);
         out.writeObject(this.profileViewType);
 
+        if (this.user != null)
+            Log.w("Profile.writeObject()","Saving user.");
+        else
+            Log.w("Profile.writeObject()","Saving NULL user.");
+
         if (this.user.isMe())
             out.writeUTF(this.user.toJson(new LOCAL_USER_PROFILE()).toString());
         else
@@ -172,6 +177,12 @@ public class Profile extends Window {
         this.profileViewType = (ProfileView) in.readObject();
 
         String userS = in.readUTF();
+
+        if ((userS != null) && (!userS.isEmpty()))
+            Log.w("Profile.readObject()","Restoring user.");
+        else
+            Log.w("Profile.readObject()","Restoring NULL user.");
+
         if (!userS.isEmpty()) {
             Format[] formats = Format.getFormat(new JsonParser().parse(userS));
             for (Format format : formats)
