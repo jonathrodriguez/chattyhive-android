@@ -162,14 +162,14 @@
     <dimen name="edit_profile_photo_border_thick">1px</dimen>
 
     <dimen name="edit_profile_full_name_pencil_separation">10dp</dimen>
-    <dimen name="edit_profile_full_name_pencil_size">20.5dp</dimen>
+    <dimen name="edit_profile_full_name_pencil_size">16.5dp</dimen>
 
     <dimen name="edit_profile_full_name_text_size">16sp</dimen>
     <dimen name="edit_profile_full_name_margin_left">40dp</dimen>
     <dimen name="edit_profile_full_name_margin_right">40dp</dimen>
     <dimen name="edit_profile_full_name_separation_half">2.5dp</dimen>
 
-    <dimen name="edit_profile_color_pencil_size">20.5dp</dimen>
+    <dimen name="edit_profile_color_pencil_size">16.5dp</dimen>
     <dimen name="edit_profile_color_pencil_separation">5dp</dimen>
     <dimen name="edit_profile_color_text_size">12sp</dimen>
     <dimen name="edit_profile_color_top_margin">1dp</dimen>

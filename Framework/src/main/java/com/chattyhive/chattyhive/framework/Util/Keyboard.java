@@ -12,23 +12,29 @@ public class Keyboard {
     public static void HideKeyboard(Activity activity) {
         if (activity == null) return;
 
-        View view = activity.getCurrentFocus();
-        if (view != null) {
-            InputMethodManager inputManager = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
-            inputManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-        }
+        Keyboard.HideKeyboard(activity.getCurrentFocus());
+        //View view = activity.getCurrentFocus();
+        //if (view != null) {
+            //InputMethodManager inputManager = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+            //inputManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        //}
     }
     public static void HideKeyboard(View view) {
         if (view == null) return;
 
-        InputMethodManager inputManager = (InputMethodManager) view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-        inputManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        view.clearFocus();
+
+        //InputMethodManager inputManager = (InputMethodManager) view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        //inputManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
     }
     public static void ShowKeyboard(View view) {
         if (view == null) return;
-        if (view.requestFocus()) {
-            InputMethodManager imm = (InputMethodManager)view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.showSoftInput(view, 0);
-        }
+
+        view.requestFocusFromTouch();
+
+        //if (view.requestFocus()) {
+        //    InputMethodManager imm = (InputMethodManager)view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        //    imm.showSoftInput(view, 0);
+        //}
     }
 }
