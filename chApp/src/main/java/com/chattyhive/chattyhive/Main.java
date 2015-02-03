@@ -111,14 +111,29 @@ public class Main extends Activity {
     }
 
     protected ViewPair ShowLayout (int layoutID, int actionBarID) {
+        Log.w("Main", "ShowLayout(Integer,Integer).Start");
         FrameLayout mainPanel = ((FrameLayout)findViewById(R.id.mainCenter));
         FrameLayout mainActionBar = ((FrameLayout)findViewById(R.id.actionCenter));
-        mainPanel.removeAllViews();
-        mainActionBar.removeAllViews();
-        View actionBar = LayoutInflater.from(this).inflate(actionBarID,mainActionBar,true);
-        View mainView = LayoutInflater.from(this).inflate(layoutID, mainPanel, true);
+        Log.w("Main", String.format("mainPanel captured: %b. mainActionBar captured: %b.",(mainPanel!=null),(mainActionBar!=null)));
+        View actionBar = null;
+        View mainView = null;
+        Log.w("Main", "process main panel if available");
+        if (mainPanel != null) {
+            Log.w("Main", "remove main panel views");
+            mainPanel.removeAllViews();
+            Log.w("Main", "inflate main layout");
+            mainView = LayoutInflater.from(this).inflate(layoutID, mainPanel, true);
+        }
+        Log.w("Main", "process action bar if available");
+        if (mainActionBar != null) {
+            Log.w("Main", "remove action bar views");
+            mainActionBar.removeAllViews();
+            Log.w("Main", "inflate action bar layout");
+            actionBar = LayoutInflater.from(this).inflate(actionBarID,mainActionBar,true);
+        }
+        Log.w("Main", "prepare result.");
         ViewPair actualView = new ViewPair(mainView,actionBar);
-
+        Log.w("Main", "ShowLayout(Integer,Integer).End");
         return actualView;
     }
     protected View ChangeActionBar (int actionBarID) {

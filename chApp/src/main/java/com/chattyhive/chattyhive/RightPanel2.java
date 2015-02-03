@@ -30,10 +30,19 @@ public class RightPanel2{
     View img;
     private int lastExpandedPosition = -1;
 
+    private View.OnClickListener open_profile = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (((Main)context).controller.getMe() != null) {
+                ((Main)context).OpenWindow(new Profile(context,((Main)context).controller.getMe(), Profile.ProfileType.Private));
+            }
+        }
+    };
+
     public RightPanel2(Context activity){
         this.context = activity ;
         this.InitializeComponent();
-        ((Activity)this.context).findViewById(R.id.right_panel_action_bar).setOnClickListener((new Profile(this.context)).open_profile);
+        ((Activity)this.context).findViewById(R.id.right_panel_action_bar).setOnClickListener(this.open_profile);
         ((Main)this.context).controller.LocalUserReceived.add(new EventHandler<EventArgs>(this, "onLocalUserLoaded", EventArgs.class));
         if (((Main)this.context).controller.getMe() != null)
             this.onLocalUserLoaded(((Main)this.context).controller.getMe(),EventArgs.Empty());

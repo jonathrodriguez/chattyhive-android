@@ -69,6 +69,20 @@ public class FloatingPanel extends ViewGroup {
     private float fixedLeftPanelWidth;
 
     private boolean allowSwipeToMovePanels;
+    private boolean baseAllowSwipeToMovePanels;
+    private boolean changedAllowSwipeToMovePanels;
+    public void setAllowSwipeToMovePanels(boolean allowSwipeToMovePanels) {
+        this.allowSwipeToMovePanels = allowSwipeToMovePanels;
+        this.changedAllowSwipeToMovePanels = true;
+    }
+    public void resetAllowSwipeToMovePanels() {
+        this.allowSwipeToMovePanels = this.baseAllowSwipeToMovePanels;
+        this.changedAllowSwipeToMovePanels = false;
+    }
+    public boolean getAllowSwipeToMovePanels() {
+        return this.allowSwipeToMovePanels;
+    }
+
     private boolean leftSwipeCheckMainBoundaries;
     private boolean rightSwipeCheckMainBoundaries;
 
@@ -162,6 +176,7 @@ public class FloatingPanel extends ViewGroup {
         this.fixedLeftPanelWidth = a.getDimension(R.styleable.FloatingPanel_fixedLeftPanelWidth,defaultFixedLeftPanelWidth);
 
         this.allowSwipeToMovePanels = a.getBoolean(R.styleable.FloatingPanel_allowSwipeToMovePanels,defaultAllowSwipeToMovePanels);
+        this.baseAllowSwipeToMovePanels = this.allowSwipeToMovePanels;
         this.leftSwipeCheckMainBoundaries = a.getBoolean(R.styleable.FloatingPanel_leftSwipeCheckMainBoundaries,defaultLeftSwipeCheckMainBoundaries);
         this.rightSwipeCheckMainBoundaries = a.getBoolean(R.styleable.FloatingPanel_rightSwipeCheckMainBoundaries,defaultRightSwipeCheckMainBoundaries);
 
@@ -1025,6 +1040,8 @@ public class FloatingPanel extends ViewGroup {
         SavedState savedState = new SavedState(super.onSaveInstanceState());
 
         savedState.actualState = actualState;
+        savedState.changedAllowSwipeToMovePanels = changedAllowSwipeToMovePanels;
+        savedState.allowSwipeToMovePanels = allowSwipeToMovePanels;
 
         return savedState;
     }
@@ -1035,6 +1052,8 @@ public class FloatingPanel extends ViewGroup {
         super.onRestoreInstanceState(savedState.getSuperState());
 
         actualState = savedState.actualState;
+        if (changedAllowSwipeToMovePanels = savedState.changedAllowSwipeToMovePanels)
+            allowSwipeToMovePanels = savedState.allowSwipeToMovePanels;
         restored = true;
 
         requestLayout();
@@ -1043,6 +1062,8 @@ public class FloatingPanel extends ViewGroup {
 
     public static class SavedState extends BaseSavedState {
         private int actualState;
+        private boolean changedAllowSwipeToMovePanels;
+        private boolean allowSwipeToMovePanels;
 
         SavedState(Parcelable superState) {
             super(superState);
@@ -1052,6 +1073,11 @@ public class FloatingPanel extends ViewGroup {
             super(in);
 
             actualState = in.readInt();
+            boolean[] swipeToMovePanels = new boolean[2];
+            in.readBooleanArray(swipeToMovePanels);
+
+            changedAllowSwipeToMovePanels = swipeToMovePanels[0];
+            allowSwipeToMovePanels = swipeToMovePanels[1];
         }
 
         @Override
@@ -1059,6 +1085,7 @@ public class FloatingPanel extends ViewGroup {
             super.writeToParcel(out, flags);
 
             out.writeInt(actualState);
+            out.writeBooleanArray(new boolean[] {changedAllowSwipeToMovePanels, allowSwipeToMovePanels});
         }
 
         public static final Parcelable.Creator<SavedState> CREATOR = new Parcelable.Creator<SavedState>() {

@@ -44,12 +44,13 @@ public class Profile extends Window {
     private transient View profileView;
     private transient View actionBar;
 
-    private enum ProfileType {Private, Public}
+    public enum ProfileType {Private, Public}
     private enum ProfileView {Private, Public, Own, Edit}
     private enum ShowInProfile { None, Private, Public, Both}
 
     private transient User user;
     private transient User modifiedUser; //This is for profile edition.
+    private String actionBarSubstring;
     private ProfileType profileType;
     private ProfileView profileViewType;
 
@@ -76,9 +77,22 @@ public class Profile extends Window {
     private ArrayList<String> selectedLanguages;
     String[] languages;
 
-    public Profile(Context context) {
+    private Profile (Context context) {
         super(context);
         this.setHierarchyLevel(ProfileHierarchyLevel);
+    }
+
+    public Profile(Context context, User user, ProfileType profileType) {
+        this(context);
+        this.user = user;
+        this.profileType = profileType;
+    }
+
+    public Profile(Context context, User user, ProfileType profileType, String actionBarSubstring) {
+        this(context);
+        this.user = user;
+        this.profileType = profileType;
+        this.actionBarSubstring = actionBarSubstring;
     }
 
     @Override
@@ -133,6 +147,8 @@ public class Profile extends Window {
     public void Hide() {
         if (!this.hasContext()) return;
 
+        ((Main)context).floatingPanel.resetAllowSwipeToMovePanels();
+
         this.profileView = null;
         this.actionBar = null;
     }
@@ -151,6 +167,7 @@ public class Profile extends Window {
         // write 'this' to 'out'...
         out.writeObject(this.profileType);
         out.writeObject(this.profileViewType);
+        out.writeUTF(this.actionBarSubstring);
 
         if (this.user != null)
             Log.w("Profile.writeObject()","Saving user.");
@@ -175,6 +192,7 @@ public class Profile extends Window {
     private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
         this.profileType = (ProfileType) in.readObject();
         this.profileViewType = (ProfileView) in.readObject();
+        this.actionBarSubstring = in.readUTF();
 
         String userS = in.readUTF();
 
@@ -200,29 +218,6 @@ public class Profile extends Window {
                         this.modifiedUser = new User(format);
             }
         }
-    }
-
-    protected View.OnClickListener open_profile = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            OpenProfile(((Main)context).controller.getMe(),ProfileType.Private);
-        }
-    };
-
-
-
-    protected void OpenProfile(User user, ProfileType profileType) {
-        this.user = user;
-        this.profileType = profileType;
-
-        ((Main)this.context).OpenWindow(this);
-    }
-
-    protected void OpenProfile(User user, ProfileType profileType, Integer hierarchyLevel) {
-        this.user = user;
-        this.profileType = profileType;
-
-        ((Main)this.context).OpenWindow(this,hierarchyLevel);
     }
 
     public void loadBigPhoto(Object sender, EventArgs eventArgs) {
@@ -1221,6 +1216,9 @@ public class Profile extends Window {
 
         this.adjustView();
         this.setData();
+
+        //TODO: Uncomment this to lock floating panel when editing profile;
+        //((Main)context).floatingPanel.setAllowSwipeToMovePanels(false);
     }
 
     protected View.OnClickListener edit_button_click = new View.OnClickListener() {
@@ -1251,6 +1249,8 @@ public class Profile extends Window {
 
         adjustView();
         setData();
+
+        ((Main)context).floatingPanel.resetAllowSwipeToMovePanels();
     }
 
     public void onUpdatedProfile(Object sender,CommandCallbackEventArgs eventArgs) {
