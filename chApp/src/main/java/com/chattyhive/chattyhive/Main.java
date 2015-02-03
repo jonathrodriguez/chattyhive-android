@@ -215,37 +215,39 @@ public class Main extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             case OP_CODE_LOGIN:
-                    if (floatingPanel.isOpen())
-                        floatingPanel.close(0);
-                    if (resultCode != RESULT_OK) {
-                        Controller.DisposeRunningController();
-                        this.finish();
-                    }
+                if (floatingPanel.isOpen())
+                    floatingPanel.close(0);
+                if (resultCode != RESULT_OK) {
+                    Controller.DisposeRunningController();
+                    this.finish();
+                }
                 break;
             case OP_CODE_EXPLORE:
-                    if (resultCode == RESULT_OK) {
-                        String nameURL = null;
-                        if ((data != null) && (data.hasExtra("NameURL")))
-                            nameURL = data.getStringExtra("NameURL");
+                if (floatingPanel.isOpen())
+                    floatingPanel.close(0);
+                if (resultCode == RESULT_OK) {
+                    String nameURL = null;
+                    if ((data != null) && (data.hasExtra("NameURL")))
+                        nameURL = data.getStringExtra("NameURL");
 
-                        if ((nameURL != null) && (!nameURL.isEmpty())) {
-                            Hive h = Hive.getHive(nameURL);
-                            Chat c = null;
-                            if (h != null)
-                                c = h.getPublicChat();
+                    if ((nameURL != null) && (!nameURL.isEmpty())) {
+                        Hive h = Hive.getHive(nameURL);
+                        Chat c = null;
+                        if (h != null)
+                            c = h.getPublicChat();
 
-                            if (c != null) {
-                                if (floatingPanel.isOpen())
-                                    floatingPanel.close(0);
-                                this.OpenWindow(new MainChat(this, c));
-                            }
-                            else
-                                this.ShowHives();
-                        } else
+                        if (c != null) {
+                            this.OpenWindow(new MainChat(this, c));
+                        }
+                        else
                             this.ShowHives();
-                    }
-                    break;
+                    } else
+                        this.ShowHives();
+                }
+                break;
             case OP_CODE_NEW_HIVE:
+                if (floatingPanel.isOpen())
+                    floatingPanel.close(0);
                 if(resultCode == RESULT_OK){
                         this.ShowHives();
                     }
@@ -332,8 +334,8 @@ public class Main extends Activity {
             Intent intent = new Intent(getApplicationContext(),NewHive.class);
             startActivityForResult(intent,OP_CODE_NEW_HIVE);
 
-            if (floatingPanel.isOpen())
-                floatingPanel.close(0);
+            /*if (floatingPanel.isOpen())
+                floatingPanel.close(0);*/
         }
     };
 

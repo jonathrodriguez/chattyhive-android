@@ -80,6 +80,8 @@ public class RightPanel2{
                     ((Main) context).controller.getMe().getUserPrivateProfile().getProfileImage().OnImageLoaded.add(new EventHandler<EventArgs>(thisPanel, "loadImage", EventArgs.class));
                     ((Main) context).controller.getMe().getUserPrivateProfile().getProfileImage().loadImage(Image.ImageSize.medium, 0);
                 }
+
+                //((Main)context).controller.LocalUserReceived.remove(new EventHandler<EventArgs>(thisPanel, "onLocalUserLoaded", EventArgs.class));
             }
         });
     }
@@ -105,8 +107,8 @@ public class RightPanel2{
                     }
                 }
 
-                image.OnImageLoaded.remove(new EventHandler<EventArgs>(thisPanel,"loadImage",EventArgs.class));
-                image.freeMemory();
+                //image.OnImageLoaded.remove(new EventHandler<EventArgs>(thisPanel,"loadImage",EventArgs.class));
+                //image.freeMemory();
             }
         });
     }

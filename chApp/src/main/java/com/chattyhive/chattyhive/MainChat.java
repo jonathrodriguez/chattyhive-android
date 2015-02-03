@@ -319,7 +319,8 @@ public class MainChat extends Window {
             this.channelConversation.MessageListModifiedEvent.remove(new EventHandler<EventArgs>(this.chatListAdapter,"OnAddItem",EventArgs.class));
 
         this.chatListAdapter = null;
-        ((ListView)mainChat.findViewById(R.id.main_panel_chat_message_list)).setAdapter(null);
+        if ((mainChat != null) && (mainChat.findViewById(R.id.main_panel_chat_message_list) != null))
+            ((ListView)mainChat.findViewById(R.id.main_panel_chat_message_list)).setAdapter(null);
         this.mainChat = null;
         this.textInput = null;
         this.actionBar = null;
