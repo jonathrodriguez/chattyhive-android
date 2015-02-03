@@ -100,6 +100,7 @@ public class FloatingPanel extends ViewGroup {
 
     private Boolean restored = false;
     private int actualState; //Center: 0; Left: 1; Right: 2
+    private int previousState; //Center: 0; Left: 1; Right: 2
 
     private float StartEventX = -1;
     private float StartEventY = -1;
@@ -199,14 +200,14 @@ public class FloatingPanel extends ViewGroup {
 
     public void openLeft(int animationDuration) {
         if (this.fixLeftPanel) {
-            if ((this.focusedView != null) && (this.actualState == 0))
+            if ((this.focusedView != null) && (this.previousState == 0))
                 Keyboard.ShowKeyboard(this.focusedView);
             this.focusedView = null;
 
             return;
         }
 
-        if ((this.focusedView != null) && (this.actualState == 1))
+        if ((this.focusedView != null) && (this.previousState == 1))
             Keyboard.ShowKeyboard(this.focusedView);
         this.focusedView = null;
 
@@ -223,7 +224,7 @@ public class FloatingPanel extends ViewGroup {
     }
 
     public void openRight(int animationDuration) {
-        if ((this.focusedView != null) && (this.actualState == 2))
+        if ((this.focusedView != null) && (this.previousState == 2))
             Keyboard.ShowKeyboard(this.focusedView);
         this.focusedView = null;
 
@@ -240,7 +241,7 @@ public class FloatingPanel extends ViewGroup {
     }
 
     public void close(int animationDuration) {
-        if ((this.focusedView != null) && (this.actualState == 0))
+        if ((this.focusedView != null) && (this.previousState == 0))
             Keyboard.ShowKeyboard(this.focusedView);
         this.focusedView = null;
 
@@ -443,8 +444,10 @@ public class FloatingPanel extends ViewGroup {
                 }
                 velocityTracker.addMovement(ev);
                 if (this.focusedView == null) {
+                    previousState = this.actualState;
                     this.focusedView = this.getRootView().findFocus();
-                    Keyboard.HideKeyboard(this.focusedView);
+                    if (!Keyboard.HideKeyboard(this.focusedView))
+                        this.focusedView = null;
                 }
                 movePanels(x-this.LastEventX);
                 this.LastEventX = x;

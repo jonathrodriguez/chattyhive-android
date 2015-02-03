@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -233,9 +234,12 @@ public class MainChat extends Window {
 
     @Override
     public void Open() {
+        Log.w("MainChat", "Open().Start");
         if (!this.hasContext()) return;
 
+        Log.w("MainChat", "Show window");
         this.Show();
+        Log.w("MainChat", "Open().End");
     }
 
     @Override
@@ -250,41 +254,55 @@ public class MainChat extends Window {
 
     @Override
     public void Show() {
+        Log.w("MainChat", "Show().Start");
         if (!this.hasContext()) return;
 
+        Log.w("MainChat", "Set channel chat if needed.");
         if (this.channelChat == null) {
             this.channelChat = Chat.getChat(this.channelChatID);
             this.channelConversation = this.channelChat.getConversation();
         }
 
+        Log.w("MainChat", "Set conversation if needed.");
         if (this.channelConversation == null)
             this.channelConversation = this.channelChat.getConversation();
 
+        Log.w("MainChat", "Set chatListAdapter if needed.");
         if (this.chatListAdapter == null)
             this.chatListAdapter = new ChatListAdapter(context, this.channelConversation);
 
+        Log.w("MainChat", "Show the view and the actionBar.");
         ViewPair viewPair = ((Main)context).ShowLayout(R.layout.main_panel_chat_layout,R.layout.chat_action_bar);
         this.actionBar = viewPair.getActionBarView();
         this.mainChat = viewPair.getMainView();
+
+        Log.w("MainChat", "Remember the textInput and set click listener for send button.");
         this.textInput = ((TextView)mainChat.findViewById(R.id.main_panel_chat_textBox));
         this.mainChat.findViewById(R.id.main_panel_chat_send_icon).setOnClickListener(this.send_button_click);
 
+        Log.w("MainChat", "Load action bar data.");
         this.loadActionBarData();
 
+        Log.w("MainChat", "Close lateral panels if open.");
         if (((Main)context).floatingPanel.isOpen())
             ((Main)context).floatingPanel.close();
 
+        Log.w("MainChat", "Establish list adapter.");
         ((ListView)mainChat.findViewById(R.id.main_panel_chat_message_list)).setAdapter(chatListAdapter);
 
+        Log.w("MainChat", "Subscribe to conversation changes.");
         this.channelConversation.MessageListModifiedEvent.add(new EventHandler<EventArgs>(this.chatListAdapter,"OnAddItem",EventArgs.class));
 
+        Log.w("MainChat", "Set bottom bar left icon.");
         if(((TextView)mainChat.findViewById(R.id.main_panel_chat_textBox)).didTouchFocusSelect()){////????????????????????????????????????
             ((ImageView)mainChat.findViewById(R.id.main_panel_chat_smyles_icon)).setBackgroundResource(R.drawable.launcher_launcher_a);
         }else{
             ((ImageView)mainChat.findViewById(R.id.main_panel_chat_smyles_icon)).setBackgroundResource(R.drawable.chats_attachment3);
         }
 
+        Log.w("MainChat", "Notify core that channel conversation window is active.");
         this.channelConversation.setChatWindowActive(true);
+        Log.w("MainChat", "Show().End");
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.chattyhive.chattyhive.framework.Util;
 
 import android.app.Activity;
 import android.content.Context;
+import android.inputmethodservice.InputMethodService;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
@@ -19,22 +20,22 @@ public class Keyboard {
             //inputManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
         //}
     }
-    public static void HideKeyboard(View view) {
-        if (view == null) return;
+    public static boolean HideKeyboard(View view) {
+        if (view == null) return false;
 
-        view.clearFocus();
+        //view.clearFocus();
 
-        //InputMethodManager inputManager = (InputMethodManager) view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-        //inputManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        InputMethodManager inputManager = (InputMethodManager) view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        return inputManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
     public static void ShowKeyboard(View view) {
         if (view == null) return;
 
-        view.requestFocusFromTouch();
+        //view.requestFocusFromTouch();
 
-        //if (view.requestFocus()) {
-        //    InputMethodManager imm = (InputMethodManager)view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-        //    imm.showSoftInput(view, 0);
-        //}
+        if (view.requestFocus()) {
+            InputMethodManager inputManager = (InputMethodManager)view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputManager.showSoftInput(view, 0);
+        }
     }
 }

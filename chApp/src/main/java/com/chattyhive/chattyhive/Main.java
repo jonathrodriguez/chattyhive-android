@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -56,14 +57,17 @@ public class Main extends Activity {
     int lastOpenHierarchyLevel;
 
     void OpenWindow(Window window) {
+        Log.w("Main", "OpenWindow(Window).Start");
         OpenWindow(window,window.getHierarchyLevel());
+        Log.w("Main", "OpenWindow(Window).End");
     }
     void OpenWindow(Window window,Integer hierarchyLevel) {
+        Log.w("Main", "OpenWindow(Window,Integer).Start");
         if (hierarchyLevel > (this.lastOpenHierarchyLevel+1))
             throw new IllegalArgumentException("Expected at most one level over the last open hierarchy level");
-
+        Log.w("Main", "HideKeyboard");
         Keyboard.HideKeyboard(this);
-
+        Log.w("Main", "Close/Hide other windows.");
         if (this.lastOpenHierarchyLevel > -1) {
             if (hierarchyLevel < this.lastOpenHierarchyLevel) {
                 for (int i = this.lastOpenHierarchyLevel; i > hierarchyLevel; i--) {
@@ -76,18 +80,19 @@ public class Main extends Activity {
                 this.viewStack.get(this.lastOpenHierarchyLevel).Hide();
             }
         }
-
+        Log.w("Main", "Adjust hierarchy level.");
         if (hierarchyLevel != window.getHierarchyLevel())
             window.setHierarchyLevel(hierarchyLevel);
-
+        Log.w("Main", "Put window in viewStack.");
         this.viewStack.put(hierarchyLevel,window);
-
+        Log.w("Main", "Remember hierarchy level.");
         this.lastOpenHierarchyLevel = hierarchyLevel;
-
+        Log.w("Main", "Set context if needed.");
         if ((!window.hasContext()) || (window.context != this))
             window.setContext(this);
-
+        Log.w("Main", "Open window.");
         window.Open();
+        Log.w("Main", "OpenWindow(Window,Integer).End");
     }
 
     void Close() {

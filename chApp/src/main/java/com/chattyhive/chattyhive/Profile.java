@@ -26,6 +26,7 @@ import com.chattyhive.backend.util.events.CommandCallbackEventArgs;
 import com.chattyhive.backend.util.events.EventArgs;
 import com.chattyhive.backend.util.events.EventHandler;
 import com.chattyhive.backend.util.formatters.DateFormatter;
+import com.chattyhive.chattyhive.framework.Util.Keyboard;
 import com.chattyhive.chattyhive.framework.Util.StaticMethods;
 import com.chattyhive.chattyhive.framework.Util.ViewPair;
 import com.google.gson.JsonParser;
@@ -150,6 +151,7 @@ public class Profile extends Window {
         // write 'this' to 'out'...
         out.writeObject(this.profileType);
         out.writeObject(this.profileViewType);
+
         if (this.user.isMe())
             out.writeUTF(this.user.toJson(new LOCAL_USER_PROFILE()).toString());
         else
@@ -1386,6 +1388,8 @@ public class Profile extends Window {
                 }
             }
 
+            Keyboard.HideKeyboard(((Activity)context));
+
             profileView.findViewById(R.id.edit_profile_status).setVisibility(View.GONE);
             statusMessageView.setVisibility(View.VISIBLE);
             statusMessageEdit.removeTextChangedListener(edit_status_changed);
@@ -1470,7 +1474,9 @@ public class Profile extends Window {
                 modifiedUser.getUserPrivateProfile().setLastName(lastName.getText().toString());
             }
 
-            ((TextView)profileView.findViewById(R.id.profile_full_name_value)).setText(String.format("%s %s", modifiedUser.getUserPrivateProfile().getFirstName(), modifiedUser.getUserPrivateProfile().getLastName()));
+            Keyboard.HideKeyboard(((Activity)context));
+
+            ((TextView) profileView.findViewById(R.id.profile_full_name_value)).setText(String.format("%s %s", modifiedUser.getUserPrivateProfile().getFirstName(), modifiedUser.getUserPrivateProfile().getLastName()));
 
             profileView.findViewById(R.id.edit_profile_full_name).setVisibility(View.GONE);
             profileView.findViewById(R.id.profile_full_name).setVisibility(View.VISIBLE);
