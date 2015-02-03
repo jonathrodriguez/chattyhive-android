@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 /**
  * Created by J.Guzmán on 24/09/2014.
@@ -17,6 +18,9 @@ public class RightPanelExpandableListAdapter extends BaseExpandableListAdapter {
     public LayoutInflater inflater;
     public Activity activity;
     private short expanded;
+    private boolean friends = true;
+    private boolean hivemates = true;
+    private boolean notifications = true;
 
     public RightPanelExpandableListAdapter(Activity act, SparseArray<RightPanelListItem> group) {
         activity = act;
@@ -142,18 +146,45 @@ public class RightPanelExpandableListAdapter extends BaseExpandableListAdapter {
 
             convertView.findViewById(R.id.menu_layout_logout).setOnClickListener(((Main) activity).logout_button_click);
 
-            convertView.findViewById(R.id.menu_friends_checkbox).setOnClickListener(new View.OnClickListener() {
+            convertView.findViewById(R.id.menu_bell).setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-                    ((ImageView)v.findViewById(R.id.menu_friends_checkbox)).setImageResource(R.drawable.menu_white_tick_deactivated_grey);
+                    if (notifications == true) {
+                        ((ImageView) v.findViewById(R.id.menu_bell_img)).setImageResource(R.drawable.menu_notificaciones_off_blanco);
+                        (((View)v.getParent().getParent()).findViewById(R.id.menu_check_buttons)).setVisibility(View.GONE);
+                        (((View)v.getParent().getParent()).findViewById(R.id.menu_notificaciones_off)).setVisibility(View.VISIBLE);
+                        notifications = false;
+                    }
+                    else if (notifications == false) {
+                        ((ImageView) v.findViewById(R.id.menu_bell_img)).setImageResource(R.drawable.menu_notificaciones_on_blanco);
+                        (((View)v.getParent().getParent()).findViewById(R.id.menu_check_buttons)).setVisibility(View.VISIBLE);
+                        (((View)v.getParent().getParent()).findViewById(R.id.menu_notificaciones_off)).setVisibility(View.GONE);
+                        notifications = true;
+                    }
                 }
             });
-            convertView.findViewById(R.id.menu_hivemates_checkbox).setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    //if (!((ImageView)v.findViewById(R.id.menu_hivemates_checkbox)).isActivated()) {
-                        //((ImageView) v.findViewById(R.id.menu_hivemates_checkbox)).setActivated(true);
-                        ((ImageView) v.findViewById(R.id.menu_hivemates_checkbox)).setImageResource(R.drawable.menu_white_tick_deactivated_grey);
-                    //}
 
+            convertView.findViewById(R.id.menu_friends).setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    if (friends == true) {
+                        ((ImageView) v.findViewById(R.id.menu_friends_checkbox)).setImageResource(R.drawable.menu_white_tick_deactivated_grey);
+                        friends = false;
+                    }
+                    else if (friends == false) {
+                        ((ImageView) v.findViewById(R.id.menu_friends_checkbox)).setImageResource(R.drawable.menu_white_tick_activated_grey);
+                        friends = true;
+                    }
+                }
+            });
+            convertView.findViewById(R.id.menu_hivemates).setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    if (hivemates == true) {
+                        ((ImageView) v.findViewById(R.id.menu_hivemates_checkbox)).setImageResource(R.drawable.menu_white_tick_deactivated_grey);
+                        hivemates = false;
+                    }
+                    else if (hivemates == false) {
+                        ((ImageView) v.findViewById(R.id.menu_hivemates_checkbox)).setImageResource(R.drawable.menu_white_tick_activated_grey);
+                        hivemates = true;
+                    }
                 }
             });
         }
