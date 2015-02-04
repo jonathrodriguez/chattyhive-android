@@ -15,7 +15,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.chattyhive.backend.Controller;
-import com.chattyhive.backend.StaticParameters;
 import com.chattyhive.backend.businessobjects.Image;
 import com.chattyhive.backend.businessobjects.Users.User;
 import com.chattyhive.backend.contentprovider.formats.COMMON;
@@ -31,7 +30,6 @@ import com.chattyhive.chattyhive.framework.CustomViews.ViewGroup.SlidingStepsLay
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Array;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -67,18 +65,20 @@ public class Register extends Activity {
 
     TextView birthdayView;
     String birthday;
+
+    //Locations
     int locationStep = 0;
     int locationIndex = -1;
-    String locationString;
-
     private String[] countries;
     private String[] region;
     private String[] city;
     private String[] titles;
     private ArrayList<String[]> regions;
     private ArrayList<String[]> cities;
+    private String locationString = null;
 
-    private ArrayList<String> mSelectedItems;
+    //Languages
+    private ArrayList<String> selectedLanguages;
     String[] languages;
 
     @Override
@@ -92,7 +92,6 @@ public class Register extends Activity {
 
         this.layout = ((SlidingStepsLayout)findViewById(R.id.slidingsteps));
         this.layout.setOnInflateLayoutListener(onInflateLayoutListener);
-        this.layout.setOnRemoveLayoutListener(onRemoveLayoutListener);
         this.layout.setOnTransitionListener(onTransitionListener);
 
         Intent intent = this.getIntent();
@@ -188,7 +187,8 @@ public class Register extends Activity {
                         ((ImageView)findViewById(R.id.register_first_step_female_radio_image)).setImageResource(R.drawable.registro_selector);
                     }
 
-                    //((TextView)view.findViewById(R.id.register_first_step_location_textView)).setText(newUser.getUserPrivateProfile().getLocation());
+                    if ((newUser.getUserPrivateProfile().getLocation() != null) && (!newUser.getUserPrivateProfile().getLocation().isEmpty()))
+                        ((TextView)view.findViewById(R.id.register_first_step_location_textView)).setText(newUser.getUserPrivateProfile().getLocation());
 
                     String langs = "";
                     if ((newUser.getUserPrivateProfile().getLanguages() != null) && (newUser.getUserPrivateProfile().getLanguages().size() > 0))
@@ -338,13 +338,6 @@ public class Register extends Activity {
         });
     }
 
-    public OnRemoveLayoutListener onRemoveLayoutListener = new OnRemoveLayoutListener() {
-        @Override
-        public void OnRemove(View view) {
-
-        }
-    };
-
     private View.OnClickListener date = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -385,6 +378,29 @@ public class Register extends Activity {
         return null;
     }
 
+    @Override
+    protected void onPrepareDialog(int id, Dialog dialog) {
+        super.onPrepareDialog(id, dialog);
+        switch (id) {
+            case LOCATION_DIALOG1_ID:
+                ((AlertDialog)dialog).setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        removeDialog(LOCATION_DIALOG1_ID);
+                    }
+                });
+                break;
+            case LOCATION_DIALOG2_ID:
+                ((AlertDialog)dialog).setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        removeDialog(LOCATION_DIALOG2_ID);
+                    }
+                });
+                break;
+        }
+    }
+
     private void getLanguages(){
         languages = new String[4];
         languages[0] = "English";
@@ -394,36 +410,30 @@ public class Register extends Activity {
     }
 
     public Dialog languagesDialog(){
-        mSelectedItems = new ArrayList();  // Where we track the selected items
+        selectedLanguages = new ArrayList();  // Where we track the selected items
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         getLanguages();
         builder.setTitle("Select your languages")
-                // Specify the list array, the items to be selected by default (null for none),
-                // and the listener through which to receive callbacks when items are selected
                 .setMultiChoiceItems(languages, null,
                         new DialogInterface.OnMultiChoiceClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which, boolean isChecked) {
                                 if (isChecked) {
-                                    // If the user checked the item, add it to the selected items
-                                    mSelectedItems.add(languages[which]);
-                                } else if (mSelectedItems.contains(languages[which])) {
-                                    // Else, if the item is already in the array, remove it
-                                    mSelectedItems.remove(languages[which]);
+                                    selectedLanguages.add(languages[which]);
+                                } else if (selectedLanguages.contains(languages[which])) {
+                                    selectedLanguages.remove(languages[which]);
                                 }
                             }
                         })
-                        // Set the action buttons
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-                        // User clicked OK, so save the mSelectedItems results somewhere
-                        // or return them to the component that opened the dialog
-                        if (mSelectedItems.size() != 0) {
-                            String languagesString = mSelectedItems.get(0);
-                            for (int i = 1; i < mSelectedItems.size(); i++) {
-                                languagesString = languagesString +", "+mSelectedItems.get(i);
+                        if (selectedLanguages.size() != 0) {
+                            String languagesString = selectedLanguages.get(0);
+                            for (int i = 1; i < selectedLanguages.size(); i++) {
+                                languagesString = languagesString + ", " + selectedLanguages.get(i);
                             }
+                            newUser.getUserPrivateProfile().setLanguages(selectedLanguages);
                             ((TextView) findViewById(R.id.register_first_step_languages_textView)).setText(languagesString);
                         }
                     }
@@ -524,7 +534,6 @@ public class Register extends Activity {
             month = selectedMonth;
             day = selectedDay;
 
-            // set selected date into textview
             birthdayView.setText(new StringBuilder().append(day)
                     .append("/").append(month + 1).append("/").append(year)
                     .append(" "));

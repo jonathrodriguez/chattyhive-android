@@ -222,6 +222,7 @@ public class Message implements Comparable {
         for (Format format : eventArgs.getReceivedFormats()) {
             if (format instanceof MESSAGE_ACK) {
                 this.fromFormat(format);
+
             }
         }
     }
