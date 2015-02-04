@@ -288,18 +288,17 @@ public class ExploreListAdapter extends BaseAdapter implements AbsListView.OnScr
                 LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         params.setMargins(3, 3, 3, 3);
         if (tagsArray != null || tagsArray.length > 0) {
-            ((LinearLayout)convertView.findViewById(R.id.explore_list_item_expanded_tags_layout)).setVisibility(View.VISIBLE);
+            convertView.findViewById(R.id.explore_list_item_expanded_tags_layout).setVisibility(View.VISIBLE);
             holder.expanded_hive_tagsLayout.removeAllViews();
             holder.expanded_hive_tagsLayout.invalidate();
             for (int i = 0; i < tagsArray.length; i++) {
-                //System.out.println(i+" "+tagsArray[i]);
                 LinearLayout textContainer = new LinearLayout(context);
                 textContainer.setLayoutParams(params);
                 TextView tv = new TextView(context);
                 tv.setLayoutParams(params);
                 tv.setBackgroundResource(R.drawable.explore_tags_border);
                 tv.setText(tagsArray[i]);
-                tv.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12);
+                tv.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
                 tv.setTextColor(Color.BLACK);
                 textContainer.addView(tv);
                 holder.expanded_hive_tagsLayout.addView(textContainer);
@@ -307,7 +306,7 @@ public class ExploreListAdapter extends BaseAdapter implements AbsListView.OnScr
             holder.expanded_hive_tagsLayout.requestLayout();
         }
         if (tagsArray.length == 0){
-            ((LinearLayout)convertView.findViewById(R.id.explore_list_item_expanded_tags_layout)).setVisibility(View.GONE);
+            convertView.findViewById(R.id.explore_list_item_expanded_tags_layout).setVisibility(View.GONE);
         }
 
         holder.expanded_hiveImage.setImageResource(R.drawable.pestanha_chats_public_chat);

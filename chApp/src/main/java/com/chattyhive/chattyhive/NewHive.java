@@ -22,6 +22,7 @@ import com.chattyhive.backend.util.events.CommandCallbackEventArgs;
 import com.chattyhive.backend.util.events.EventHandler;
 import com.chattyhive.chattyhive.util.Category;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -144,13 +145,13 @@ public class NewHive extends Activity{
             //SELECCIÓN DE TAGS
             //TODO: Sustituir esto por una lista de tags a asociar al hive.
 
-            TreeSet<String> tags = new TreeSet<String>();
+            ArrayList<String> tags = new ArrayList<String>();
             String[] tags_tmp;
             String tags_string = ((TextView)findViewById(R.id.new_hive_tags)).getText().toString();
             tags_tmp = tags_string.split("[, ]+");
             if (tags_tmp.length > 0) {
                 for (String tag : tags_tmp)
-                    if ((tag != null) && (!tag.isEmpty()))
+                    if ((tag != null) && (!tag.isEmpty()) && (!tags.contains(tag)))
                         tags.add(tag);
             }
             if (tags.size() > 0)
@@ -341,6 +342,7 @@ public class NewHive extends Activity{
                             @Override
                             public void onClick(DialogInterface dialog, int id) {
                                 if (selectedLanguages.size() != 0) {
+                                    ((TextView)findViewById(R.id.new_hive_languages_text)).setVisibility(View.GONE);
                                     ((LinearLayout)findViewById(R.id.new_hive_languages_layout)).setVisibility(View.VISIBLE);
                                     WrapLayout expanded_hive_tagsLayout = (WrapLayout) findViewById(R.id.explore_wrap_layout_tags);
                                     LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
@@ -356,7 +358,7 @@ public class NewHive extends Activity{
                                         tv.setLayoutParams(params);
                                         tv.setBackgroundResource(R.drawable.explore_tags_border);
                                         tv.setText(selectedLanguages.get(i));
-                                        tv.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12);
+                                        tv.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
                                         tv.setTextColor(Color.BLACK);
                                         textContainer.addView(tv);
                                         expanded_hive_tagsLayout.addView(textContainer);
@@ -367,6 +369,7 @@ public class NewHive extends Activity{
                                     ((LinearLayout)findViewById(R.id.new_hive_languages_layout)).setVisibility(View.GONE);
                                     expanded_hive_tagsLayout.removeAllViews();
                                     expanded_hive_tagsLayout.invalidate();
+                                    ((TextView)findViewById(R.id.new_hive_languages_text)).setVisibility(View.VISIBLE);
                                 }
                                 verify();
                             }
