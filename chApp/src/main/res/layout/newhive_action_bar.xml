@@ -36,7 +36,7 @@
             android:maxLines="1"
             android:text="nuevo hive"
             android:textColor="@android:color/white"
-            android:textSize="32dp" />
+            android:textSize="@dimen/new_hive_title_text" />
 
         <LinearLayout
             android:layout_width="wrap_content"

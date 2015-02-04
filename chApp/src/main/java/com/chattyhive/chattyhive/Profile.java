@@ -74,10 +74,12 @@ public class Profile extends Window {
 
     private ArrayList<String> selectedLanguages;
     String[] languages;
+    boolean[] languagesSelection = null;
 
     public Profile(Context context) {
         super(context);
         this.setHierarchyLevel(ProfileHierarchyLevel);
+        getLanguages();
     }
 
     @Override
@@ -634,7 +636,7 @@ public class Profile extends Window {
         @Override
         public void onClick(View v) {
             System.out.println("LANG");
-            getLanguages();
+            //getLanguages();
             Dialog dialogN = onCreateDialog(LANGUAGE_DIALOG_ID);
             dialogN.show();
         }
@@ -671,22 +673,30 @@ public class Profile extends Window {
         languages[1] = "French";
         languages[2] = "Spanish";
         languages[3] = "Turkish";
+        languagesSelection = new boolean[4];
+        selectedLanguages = new ArrayList();  // Where we track the selected items
     }
 
     public Dialog languagesDialog(){
 
-        selectedLanguages = new ArrayList();  // Where we track the selected items
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        getLanguages();
         builder.setTitle("Select your languages")
-                .setMultiChoiceItems(languages, null,
+                .setMultiChoiceItems(languages, languagesSelection,
                         new DialogInterface.OnMultiChoiceClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which, boolean isChecked) {
                                 if (isChecked) {
                                     selectedLanguages.add(languages[which]);
+                                    languagesSelection[which] = isChecked;
+                                    System.out.println(isChecked);
                                 } else if (selectedLanguages.contains(languages[which])) {
                                     selectedLanguages.remove(languages[which]);
+                                    languagesSelection[which] = isChecked;
+                                    for (int i = 0; i <selectedLanguages.size() ; i++) {
+                                        System.out.println(selectedLanguages.get(i));
+                                    }
+                                    System.out.println(languages[which]);
+                                    System.out.println(isChecked);
                                 }
                             }
                         })
@@ -701,6 +711,10 @@ public class Profile extends Window {
                             modifiedUser.getUserPublicProfile().setLanguages(selectedLanguages);
                             modifiedUser.getUserPrivateProfile().setLanguages(selectedLanguages);
                             ((TextView) ((Activity)context).findViewById(R.id.profile_information_languages_value)).setText(languagesString);
+                        } else if (selectedLanguages.size() == 0){
+                            modifiedUser.getUserPublicProfile().setLanguages(selectedLanguages);
+                            modifiedUser.getUserPrivateProfile().setLanguages(selectedLanguages);
+                            ((TextView) ((Activity)context).findViewById(R.id.profile_information_languages_value)).setText("");
                         }
                     }
                 })

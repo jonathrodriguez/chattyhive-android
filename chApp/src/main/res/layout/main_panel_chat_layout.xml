@@ -34,10 +34,12 @@
             android:gravity="center">
         <ImageView
             android:id="@+id/main_panel_chat_smyles_icon"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="wrap_content"
+            android:layout_height="25dp"
             android:layout_gravity="center"
-            android:src="@drawable/chats_isotipo_puro_recto_01" />
+            android:src="@drawable/chats_isotipo_puro_recto_01"
+            android:adjustViewBounds="true"
+            android:scaleType="centerInside" />
         </LinearLayout>
         <EditText
             android:id="@+id/main_panel_chat_textBox"
@@ -53,7 +55,7 @@
             android:paddingLeft="5dp"
             android:textColor="#111111"
             android:textColorHint="#808080"
-            android:textCursorDrawable="@null"
+            android:textCursorDrawable="@drawable/color_cursor"
             android:textSize="14.5dp" />
 
         <LinearLayout

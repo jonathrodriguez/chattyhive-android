@@ -20,6 +20,7 @@ import com.chattyhive.backend.util.events.CommandCallbackEventArgs;
 import com.chattyhive.backend.util.events.EventHandler;
 import com.chattyhive.chattyhive.util.Category;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -138,13 +139,13 @@ public class NewHive extends Activity{
             //SELECCIÓN DE TAGS
             //TODO: Sustituir esto por una lista de tags a asociar al hive.
 
-            TreeSet<String> tags = new TreeSet<String>();
+            ArrayList<String> tags = new ArrayList<String>();
             String[] tags_tmp;
             String tags_string = ((TextView)findViewById(R.id.new_hive_tags)).getText().toString();
             tags_tmp = tags_string.split("[, ]+");
             if (tags_tmp.length > 0) {
                 for (String tag : tags_tmp)
-                    if ((tag != null) && (!tag.isEmpty()))
+                    if ((tag != null) && (!tag.isEmpty()) && (!tags.contains(tag)))
                         tags.add(tag);
             }
             if (tags.size() > 0)
