@@ -1217,8 +1217,7 @@ public class Profile extends Window {
         this.adjustView();
         this.setData();
 
-        //TODO: Uncomment this to lock floating panel when editing profile;
-        //((Main)context).floatingPanel.setAllowSwipeToMovePanels(false);
+        ((Main)context).floatingPanel.setAllowSwipeToMovePanels(false);
     }
 
     protected View.OnClickListener edit_button_click = new View.OnClickListener() {

@@ -209,22 +209,22 @@ public class FloatingPanel extends ViewGroup {
 
     public void openLeft() {
         if (this.fixLeftPanel) return;
-        Keyboard.HideKeyboard(this.getRootView().findFocus());
+        //Keyboard.HideKeyboard(this.getRootView().findFocus());
         openLeft(this.buttonPressedAnimationDuration);
     }
 
     public void openLeft(int animationDuration) {
         if (this.fixLeftPanel) {
-            if ((this.focusedView != null) && (this.previousState == 0))
+           /* if ((this.focusedView != null) && (this.previousState == 0))
                 Keyboard.ShowKeyboard(this.focusedView);
-            this.focusedView = null;
+            this.focusedView = null;*/
 
             return;
         }
 
-        if ((this.focusedView != null) && (this.previousState == 1))
+       /* if ((this.focusedView != null) && (this.previousState == 1))
             Keyboard.ShowKeyboard(this.focusedView);
-        this.focusedView = null;
+        this.focusedView = null;*/
 
         float leftWidth = mainPanels.get("left").getMeasuredWidth();
         int leftMargin = ((LayoutParams)mainPanels.get("left").getLayoutParams()).leftMargin;
@@ -234,14 +234,14 @@ public class FloatingPanel extends ViewGroup {
     }
 
     public void openRight() {
-        Keyboard.HideKeyboard(this.getRootView().findFocus());
+        //Keyboard.HideKeyboard(this.getRootView().findFocus());
         openRight(this.buttonPressedAnimationDuration);
     }
 
     public void openRight(int animationDuration) {
-        if ((this.focusedView != null) && (this.previousState == 2))
+        /*if ((this.focusedView != null) && (this.previousState == 2))
             Keyboard.ShowKeyboard(this.focusedView);
-        this.focusedView = null;
+        this.focusedView = null;*/
 
         float rightWidth = mainPanels.get("right").getMeasuredWidth();
         int leftMargin = ((LayoutParams)mainPanels.get("right").getLayoutParams()).leftMargin;
@@ -251,14 +251,14 @@ public class FloatingPanel extends ViewGroup {
     }
 
     public void close() {
-        Keyboard.HideKeyboard(this.getRootView().findFocus());
+        //Keyboard.HideKeyboard(this.getRootView().findFocus());
         close(this.buttonPressedAnimationDuration);
     }
 
     public void close(int animationDuration) {
-        if ((this.focusedView != null) && (this.previousState == 0))
+        /*if ((this.focusedView != null) && (this.previousState == 0))
             Keyboard.ShowKeyboard(this.focusedView);
-        this.focusedView = null;
+        this.focusedView = null;*/
 
         movePanels(-actualPosition,animationDuration);
     }
@@ -458,12 +458,12 @@ public class FloatingPanel extends ViewGroup {
                     }
                 }
                 velocityTracker.addMovement(ev);
-                if (this.focusedView == null) {
+                /*if (this.focusedView == null) {
                     previousState = this.actualState;
                     this.focusedView = this.getRootView().findFocus();
                     if (!Keyboard.HideKeyboard(this.focusedView))
                         this.focusedView = null;
-                }
+                }*/
                 movePanels(x-this.LastEventX);
                 this.LastEventX = x;
                 break;
@@ -603,16 +603,24 @@ public class FloatingPanel extends ViewGroup {
         switch (actualState) {
             case 0:
                 actualPosition = 0;
+                if (previousState != actualState)
+                    Keyboard.HideKeyboard(this.getRootView().findFocus());
                 break;
             case 1:
                 actualPosition = leftBound;
+                if (previousState != actualState)
+                    Keyboard.HideKeyboard(this.getRootView().findFocus());
                 this.mainPanelCover.setVisibility(VISIBLE);
                 break;
             case 2:
                 actualPosition = rightBound;
+                if (previousState != actualState)
+                    Keyboard.HideKeyboard(this.getRootView().findFocus());
                 this.mainPanelCover.setVisibility(VISIBLE);
                 break;
         }
+
+        this.previousState = actualState;
 
         invalidate();
         requestLayout();
@@ -1060,6 +1068,7 @@ public class FloatingPanel extends ViewGroup {
         super.onRestoreInstanceState(savedState.getSuperState());
 
         actualState = savedState.actualState;
+        previousState = actualState;
         if (changedAllowSwipeToMovePanels = savedState.changedAllowSwipeToMovePanels)
             allowSwipeToMovePanels = savedState.allowSwipeToMovePanels;
         restored = true;
