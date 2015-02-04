@@ -288,18 +288,17 @@ public class ExploreListAdapter extends BaseAdapter implements AbsListView.OnScr
                 LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         params.setMargins(3, 3, 3, 3);
         if (tagsArray != null || tagsArray.length > 0) {
-            ((LinearLayout)convertView.findViewById(R.id.explore_list_item_expanded_tags_layout)).setVisibility(View.VISIBLE);
+            convertView.findViewById(R.id.explore_list_item_expanded_tags_layout).setVisibility(View.VISIBLE);
             holder.expanded_hive_tagsLayout.removeAllViews();
             holder.expanded_hive_tagsLayout.invalidate();
             for (int i = 0; i < tagsArray.length; i++) {
-                //System.out.println(i+" "+tagsArray[i]);
                 LinearLayout textContainer = new LinearLayout(context);
                 textContainer.setLayoutParams(params);
                 TextView tv = new TextView(context);
                 tv.setLayoutParams(params);
                 tv.setBackgroundResource(R.drawable.explore_tags_border);
                 tv.setText(tagsArray[i]);
-                tv.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12);
+                tv.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
                 tv.setTextColor(Color.BLACK);
                 textContainer.addView(tv);
                 holder.expanded_hive_tagsLayout.addView(textContainer);
@@ -307,11 +306,11 @@ public class ExploreListAdapter extends BaseAdapter implements AbsListView.OnScr
             holder.expanded_hive_tagsLayout.requestLayout();
         }
         if (tagsArray.length == 0){
-            ((LinearLayout)convertView.findViewById(R.id.explore_list_item_expanded_tags_layout)).setVisibility(View.GONE);
+            convertView.findViewById(R.id.explore_list_item_expanded_tags_layout).setVisibility(View.GONE);
         }
 
-        holder.expanded_hiveImage.setImageResource(R.drawable.pestanha_chats_public_chat);
-        holder.collapsed_hiveImage.setImageResource(R.drawable.pestanha_chats_public_chat);
+        holder.expanded_hiveImage.setImageResource(R.drawable.default_hive_image);
+        holder.collapsed_hiveImage.setImageResource(R.drawable.default_hive_image);
         try {
             hive.getHiveImage().OnImageLoaded.add(new EventHandler<EventArgs>(holder, "loadCollapsedHiveImage", EventArgs.class));
             hive.getHiveImage().OnImageLoaded.add(new EventHandler<EventArgs>(holder, "loadExpandedHiveImage", EventArgs.class));
@@ -319,35 +318,14 @@ public class ExploreListAdapter extends BaseAdapter implements AbsListView.OnScr
             hive.getHiveImage().loadImage(Image.ImageSize.large, 0);
         } catch (Exception e) { }
 
-       /*if ((position == (this.getCount()-1)) && (this.moreItems)) {
-            ((Explore)this.context).GetMoreHives();
-        }*/
-
-        View.OnClickListener join_button_click = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //System.out.println("join!!!!");
-                //String hiveNameURL =((String) ((TextView)v.findViewById(R.id.explore_list_item_name)).getTag());
-                //controller.JoinHive(hiveNameURL);
-
-                ViewHolder holder = (ViewHolder)v.getTag(R.id.Explore_ListViewHolder);
-
-                //joined_hives.add(position);
-
-                ((View)v.getParent()).findViewById(R.id.explore_chat_button2).setVisibility(View.VISIBLE);
-                v.findViewById(R.id.explore_join_button).setVisibility(View.GONE);
-                controller.JoinHive(holder.hive);
-            }
-        };
-
-        if (!joined_hives.containsKey(hive.getNameUrl())) {
-            convertView.findViewById(R.id.explore_join_button).setVisibility(View.VISIBLE);
-            convertView.findViewById(R.id.explore_joining_frame).setVisibility(View.GONE);
-            convertView.findViewById(R.id.explore_chat_button2).setVisibility(View.GONE);
-        } else if (joined_hives.get(hive.getNameUrl())) {
+        if (((Hive.getHiveCount() > 0) && (Hive.isHiveJoined(hive.getNameUrl()))) || ((joined_hives.containsKey(hive.getNameUrl())) && (joined_hives.get(hive.getNameUrl())))) {
             convertView.findViewById(R.id.explore_join_button).setVisibility(View.GONE);
             convertView.findViewById(R.id.explore_joining_frame).setVisibility(View.GONE);
             convertView.findViewById(R.id.explore_chat_button2).setVisibility(View.VISIBLE);
+        } else if (!joined_hives.containsKey(hive.getNameUrl())) {
+            convertView.findViewById(R.id.explore_join_button).setVisibility(View.VISIBLE);
+            convertView.findViewById(R.id.explore_joining_frame).setVisibility(View.GONE);
+            convertView.findViewById(R.id.explore_chat_button2).setVisibility(View.GONE);
         } else {
             convertView.findViewById(R.id.explore_join_button).setVisibility(View.GONE);
             convertView.findViewById(R.id.explore_joining_frame).setVisibility(View.VISIBLE);

@@ -75,6 +75,7 @@ public class Explore extends Activity {
 
     private void Initialize(){
         Log.w("Explore","Initialize()");
+
         this.LRU_date = new TreeMap<Date, Integer>();
         this.LRU_step = new TreeMap<Integer, Date>();
 
@@ -217,18 +218,19 @@ public class Explore extends Activity {
         public void onClick(View v) {
             Hive hive = (Hive)v.getTag(R.id.BO_Hive);
 
-            if (!joined_hives.containsKey(hive.getNameUrl())) {
+            if (((Hive.getHiveCount() > 0) && (Hive.isHiveJoined(hive.getNameUrl()))) || ((joined_hives.containsKey(hive.getNameUrl())) && (joined_hives.get(hive.getNameUrl())))) {
+                Intent data = new Intent();
+                data.putExtra("NameURL", hive.getNameUrl());
+                setResult(RESULT_OK, data);
+                finish();
+            }
+            else if (!joined_hives.containsKey(hive.getNameUrl())) {
                 controller.JoinHive(hive);
                 joined_hives.put(hive.getNameUrl(),false);
                 if (activeList < 4)
                     exploreListAdapter.get(activeList).notifyDataSetChanged();
                 else if (activeList == 4)
                     exploreFilteredListAdapter.notifyDataSetChanged();
-            } else if (joined_hives.get(hive.getNameUrl())) {
-                Intent data = new Intent();
-                data.putExtra("NameURL", hive.getNameUrl());
-                setResult(RESULT_OK, data);
-                finish();
             }
         }
     };

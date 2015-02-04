@@ -26,6 +26,7 @@ import com.chattyhive.backend.util.events.CommandCallbackEventArgs;
 import com.chattyhive.backend.util.events.EventArgs;
 import com.chattyhive.backend.util.events.EventHandler;
 import com.chattyhive.backend.util.formatters.DateFormatter;
+import com.chattyhive.chattyhive.framework.Util.Keyboard;
 import com.chattyhive.chattyhive.framework.Util.StaticMethods;
 import com.chattyhive.chattyhive.framework.Util.ViewPair;
 import com.google.gson.JsonParser;
@@ -43,12 +44,13 @@ public class Profile extends Window {
     private transient View profileView;
     private transient View actionBar;
 
-    private enum ProfileType {Private, Public}
+    public enum ProfileType {Private, Public}
     private enum ProfileView {Private, Public, Own, Edit}
     private enum ShowInProfile { None, Private, Public, Both}
 
     private transient User user;
     private transient User modifiedUser; //This is for profile edition.
+    private String actionBarSubstring;
     private ProfileType profileType;
     private ProfileView profileViewType;
 
@@ -74,10 +76,25 @@ public class Profile extends Window {
 
     private ArrayList<String> selectedLanguages;
     String[] languages;
+    boolean[] languagesSelection = null;
 
-    public Profile(Context context) {
+    private Profile (Context context) {
         super(context);
         this.setHierarchyLevel(ProfileHierarchyLevel);
+        getLanguages();
+    }
+
+    public Profile(Context context, User user, ProfileType profileType) {
+        this(context);
+        this.user = user;
+        this.profileType = profileType;
+    }
+
+    public Profile(Context context, User user, ProfileType profileType, String actionBarSubstring) {
+        this(context);
+        this.user = user;
+        this.profileType = profileType;
+        this.actionBarSubstring = actionBarSubstring;
     }
 
     @Override
@@ -132,6 +149,8 @@ public class Profile extends Window {
     public void Hide() {
         if (!this.hasContext()) return;
 
+        ((Main)context).floatingPanel.resetAllowSwipeToMovePanels();
+
         this.profileView = null;
         this.actionBar = null;
     }
@@ -150,6 +169,13 @@ public class Profile extends Window {
         // write 'this' to 'out'...
         out.writeObject(this.profileType);
         out.writeObject(this.profileViewType);
+        out.writeUTF(this.actionBarSubstring);
+
+        if (this.user != null)
+            Log.w("Profile.writeObject()","Saving user.");
+        else
+            Log.w("Profile.writeObject()","Saving NULL user.");
+
         if (this.user.isMe())
             out.writeUTF(this.user.toJson(new LOCAL_USER_PROFILE()).toString());
         else
@@ -168,8 +194,15 @@ public class Profile extends Window {
     private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
         this.profileType = (ProfileType) in.readObject();
         this.profileViewType = (ProfileView) in.readObject();
+        this.actionBarSubstring = in.readUTF();
 
         String userS = in.readUTF();
+
+        if ((userS != null) && (!userS.isEmpty()))
+            Log.w("Profile.readObject()","Restoring user.");
+        else
+            Log.w("Profile.readObject()","Restoring NULL user.");
+
         if (!userS.isEmpty()) {
             Format[] formats = Format.getFormat(new JsonParser().parse(userS));
             for (Format format : formats)
@@ -187,29 +220,6 @@ public class Profile extends Window {
                         this.modifiedUser = new User(format);
             }
         }
-    }
-
-    protected View.OnClickListener open_profile = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            OpenProfile(((Main)context).controller.getMe(),ProfileType.Private);
-        }
-    };
-
-
-
-    protected void OpenProfile(User user, ProfileType profileType) {
-        this.user = user;
-        this.profileType = profileType;
-
-        ((Main)this.context).OpenWindow(this);
-    }
-
-    protected void OpenProfile(User user, ProfileType profileType, Integer hierarchyLevel) {
-        this.user = user;
-        this.profileType = profileType;
-
-        ((Main)this.context).OpenWindow(this,hierarchyLevel);
     }
 
     public void loadBigPhoto(Object sender, EventArgs eventArgs) {
@@ -298,6 +308,7 @@ public class Profile extends Window {
                 profileView.findViewById(R.id.profile_edit_full_name).setOnClickListener(null);
                 profileView.findViewById(R.id.profile_edit_full_name).setClickable(false);
                 profileView.findViewById(R.id.profile_public_name).setVisibility(View.VISIBLE);
+                ((TextView)profileView.findViewById(R.id.profile_public_name)).setTextSize(TypedValue.COMPLEX_UNIT_PX,context.getResources().getDimension(R.dimen.my_profile_nickname_text_size_private));
                 profileView.findViewById(R.id.profile_edit_color).setVisibility(View.GONE);
                 //Status
                 profileView.findViewById(R.id.profile_status_message_header).setVisibility(View.GONE);
@@ -356,6 +367,7 @@ public class Profile extends Window {
                 profileView.findViewById(R.id.profile_edit_full_name).setOnClickListener(null);
                 profileView.findViewById(R.id.profile_edit_full_name).setClickable(false);
                 profileView.findViewById(R.id.profile_public_name).setVisibility(View.VISIBLE);
+                ((TextView)profileView.findViewById(R.id.profile_public_name)).setTextSize(TypedValue.COMPLEX_UNIT_PX,context.getResources().getDimension(R.dimen.my_profile_nickname_text_size_public));
                 profileView.findViewById(R.id.profile_edit_color).setVisibility(View.GONE);
                 //Status
                 profileView.findViewById(R.id.profile_status_message_header).setVisibility(View.GONE);
@@ -418,6 +430,7 @@ public class Profile extends Window {
                 profileView.findViewById(R.id.profile_edit_full_name).setOnClickListener(null);
                 profileView.findViewById(R.id.profile_edit_full_name).setClickable(false);
                 profileView.findViewById(R.id.profile_public_name).setVisibility(View.VISIBLE);
+                ((TextView)profileView.findViewById(R.id.profile_public_name)).setTextSize(TypedValue.COMPLEX_UNIT_PX,context.getResources().getDimension(R.dimen.my_profile_nickname_text_size_private));
                 profileView.findViewById(R.id.profile_edit_color).setVisibility(View.GONE);
                 //Status
                 profileView.findViewById(R.id.profile_status_message_header).setVisibility(View.VISIBLE);
@@ -503,6 +516,7 @@ public class Profile extends Window {
                         profileView.findViewById(R.id.profile_edit_full_name).setVisibility(View.VISIBLE);
                         profileView.findViewById(R.id.profile_edit_full_name).setOnClickListener(edit_name_click_listener);
                         profileView.findViewById(R.id.profile_public_name).setVisibility(View.VISIBLE);
+                        ((TextView)profileView.findViewById(R.id.profile_public_name)).setTextSize(TypedValue.COMPLEX_UNIT_PX,context.getResources().getDimension(R.dimen.my_profile_nickname_text_size_private));
                         profileView.findViewById(R.id.profile_edit_color).setVisibility(View.GONE);
                         //Status
                         profileView.findViewById(R.id.profile_status_message_header).setVisibility(View.VISIBLE);
@@ -576,6 +590,7 @@ public class Profile extends Window {
                         profileView.findViewById(R.id.profile_edit_full_name).setOnClickListener(null);
                         profileView.findViewById(R.id.profile_edit_full_name).setClickable(false);
                         profileView.findViewById(R.id.profile_public_name).setVisibility(View.VISIBLE);
+                        ((TextView)profileView.findViewById(R.id.profile_public_name)).setTextSize(TypedValue.COMPLEX_UNIT_PX,context.getResources().getDimension(R.dimen.my_profile_nickname_text_size_public));
                         profileView.findViewById(R.id.profile_edit_color).setVisibility(View.VISIBLE);
                         //Status
                         profileView.findViewById(R.id.profile_status_message_header).setVisibility(View.VISIBLE);
@@ -634,7 +649,7 @@ public class Profile extends Window {
         @Override
         public void onClick(View v) {
             System.out.println("LANG");
-            getLanguages();
+            //getLanguages();
             Dialog dialogN = onCreateDialog(LANGUAGE_DIALOG_ID);
             dialogN.show();
         }
@@ -671,22 +686,30 @@ public class Profile extends Window {
         languages[1] = "French";
         languages[2] = "Spanish";
         languages[3] = "Turkish";
+        languagesSelection = new boolean[4];
+        selectedLanguages = new ArrayList();  // Where we track the selected items
     }
 
     public Dialog languagesDialog(){
 
-        selectedLanguages = new ArrayList();  // Where we track the selected items
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        getLanguages();
         builder.setTitle("Select your languages")
-                .setMultiChoiceItems(languages, null,
+                .setMultiChoiceItems(languages, languagesSelection,
                         new DialogInterface.OnMultiChoiceClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which, boolean isChecked) {
                                 if (isChecked) {
                                     selectedLanguages.add(languages[which]);
+                                    languagesSelection[which] = isChecked;
+                                    System.out.println(isChecked);
                                 } else if (selectedLanguages.contains(languages[which])) {
                                     selectedLanguages.remove(languages[which]);
+                                    languagesSelection[which] = isChecked;
+                                    for (int i = 0; i <selectedLanguages.size() ; i++) {
+                                        System.out.println(selectedLanguages.get(i));
+                                    }
+                                    System.out.println(languages[which]);
+                                    System.out.println(isChecked);
                                 }
                             }
                         })
@@ -701,6 +724,10 @@ public class Profile extends Window {
                             modifiedUser.getUserPublicProfile().setLanguages(selectedLanguages);
                             modifiedUser.getUserPrivateProfile().setLanguages(selectedLanguages);
                             ((TextView) ((Activity)context).findViewById(R.id.profile_information_languages_value)).setText(languagesString);
+                        } else if (selectedLanguages.size() == 0){
+                            modifiedUser.getUserPublicProfile().setLanguages(selectedLanguages);
+                            modifiedUser.getUserPrivateProfile().setLanguages(selectedLanguages);
+                            ((TextView) ((Activity)context).findViewById(R.id.profile_information_languages_value)).setText("");
                         }
                     }
                 })
@@ -850,10 +877,15 @@ public class Profile extends Window {
                     profileView.findViewById(R.id.profile_information_gender).setVisibility(View.GONE);
                 else {
                     profileView.findViewById(R.id.profile_information_gender).setVisibility(View.VISIBLE);
-                    if (user.getUserPrivateProfile().getSex().equalsIgnoreCase("male"))
+                    if (user.getUserPrivateProfile().getSex().equalsIgnoreCase("male")) {
                         ((TextView) profileView.findViewById(R.id.profile_information_gender_value)).setText(R.string.profile_information_gender_male_value);
-                    else
+                        if (user.getUserPrivateProfile().getProfileImage() == null)
+                            ((ImageView) profileView.findViewById(R.id.profile_big_photo_thumbnail)).setImageResource(R.drawable.default_profile_image_male);
+                    } else {
                         ((TextView) profileView.findViewById(R.id.profile_information_gender_value)).setText(R.string.profile_information_gender_female_value);
+                        if (user.getUserPrivateProfile().getProfileImage() == null)
+                            ((ImageView) profileView.findViewById(R.id.profile_big_photo_thumbnail)).setImageResource(R.drawable.default_profile_image_female);
+                    }
                 }
 
                 if ((user.getUserPrivateProfile().getLanguages() == null) || (user.getUserPrivateProfile().getLanguages().isEmpty()))
@@ -953,10 +985,15 @@ public class Profile extends Window {
                     ((TextView) profileView.findViewById(R.id.profile_information_gender_value)).setText("");
                 } else {
                     profileView.findViewById(R.id.profile_information_gender).setVisibility(View.VISIBLE);
-                    if (user.getUserPrivateProfile().getSex().equalsIgnoreCase("male"))
+                    if (user.getUserPrivateProfile().getSex().equalsIgnoreCase("male")) {
                         ((TextView) profileView.findViewById(R.id.profile_information_gender_value)).setText(R.string.profile_information_gender_male_value);
-                    else
+                        if (user.getUserPrivateProfile().getProfileImage() == null)
+                            ((ImageView) profileView.findViewById(R.id.profile_big_photo_thumbnail)).setImageResource(R.drawable.default_profile_image_male);
+                    } else {
                         ((TextView) profileView.findViewById(R.id.profile_information_gender_value)).setText(R.string.profile_information_gender_female_value);
+                        if (user.getUserPrivateProfile().getProfileImage() == null)
+                            ((ImageView) profileView.findViewById(R.id.profile_big_photo_thumbnail)).setImageResource(R.drawable.default_profile_image_female);
+                    }
                 }
 
                 if ((user.getUserPrivateProfile().getLanguages() == null) || (user.getUserPrivateProfile().getLanguages().isEmpty())) {
@@ -1034,10 +1071,15 @@ public class Profile extends Window {
                     ((TextView) profileView.findViewById(R.id.profile_information_gender_value)).setText("");
                 } else {
                     profileView.findViewById(R.id.profile_information_gender).setVisibility(View.VISIBLE);
-                    if (modifiedUser.getUserPrivateProfile().getSex().equalsIgnoreCase("male"))
+                    if (modifiedUser.getUserPrivateProfile().getSex().equalsIgnoreCase("male")) {
                         ((TextView) profileView.findViewById(R.id.profile_information_gender_value)).setText(R.string.profile_information_gender_male_value);
-                    else
+                        if (modifiedUser.getUserPrivateProfile().getProfileImage() == null)
+                            ((ImageView) profileView.findViewById(R.id.profile_big_photo_thumbnail)).setImageResource(R.drawable.default_profile_image_male);
+                    } else {
                         ((TextView) profileView.findViewById(R.id.profile_information_gender_value)).setText(R.string.profile_information_gender_female_value);
+                        if (modifiedUser.getUserPrivateProfile().getProfileImage() == null)
+                            ((ImageView) profileView.findViewById(R.id.profile_big_photo_thumbnail)).setImageResource(R.drawable.default_profile_image_female);
+                    }
                 }
 
                 if ((modifiedUser.getUserPrivateProfile().getLanguages() == null) || (modifiedUser.getUserPrivateProfile().getLanguages().isEmpty())) {
@@ -1188,6 +1230,8 @@ public class Profile extends Window {
 
         this.adjustView();
         this.setData();
+
+        ((Main)context).floatingPanel.setAllowSwipeToMovePanels(false);
     }
 
     protected View.OnClickListener edit_button_click = new View.OnClickListener() {
@@ -1218,6 +1262,8 @@ public class Profile extends Window {
 
         adjustView();
         setData();
+
+        ((Main)context).floatingPanel.resetAllowSwipeToMovePanels();
     }
 
     public void onUpdatedProfile(Object sender,CommandCallbackEventArgs eventArgs) {
@@ -1366,6 +1412,8 @@ public class Profile extends Window {
                 }
             }
 
+            Keyboard.HideKeyboard(((Activity)context));
+
             profileView.findViewById(R.id.edit_profile_status).setVisibility(View.GONE);
             statusMessageView.setVisibility(View.VISIBLE);
             statusMessageEdit.removeTextChangedListener(edit_status_changed);
@@ -1450,7 +1498,9 @@ public class Profile extends Window {
                 modifiedUser.getUserPrivateProfile().setLastName(lastName.getText().toString());
             }
 
-            ((TextView)profileView.findViewById(R.id.profile_full_name_value)).setText(String.format("%s %s", modifiedUser.getUserPrivateProfile().getFirstName(), modifiedUser.getUserPrivateProfile().getLastName()));
+            Keyboard.HideKeyboard(((Activity)context));
+
+            ((TextView) profileView.findViewById(R.id.profile_full_name_value)).setText(String.format("%s %s", modifiedUser.getUserPrivateProfile().getFirstName(), modifiedUser.getUserPrivateProfile().getLastName()));
 
             profileView.findViewById(R.id.edit_profile_full_name).setVisibility(View.GONE);
             profileView.findViewById(R.id.profile_full_name).setVisibility(View.VISIBLE);

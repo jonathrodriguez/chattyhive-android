@@ -90,7 +90,6 @@ public class Register extends Activity {
 
         this.layout = ((SlidingStepsLayout)findViewById(R.id.slidingsteps));
         this.layout.setOnInflateLayoutListener(onInflateLayoutListener);
-        this.layout.setOnRemoveLayoutListener(onRemoveLayoutListener);
         this.layout.setOnTransitionListener(onTransitionListener);
 
         Intent intent = this.getIntent();
@@ -324,13 +323,6 @@ public class Register extends Activity {
             }
         });
     }
-
-    public OnRemoveLayoutListener onRemoveLayoutListener = new OnRemoveLayoutListener() {
-        @Override
-        public void OnRemove(View view) {
-
-        }
-    };
 
     private View.OnClickListener date = new View.OnClickListener() {
         @Override
