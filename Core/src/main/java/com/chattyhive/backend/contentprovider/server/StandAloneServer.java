@@ -525,8 +525,8 @@ public class StandAloneServer {
                     DataProvider dataProvider = DataProvider.GetDataProvider();
                     if (dataProvider != null) {
                         Server server = dataProvider.getServer();
-                        if ((server != null) && (server.getServerUser() != null)) {
-                            String login = server.getServerUser().getLogin();
+                        if ((server != null) && (server.getUserSession() != null)) {
+                            String login = server.getUserSession().getLogin();
                             if ((login != null) && (!login.isEmpty())) {
                                 if ((login.equalsIgnoreCase(receiver.getEmail())) || (login.equalsIgnoreCase(receiver.getUserID()))) {
                                     dataProvider.onChannelEvent(null, new PubSubChannelEventArgs(destination.getChannelUnicode(), "msg", msg.toJson(new MESSAGE()).toString()));
@@ -753,7 +753,7 @@ public class StandAloneServer {
                             result = ExecuteCommand(server, command, Callback, CallbackAdditionalData, retryCount + 1, formats);
                         } else {
                             //TODO: Check COMMON for operation Error and set result here.
-                            server.getServerUser().setStatus(ServerStatus.ERROR);
+                            server.getUserSession().setStatus(ServerStatus.ERROR);
                             System.out.println(String.format("ERROR. Code: %d. Request command: %s. Request URL: %s. Request body: %s",((COMMON) format).ERROR,command.toString(),ServerCommand.GetCommand(command).getUrl(formats),ServerCommand.GetCommand(command).getBodyData(formats)));
                             result = true;
                         }
