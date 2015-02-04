@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/my_profile_action_bar_height"
+    android:background="@drawable/profile_action_bar_shape">
+    <ImageButton
+        android:layout_width="@dimen/my_profile_action_bar_thumbnail_width"
+        android:layout_height="match_parent"
+        android:id="@+id/profile_action_bar_myPhoto_button"
+        android:background="@color/my_profile_action_bar_thumbnail_background"
+        android:src="@drawable/registro_load_picture"
+        android:scaleType="fitXY"
+        android:paddingLeft="@dimen/my_profile_action_bar_thumbnail_padding_left"
+        android:paddingTop="@dimen/my_profile_action_bar_thumbnail_padding_top"
+        android:paddingRight="@dimen/my_profile_action_bar_thumbnail_padding_right"
+        android:paddingBottom="@dimen/my_profile_action_bar_thumbnail_padding_bottom" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:id="@+id/profile_action_bar_menu_clickable"
+        android:layout_weight="1">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:id="@+id/textView"
+        android:layout_weight="1"
+        android:gravity="center_vertical"
+        android:textStyle="bold"
+        android:background="@color/my_profile_action_bar_title_background"
+        android:textColor="@color/my_profile_action_bar_title_text"
+        android:textSize="@dimen/my_profile_action_bar_title_text_height"
+        android:text="@string/profile_title"
+        android:paddingLeft="@dimen/my_profile_action_bar_title_padding_left"
+        android:paddingRight="@dimen/my_profile_action_bar_title_padding_right"/>
+
+    <ImageView
+        android:layout_width="@dimen/my_profile_action_bar_menu_button_width"
+        android:layout_height="match_parent"
+        android:id="@+id/profile_action_bar_menu_icon"
+        android:background="@color/my_profile_action_bar_menu_button_background"
+        android:src="@drawable/home_menu"
+        android:scaleType="fitXY"
+        android:paddingLeft="@dimen/my_profile_action_bar_menu_button_padding_left"
+        android:paddingRight="@dimen/my_profile_action_bar_menu_button_padding_right"
+        android:paddingTop="@dimen/my_profile_action_bar_menu_button_padding_top"
+        android:paddingBottom="@dimen/my_profile_action_bar_menu_button_padding_bottom" />
+    </LinearLayout>
+</LinearLayout>

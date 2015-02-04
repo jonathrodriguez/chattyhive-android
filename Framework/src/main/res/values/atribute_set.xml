@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="floatingPanelStyle" format="reference" />
+
+    <declare-styleable name="FloatingPanel_Child">
+        <attr name="layout_position" format="enum">
+            <enum name="center" value="0" />
+            <enum name="left" value="1" />
+            <enum name="right" value="2" />
+        </attr>
+        <attr name="layout_type" format="enum">
+            <enum name="actionBar" value="0" />
+            <enum name="mainPanel" value="1" />
+        </attr>
+    </declare-styleable>
+
+    <item type="id" name="FloatingPanelCenterCoverID"/>
+
+    <declare-styleable name="FloatingPanel">
+        <attr name="centerMainPanelLeftVisibleWidth" format="dimension" />
+        <attr name="centerActionBarLeftVisibleWidth" format="dimension" />
+
+        <attr name="centerMainPanelRightVisibleWidth" format="dimension" />
+        <attr name="centerActionBarRightVisibleWidth" format="dimension" />
+
+        <attr name="fixLeftPanel" format="boolean"/>
+        <attr name="fixedLeftPanelWidth" format="dimension"/>
+
+        <attr name="maxLeftPanelWidth" format="dimension"/>
+        <attr name="maxRightPanelWidth" format="dimension"/>
+
+        <attr name="allowSwipeToMovePanels" format="boolean"/>
+        <attr name="leftSwipeCheckMainBoundaries" format="boolean"/>
+        <attr name="rightSwipeCheckMainBoundaries" format="boolean"/>
+
+        <attr name="centerMainPanelCoverColor" format="color"/>
+
+        <attr name="maxAnimationDuration" format="integer" />
+        <attr name="buttonPressedAnimationDuration" format="integer" />
+
+        <attr name="touchActionMoveDistanceThreshold" format="dimension"/>
+
+        <attr name="flingSpeedThreshold" format="integer" />
+
+    </declare-styleable>
+
+    <attr name="slidingStepsLayoutStyle" format="reference" />
+
+    <declare-styleable name="SlidingStepsLayout_Child">
+        <attr name="layout" format="reference"/>
+        <attr name="stepOrder" format="integer"/>
+        <attr name="previousStepButton" format="reference"/>
+        <attr name="nextStepButton" format="reference"/>
+        <attr name="stepTitle" format="string"/>
+        <attr name="stepSubtitle" format="string"/>
+    </declare-styleable>
+
+    <declare-styleable name="SlidingStepsLayout">
+        <attr name="showActionBar" format="boolean" />
+        <attr name="actionBarHeight" format="dimension"/>
+        <attr name="actionBarArrowPointWidth" format="dimension" />
+        <attr name="actionBarUnselectedTitleColor" format="color"/>
+        <attr name="actionBarSelectedTitleColor" format="color"/>
+        <attr name="actionBarUnselectedSubtitleColor" format="color"/>
+        <attr name="actionBarSelectedSubtitleColor" format="color"/>
+        <attr name="actionBarBackground" format="color|reference"/>
+        <attr name="actionBarMarkerBackgroundColor" format="color"/>
+        <attr name="actionBarTitleTextSize" format="dimension"/>
+        <attr name="actionBarSubTitleTextSize" format="dimension"/>
+        <attr name="actionBarTitleMarginBottom" format="dimension"/>
+        <attr name="actionBarLabelMarginLeft" format="dimension"/>
+        <attr name="actionBarLabelMarginRight" format="dimension"/>
+
+        <attr name="allowSwipeToChangeStep" format="boolean"/>
+        <attr name="touchActionMoveDetectionDistanceThreshold" format="dimension"/>
+        <attr name="flingSpeedDetectionThreshold" format="integer" />
+
+        <attr name="maxTransitionAnimationDuration" format="integer" />
+        <attr name="buttonPressedTransitionAnimationDuration" format="integer" />
+    </declare-styleable>
+</resources>

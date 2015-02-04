@@ -1,0 +1,9 @@
+apply plugin: 'java'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile group: 'com.pusher', name: 'pusher-java-client', version: '0.2.0'
+}

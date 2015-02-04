@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- MY PROFILE:  Action Bar colors -->
+    <color name="my_profile_action_bar_thumbnail_background">#111111</color>
+
+    <color name="my_profile_action_bar_title_background">#1D1D1D</color>
+    <color name="my_profile_action_bar_title_text">#FFFFFF</color>
+
+    <color name="my_profile_action_bar_menu_button_background">#1D1D1D</color>
+
+    <color name="my_profile_action_bar_border_left">#383838</color>
+    <color name="my_profile_action_bar_border_top">#383838</color>
+    <color name="my_profile_action_bar_border_right">#383838</color>
+    <color name="my_profile_action_bar_border_bottom">#0D0D0D</color>
+    <!-- _____________________________________________________________________ -->
+    <!-- MY PROFILE:  Main panel colors -->
+    <color name="my_profile_edit_button_border">#C0C0C0</color>
+    <color name="my_profile_edit_button">#FFFFFF</color>
+    <color name="my_profile_edit_button_text">#333333</color>
+
+    <color name="my_profile_general_background">#EDEDED</color>
+    <color name="my_profile_full_name_text">#333333</color>
+    <color name="my_profile_nickname_default_text">#B03F40</color>
+
+    <color name="my_profile_status_text">#000000</color>
+    <color name="my_profile_status_active_text">#000000</color>
+    <color name="my_profile_status_inactive_text">#808080</color>
+    <color name="my_profile_status_message_text">#404040</color>
+    <color name="my_profile_status_background">#FFFFFF</color>
+    <color name="my_profile_status_message_line">#EFEFEF</color>
+    <color name="my_profile_status_private_public_line">#C0C0C0</color>
+    <color name="my_profile_status_border">#C0C0C0</color>
+    <item name="my_profile_status_inactive_alpha" format="float" type="color">0.5</item>
+    <item name="my_profile_status_active_alpha" format="float" type="color">1</item>
+
+    <color name="my_profile_information_text">#000000</color>
+    <color name="my_profile_information_param_name_text">#808080</color>
+    <color name="my_profile_information_param_value_text">#404040</color>
+    <color name="my_profile_information_background">#FFFFFF</color>
+    <color name="my_profile_information_line">#EFEFEF</color>
+    <color name="my_profile_information_border">#C0C0C0</color>
+    <!-- _____________________________________________________________________ -->
+    <!-- _____________________________________________________________________ -->
+    <!-- _____________________________________________________________________ -->
+
+    <!-- EDIT PROFILE:  Action Bar colors -->
+
+    <color name="edit_profile_action_bar_background">#ffffff</color>
+    <color name="edit_profile_action_bar_button_border">#C0C0C0</color>
+    <color name="edit_profile_action_bar_type_button_marker">#404040</color>
+    <color name="edit_profile_action_bar_type_button_text">#000</color>
+    <item name="edit_profile_action_bar_type_button_unselected_alpha" format="float" type="color">0.5</item>
+    <item name="edit_profile_action_bar_type_button_selected_alpha" format="float" type="color">0.8</item>
+
+    <!-- _____________________________________________________________________ -->
+    <!-- EDIT PROFILE:  Main panel colors -->
+
+    <color name="edit_profile_privacy_note_image_tint">#000000</color>
+    <color name="edit_profile_privacy_note_text_color">#333333</color>
+    <color name="edit_profile_privacy_note_background_color">#fffbef</color>
+    <color name="edit_profile_privacy_note_shadow_color">#FF010101</color>
+    <color name="edit_profile_privacy_note_shadow_border_color">#80010101</color>
+
+    <color name="edit_profile_edit_messages_text_color">#ff8000</color>
+    <color name="edit_profile_edit_photo_border_color">#ff8000</color>
+    <color name="edit_profile_edit_photo_background_color">#00000000</color>
+
+    <color name="edit_profile_edit_images_tint_color">#ffa041</color>
+
+    <color name="edit_profile_full_name_text_color">#111111</color>
+    <color name="edit_profile_full_name_hint_color">#808080</color>
+
+    <color name="edit_profile_status_text_color">#111111</color>
+    <color name="edit_profile_status_hint_color">#808080</color>
+    <color name="edit_profile_status_length_text_color">#404040</color>
+
+    <item name="edit_profile_information_item_visible_alpha" format="float" type="color">1</item>
+    <item name="edit_profile_information_item_hidden_alpha" format="float" type="color">0.5</item>
+
+    <!-- _____________________________________________________________________ -->
+    <!-- _____________________________________________________________________ -->
+    <!-- _____________________________________________________________________ -->
+
+    <!-- USER PROFILE:  Action Bar colors -->
+
+    <!-- _____________________________________________________________________ -->
+    <!-- USER PROFILE:  Main panel colors -->
+    <color name="profile_photo_border_color">#c0c0c0</color>
+    <color name="profile_photo_background_color">#00000000</color>
+</resources>

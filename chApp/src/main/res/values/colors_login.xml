@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- LOGIN COLORS -->
+    <!-- ___________________________________________________________________________ -->
+
+    <color name="login_background_color">#111111</color>
+    <color name="login_bottom_text_color">#E5E5E5</color>
+
+    <color name="login_tab_panel_background_color">#FF242424</color>
+    <color name="login_tab_panel_border_color">#FF404040</color>
+    <color name="login_tab_panel_selected_button_background_color">#FF242424</color>
+    <color name="login_tab_panel_selected_button_text_color">#EEEEEE</color>
+    <color name="login_tab_panel_selected_button_border_color">#FF404040</color>
+    <color name="login_tab_panel_not_selected_button_background_color">#FF404040</color>
+    <color name="login_tab_panel_not_selected_button_text_color">#EEEEEE</color>
+    <color name="login_tab_panel_not_selected_button_border_color">#FF404040</color>
+
+    <color name="login_tab_panel_social_networks_buttons_facebook_background_color">#3B5898</color>
+    <color name="login_tab_panel_social_networks_buttons_facebook_border_color">#6682C4</color>
+    <color name="login_tab_panel_social_networks_buttons_facebook_shadow_color">#FF010101</color>
+    <color name="login_tab_panel_social_networks_buttons_facebook_shadow_border_color">#AA010101</color>
+
+    <color name="login_tab_panel_social_networks_buttons_twitter_background_color">#00ACEE</color>
+    <color name="login_tab_panel_social_networks_buttons_twitter_border_color">#59D1FF</color>
+    <color name="login_tab_panel_social_networks_buttons_twitter_shadow_color">#FF010101</color>
+    <color name="login_tab_panel_social_networks_buttons_twitter_shadow_border_color">#AA010101</color>
+
+    <color name="login_tab_panel_social_networks_buttons_google_plus_background_color">#C61010</color>
+    <color name="login_tab_panel_social_networks_buttons_google_plus_border_color">#F02F2F</color>
+    <color name="login_tab_panel_social_networks_buttons_google_plus_shadow_color">#FF010101</color>
+    <color name="login_tab_panel_social_networks_buttons_google_plus_shadow_border_color">#AA010101</color>
+
+    <color name="login_tab_panel_social_networks_buttons_vertical_separator_color">#FFFFFF</color>
+    <color name="login_tab_panel_social_networks_buttons_text_color">#F0FEFF</color>
+
+    <!-- Login tab -->
+    <color name="login_tab_panel_login_username_background_color">#FFFFFF</color>
+    <color name="login_tab_panel_login_username_hint_color">#808080</color>
+    <color name="login_tab_panel_login_username_text_color">#111111</color>
+
+    <color name="login_tab_panel_login_password_background_color">#FFFFFF</color>
+    <color name="login_tab_panel_login_password_hint_color">#808080</color>
+    <color name="login_tab_panel_login_password_text_color">#111111</color>
+
+    <color name="login_tab_panel_login_login_button_background_color">#FFFFB615</color>
+    <color name="login_tab_panel_login_login_button_border_color">#FFFFC94A</color>
+    <color name="login_tab_panel_login_login_button_shadow_color">#FF010101</color>
+    <color name="login_tab_panel_login_login_button_shadow_border_color">#AA010101</color>
+    <color name="login_tab_panel_login_login_button_text_color">#111111</color>
+
+    <color name="login_tab_panel_login_social_networks_text_color">#F0FEFC</color>
+
+    <!-- Register tab -->
+
+    <color name="login_tab_panel_sign_up_email_text_text_color">#F0FEFF</color>
+
+    <color name="login_tab_panel_sign_up_email_field_background_color">#FFFFFF</color>
+    <color name="login_tab_panel_sign_up_email_field_hint_color">#808080</color>
+    <color name="login_tab_panel_sign_up_email_field_text_color">#111111</color>
+
+    <color name="login_tab_panel_sign_up_go_button_background_color">#FFFFB615</color>
+    <color name="login_tab_panel_sign_up_go_button_border_color">#FFFFC94A</color>
+    <color name="login_tab_panel_sign_up_go_button_shadow_color">#FF010101</color>
+    <color name="login_tab_panel_sign_up_go_button_shadow_border_color">#AA010101</color>
+    <color name="login_tab_panel_sign_up_go_button_text_color">#111111</color>
+</resources>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+<item>
+    <shape android:shape="rectangle">
+        <stroke android:width="@dimen/login_tab_panel_shadow_border_width" android:color="@color/login_tab_panel_selected_button_border_color" />
+        <corners android:topLeftRadius="@dimen/login_tab_panel_corner_radius_top" android:topRightRadius="@dimen/login_tab_panel_corner_radius_top" />
+        <solid android:color="@color/login_tab_panel_selected_button_border_color" />
+    </shape>
+</item>
+<item android:top="@dimen/login_tab_panel_border_width" android:left="@dimen/login_tab_panel_border_width" android:right="@dimen/login_tab_panel_border_width">
+    <shape android:shape="rectangle">
+        <corners android:topLeftRadius="@dimen/login_tab_panel_corner_radius_top" android:topRightRadius="@dimen/login_tab_panel_corner_radius_top"/>
+        <solid android:color="@color/login_tab_panel_selected_button_background_color" />
+    </shape>
+</item>
+</layer-list>
