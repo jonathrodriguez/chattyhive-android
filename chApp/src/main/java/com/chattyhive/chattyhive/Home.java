@@ -18,6 +18,11 @@ public class Home extends Window {
     private static int HomeHierarchyLevel = 0;
     private transient HomeListAdapter homeListAdapter;
 
+    void setContext(Context context) {
+        super.setContext(context);
+        this.homeListAdapter = null;
+    }
+
     public Home(Context context) {
         super(context);
         this.setHierarchyLevel(HomeHierarchyLevel);

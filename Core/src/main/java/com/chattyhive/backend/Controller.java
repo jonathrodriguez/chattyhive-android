@@ -44,6 +44,7 @@ import java.net.CookieManager;
 import java.net.CookiePolicy;
 import java.net.CookieStore;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.TreeMap;
 
@@ -74,25 +75,27 @@ public class Controller {
         return (Initialized = true);
     }
     public static void Initialize() {
-        Controller.PrivateInitialize();
-        CookieHandler.setDefault(new CookieManager());
+        if (Controller.PrivateInitialize())
+            CookieHandler.setDefault(new CookieManager());
     }
     public static void Initialize(Object... LocalStorage) {
-        PrivateInitialize();
-        setLocalStorage(LocalStorage);
-        DataProvider.Initialize(LocalStorage);
-        CookieHandler.setDefault(new CookieManager());
+        if (Controller.PrivateInitialize()) {
+            setLocalStorage(LocalStorage);
+            DataProvider.Initialize(LocalStorage);
+            CookieHandler.setDefault(new CookieManager());
+        }
     }
     public static void Initialize(CookieStore cookieStore) {
-        PrivateInitialize();
-        CookieHandler.setDefault(new CookieManager(cookieStore, CookiePolicy.ACCEPT_ALL));
+        if (Controller.PrivateInitialize()) {
+            CookieHandler.setDefault(new CookieManager(cookieStore, CookiePolicy.ACCEPT_ALL));
+        }
     }
     public static void Initialize(CookieStore cookieStore, Object... LocalStorage) {
-        PrivateInitialize();
-        setLocalStorage(LocalStorage);
-        DataProvider.Initialize(LocalStorage);
-
-        CookieHandler.setDefault(new CookieManager(cookieStore, CookiePolicy.ACCEPT_ALL));
+        if (Controller.PrivateInitialize()) {
+            setLocalStorage(LocalStorage);
+            DataProvider.Initialize(LocalStorage);
+            CookieHandler.setDefault(new CookieManager(cookieStore, CookiePolicy.ACCEPT_ALL));
+        }
     }
 
     //COMMON STATIC
@@ -326,41 +329,6 @@ public class Controller {
      * @param
      */
 
-
-
-/*    public void onExploreHivesCallback(Object sender,CommandCallbackEventArgs eventArgs) {
-        ArrayList<Format> receivedFormats = eventArgs.getReceivedFormats();
-        ArrayList<Format> sentFormats = eventArgs.getSentFormats();
-
-        Explore.SortType sortType = null;
-
-        for (Format format : sentFormats)
-            if (format instanceof EXPLORE_FILTER) {
-                if (((EXPLORE_FILTER) format).TYPE.equalsIgnoreCase(Explore.SortType.OUTSTANDING.toString()))
-                    sortType = Explore.SortType.OUTSTANDING;
-                else if (((EXPLORE_FILTER) format).TYPE.equalsIgnoreCase(Explore.SortType.USERS.toString()))
-                    sortType = Explore.SortType.USERS;
-                else if (((EXPLORE_FILTER) format).TYPE.equalsIgnoreCase(Explore.SortType.TRENDING.toString()))
-                    sortType = Explore.SortType.TRENDING;
-                else if (((EXPLORE_FILTER) format).TYPE.equalsIgnoreCase(Explore.SortType.CREATION_DATE.toString()))
-                    sortType = Explore.SortType.CREATION_DATE;
-            }
-
-        if (sortType == null) return;
-
-        if ((!this.exploreHives.containsKey(sortType)) || (this.exploreHives.get(sortType) == null))
-            this.exploreHives.put(sortType,new ArrayList<Hive>());
-
-        for (Format format : receivedFormats)
-            if (format instanceof HIVE)
-                this.exploreHives.get(sortType).add(new Hive((HIVE)format));
-            else if (format instanceof HIVE_LIST)
-                for (HIVE hive : ((HIVE_LIST) format).LIST)
-                    this.exploreHives.get(sortType).add(new Hive(hive));
-
-        if (this.ExploreHivesListChange != null)
-            this.ExploreHivesListChange.fire(this.exploreHives,EventArgs.Empty());
-    }*/
 
     public void JoinHive(Hive hive) {
         this.dataProvider.JoinHive(hive);
@@ -605,7 +573,19 @@ public class Controller {
                 if (homeCards != null)
                     homeCards.clear();
                 else
-                    homeCards = new TreeMap<Date, HomeCard>();
+                    homeCards = new TreeMap<Date, HomeCard>(new Comparator<Date>() {
+                        @Override
+                        public int compare(Date o1, Date o2) {
+                            if ((o1 == null) && (o2 != null))
+                                return 1;
+                            else if ((o1 != null) && (o2 == null))
+                                return -1;
+                            else if (o1 != null) //&& (o2 != null)) <- Which is always true
+                                return o2.compareTo(o1);
+                            else
+                                return 0;
+                        }
+                    });
 
                 int hiveCount = Hive.getHiveCount();
                 Hive hive;
