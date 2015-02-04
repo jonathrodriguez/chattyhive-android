@@ -30,10 +30,19 @@ public class RightPanel2{
     View img;
     private int lastExpandedPosition = -1;
 
+    private View.OnClickListener open_profile = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (((Main)context).controller.getMe() != null) {
+                ((Main)context).OpenWindow(new Profile(context,((Main)context).controller.getMe(), Profile.ProfileType.Private));
+            }
+        }
+    };
+
     public RightPanel2(Context activity){
         this.context = activity ;
         this.InitializeComponent();
-        ((Activity)this.context).findViewById(R.id.right_panel_action_bar).setOnClickListener((new Profile(this.context)).open_profile);
+        ((Activity)this.context).findViewById(R.id.right_panel_action_bar).setOnClickListener(this.open_profile);
         ((Main)this.context).controller.LocalUserReceived.add(new EventHandler<EventArgs>(this, "onLocalUserLoaded", EventArgs.class));
         if (((Main)this.context).controller.getMe() != null)
             this.onLocalUserLoaded(((Main)this.context).controller.getMe(),EventArgs.Empty());
@@ -60,10 +69,19 @@ public class RightPanel2{
                 ((TextView)((Activity)context).findViewById(R.id.menu_private_profile_name)).setText(name);
                 name = context.getResources().getString(R.string.public_username_identifier_character).concat(((Main) context).controller.getMe().getUserPublicProfile().getShowingName().toString());
                 ((TextView)((Activity)context).findViewById(R.id.menu_public_profile_name)).setText(name);
-                ((ImageView)((Activity)context).findViewById(R.id.menu_profile_photo_image)).setImageResource(R.drawable.pestanha_chats_user);
+
+                if (((Main) context).controller.getMe().getUserPrivateProfile().getSex().equalsIgnoreCase("male"))
+                    ((ImageView)((Activity)context).findViewById(R.id.menu_profile_photo_image)).setImageResource(R.drawable.default_profile_image_male);
+                else
+                    ((ImageView)((Activity)context).findViewById(R.id.menu_profile_photo_image)).setImageResource(R.drawable.default_profile_image_female);
+
                 ((ImageView)((Activity)context).findViewById(R.id.menu_profile_photo_image)).setColorFilter(Color.parseColor("#ffffff"));
-                ((Main) context).controller.getMe().getUserPrivateProfile().getProfileImage().OnImageLoaded.add(new EventHandler<EventArgs>(thisPanel,"loadImage",EventArgs.class));
-                ((Main) context).controller.getMe().getUserPrivateProfile().getProfileImage().loadImage(Image.ImageSize.medium,0);
+                if (((Main) context).controller.getMe().getUserPrivateProfile().getProfileImage() != null) {
+                    ((Main) context).controller.getMe().getUserPrivateProfile().getProfileImage().OnImageLoaded.add(new EventHandler<EventArgs>(thisPanel, "loadImage", EventArgs.class));
+                    ((Main) context).controller.getMe().getUserPrivateProfile().getProfileImage().loadImage(Image.ImageSize.medium, 0);
+                }
+
+                //((Main)context).controller.LocalUserReceived.remove(new EventHandler<EventArgs>(thisPanel, "onLocalUserLoaded", EventArgs.class));
             }
         });
     }
@@ -89,8 +107,8 @@ public class RightPanel2{
                     }
                 }
 
-                image.OnImageLoaded.remove(new EventHandler<EventArgs>(thisPanel,"loadImage",EventArgs.class));
-                image.freeMemory();
+                //image.OnImageLoaded.remove(new EventHandler<EventArgs>(thisPanel,"loadImage",EventArgs.class));
+                //image.freeMemory();
             }
         });
     }

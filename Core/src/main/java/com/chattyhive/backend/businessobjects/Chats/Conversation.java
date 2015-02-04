@@ -253,8 +253,11 @@ public class Conversation { //TODO: implements SortedSet<Message>
         if ((messageListModified) && (this.MessageListModifiedEvent != null))
             this.MessageListModifiedEvent.fire(this, EventArgs.Empty());
 
-        if ((messageListModified) && (this.getParent().chatKind == ChatKind.HIVE))
+        if ((messageListModified) && (this.getParent().chatKind == ChatKind.HIVE) && (Hive.HiveListChanged != null))
             Hive.HiveListChanged.fire(null,EventArgs.Empty());
+
+        if ((messageListModified) && (Chat.ChatListChanged != null))
+            Chat.ChatListChanged.fire(null,EventArgs.Empty());
 
         if ((message.getId() != null) && (!message.getId().isEmpty())) {
             if (StaticParameters.MaxLocalMessages != 0) {

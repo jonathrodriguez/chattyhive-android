@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -198,12 +199,18 @@ public class HomeListAdapter extends BaseAdapter {
 
         @Override
         public void onClick(View v) {
-            MainChat mainChat;
+            //Log.w("HomeCardItem","onClick()");
             Chat chatChat = null;
+            //if (((HiveMessageCard)card).getHive() == null)
+                //Log.w("HomeCardItem","Hive is null.");
             chatChat = ((HiveMessageCard)card).getHive().getPublicChat();
             if (chatChat != null) {
+                //Log.w("HomeCardItem","Opening chat...");
                 ((Main)context).OpenWindow(new MainChat(context, chatChat));
-            }
+                //Log.w("HomeCardItem","Chat open.");
+            } //else {
+                //Log.w("HomeCardItem","Chat is null.");
+            //}
         }
 
         private void updateFields() {
@@ -238,26 +245,26 @@ public class HomeListAdapter extends BaseAdapter {
         }
 
         private void updateTimeStamp(HiveMessageCard hc) {
-            if (hc == null) return;
-            if (this.TimeStamp != null) {
-                String LastMessageTimestamp = "";
-                Date timeStamp = hc.getMessage().getOrdinationTimeStamp();
-                Date fiveMinutesAgo = new Date((new Date()).getTime() - 5*60*1000);
-                Date today = DateFormatter.toDate(DateFormatter.toString(timeStamp));
-                Calendar yesterday = Calendar.getInstance();
-                yesterday.setTime(today);
-                yesterday.roll(Calendar.DAY_OF_MONTH, false);
-                if (timeStamp.after( fiveMinutesAgo ))
-                    LastMessageTimestamp = context.getString(R.string.left_panel_imprecise_time_now);
-                else if (timeStamp.after(today))
-                    LastMessageTimestamp = TimestampFormatter.toLocaleString(timeStamp);
-                else if (timeStamp.after(yesterday.getTime()))
-                    LastMessageTimestamp = context.getString(R.string.left_panel_imprecise_time_yesterday);
-                else
-                    LastMessageTimestamp = DateFormatter.toHumanReadableString(timeStamp);
+            if ((hc == null) || (this.TimeStamp == null)) return;
 
-                this.TimeStamp.setText(LastMessageTimestamp);
-            }
+            String LastMessageTimestamp = "";
+            Date timeStamp = hc.getMessage().getOrdinationTimeStamp();
+            Date fiveMinutesAgo = new Date((new Date()).getTime() - 5*60*1000);
+            Date today = DateFormatter.toDate(DateFormatter.toString(new Date()));
+            Calendar yesterday = Calendar.getInstance();
+            yesterday.setTime(today);
+            yesterday.roll(Calendar.DAY_OF_MONTH, false);
+            if (timeStamp.after( fiveMinutesAgo ))
+                LastMessageTimestamp = context.getString(R.string.left_panel_imprecise_time_now);
+            else if (timeStamp.after(today))
+                LastMessageTimestamp = TimestampFormatter.toLocaleString(timeStamp);
+            else if (timeStamp.after(yesterday.getTime()))
+                LastMessageTimestamp = context.getString(R.string.left_panel_imprecise_time_yesterday);
+            else
+                LastMessageTimestamp = DateFormatter.toShortHumanReadableString(timeStamp);
+
+            this.TimeStamp.setText(LastMessageTimestamp);
+
         }
 
         private void updateMessage(HiveMessageCard hc) {
@@ -271,6 +278,8 @@ public class HomeListAdapter extends BaseAdapter {
             if ((this.HiveImage != null) && (hc.getHive().getHiveImage() != null)) {
                 hc.getHive().getHiveImage().OnImageLoaded.add(new EventHandler<EventArgs>(this,"onHiveImageLoaded",EventArgs.class));
                 hc.getHive().getHiveImage().loadImage(Image.ImageSize.small,0);
+            } else if (this.HiveImage != null) {
+                this.HiveImage.setImageResource(R.drawable.default_hive_image);
             }
         }
 
