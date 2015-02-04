@@ -86,6 +86,14 @@ public class Hive implements IContextualizable {
     public static Collection<Hive> getHives() {
         return Hives.values();
     }
+
+    public static boolean isHiveJoined(String nameUrl) {
+        if (Hive.Hives == null) throw new IllegalStateException("Hives must be initialized.");
+        else if (nameUrl == null) throw new NullPointerException("NameUrl must not be null.");
+        else if (nameUrl.isEmpty()) throw  new IllegalArgumentException("NameUrl must not be empty.");
+
+        return Hive.Hives.containsKey(nameUrl);
+    }
     /***********************************/
     /*        STATIC CALLBACKS         */
     /***********************************/
@@ -233,6 +241,7 @@ public class Hive implements IContextualizable {
             String hiveNameURL = hive_id.NAME_URL;
             this.nameUrl = hiveNameURL;
             this.publicChat = new Chat(chat, this);
+            this.subscribedUsers = 1;
             Hive.Hives.put(hiveNameURL, this);
 
             if (HiveListChanged != null)
