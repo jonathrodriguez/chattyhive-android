@@ -1068,7 +1068,7 @@ public class StandAloneServer {
 
                 ArrayList<String> allHives = new ArrayList<String>(Hives.keySet());
 
-                if (userHives != null)
+                if ((userHives != null) && (!filter.TYPE.equalsIgnoreCase("CREATION_DATE")))
                     allHives.removeAll(userHives);
 
                 Comparator<Hive> comparator = null;
@@ -1407,37 +1407,41 @@ public class StandAloneServer {
                         common.STATUS = "OK";
                         Conversation conversation = Chats.get(chatId.CHANNEL_UNICODE).getConversation();
                         ArrayList<Message> resultList = new ArrayList<Message>();
+                        if (conversation.getCount() > 0) {
+                            String lastMessageID = null;
+                            if ((filter.LAST_MESSAGE_ID == null) || (filter.LAST_MESSAGE_ID.isEmpty()) || (filter.LAST_MESSAGE_ID.equalsIgnoreCase("LAST")))
+                                lastMessageID = conversation.getLastMessage().getId();
+                            else
+                                lastMessageID = filter.LAST_MESSAGE_ID;
+                            int lastMessage = Integer.parseInt(lastMessageID);
 
-                        String lastMessageID = null;
-                        if ((filter.LAST_MESSAGE_ID == null) || (filter.LAST_MESSAGE_ID.isEmpty()) || (filter.LAST_MESSAGE_ID.equalsIgnoreCase("LAST")))
-                            lastMessageID = conversation.getLastMessage().getId();
-                        else
-                            lastMessageID = filter.LAST_MESSAGE_ID;
-                        int lastMessage = Integer.parseInt(lastMessageID);
+                            String firstMessageID = null;
+                            if ((filter.START_MESSAGE_ID == null) || (filter.START_MESSAGE_ID.isEmpty()) || (filter.START_MESSAGE_ID.equalsIgnoreCase("FIRST")))
+                                firstMessageID = "-1";
+                            else
+                                firstMessageID = filter.START_MESSAGE_ID;
+                            int firstMessage = Integer.parseInt(firstMessageID);
 
-                        String firstMessageID = null;
-                        if ((filter.START_MESSAGE_ID == null) || (filter.START_MESSAGE_ID.isEmpty()) || (filter.START_MESSAGE_ID.equalsIgnoreCase("FIRST")))
-                            firstMessageID = "-1";
-                        else
-                            firstMessageID = filter.START_MESSAGE_ID;
-                        int firstMessage = Integer.parseInt(firstMessageID);
+                            int messageCount;
+                            if (filter.COUNT != null)
+                                messageCount = filter.COUNT;
+                            else
+                                messageCount = lastMessage - firstMessage;
 
-                        int messageCount;
-                        if (filter.COUNT != null)
-                            messageCount = filter.COUNT;
-                        else
-                            messageCount = lastMessage-firstMessage;
+                            for (int i = lastMessage; ((i > firstMessage) && ((lastMessage - i) < messageCount)); i--) {
+                                resultList.add(conversation.getMessageByID(String.format("%d", i)));
+                            }
 
-                        for (int i = lastMessage; ((i>firstMessage) && ((lastMessage-i)<messageCount)); i--) {
-                            resultList.add(conversation.getMessageByID(String.format("%d",i)));
-                        }
+                            list.MESSAGES = new ArrayList<MESSAGE>();
+                            for (Message msg : resultList)
+                                list.MESSAGES.add((MESSAGE) msg.toFormat(new MESSAGE()));
 
-                        list.MESSAGES = new ArrayList<MESSAGE>();
-                        for (Message msg : resultList)
-                            list.MESSAGES.add((MESSAGE)msg.toFormat(new MESSAGE()));
-
-                        if ((firstMessage > -1) || (filter.START_MESSAGE_ID.equalsIgnoreCase("FIRST"))) {
-                            list.NUMBER_MESSAGES = lastMessage-firstMessage-messageCount;
+                            if ((firstMessage > -1) || (filter.START_MESSAGE_ID.equalsIgnoreCase("FIRST"))) {
+                                list.NUMBER_MESSAGES = lastMessage - firstMessage - messageCount;
+                            }
+                        } else {
+                            list.MESSAGES = null;
+                            list.NUMBER_MESSAGES = 0;
                         }
 
                     } else {

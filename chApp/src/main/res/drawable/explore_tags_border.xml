@@ -7,11 +7,9 @@
     <solid android:color="#fff7e1" />
 
     <padding
-        android:left="9px"
-        android:right="9px"
-        android:top="9px"
-        android:bottom="9px"/>
-
+        android:left="8px"
+        android:right="8px"
+        android:top="4px"
+        android:bottom="4px"/>
     <corners android:radius="8px" />
-
 </shape>

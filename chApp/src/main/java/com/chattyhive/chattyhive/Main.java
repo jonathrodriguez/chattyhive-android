@@ -88,8 +88,10 @@ public class Main extends Activity {
     }
 
     void Close() {
-        if (this.lastOpenHierarchyLevel >= 0)
+        if (this.lastOpenHierarchyLevel >= 0) {
             this.viewStack.get(this.lastOpenHierarchyLevel).Close();
+            this.viewStack.remove(this.lastOpenHierarchyLevel);
+        }
 
         this.lastOpenHierarchyLevel--;
 
