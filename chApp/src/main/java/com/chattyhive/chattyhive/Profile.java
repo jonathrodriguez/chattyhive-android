@@ -50,7 +50,7 @@ public class Profile extends Window {
 
     private transient User user;
     private transient User modifiedUser; //This is for profile edition.
-    private String actionBarSubstring;
+    private String actionBarSubstring = "";
     private ProfileType profileType;
     private ProfileView profileViewType;
 
