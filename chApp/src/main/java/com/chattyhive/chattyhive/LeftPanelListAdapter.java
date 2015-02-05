@@ -376,16 +376,14 @@ public class LeftPanelListAdapter extends BaseAdapter {
                     ((ChatViewHolder)holder).chatHiveImage.setVisibility(View.VISIBLE);
                     ((ChatViewHolder)holder).chatTypeImage.setImageResource(R.drawable.pestanha_chats_arroba);
                     ((ChatViewHolder)holder).chatImage.setImageResource(R.drawable.chats_users_online);
-                    String parentHiveName = null;
                     try {
                         ((Chat) item).getParentHive().getHiveImage().OnImageLoaded.add(new EventHandler<EventArgs>(holder, "loadHiveImage", EventArgs.class));
                         ((Chat) item).getParentHive().getHiveImage().loadImage(Image.ImageSize.small, 0);
-                        parentHiveName = context.getResources().getString(R.string.hivename_identifier_character).concat(((Chat) item).getParentHive().getName());
+                        ((ChatViewHolder)holder).hiveName = context.getResources().getString(R.string.hivename_identifier_character).concat(((Chat) item).getParentHive().getName());
                     } catch (Exception e) { }
-                    User otherUser = null;
                     for (User user : ((Chat) item).getMembers())
                         if (!user.isMe()) {
-                            otherUser = user;
+                            ((ChatViewHolder)holder).user = user;
                             if ((user.getUserPublicProfile() != null) && (user.getUserPublicProfile().getShowingName() != null)) {
                                 GroupName = context.getResources().getString(R.string.public_username_identifier_character).concat(user.getUserPublicProfile().getShowingName());
                                 try {
@@ -412,14 +410,9 @@ public class LeftPanelListAdapter extends BaseAdapter {
                     ((ChatViewHolder)holder).chatPendingMessagesNumber.setVisibility(View.INVISIBLE);
 
 
-                    final User hivemate = otherUser;
-                    final String hiveName = parentHiveName;
-                    ((ChatViewHolder)holder).chatImage.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            openProfile(hivemate, Profile.ProfileType.Public,hiveName);
-                        }
-                    });
+                    ((ChatViewHolder)holder).profileType = Profile.ProfileType.Public;
+                    ((ChatViewHolder)holder).chatImage.setOnClickListener(((ChatViewHolder)holder).thumbnailClickListener);
+                    ((ChatViewHolder)holder).chatImage.setClickable(true);
 
                     break;
                 case PUBLIC_GROUP:
@@ -455,6 +448,9 @@ public class LeftPanelListAdapter extends BaseAdapter {
                     }
                     ((ChatViewHolder)holder).chatLastMessageTimestamp.setVisibility(View.VISIBLE);
                     ((ChatViewHolder)holder).chatPendingMessagesNumber.setVisibility(View.INVISIBLE);
+
+                    ((ChatViewHolder)holder).chatImage.setOnClickListener(null);
+                    ((ChatViewHolder)holder).chatImage.setClickable(false);
                     break;
                 case HIVE:
                     ((ChatViewHolder)holder).chatHiveImage.setVisibility(View.GONE);
@@ -473,16 +469,18 @@ public class LeftPanelListAdapter extends BaseAdapter {
                     ((ChatViewHolder)holder).chatPendingMessagesNumber.setVisibility(View.INVISIBLE);
                     ((ChatViewHolder)holder).chatImage.setAdjustViewBounds(true);
                     ((ChatViewHolder)holder).chatImage.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+
+                    ((ChatViewHolder)holder).chatImage.setOnClickListener(null);
+                    ((ChatViewHolder)holder).chatImage.setClickable(false);
                     break;
                 case PRIVATE_SINGLE:
                     ((ChatViewHolder)holder).chatHiveImage.setVisibility(View.GONE);
                     ((ChatViewHolder)holder).chatTypeImage.setImageResource(R.drawable.pestanha_chats_user);
                     ((ChatViewHolder)holder).chatImage.setImageResource(R.drawable.default_profile_image_male);
 
-                    User oUser = null;
                     for (User user : ((Chat) item).getMembers())
                         if (!user.isMe()) {
-                            oUser = user;
+                            ((ChatViewHolder)holder).user = user;
                             if ((user.getUserPrivateProfile() != null) && (user.getUserPrivateProfile().getShowingName() != null)) {
                                 GroupName = user.getUserPrivateProfile().getShowingName();
                                 if (user.getUserPrivateProfile().getProfileImage() == null) {
@@ -510,13 +508,11 @@ public class LeftPanelListAdapter extends BaseAdapter {
                     ((ChatViewHolder)holder).chatLastMessageTimestamp.setVisibility(View.VISIBLE);
                     ((ChatViewHolder)holder).chatPendingMessagesNumber.setVisibility(View.INVISIBLE);
 
-                    final User friend = oUser;
-                    ((ChatViewHolder)holder).chatImage.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            openProfile(friend, Profile.ProfileType.Private,null);
-                        }
-                    });
+                    ((ChatViewHolder)holder).profileType = Profile.ProfileType.Private;
+                    ((ChatViewHolder)holder).hiveName = null;
+
+                    ((ChatViewHolder)holder).chatImage.setOnClickListener(((ChatViewHolder)holder).thumbnailClickListener);
+                    ((ChatViewHolder)holder).chatImage.setClickable(true);
                     break;
                 case PRIVATE_GROUP:
                     ((ChatViewHolder)holder).chatHiveImage.setVisibility(View.GONE);
@@ -546,6 +542,9 @@ public class LeftPanelListAdapter extends BaseAdapter {
                     }
                     ((ChatViewHolder)holder).chatLastMessageTimestamp.setVisibility(View.VISIBLE);
                     ((ChatViewHolder)holder).chatPendingMessagesNumber.setVisibility(View.INVISIBLE);
+
+                    ((ChatViewHolder)holder).chatImage.setOnClickListener(null);
+                    ((ChatViewHolder)holder).chatImage.setClickable(false);
                     break;
                 default:
                     return null;
@@ -565,7 +564,7 @@ public class LeftPanelListAdapter extends BaseAdapter {
 
     private void openProfile(User user,Profile.ProfileType profileType, String hiveName) {
         if (user != null)
-            ((Main)context).OpenWindow(new Profile(this.context,user,profileType, hiveName));
+            ((Main)context).OpenWindow(new Profile(context,user,profileType, hiveName));
     }
 
     private abstract class ViewHolder{}
@@ -614,6 +613,18 @@ public class LeftPanelListAdapter extends BaseAdapter {
         public ImageView chatTypeImage;
         public TextView chatLastMessageTimestamp;
         public TextView chatPendingMessagesNumber;
+
+        public User user;
+        public String hiveName;
+        public Profile.ProfileType profileType;
+
+        public View.OnClickListener thumbnailClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if ((user != null) && (profileType != null))
+                    openProfile(user,profileType,hiveName);
+            }
+        };
 
         public void loadHiveImage(Object sender,EventArgs eventArgs) {
             if (!(sender instanceof Image)) return;

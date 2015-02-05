@@ -135,7 +135,9 @@ public class Profile extends Window {
 
         actionBar.findViewById(R.id.profile_action_bar_menu_clickable).setOnClickListener(((Main)context).menuIcon_ClickListener);
         actionBar.findViewById(R.id.profile_action_bar_myPhoto_button).setOnClickListener(((Main)context).appIcon_ClickListener);
-        ((Main)context).menuIcon_ClickListener.onClick(actionBar.findViewById(R.id.profile_action_bar_menu_clickable));
+
+        if (((Main)context).floatingPanel.isOpen())
+            ((Main)context).floatingPanel.close();
 
         if (user.isMe()) {
             setData();
@@ -269,7 +271,7 @@ public class Profile extends Window {
                     e.printStackTrace();
                 } finally {
                     image.OnImageLoaded.remove(new EventHandler<EventArgs>(thisProfile, "loadBigPhoto", EventArgs.class));
-                    image.freeMemory();
+                    //image.freeMemory();
                 }
             }
         });
@@ -298,7 +300,7 @@ public class Profile extends Window {
                     e.printStackTrace();
                 } finally {
                     image.OnImageLoaded.remove(new EventHandler<EventArgs>(thisProfile,"loadSmallPhoto",EventArgs.class));
-                    image.freeMemory();
+                    //image.freeMemory();
                 }
             }
         });

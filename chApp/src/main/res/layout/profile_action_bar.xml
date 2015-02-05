@@ -22,13 +22,15 @@
         android:layout_height="match_parent"
         android:orientation="horizontal"
         android:id="@+id/profile_action_bar_menu_clickable"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:background="@color/my_profile_action_bar_title_background">
 
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:background="#00000000">
 
             <TextView
             android:layout_width="match_parent"
@@ -38,13 +40,13 @@
             android:layout_weight="1"
             android:gravity="center_vertical"
             android:textStyle="bold"
-            android:background="@color/my_profile_action_bar_title_background"
-            android:textColor="@color/my_profile_action_bar_title_text"
+                android:textColor="@color/my_profile_action_bar_title_text"
             android:textSize="@dimen/my_profile_action_bar_title_text_height"
             android:text="@string/profile_title"
             android:paddingLeft="@dimen/my_profile_action_bar_title_padding_left"
             android:paddingRight="@dimen/my_profile_action_bar_title_padding_right"
-                android:ellipsize="end" />
+                android:ellipsize="end"
+                android:background="#00000000" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -54,7 +56,8 @@
                 android:paddingLeft="2dp"
                 android:ellipsize="end"
                 android:textSize="13sp"
-                android:visibility="gone" />
+                android:visibility="gone"
+                android:background="#00000000" />
         </LinearLayout>
 
         <ImageView
