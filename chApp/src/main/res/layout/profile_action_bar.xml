@@ -22,23 +22,45 @@
         android:layout_height="match_parent"
         android:orientation="horizontal"
         android:id="@+id/profile_action_bar_menu_clickable"
-        android:layout_weight="1">
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:id="@+id/textView"
         android:layout_weight="1"
-        android:gravity="center_vertical"
-        android:textStyle="bold"
-        android:background="@color/my_profile_action_bar_title_background"
-        android:textColor="@color/my_profile_action_bar_title_text"
-        android:textSize="@dimen/my_profile_action_bar_title_text_height"
-        android:text="@string/profile_title"
-        android:paddingLeft="@dimen/my_profile_action_bar_title_padding_left"
-        android:paddingRight="@dimen/my_profile_action_bar_title_padding_right"/>
+        android:background="@color/my_profile_action_bar_title_background">
 
-    <ImageView
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="#00000000">
+
+            <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:id="@+id/profile_title_text"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:textStyle="bold"
+                android:textColor="@color/my_profile_action_bar_title_text"
+            android:textSize="@dimen/my_profile_action_bar_title_text_height"
+            android:text="@string/profile_title"
+            android:paddingLeft="@dimen/my_profile_action_bar_title_padding_left"
+            android:paddingRight="@dimen/my_profile_action_bar_title_padding_right"
+                android:ellipsize="end"
+                android:background="#00000000" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:id="@+id/profile_subtitle_text"
+                android:paddingLeft="2dp"
+                android:ellipsize="end"
+                android:textSize="13sp"
+                android:visibility="gone"
+                android:background="#00000000" />
+        </LinearLayout>
+
+        <ImageView
         android:layout_width="@dimen/my_profile_action_bar_menu_button_width"
         android:layout_height="match_parent"
         android:id="@+id/profile_action_bar_menu_icon"
