@@ -38,7 +38,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.TreeMap;
 import java.util.TreeSet;
 
 /**
@@ -335,7 +334,7 @@ public class LeftPanelListAdapter extends BaseAdapter {
                 ((HiveViewHolder) holder).hiveCategoryImage.setImageResource(R.drawable.registro_important_note_orange);
                 ((HiveViewHolder) holder).hiveCategoryName.setText("Unknown category");
             }
-            ((HiveViewHolder)holder).hiveSubscribedUsers.setText(String.valueOf(((Hive) item).getSubscribedUsers()));
+            ((HiveViewHolder)holder).hiveSubscribedUsers.setText(String.valueOf(((Hive) item).getSubscribedUsersCount()));
             ((HiveViewHolder)holder).hiveItem.setTag(R.id.BO_Hive,item);
             if (((Hive) item).getHiveImage() == null)
                 ((HiveViewHolder)holder).hiveImage.setImageResource(R.drawable.default_hive_image);
