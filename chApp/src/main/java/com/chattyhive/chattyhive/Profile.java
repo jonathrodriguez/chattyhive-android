@@ -143,6 +143,9 @@ public class Profile extends Window {
             profileView.findViewById(R.id.my_profile_status_private_button).setOnClickListener(change_shown_message);
             profileView.findViewById(R.id.my_profile_edit_button).setOnClickListener(edit_button_click);
         }
+
+        //TODO: Check if in other users profile is needed to add some context info in right panel.
+        ((Main)context).rightPanel.setCommunicationContext(null);
     }
 
     @Override

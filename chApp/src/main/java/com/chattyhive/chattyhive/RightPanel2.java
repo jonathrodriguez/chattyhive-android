@@ -12,6 +12,7 @@ import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.chattyhive.backend.businessobjects.Chats.IContextualizable;
 import com.chattyhive.backend.businessobjects.Image;
 import com.chattyhive.backend.util.events.EventArgs;
 import com.chattyhive.backend.util.events.EventHandler;
@@ -173,6 +174,17 @@ public class RightPanel2{
         grupos.append(0, grupo0);
         grupos.append(1, grupo1);
         grupos.append(2, grupo2);
+    }
+
+    public void setCommunicationContext(IContextualizable communicationContext) {
+        if (communicationContext == null) {
+            //TODO: hide communication context.
+        } else {
+            //TODO: show communication context.
+            //Nota: si necesitas el tipo de contexto (chat con amigo, chat privado en hive, chat publico de hive, etc) Sería conveniente en
+            //IContextualizable definir un tipo enumerado con los posibles valores, y como método de la interfaz una funcion "getContextType()" que
+            //devuelva el tipo.
+        }
     }
 }
 

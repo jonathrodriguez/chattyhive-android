@@ -303,6 +303,8 @@ public class MainChat extends Window {
         //Log.w("MainChat", "Notify core that channel conversation window is active.");
         this.channelConversation.setChatWindowActive(true);
         //Log.w("MainChat", "Show().End");
+
+        ((Main)context).rightPanel.setCommunicationContext(this.channelChat);
     }
 
     @Override
