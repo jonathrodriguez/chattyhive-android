@@ -2,6 +2,7 @@ package com.chattyhive.backend.businessobjects.Chats;
 
 import com.chattyhive.backend.Controller;
 import com.chattyhive.backend.businessobjects.Image;
+import com.chattyhive.backend.businessobjects.Users.User;
 import com.chattyhive.backend.contentprovider.AvailableCommands;
 import com.chattyhive.backend.contentprovider.DataProvider;
 import com.chattyhive.backend.contentprovider.OSStorageProvider.HiveLocalStorageInterface;
@@ -10,6 +11,10 @@ import com.chattyhive.backend.contentprovider.formats.COMMON;
 import com.chattyhive.backend.contentprovider.formats.Format;
 import com.chattyhive.backend.contentprovider.formats.HIVE;
 import com.chattyhive.backend.contentprovider.formats.HIVE_ID;
+import com.chattyhive.backend.contentprovider.formats.HIVE_USERS_FILTER;
+import com.chattyhive.backend.contentprovider.formats.INTERVAL;
+import com.chattyhive.backend.contentprovider.formats.USER_PROFILE;
+import com.chattyhive.backend.contentprovider.formats.USER_PROFILE_LIST;
 import com.chattyhive.backend.util.events.CommandCallbackEventArgs;
 import com.chattyhive.backend.util.events.Event;
 import com.chattyhive.backend.util.events.EventArgs;
@@ -22,7 +27,9 @@ import com.google.gson.JsonParser;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.TreeMap;
 
 /**
@@ -115,6 +122,7 @@ public class Hive implements IContextualizable {
      Constructor
      *****************************************/
     public Hive(HIVE data) {
+        this.OnSubscribedUsersListUpdated = new Event<EventArgs>();
         this.category = data.CATEGORY;
         this.creationDate = data.CREATION_DATE;
         this.description = data.DESCRIPTION;
@@ -126,7 +134,7 @@ public class Hive implements IContextualizable {
 
         this.publicChat = null;
 
-        this.subscribedUsers = 0;
+        this.subscribedUsersCount = 0;
         this.tags = new String[0];
         this.chatLanguages = new String[0];
 
@@ -139,7 +147,7 @@ public class Hive implements IContextualizable {
         }
 
         if (data.SUBSCRIBED_USERS != null) {
-            this.subscribedUsers = data.SUBSCRIBED_USERS;
+            this.subscribedUsersCount = data.SUBSCRIBED_USERS;
         }
 
         if (data.PUBLIC_CHAT != null) {
@@ -150,6 +158,7 @@ public class Hive implements IContextualizable {
         }
     }
     private Hive(String nameUrl,Boolean internal) {
+        this.OnSubscribedUsersListUpdated = new Event<EventArgs>();
         if (!internal) {
             this.name = nameUrl;
             this.creationDate = new Date();
@@ -241,7 +250,7 @@ public class Hive implements IContextualizable {
             String hiveNameURL = hive_id.NAME_URL;
             this.nameUrl = hiveNameURL;
             this.publicChat = new Chat(chat, this);
-            this.subscribedUsers = 1;
+            this.subscribedUsersCount = 1;
             Hive.Hives.put(hiveNameURL, this);
 
             if (HiveListChanged != null)
@@ -258,8 +267,54 @@ public class Hive implements IContextualizable {
     /*****************************************
      users list
      *****************************************/
-    public void requestUsers() {
-        //TODO: implement server request (NOT AVAILABLE)
+    public enum HiveUsersType {
+        OUTSTANDING,
+        LOCATION,
+        RECENTLY_ONLINE
+    }
+    private HiveUsersType lastRequestedUserList;
+    public Event<EventArgs> OnSubscribedUsersListUpdated;
+    public void requestUsers(int start, int count, HiveUsersType listType) {
+        if ((this.lastRequestedUserList == null) || (this.lastRequestedUserList.compareTo(listType) != 0)) {
+            this.subscribedUsers = new ArrayList<User>();
+            this.lastRequestedUserList = listType;
+        }
+        HIVE_USERS_FILTER hive_users_filter = new HIVE_USERS_FILTER();
+        hive_users_filter.RESULT_INTERVAL = new INTERVAL();
+
+        hive_users_filter.TYPE = this.lastRequestedUserList.name();
+        hive_users_filter.RESULT_INTERVAL.START_INDEX = (start > 0)?String.valueOf(start):"FIRST";
+        hive_users_filter.RESULT_INTERVAL.COUNT = count;
+
+        Controller.GetRunningController().getDataProvider().RunCommand(AvailableCommands.HiveUsers,new EventHandler<CommandCallbackEventArgs>(this,"requestUsersCallback",CommandCallbackEventArgs.class),hive_users_filter,this.toFormat(new HIVE_ID()));
+    }
+    public void requestUsersCallback (Object sender, CommandCallbackEventArgs eventArgs) {
+        USER_PROFILE_LIST user_profile_list = null;
+        Boolean requestOK = false;
+
+        ArrayList<Format> received = eventArgs.getReceivedFormats();
+        for (Format format : received) {
+            if ((format instanceof COMMON) && (((COMMON) format).STATUS.equalsIgnoreCase("OK")))
+                requestOK = true;
+            else if (format instanceof USER_PROFILE_LIST)
+                user_profile_list = (USER_PROFILE_LIST)format;
+        }
+
+
+        if ((requestOK) && (user_profile_list != null)) {
+            if (user_profile_list.LIST != null) {
+                boolean listChanged = false;
+                for (USER_PROFILE user_profile : user_profile_list.LIST) {
+                    try {
+                        User u = new User(user_profile, Controller.GetRunningController());
+                        listChanged = this.subscribedUsers.add(u) || listChanged;
+                    } catch (Exception e) { }
+                }
+            }
+
+            if (OnSubscribedUsersListUpdated != null)
+                this.OnSubscribedUsersListUpdated.fire(this, EventArgs.Empty());
+        }
     }
 
     /*****************************************
@@ -271,15 +326,17 @@ public class Hive implements IContextualizable {
     protected String name;
     protected String nameUrl;
     protected Chat publicChat;
-    protected Integer subscribedUsers;
+    protected Integer subscribedUsersCount;
     protected String[] chatLanguages;
     protected String[] tags;
+    protected ArrayList<User> subscribedUsers;
 
     protected String imageURL;
+    protected Image hiveImage;
+
     public String getImageURL() {
         return this.imageURL;
     }
-    protected Image hiveImage;
     public void setImageURL(String value) {
         this.imageURL = value;
         if (this.hiveImage != null)
@@ -328,16 +385,23 @@ public class Hive implements IContextualizable {
         this.tags = tags;
     }
 
-    public int getSubscribedUsers() {
+    public List<User> getSubscribedUsers() {
         if (this.subscribedUsers != null)
-            return this.subscribedUsers;
+            return Collections.unmodifiableList(this.subscribedUsers);
+        else
+            return null;
+    }
+
+    public int getSubscribedUsersCount() {
+        if (this.subscribedUsersCount != null)
+            return this.subscribedUsersCount;
         else
             return 0;
     }
     public int incSubscribedUsers(int quantity) {
-        if (this.subscribedUsers == null)
-            this.subscribedUsers = 0;
-        return this.subscribedUsers += quantity;
+        if (this.subscribedUsersCount == null)
+            this.subscribedUsersCount = 0;
+        return this.subscribedUsersCount += quantity;
     }
 
     /*************************************/
@@ -351,7 +415,7 @@ public class Hive implements IContextualizable {
             ((HIVE) format).CREATION_DATE = this.creationDate;
             ((HIVE) format).DESCRIPTION = this.description;
             ((HIVE) format).IMAGE_URL = this.imageURL;
-            ((HIVE) format).SUBSCRIBED_USERS = this.subscribedUsers;
+            ((HIVE) format).SUBSCRIBED_USERS = this.subscribedUsersCount;
 
             if (this.tags != null) {
                 ((HIVE) format).TAGS = new ArrayList<String>(Arrays.asList(this.tags));
@@ -380,7 +444,7 @@ public class Hive implements IContextualizable {
             this.creationDate = ((HIVE) format).CREATION_DATE;
             this.setImageURL(((HIVE) format).IMAGE_URL);
             this.publicChat = null;
-            this.subscribedUsers = 0;
+            this.subscribedUsersCount = 0;
             this.tags = new String[0];
             this.chatLanguages = new String[0];
 
@@ -393,7 +457,7 @@ public class Hive implements IContextualizable {
             }
 
             if (((HIVE) format).SUBSCRIBED_USERS != null) {
-                this.subscribedUsers = ((HIVE) format).SUBSCRIBED_USERS;
+                this.subscribedUsersCount = ((HIVE) format).SUBSCRIBED_USERS;
             }
 
             if (((HIVE) format).PUBLIC_CHAT != null) {
