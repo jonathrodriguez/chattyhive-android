@@ -174,7 +174,7 @@ public class Image {
     }
 
     public void freeMemory () {
-        if (smallThumbnail != null)
+        /*if (smallThumbnail != null)
             try { smallThumbnail.close(); } catch (IOException e) { e.printStackTrace(); } finally { smallThumbnail = null; }
         if (mediumThumbnail != null)
             try { mediumThumbnail.close(); } catch (IOException e) { e.printStackTrace(); } finally { mediumThumbnail = null; }
@@ -183,6 +183,6 @@ public class Image {
         if (xlargeThumbnail != null)
             try { xlargeThumbnail.close(); } catch (IOException e) { e.printStackTrace(); } finally { xlargeThumbnail = null; }
         if (fileImage != null)
-            try { fileImage.close(); } catch (IOException e) { e.printStackTrace(); } finally { fileImage = null; }
+            try { fileImage.close(); } catch (IOException e) { e.printStackTrace(); } finally { fileImage = null; }*/
     }
 }

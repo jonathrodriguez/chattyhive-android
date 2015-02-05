@@ -23,6 +23,7 @@ import com.chattyhive.backend.contentprovider.formats.Format;
 import com.chattyhive.backend.contentprovider.formats.HIVE;
 import com.chattyhive.backend.contentprovider.formats.HIVE_ID;
 import com.chattyhive.backend.contentprovider.formats.HIVE_LIST;
+import com.chattyhive.backend.contentprovider.formats.HIVE_USERS_FILTER;
 import com.chattyhive.backend.contentprovider.formats.LOCAL_USER_PROFILE;
 import com.chattyhive.backend.contentprovider.formats.LOGIN;
 import com.chattyhive.backend.contentprovider.formats.MESSAGE;
@@ -36,6 +37,7 @@ import com.chattyhive.backend.contentprovider.formats.PUBLIC_PROFILE;
 import com.chattyhive.backend.contentprovider.formats.USERNAME;
 import com.chattyhive.backend.contentprovider.formats.USER_EMAIL;
 import com.chattyhive.backend.contentprovider.formats.USER_PROFILE;
+import com.chattyhive.backend.contentprovider.formats.USER_PROFILE_LIST;
 import com.chattyhive.backend.util.RandomString;
 import com.chattyhive.backend.util.events.CommandCallbackEventArgs;
 import com.chattyhive.backend.util.events.ConnectionEventArgs;
@@ -704,6 +706,9 @@ public class StandAloneServer {
                     break;
                 case HiveInfo:
                     response = HiveInfo(server, formats);
+                    break;
+                case HiveUsers:
+                    response = HiveUsers(server,formats);
                     break;
                 case CreateHive:
                     response = CreateHive(server, formats);
@@ -2084,6 +2089,214 @@ public class StandAloneServer {
                         common.STATUS = "OK";
                     }
 
+                } else {
+                    common.STATUS = "SESSION EXPIRED";
+                }
+            }
+        }
+
+        if ((responseCode != null) && (responseCode == 200) && (responseFormats.size() > 0)) {
+            responseBody = "";
+            for (Format format : responseFormats)
+                responseBody += ((responseBody.isEmpty())?"{":", ")+format.toJSON().toString().substring(1,format.toJSON().toString().length()-1);
+            responseBody += "}";
+        }
+
+        return new AbstractMap.SimpleEntry<Integer,String>((responseCode != null)?responseCode:-1,(responseBody != null)?responseBody:"");
+    }
+
+    private static AbstractMap.SimpleEntry<Integer, String> HiveUsers(Server server, Format... formats) {
+        Integer responseCode = null;
+        String responseBody = null;
+
+        HIVE_USERS_FILTER hiveUsersFilter = null;
+        HIVE_ID hiveId = null;
+        if (formats != null)
+            for (Format format : formats)
+                if (format instanceof HIVE_USERS_FILTER)
+                    hiveUsersFilter = (HIVE_USERS_FILTER)format;
+                else if (format instanceof HIVE_ID)
+                    hiveId = (HIVE_ID)format;
+
+        COMMON common = new COMMON();
+
+        ArrayList<Format> responseFormats = new ArrayList<Format>();
+        responseFormats.add(common);
+
+        if ((hiveUsersFilter == null) || (hiveId == null)) {
+            common.STATUS = "ERROR";
+            common.ERROR = -1;
+        } else {
+            HttpCookie csrfCookie = checkCSRFCookie(server.getAppName());
+
+            if ((csrfCookie == null) || (csrfCookie.hasExpired()) || (!CSRFTokens.contains(csrfCookie.getValue())))
+                responseCode = 403;
+            else {
+                responseCode = 200;
+                User user = checkSessionCookie(csrfCookie,server.getAppName());
+
+                if (user != null) {
+                    //Lets GET HIVE USERS
+                    if ((hiveId.NAME_URL == null) || (!Hives.containsKey(hiveId.NAME_URL)) || (!UserHiveSubscriptions.containsKey(user.getUserID())) || (!UserHiveSubscriptions.get(user.getUserID()).contains(hiveId.NAME_URL))) {
+                        common.STATUS = "ERROR";
+                        common.ERROR = -13;
+                    } else {
+                        Hive hive = Hives.get(hiveId.NAME_URL);
+
+                        Comparator<User> comparator = null;
+
+                        if (hiveUsersFilter.TYPE.equalsIgnoreCase("OUTSTANDING")) {
+                            comparator = new Comparator<User>() {
+                                @Override
+                                public int compare(User o1, User o2) { //o1 < o2 => res < 0 | o1 = o2 => res = 0 | o1 > o2 => res > 0
+                                    if ((o1 == null) && (o2 != null))
+                                        return -1;
+                                    else if ((o1 != null) && (o2 == null))
+                                        return 1;
+                                    else if ((o1 == null) && (o2 == null))
+                                        return 0;
+
+                                    String u1 = o1.getUserID();
+                                    String u2 = o2.getUserID();
+
+                                    int res = u1.compareTo(u2);
+
+                                    return ((res==0)?o1.getEmail().compareToIgnoreCase(o2.getEmail()):res);
+                                }
+                            };
+                        } else if (hiveUsersFilter.TYPE.equalsIgnoreCase("LOCATION")) {
+                            comparator = new Comparator<User>() {
+                                @Override
+                                public int compare(User o1, User o2) { //o1 < o2 => res < 0 | o1 = o2 => res = 0 | o1 > o2 => res > 0
+                                    if ((o1 == null) && (o2 != null))
+                                        return -1;
+                                    else if ((o1 != null) && (o2 == null))
+                                        return 1;
+                                    else if ((o1 == null) && (o2 == null))
+                                        return 0;
+
+                                    String l1 = o1.getUserPublicProfile().getLocation();
+                                    String l2 = o2.getUserPublicProfile().getLocation();
+
+                                    return l1.compareTo(l2);
+                                }
+                            };
+                        } else if (hiveUsersFilter.TYPE.equalsIgnoreCase("RECENTLY_ONLINE")) {
+                            comparator = new Comparator<User>() {
+                                @Override
+                                public int compare(User o1, User o2) { //o1 < o2 => res < 0 | o1 = o2 => res = 0 | o1 > o2 => res > 0
+                                    if ((o1 == null) && (o2 != null))
+                                        return -1;
+                                    else if ((o1 != null) && (o2 == null))
+                                        return 1;
+                                    else if ((o1 == null) && (o2 == null))
+                                        return 0;
+
+                                    long d1 = o1.getUserPublicProfile().getBirthdate().getTime();
+                                    long d2 = o2.getUserPublicProfile().getBirthdate().getTime();
+
+                                    long res = d2-d1;
+
+                                    return ((res > Integer.MAX_VALUE)?Integer.MAX_VALUE:((res < Integer.MIN_VALUE)?Integer.MIN_VALUE:((res==0)?o1.getUserID().compareToIgnoreCase(o2.getUserID()):(int)res)));
+                                }
+                            };
+                        } else {
+                            comparator = null;
+                        }
+
+                        Collection<User> resultSet = null;
+                        if (comparator != null)
+                            resultSet = new TreeSet<User>(comparator);
+                        else
+                            resultSet = new ArrayList<User>();
+
+                        ArrayList<String> allUsers = null;
+                        if (HiveUserSubscriptions.containsKey(hive.getNameUrl()))
+                            allUsers = HiveUserSubscriptions.get(hive.getNameUrl());
+                        else
+                            allUsers = new ArrayList<String>();
+
+                        for (String userLogin : allUsers)
+                            if (!userLogin.equalsIgnoreCase(user.getUserID()))
+                                resultSet.add(LoginUser.get(userLogin));
+
+                        USER_PROFILE_LIST list = new USER_PROFILE_LIST();
+                        list.LIST = new ArrayList<USER_PROFILE>();
+
+                        responseFormats.add(list);
+
+                        User[] results = resultSet.toArray(new User[resultSet.size()]);
+
+                        int length = results.length;
+                        if (length > 0) {
+                            int start = -1;
+                            int count = -1;
+                            int end = -1;
+
+                            if ((hiveUsersFilter.RESULT_INTERVAL != null) && (hiveUsersFilter.RESULT_INTERVAL.START_INDEX != null) && (!hiveUsersFilter.RESULT_INTERVAL.START_INDEX.isEmpty()))
+                                start = ((hiveUsersFilter.RESULT_INTERVAL.START_INDEX.equalsIgnoreCase("FIRST")) ? 0 : ((hiveUsersFilter.RESULT_INTERVAL.START_INDEX.equalsIgnoreCase("LAST")) ? length : Integer.parseInt(hiveUsersFilter.RESULT_INTERVAL.START_INDEX)));
+
+                            if ((hiveUsersFilter.RESULT_INTERVAL != null) && (hiveUsersFilter.RESULT_INTERVAL.END_INDEX != null) && (!hiveUsersFilter.RESULT_INTERVAL.END_INDEX.isEmpty()))
+                                end = ((hiveUsersFilter.RESULT_INTERVAL.END_INDEX.equalsIgnoreCase("FIRST")) ? 0 : ((hiveUsersFilter.RESULT_INTERVAL.END_INDEX.equalsIgnoreCase("LAST")) ? length : Integer.parseInt(hiveUsersFilter.RESULT_INTERVAL.END_INDEX)));
+
+                            if ((hiveUsersFilter.RESULT_INTERVAL != null) && (hiveUsersFilter.RESULT_INTERVAL.COUNT != null))
+                                count = hiveUsersFilter.RESULT_INTERVAL.COUNT;
+
+                            int finalStart = 0;
+                            int finalEnd = length;
+
+                            if ((start < 0) && (count >= 0) && (end >= 0)) {
+                                if (end < finalEnd)
+                                    finalEnd = end;
+
+                                finalStart = finalEnd - count;
+                            } else if ((start >= 0) && (count >= 0) && (end < 0)) {
+                                if (start > finalStart)
+                                    finalStart = start;
+
+                                finalEnd = finalStart + count;
+                            } else if ((start >= 0) && (count < 0) && (end >= 0)) {
+                                finalEnd = end;
+                                finalStart = start;
+                            } else if ((start >= 0) && (count >= 0) && (end >= 0)) {
+                                if (start > finalStart)
+                                    finalStart = start;
+
+                                finalEnd = finalStart + count;
+
+                                if (end < finalEnd)
+                                    finalEnd = end;
+                            }
+
+                            if (finalStart < 0)
+                                finalStart = 0;
+                            else if (finalStart >= length)
+                                finalStart = length - 1;
+
+                            if (finalEnd < 0)
+                                finalEnd = 0;
+                            else if (finalEnd > length)
+                                finalEnd = length;
+
+                            if (finalStart > finalEnd) {
+                                int tmp = finalStart;
+                                finalStart = finalEnd;
+                                finalEnd = tmp;
+                            }
+
+                            if ((finalEnd - finalStart) > 0) {
+                                results = Arrays.copyOfRange(results, finalStart, finalEnd);
+
+                                for (User u : results) {
+                                    USER_PROFILE user_profile = new USER_PROFILE();
+                                    user_profile.USER_BASIC_PUBLIC_PROFILE = (BASIC_PUBLIC_PROFILE)u.getUserPublicProfile().toFormat(new BASIC_PUBLIC_PROFILE());
+                                    list.LIST.add(user_profile);
+                                }
+                            }
+                        }
+
+                        common.STATUS = "OK";
+                    }
                 } else {
                     common.STATUS = "SESSION EXPIRED";
                 }
