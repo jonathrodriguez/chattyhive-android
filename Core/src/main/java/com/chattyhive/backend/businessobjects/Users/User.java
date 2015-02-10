@@ -165,12 +165,18 @@ public class User {
         profile_id.USER_ID = this.userID;
 
         if (profileType == ProfileType.PUBLIC) {
-            if ((this.userPublicProfile != null) && (this.userPublicProfile.getLoadedProfileLevel().ordinal() >= profileLevel.ordinal()))
+            if ((this.userPublicProfile != null) && (this.userPublicProfile.getLoadedProfileLevel().ordinal() >= profileLevel.ordinal())) {
+                if (this.UserLoaded != null)
+                    this.UserLoaded.fire(this,EventArgs.Empty());
                 return;
+            }
             profile_id.PROFILE_TYPE = "_PUBLIC";
         } else if (profileType == ProfileType.PRIVATE) {
-            if ((this.userPrivateProfile != null) && (this.userPrivateProfile.getLoadedProfileLevel().ordinal() >= profileLevel.ordinal()))
+            if ((this.userPrivateProfile != null) && (this.userPrivateProfile.getLoadedProfileLevel().ordinal() >= profileLevel.ordinal())) {
+                if (this.UserLoaded != null)
+                    this.UserLoaded.fire(this,EventArgs.Empty());
                 return;
+            }
             profile_id.PROFILE_TYPE = "_PRIVATE";
         } else return;
 
@@ -195,8 +201,16 @@ public class User {
 
         ProfileLevel profileLevel = (profile_id.PROFILE_TYPE.startsWith("BASIC_"))?ProfileLevel.Basic:((profile_id.PROFILE_TYPE.startsWith("EXTENDED_"))?ProfileLevel.Extended:((profile_id.PROFILE_TYPE.startsWith("COMPLETE_"))?ProfileLevel.Complete:ProfileLevel.None));
 
-        if ((profile_id.PROFILE_TYPE.endsWith("_PUBLIC")) && (this.userPublicProfile != null) && (this.userPublicProfile.getLoadedProfileLevel().ordinal() >= profileLevel.ordinal())) return;
-        else if ((profile_id.PROFILE_TYPE.endsWith("_PRIVATE")) && (this.userPrivateProfile != null) && (this.userPrivateProfile.getLoadedProfileLevel().ordinal() >= profileLevel.ordinal())) return;
+        if ((profile_id.PROFILE_TYPE.endsWith("_PUBLIC")) && (this.userPublicProfile != null) && (this.userPublicProfile.getLoadedProfileLevel().ordinal() >= profileLevel.ordinal()))  {
+            if (this.UserLoaded != null)
+                this.UserLoaded.fire(this,EventArgs.Empty());
+            return;
+        }
+        else if ((profile_id.PROFILE_TYPE.endsWith("_PRIVATE")) && (this.userPrivateProfile != null) && (this.userPrivateProfile.getLoadedProfileLevel().ordinal() >= profileLevel.ordinal()))  {
+            if (this.UserLoaded != null)
+                this.UserLoaded.fire(this,EventArgs.Empty());
+            return;
+        }
 
         this.loading = true;
         this.controller.getDataProvider().RunCommand(AvailableCommands.UserProfile,new EventHandler<CommandCallbackEventArgs>(this,"loadCallback",CommandCallbackEventArgs.class),profile_id);

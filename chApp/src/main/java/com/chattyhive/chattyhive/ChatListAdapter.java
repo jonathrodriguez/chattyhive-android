@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -136,6 +137,7 @@ public class ChatListAdapter extends BaseAdapter {
                     if (isMessage) {
                         holder.username = (TextView) convertView.findViewById(R.id.main_panel_chat_username);
                         holder.messageText = (TextView) convertView.findViewById(R.id.main_panel_chat_messageText);
+                        holder.messageImage = (ImageView) convertView.findViewById(R.id.main_panel_chat_image);
                         holder.avatarThumbnail = (ImageView) convertView.findViewById(R.id.main_panel_chat_avatarThumbnail);
                         holder.timeStamp = (TextView) convertView.findViewById(R.id.main_panel_chat_timeStamp);
                         holder.chatItem = convertView.findViewById(R.id.main_panel_chat_item);
@@ -162,9 +164,12 @@ public class ChatListAdapter extends BaseAdapter {
                     }
                     if (isMessage) {
                         holder.messageText = (TextView) convertView.findViewById(R.id.main_panel_chat_single_message_messageText);
+                        holder.messageImage = (ImageView) convertView.findViewById(R.id.main_panel_chat_single_message_image);
                         holder.timeStamp = (TextView) convertView.findViewById(R.id.main_panel_chat_single_message_timeStamp);
                         holder.chatItem = convertView.findViewById(R.id.main_panel_chat_item);
                         holder.tickImage = (ImageView)convertView.findViewById(R.id.main_panel_chat_single_message_confirm_icon);
+
+                        ((LinearLayout.LayoutParams)holder.chatItem.getLayoutParams()).weight = 0;
                     }
                     break;
                 default:
@@ -197,7 +202,20 @@ public class ChatListAdapter extends BaseAdapter {
                 }
             }
 
+            holder.messageImage.setVisibility(View.GONE);
+            holder.messageText.setVisibility(View.VISIBLE);
             holder.messageText.setText(message.getMessageContent().getContent());
+
+            if ((message.getMessageContent().getContentType() != null) && (message.getMessageContent().getContentType().equalsIgnoreCase("IMAGE")))
+            {
+                Image image = null;
+                try { image = message.getMessageContent().getImage(); } catch (Exception e) {}
+                if (image != null) {
+                    image.OnImageLoaded.add(new EventHandler<EventArgs>(holder, "onMessageImageLoaded", EventArgs.class));
+                    image.loadImage(Image.ImageSize.xlarge, 0);
+                }
+            }
+
             /*if (message.getServerTimeStamp() != null)
                 holder.timeStamp.setText(TimestampFormatter.toLocaleString(message.getServerTimeStamp()));
             else if (message.getTimeStamp() != null)
@@ -260,9 +278,40 @@ public class ChatListAdapter extends BaseAdapter {
         public View chatItem;
         public TextView username;
         public TextView messageText;
+        public ImageView messageImage;
         public TextView timeStamp;
         public ImageView avatarThumbnail;
         public ImageView tickImage;
+
+        public void onMessageImageLoaded(Object sender,EventArgs eventArgs) {
+            if (!(sender instanceof Image)) return;
+
+            final Image image = (Image)sender;
+            final ViewHolder thisViewHolder = this;
+
+            ((Activity)context).runOnUiThread( new Runnable() {
+                @Override
+                public void run() {
+                    InputStream is = image.getImage(Image.ImageSize.xlarge,0);
+                    if ((is != null) && (messageImage != null)) {
+                        messageImage.setImageBitmap(BitmapFactory.decodeStream(is));
+                        messageImage.setVisibility(View.VISIBLE);
+                        messageText.setVisibility(View.GONE);
+                        if ((chatKind == ChatKind.PRIVATE_SINGLE) || (chatKind == ChatKind.PUBLIC_SINGLE))
+                            ((LinearLayout.LayoutParams)chatItem.getLayoutParams()).weight = 1;
+                        try {
+                            is.reset();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    if (is != null)
+                        image.OnImageLoaded.remove(new EventHandler<EventArgs>(thisViewHolder,"onMessageImageLoaded",EventArgs.class));
+                    //image.freeMemory();
+                }
+            });
+        }
 
         public void onImageLoaded(Object sender,EventArgs eventArgs) {
             if (!(sender instanceof Image)) return;

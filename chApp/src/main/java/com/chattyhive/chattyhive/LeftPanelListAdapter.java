@@ -38,7 +38,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.TreeMap;
 import java.util.TreeSet;
 
 /**
@@ -335,7 +334,7 @@ public class LeftPanelListAdapter extends BaseAdapter {
                 ((HiveViewHolder) holder).hiveCategoryImage.setImageResource(R.drawable.registro_important_note_orange);
                 ((HiveViewHolder) holder).hiveCategoryName.setText("Unknown category");
             }
-            ((HiveViewHolder)holder).hiveSubscribedUsers.setText(String.valueOf(((Hive) item).getSubscribedUsers()));
+            ((HiveViewHolder)holder).hiveSubscribedUsers.setText(String.valueOf(((Hive) item).getSubscribedUsersCount()));
             ((HiveViewHolder)holder).hiveItem.setTag(R.id.BO_Hive,item);
             if (((Hive) item).getHiveImage() == null)
                 ((HiveViewHolder)holder).hiveImage.setImageResource(R.drawable.default_hive_image);
@@ -380,9 +379,11 @@ public class LeftPanelListAdapter extends BaseAdapter {
                     try {
                         ((Chat) item).getParentHive().getHiveImage().OnImageLoaded.add(new EventHandler<EventArgs>(holder, "loadHiveImage", EventArgs.class));
                         ((Chat) item).getParentHive().getHiveImage().loadImage(Image.ImageSize.small, 0);
+                        ((ChatViewHolder)holder).hiveName = context.getResources().getString(R.string.hivename_identifier_character).concat(((Chat) item).getParentHive().getName());
                     } catch (Exception e) { }
                     for (User user : ((Chat) item).getMembers())
                         if (!user.isMe()) {
+                            ((ChatViewHolder)holder).user = user;
                             if ((user.getUserPublicProfile() != null) && (user.getUserPublicProfile().getShowingName() != null)) {
                                 GroupName = context.getResources().getString(R.string.public_username_identifier_character).concat(user.getUserPublicProfile().getShowingName());
                                 try {
@@ -407,6 +408,12 @@ public class LeftPanelListAdapter extends BaseAdapter {
                     }
                     ((ChatViewHolder)holder).chatLastMessageTimestamp.setVisibility(View.VISIBLE);
                     ((ChatViewHolder)holder).chatPendingMessagesNumber.setVisibility(View.INVISIBLE);
+
+
+                    ((ChatViewHolder)holder).profileType = Profile.ProfileType.Public;
+                    ((ChatViewHolder)holder).chatImage.setOnClickListener(((ChatViewHolder)holder).thumbnailClickListener);
+                    ((ChatViewHolder)holder).chatImage.setClickable(true);
+
                     break;
                 case PUBLIC_GROUP:
                     ((ChatViewHolder)holder).chatHiveImage.setVisibility(View.VISIBLE);
@@ -441,6 +448,9 @@ public class LeftPanelListAdapter extends BaseAdapter {
                     }
                     ((ChatViewHolder)holder).chatLastMessageTimestamp.setVisibility(View.VISIBLE);
                     ((ChatViewHolder)holder).chatPendingMessagesNumber.setVisibility(View.INVISIBLE);
+
+                    ((ChatViewHolder)holder).chatImage.setOnClickListener(null);
+                    ((ChatViewHolder)holder).chatImage.setClickable(false);
                     break;
                 case HIVE:
                     ((ChatViewHolder)holder).chatHiveImage.setVisibility(View.GONE);
@@ -459,13 +469,18 @@ public class LeftPanelListAdapter extends BaseAdapter {
                     ((ChatViewHolder)holder).chatPendingMessagesNumber.setVisibility(View.INVISIBLE);
                     ((ChatViewHolder)holder).chatImage.setAdjustViewBounds(true);
                     ((ChatViewHolder)holder).chatImage.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+
+                    ((ChatViewHolder)holder).chatImage.setOnClickListener(null);
+                    ((ChatViewHolder)holder).chatImage.setClickable(false);
                     break;
                 case PRIVATE_SINGLE:
                     ((ChatViewHolder)holder).chatHiveImage.setVisibility(View.GONE);
                     ((ChatViewHolder)holder).chatTypeImage.setImageResource(R.drawable.pestanha_chats_user);
                     ((ChatViewHolder)holder).chatImage.setImageResource(R.drawable.default_profile_image_male);
+
                     for (User user : ((Chat) item).getMembers())
                         if (!user.isMe()) {
+                            ((ChatViewHolder)holder).user = user;
                             if ((user.getUserPrivateProfile() != null) && (user.getUserPrivateProfile().getShowingName() != null)) {
                                 GroupName = user.getUserPrivateProfile().getShowingName();
                                 if (user.getUserPrivateProfile().getProfileImage() == null) {
@@ -492,6 +507,12 @@ public class LeftPanelListAdapter extends BaseAdapter {
                     }
                     ((ChatViewHolder)holder).chatLastMessageTimestamp.setVisibility(View.VISIBLE);
                     ((ChatViewHolder)holder).chatPendingMessagesNumber.setVisibility(View.INVISIBLE);
+
+                    ((ChatViewHolder)holder).profileType = Profile.ProfileType.Private;
+                    ((ChatViewHolder)holder).hiveName = null;
+
+                    ((ChatViewHolder)holder).chatImage.setOnClickListener(((ChatViewHolder)holder).thumbnailClickListener);
+                    ((ChatViewHolder)holder).chatImage.setClickable(true);
                     break;
                 case PRIVATE_GROUP:
                     ((ChatViewHolder)holder).chatHiveImage.setVisibility(View.GONE);
@@ -521,6 +542,9 @@ public class LeftPanelListAdapter extends BaseAdapter {
                     }
                     ((ChatViewHolder)holder).chatLastMessageTimestamp.setVisibility(View.VISIBLE);
                     ((ChatViewHolder)holder).chatPendingMessagesNumber.setVisibility(View.INVISIBLE);
+
+                    ((ChatViewHolder)holder).chatImage.setOnClickListener(null);
+                    ((ChatViewHolder)holder).chatImage.setClickable(false);
                     break;
                 default:
                     return null;
@@ -536,6 +560,11 @@ public class LeftPanelListAdapter extends BaseAdapter {
         }*/
 
         return convertView;
+    }
+
+    private void openProfile(User user,Profile.ProfileType profileType, String hiveName) {
+        if (user != null)
+            ((Main)context).OpenWindow(new Profile(context,user,profileType, hiveName));
     }
 
     private abstract class ViewHolder{}
@@ -584,6 +613,18 @@ public class LeftPanelListAdapter extends BaseAdapter {
         public ImageView chatTypeImage;
         public TextView chatLastMessageTimestamp;
         public TextView chatPendingMessagesNumber;
+
+        public User user;
+        public String hiveName;
+        public Profile.ProfileType profileType;
+
+        public View.OnClickListener thumbnailClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if ((user != null) && (profileType != null))
+                    openProfile(user,profileType,hiveName);
+            }
+        };
 
         public void loadHiveImage(Object sender,EventArgs eventArgs) {
             if (!(sender instanceof Image)) return;

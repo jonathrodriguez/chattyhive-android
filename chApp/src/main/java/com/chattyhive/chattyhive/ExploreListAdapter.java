@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -258,7 +257,7 @@ public class ExploreListAdapter extends BaseAdapter implements AbsListView.OnScr
         holder.collapsed_hive_name.setText(hive.getName());
         holder.collapsed_hive_description.setText(hive.getDescription());
         Category.setCategory(hive.getCategory(),holder.collapsed_categoryImage,holder.collapsed_categoryText);
-        holder.collapsed_usersText.setText(String.valueOf(hive.getSubscribedUsers()));
+        holder.collapsed_usersText.setText(String.valueOf(hive.getSubscribedUsersCount()));
 
         holder.expanded_hive_name.setText(hive.getName());
         if (hive.getDescription() != null)
@@ -266,7 +265,7 @@ public class ExploreListAdapter extends BaseAdapter implements AbsListView.OnScr
         else if (hive.getDescription() == null || hive.getDescription() == "")
             holder.expanded_hive_description.setVisibility(View.GONE);
         Category.setCategory(hive.getCategory(),holder.expanded_categoryImage,holder.expanded_categoryText);
-        holder.expanded_usersText.setText(context.getString(R.string.explore_hive_card_expanded_n_mates,hive.getSubscribedUsers()));
+        holder.expanded_usersText.setText(context.getString(R.string.explore_hive_card_expanded_n_mates,hive.getSubscribedUsersCount()));
 
         String chatLanguages = "";
         if (hive.getChatLanguages() != null)

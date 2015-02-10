@@ -22,7 +22,18 @@
         android:paddingBottom="7dp"
         android:paddingTop="7dp"
         android:paddingRight="35dp"
-        android:paddingLeft="14dp">
+        android:paddingLeft="14dp"
+        android:layout_weight="0">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/main_panel_chat_single_message_image"
+            android:adjustViewBounds="true"
+            android:scaleType="fitXY"
+            android:visibility="gone"
+            android:paddingTop="4dp"
+            android:paddingBottom="7dp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -34,7 +45,9 @@
             android:layout_alignParentTop="true"
             android:paddingTop="4dp"
             android:paddingBottom="7dp"
-            android:textSize="14.5sp"/>
+            android:textSize="14.5sp"
+            android:visibility="visible" />
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
