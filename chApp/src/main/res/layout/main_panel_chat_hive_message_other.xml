@@ -71,7 +71,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/main_panel_chat_image"
             android:adjustViewBounds="true"
-            android:scaleType="centerInside"
+            android:scaleType="fitXY"
             android:visibility="gone"
             android:layout_marginRight="4dp" />
 

@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -167,6 +168,8 @@ public class ChatListAdapter extends BaseAdapter {
                         holder.timeStamp = (TextView) convertView.findViewById(R.id.main_panel_chat_single_message_timeStamp);
                         holder.chatItem = convertView.findViewById(R.id.main_panel_chat_item);
                         holder.tickImage = (ImageView)convertView.findViewById(R.id.main_panel_chat_single_message_confirm_icon);
+
+                        ((LinearLayout.LayoutParams)holder.chatItem.getLayoutParams()).weight = 0;
                     }
                     break;
                 default:
@@ -294,6 +297,8 @@ public class ChatListAdapter extends BaseAdapter {
                         messageImage.setImageBitmap(BitmapFactory.decodeStream(is));
                         messageImage.setVisibility(View.VISIBLE);
                         messageText.setVisibility(View.GONE);
+                        if ((chatKind == ChatKind.PRIVATE_SINGLE) || (chatKind == ChatKind.PUBLIC_SINGLE))
+                            ((LinearLayout.LayoutParams)chatItem.getLayoutParams()).weight = 1;
                         try {
                             is.reset();
                         } catch (IOException e) {
