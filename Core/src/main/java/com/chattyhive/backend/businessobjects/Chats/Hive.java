@@ -426,4 +426,9 @@ public class Hive implements IContextualizable {
 
         throw  new IllegalArgumentException("Expected HIVE or HIVE_ID formats.");
     }
+
+    @Override
+    public ContextObj getOpenedChat() {
+        return null;
+    }
 }
