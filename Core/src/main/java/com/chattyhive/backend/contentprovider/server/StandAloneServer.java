@@ -94,6 +94,7 @@ public class StandAloneServer {
 
     private static HashMap<String, ArrayList<String>> UserFriendList;
     private static String[] Words = new String[]{"Lorem","ipsum","dolor","sit","amet","consectetuer","adipiscing","elit. Aenean","commodo","ligula","eget","dolor. Aenean","massa. Cum","sociis","natoque","penatibus","et","magnis","dis","parturient","montes,","nascetur","ridiculus","mus. Donec","quam","felis,","ultricies","nec,","pellentesque","eu,","pretium","quis,","sem. Nulla","consequat","massa","quis","enim. Donec","pede","justo","fringilla","vel,","aliquet","nec","vulputate","eget,","arcu. In","enim","justo","rhoncus","ut,","imperdiet","a","venenatis","vitae","justo","nullam","dictum","felis","eu","pede","mollis","pretium. Integer","tincidunt. Cras","dapibus","vivamus","elementum","semper","nisi. Aenean","vulputate","eleifend","tellus. Aenean","leo","ligula,","porttitor","eu,","consequat","vitae","eleifend","ac","enim. Aliquam","lorem","ante","dapibus","in,","viverra","quis,","feugiat","a,","tellus. Phasellus","viverra","nulla","ut","metus","varius","laoreet. Quisque","rutrum","aenean","imperdiet","etiam","ultricies","nisi","vel","augue. Curabitur","ullamcorper","ultricies","nisi","nam","eget","dui. Etiam","rhoncus","maecenas","tempus,","tellus","eget","condimentum","rhoncus","sem","quam","semper","libero,","sit","amet","adipiscing","sem","neque","sed","ipsum. Nam","quam","nunc,","blandit","vel","luctus","pulvinar","hendrerit","id","lorem. Maecenas","nec","odio","et","ante","tincidunt","tempus. Donec","vitae","sapien","ut","libero","venenatis","faucibus. Nullam","quis,","ante. Etiam","sit","amet","orci","eget","eros","faucibus","tincidunt","duis","leo","sed","fringilla","mauris","sit","amet","nibh. Donec","sodales","sagittis","magna. Sed","consequat","leo","eget","bibendum","sodales,","augue","velit","cursus","nunc"};
+    private static String[] Images = new String[]{"file_chat_001.jpg","file_chat_002.jpg","file_chat_003.jpg","file_chat_004.jpg","file_chat_005.jpg","file_chat_006.jpg","file_chat_007.jpg","file_chat_008.jpg","file_chat_009.jpg","file_chat_010.jpg","file_chat_011.jpg","file_chat_012.jpg","file_chat_013.jpg","file_chat_014.jpg","file_chat_015.jpg","file_chat_016.jpg","file_chat_017.jpg","file_chat_018.jpg","file_chat_019.jpg","file_chat_020.jpg","file_chat_021.jpg","file_chat_022.jpg","file_chat_023.jpg","file_chat_024.jpg","file_chat_025.jpg","file_chat_026.jpg","file_chat_027.jpg","file_chat_028.jpg","file_chat_029.jpg","file_chat_030.jpg","file_chat_031.jpg","file_chat_032.jpg","file_chat_033.jpg","file_chat_034.jpg","file_chat_035.jpg","file_chat_036.jpg","file_chat_037.jpg","file_chat_038.jpg","file_chat_039.jpg","file_chat_040.jpg"};
     static {
         if (StaticParameters.StandAlone) {
             CSRFTokens = new ArrayList<String>();
@@ -470,10 +471,22 @@ public class StandAloneServer {
         }
         if (sender != null) {
 
-            int messageLength = random.nextInt(30) + 1;
+            String content_type = "";
             String messageContent = "";
-            for (int wordCount = 0; wordCount < messageLength; wordCount++)
-                messageContent = messageContent.concat(((messageContent.isEmpty())?"":" ")).concat(Words[random.nextInt(Words.length)]);
+
+            if ((Images.length > 0) && (random.nextDouble() <= ((double)1/15))) {
+                //Send Image
+                content_type = "IMAGE";
+                messageContent = Images[random.nextInt(Images.length)];
+            } else {
+                //Send text
+                content_type = "TEXT";
+                int messageLength = random.nextInt(30) + 1;
+                for (int wordCount = 0; wordCount < messageLength; wordCount++)
+                    messageContent = messageContent.concat(((messageContent.isEmpty())?"":" ")).concat(Words[random.nextInt(Words.length)]);
+            }
+
+
 
             long minDate = (new Date()).getTime() - (30L*24*60*60*1000);//chat.getCreationDate().getTime();
             if ((chat.getConversation().getCount() > 0) && (chat.getConversation().getLastMessage() != null))
@@ -490,7 +503,7 @@ public class StandAloneServer {
             message.SERVER_TIMESTAMP = new Date(date);
             message.USER_ID = sender.getUserID();
             message.CONTENT = new MESSAGE_CONTENT();
-            message.CONTENT.CONTENT_TYPE = "TEXT";
+            message.CONTENT.CONTENT_TYPE = content_type;
             message.CONTENT.CONTENT = messageContent;
             sendMessage(sender, chat,message,notify);
         }
