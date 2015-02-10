@@ -66,6 +66,14 @@
             android:gravity="right|top"
             android:orientation="vertical">
 
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/main_panel_chat_image"
+                android:adjustViewBounds="true"
+                android:scaleType="centerInside"
+                android:visibility="gone" />
+
             <TextView
                 android:id="@+id/main_panel_chat_messageText"
                 android:layout_width="wrap_content"
@@ -75,7 +83,8 @@
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="#333333"
                 android:textSize="14.5sp"
-                android:gravity="left"/>
+                android:gravity="left"
+                android:visibility="visible" />
         </LinearLayout>
     </LinearLayout>
 
