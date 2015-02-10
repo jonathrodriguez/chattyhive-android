@@ -519,4 +519,8 @@ public class Chat implements IContextualizable {
         throw  new IllegalArgumentException("Expected CHAT, CHAT_ID or CHAT_SYNC formats.");
     }
 
+    @Override
+    public ContextObj getOpenedChat() {
+        return null;
+    }
 }
