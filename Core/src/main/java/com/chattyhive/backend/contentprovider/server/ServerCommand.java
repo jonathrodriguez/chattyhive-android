@@ -23,13 +23,13 @@ public class ServerCommand {
     /*************************************/
 
     private ServerCommandDefinition command;
-    private UserSession userSession;
+    private IServerUser serverUser;
 
     private ArrayList<Format> inputFormats;
     private ArrayList<Format> paramFormats;
 
-    public ServerCommand (UserSession userSession, AvailableCommands command, Format... formats) {
-        this.userSession = userSession;
+    public ServerCommand (IServerUser serverUser, AvailableCommands command, Format... formats) {
+        this.serverUser = serverUser;
         this.command = ServerCommandDefinition.GetCommand(command);
 
         this.inputFormats = new ArrayList<Format>();
@@ -53,6 +53,7 @@ public class ServerCommand {
     public String getUrl() { //TODO: Edit this to support optional parameters
         String url = this.command.getUrl();
         int paramIndex = url.indexOf('[');
+        //TODO: Algoritmo: 1) Buscar un %_ o un %+. 2) Buscar el %% correspondiente a éste abrir. 3) Enviar lo del medio a recursiveParseURL 4) Sustituir y repetir hasta terminar la url
         while (paramIndex > -1) {
             int endParamIndex = url.indexOf(']');
             if (endParamIndex > -1) {
@@ -73,7 +74,21 @@ public class ServerCommand {
         }
         return url;
     }
-    private String getUrlParameterValue(String parameter, Format... formats) throws NoSuchFieldException, IllegalAccessException {
+
+    private String recursiveParseURL(String fragment,boolean Optional) {
+        String url = fragment;
+        //TODO: Algoritmo. Si comienza con %+ es un parámetro. Si comienza con %_ debe contener
+        // un %+ con el parámtro; además el parámetro será opcional. Entre %_ y %+ está el prefijo.
+        // Entre los cierres, %% y %%, está el sufijo.
+        if (!Optional) {
+            //Estoy en el último nivel. Resuelvo y devuelvo un valor.
+        } else {
+            //Quizá no esté en el último nivel. Verifico y ya devuelvo según si hay valor o no.
+        }
+        return url;
+    }
+
+    private String getUrlParameterValue(String parameter) throws NoSuchFieldException, IllegalAccessException {
         Format parameterFormat = null;
 
         int dotIndex = parameter.indexOf('.');
@@ -81,8 +96,8 @@ public class ServerCommand {
 
         String formatName = parameter.substring(preIndex,dotIndex);
 
-        for (Format f : formats)
-            if (this.paramFormats.contains(f.getClass()))
+        for (Format f : this.paramFormats)
+            if (this.command.getParamFormats().contains(f.getClass()))
                 if (f.getClass().getSimpleName().equalsIgnoreCase(formatName)) {
                     parameterFormat = f;
                     break;
@@ -129,54 +144,22 @@ public class ServerCommand {
     }
 
     public Boolean checkCookies() {
-        if (this.requiredCookies == null) return true;
+        if (this.command.getRequiredCookies() == null) return true;
 
-        TreeMap<String,Boolean> requiredCookiesCheck = new TreeMap<String, Boolean>();
-        for (String cookie : this.requiredCookies)
-            requiredCookiesCheck.put(cookie,false);
-
-        CookieManager cookieManager = (CookieManager) CookieHandler.getDefault();
-        CookieStore cookieStore = cookieManager.getCookieStore();
-        List<HttpCookie> cookies = cookieStore.getCookies();
-
-        if (cookies != null) {
-            for (HttpCookie cookie : cookies)
-                if (requiredCookiesCheck.containsKey(cookie.getName()))
-                    requiredCookiesCheck.put(cookie.getName(),true);
-        }
-
-        if (requiredCookiesCheck.size() > 0) {
-            for (Boolean value : requiredCookiesCheck.values())
-                if (!value)
-                    return false;
-        }
+        for (String cookie : this.command.getRequiredCookies())
+            if (this.serverUser.getAuthToken(cookie) == null)
+                return false;
 
         return true;
     }
     public ArrayList<String> getUnsatisfyingCookies() {
         ArrayList<String> result = new ArrayList<String>();
 
-        if (this.requiredCookies == null) return null;
+        if (this.command.getRequiredCookies() == null) return null;
 
-        TreeMap<String,Boolean> requiredCookiesCheck = new TreeMap<String, Boolean>();
-        for (String cookie : this.requiredCookies)
-            requiredCookiesCheck.put(cookie,false);
-
-        CookieManager cookieManager = (CookieManager) CookieHandler.getDefault();
-        CookieStore cookieStore = cookieManager.getCookieStore();
-        List<HttpCookie> cookies = cookieStore.getCookies();
-
-        if (cookies != null) {
-            for (HttpCookie cookie : cookies)
-                if (requiredCookiesCheck.containsKey(cookie.getName()))
-                    requiredCookiesCheck.put(cookie.getName(),true);
-        }
-
-        if (requiredCookiesCheck.size() > 0) {
-            for (Map.Entry<String,Boolean> requirement : requiredCookiesCheck.entrySet())
-                if (!requirement.getValue())
-                    result.add(requirement.getKey());
-        }
+        for (String cookie : this.command.getRequiredCookies())
+            if (this.serverUser.getAuthToken(cookie) == null)
+                result.add(cookie);
 
         return (result.size() > 0)?result:null;
     }
@@ -195,30 +178,6 @@ public class ServerCommand {
 
         for (Class<?> formatClass : this.command.getRequiredParamFormats())
             if (!paramFormatClasses.contains(formatClass)) return false;
-
-        return true;
-    }
-
-    private Boolean checkFormats(Format... formats) {
-        TreeMap<String,Boolean> requiredFormats = new TreeMap<String,Boolean>();
-        if (this.command.getRequiredInputFormats() != null)
-            for (Class<?> format : this.command.getRequiredInputFormats())
-                requiredFormats.put(format.getName(),false);
-        if (this.command.getRequiredParamFormats() != null)
-            for (Class<?> format : this.command.getRequiredParamFormats())
-                requiredFormats.put(format.getName(),false);
-
-        if (formats != null) {
-            for (Format format : formats)
-                if (requiredFormats.containsKey(format.getClass().getName()))
-                    requiredFormats.put(format.getClass().getName(), true);
-        }
-
-        if (requiredFormats.size() > 0) {
-            for (Boolean value : requiredFormats.values())
-                if (!value)
-                    return false;
-        }
 
         return true;
     }
