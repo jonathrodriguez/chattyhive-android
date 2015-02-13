@@ -3,6 +3,7 @@ package com.chattyhive.chattyhive;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -57,30 +58,37 @@ public class LeftPanelListAdapter extends BaseAdapter {
 
     public void SetVisibleList(int LeftPanel_ListKind) {
         this.visibleList = LeftPanel_ListKind;
-        this.OnAddItem(this,EventArgs.Empty());
+        this.OnAddItem(this, EventArgs.Empty());
     }
-    public  int GetVisibleList() {
+
+    public int GetVisibleList() {
         return this.visibleList;
     }
 
-    public void SetOnClickListener (View.OnClickListener listener) {
+    public void SetOnClickListener(View.OnClickListener listener) {
         this.clickListener = listener;
         notifyDataSetChanged();
     }
 
     public void OnAddItem(Object sender, EventArgs args) {  //TODO: This is only a patch. Hive and Chat collections must be updated on UIThread.
-        ((Activity)this.context).runOnUiThread(new Runnable(){
+        ((Activity) this.context).runOnUiThread(new Runnable() {
             public void run() {
                 hiveList = null;
                 chatList = null;
                 if (visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Hives)) {
                     while (hiveList == null)
-                        try { CaptureHives(); } catch (Exception e) { hiveList = null; }
+                        try {
+                            CaptureHives();
+                        } catch (Exception e) {
+                            hiveList = null;
+                        }
                 } else if (visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Chats)) {
                     while (chatList == null)
                         try {
                             CaptureChats();
-                        } catch (Exception e) { chatList = null; }
+                        } catch (Exception e) {
+                            chatList = null;
+                        }
                 } else if (visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Mates)) {
                     hiveList = null;
                     chatList = null;
@@ -163,12 +171,12 @@ public class LeftPanelListAdapter extends BaseAdapter {
                     /*if ((lhs.getPublicChat().getConversation() != null) && (lhs.getPublicChat().getConversation().getCount() > 0) && (lhs.getPublicChat().getConversation().getLastMessage() != null))
                         lhsDate = lhs.getPublicChat().getConversation().getLastMessage().getOrdinationTimeStamp();
                     else if (lhs.getCreationDate() != null)*/
-                        lhsDate = lhs.getCreationDate();
+                    lhsDate = lhs.getCreationDate();
 
                    /* if ((rhs.getPublicChat().getConversation() != null) && (rhs.getPublicChat().getConversation().getCount() > 0) && (rhs.getPublicChat().getConversation().getLastMessage() != null))
                         rhsDate = rhs.getPublicChat().getConversation().getLastMessage().getOrdinationTimeStamp();
                     else if (rhs.getCreationDate() != null)*/
-                        rhsDate = rhs.getCreationDate();
+                    rhsDate = rhs.getCreationDate();
 
                     if ((lhsDate == null) && (rhsDate != null))
                         res = 1;
@@ -199,12 +207,12 @@ public class LeftPanelListAdapter extends BaseAdapter {
         hiveList = new ArrayList<Hive>(list);
     }
 
-    public LeftPanelListAdapter (Context activityContext) {
+    public LeftPanelListAdapter(Context activityContext) {
         super();
         this.context = activityContext;
         this.ListSizeChanged = new Event<EventArgs>();
-        this.inflater = ((Activity)this.context).getLayoutInflater();
-        this.listView = ((ListView)((Activity)this.context).findViewById(R.id.left_panel_element_list));
+        this.inflater = ((Activity) this.context).getLayoutInflater();
+        this.listView = ((ListView) ((Activity) this.context).findViewById(R.id.left_panel_element_list));
         //this.listView.setAdapter(this);
 
         if (visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Hives)) {
@@ -245,7 +253,7 @@ public class LeftPanelListAdapter extends BaseAdapter {
     }
 
     @Override
-    public Object getItem(int position){
+    public Object getItem(int position) {
         if (this.visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Hives)) {
             return hiveList.get(position);
         } else if (this.visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Chats)) {
@@ -268,51 +276,56 @@ public class LeftPanelListAdapter extends BaseAdapter {
         ViewHolder holder = null;
         int type = visibleList;
 
-        if (type == context.getResources().getInteger(R.integer.LeftPanel_ListKind_None)) { return null; }
-        if (convertView==null) {
+        if (type == context.getResources().getInteger(R.integer.LeftPanel_ListKind_None)) {
+            return null;
+        }
+        if (convertView == null) {
             TypedValue alpha = new TypedValue();
             if (type == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Hives)) {
                 holder = new HiveViewHolder();
-                convertView = this.inflater.inflate(R.layout.left_panel_hives_list_item,parent,false);
-                ((HiveViewHolder)holder).hiveItem = (LinearLayout)convertView.findViewById((R.id.left_panel_hives_list_item_top_view));
-                ((HiveViewHolder)holder).hiveName = (TextView)convertView.findViewById(R.id.left_panel_hives_list_item_hive_name);
-                ((HiveViewHolder)holder).hiveImage = (ImageView)convertView.findViewById(R.id.left_panel_hives_list_item_img);
-                ((HiveViewHolder)holder).hiveCategoryImage = (ImageView)convertView.findViewById(R.id.left_panel_hives_list_item_hive_categroy_img);
-                ((HiveViewHolder)holder).hiveCategoryName = (TextView)convertView.findViewById(R.id.left_panel_hives_list_item_hive_category);
-                ((HiveViewHolder)holder).hiveDescription = (TextView)convertView.findViewById(R.id.left_panel_hives_list_item_hive_description);
-                ((HiveViewHolder)holder).hiveSubscribedUsers = (TextView)convertView.findViewById(R.id.left_panel_hives_list_item_hive_subscribed_users);
-                ((HiveViewHolder)holder).hiveItem.setOnClickListener(clickListener);
+                convertView = this.inflater.inflate(R.layout.left_panel_hives_list_item, parent, false);
+                ((HiveViewHolder) holder).hiveItem = (LinearLayout) convertView.findViewById((R.id.left_panel_hives_list_item_top_view));
+                ((HiveViewHolder) holder).hiveName = (TextView) convertView.findViewById(R.id.left_panel_hives_list_item_hive_name);
+                ((HiveViewHolder) holder).hiveImage = (ImageView) convertView.findViewById(R.id.left_panel_hives_list_item_img);
+                ((HiveViewHolder) holder).hiveCategoryImage = (ImageView) convertView.findViewById(R.id.left_panel_hives_list_item_hive_categroy_img);
+                ((HiveViewHolder) holder).hiveCategoryName = (TextView) convertView.findViewById(R.id.left_panel_hives_list_item_hive_category);
+                ((HiveViewHolder) holder).hiveDescription = (TextView) convertView.findViewById(R.id.left_panel_hives_list_item_hive_description);
+                ((HiveViewHolder) holder).hiveSubscribedUsers = (TextView) convertView.findViewById(R.id.left_panel_hives_list_item_hive_subscribed_users);
+                ((HiveViewHolder) holder).hiveCardLanguage = (TextView) convertView.findViewById(R.id.context_list_item_expanded_hive_chat_languages);
+                ((HiveViewHolder) holder).hiveTags = (WrapLayout) convertView.findViewById(R.id.context_wrap_layout_tags);
+                ((HiveViewHolder) holder).hiveImageSmall = (ImageView) convertView.findViewById(R.id.left_panel_title_img);
+                ((HiveViewHolder) holder).hiveItem.setOnClickListener(clickListener);
 
                 //Set the alpha values
                 convertView.getContext().getResources().getValue(R.color.left_panel_hive_list_item_hive_subscribed_users_img_alpha, alpha, true);
                 StaticMethods.SetAlpha((ImageView) convertView.findViewById(R.id.left_panel_hives_list_item_hive_subscribed_users_img), alpha.getFloat());
                 convertView.getContext().getResources().getValue(R.color.left_panel_hive_list_item_hive_category_img_alpha, alpha, true);
-                StaticMethods.SetAlpha(((HiveViewHolder)holder).hiveCategoryImage,alpha.getFloat());
+                StaticMethods.SetAlpha(((HiveViewHolder) holder).hiveCategoryImage, alpha.getFloat());
             } else if (type == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Chats)) {
                 holder = new ChatViewHolder();
-                convertView = this.inflater.inflate(R.layout.left_panel_chat_list_item,parent,false);
-                ((ChatViewHolder)holder).chatItem = (RelativeLayout)convertView.findViewById((R.id.left_panel_chat_list_item_top_view));
-                ((ChatViewHolder)holder).chatName = (TextView)convertView.findViewById(R.id.left_panel_chat_list_item_chat_name);
-                ((ChatViewHolder)holder).chatLastMessage = (TextView)convertView.findViewById(R.id.left_panel_chat_list_item_last_message);
-                ((ChatViewHolder)holder).chatImage = (ImageView)convertView.findViewById(R.id.left_panel_chat_list_item_big_img);
-                ((ChatViewHolder)holder).chatHiveImage = (ImageView)convertView.findViewById(R.id.left_panel_chat_list_item_little_img);
-                ((ChatViewHolder)holder).chatLastMessageTimestamp = (TextView)convertView.findViewById(R.id.left_panel_chat_list_item_timestamp);
-                ((ChatViewHolder)holder).chatPendingMessagesNumber = (TextView)convertView.findViewById(R.id.left_panel_chat_list_item_number_messages);
-                ((ChatViewHolder)holder).chatTypeImage = (ImageView)convertView.findViewById(R.id.left_panel_chat_list_item_item_type_img);
-                ((ChatViewHolder)holder).chatItem.setOnClickListener(clickListener);
+                convertView = this.inflater.inflate(R.layout.left_panel_chat_list_item, parent, false);
+                ((ChatViewHolder) holder).chatItem = (RelativeLayout) convertView.findViewById((R.id.left_panel_chat_list_item_top_view));
+                ((ChatViewHolder) holder).chatName = (TextView) convertView.findViewById(R.id.left_panel_chat_list_item_chat_name);
+                ((ChatViewHolder) holder).chatLastMessage = (TextView) convertView.findViewById(R.id.left_panel_chat_list_item_last_message);
+                ((ChatViewHolder) holder).chatImage = (ImageView) convertView.findViewById(R.id.left_panel_chat_list_item_big_img);
+                ((ChatViewHolder) holder).chatHiveImage = (ImageView) convertView.findViewById(R.id.left_panel_chat_list_item_little_img);
+                ((ChatViewHolder) holder).chatLastMessageTimestamp = (TextView) convertView.findViewById(R.id.left_panel_chat_list_item_timestamp);
+                ((ChatViewHolder) holder).chatPendingMessagesNumber = (TextView) convertView.findViewById(R.id.left_panel_chat_list_item_number_messages);
+                ((ChatViewHolder) holder).chatTypeImage = (ImageView) convertView.findViewById(R.id.left_panel_chat_list_item_item_type_img);
+                ((ChatViewHolder) holder).chatItem.setOnClickListener(clickListener);
 
                 //set the alpha values
                 convertView.getContext().getResources().getValue(R.color.left_panel_chat_list_item_item_type_img_alpha, alpha, true);
-                StaticMethods.SetAlpha(((ChatViewHolder)holder).chatTypeImage,alpha.getFloat());
+                StaticMethods.SetAlpha(((ChatViewHolder) holder).chatTypeImage, alpha.getFloat());
             } else if (type == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Mates)) {
                 //convertView = this.inflater.inflate(R.layout.main_panel_chat_hive_message_me,parent,false);
                 holder = new FriendViewHolder();
             }
 
             if (convertView != null)
-                convertView.setTag(R.id.LeftPanel_ListViewHolder,holder);
+                convertView.setTag(R.id.LeftPanel_ListViewHolder, holder);
         } else {
-            holder = (ViewHolder)convertView.getTag(R.id.LeftPanel_ListViewHolder);
+            holder = (ViewHolder) convertView.getTag(R.id.LeftPanel_ListViewHolder);
         }
 
         Object item = this.getItem(position);
@@ -324,24 +337,53 @@ public class LeftPanelListAdapter extends BaseAdapter {
 
         if (type == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Hives)) {
             if ((((Hive) item).getName() != null) && (!((Hive) item).getName().isEmpty()))
-                ((HiveViewHolder)holder).hiveName.setText(context.getResources().getString(R.string.hivename_identifier_character).concat(((Hive) item).getName()));
+                ((HiveViewHolder) holder).hiveName.setText(context.getResources().getString(R.string.hivename_identifier_character).concat(((Hive) item).getName()));
             else
-                ((HiveViewHolder)holder).hiveName.setText(context.getResources().getString(R.string.hivename_identifier_character).concat("<empty_hive_name>"));
-            ((HiveViewHolder)holder).hiveDescription.setText(((Hive)item).getDescription());
-            if ((((Hive)item).getCategory() != null) && (!((Hive)item).getCategory().isEmpty()))
+                ((HiveViewHolder) holder).hiveName.setText(context.getResources().getString(R.string.hivename_identifier_character).concat("<empty_hive_name>"));
+            ((HiveViewHolder) holder).hiveDescription.setText(((Hive) item).getDescription());
+            if ((((Hive) item).getCategory() != null) && (!((Hive) item).getCategory().isEmpty()))
                 Category.setCategory(((Hive) item).getCategory(), ((HiveViewHolder) holder).hiveCategoryImage, ((HiveViewHolder) holder).hiveCategoryName);
             else {
                 ((HiveViewHolder) holder).hiveCategoryImage.setImageResource(R.drawable.registro_important_note_orange);
                 ((HiveViewHolder) holder).hiveCategoryName.setText("Unknown category");
             }
-            ((HiveViewHolder)holder).hiveSubscribedUsers.setText(String.valueOf(((Hive) item).getSubscribedUsersCount()));
-            ((HiveViewHolder)holder).hiveItem.setTag(R.id.BO_Hive,item);
-            if (((Hive) item).getHiveImage() == null)
-                ((HiveViewHolder)holder).hiveImage.setImageResource(R.drawable.default_hive_image);
-            else {
+            ((HiveViewHolder) holder).hiveSubscribedUsers.setText(String.valueOf(((Hive) item).getSubscribedUsersCount()));
+            ((HiveViewHolder) holder).hiveItem.setTag(R.id.BO_Hive, item);
+            if (((Hive) item).getHiveImage() == null) {
+                ((HiveViewHolder) holder).hiveImage.setImageResource(R.drawable.default_hive_image);
+                ((HiveViewHolder) holder).hiveImageSmall.setImageResource(R.drawable.default_hive_image);
+            } else {
                 ((Hive) item).getHiveImage().OnImageLoaded.add(new EventHandler<EventArgs>(holder, "loadHiveImage", EventArgs.class));
                 ((Hive) item).getHiveImage().loadImage(Image.ImageSize.medium, 0);
             }
+
+            String[] tagsArray = ((Hive) item).getTags();
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            params.setMargins(3, 3, 3, 3);
+            if (tagsArray != null || tagsArray.length > 0) {
+                convertView.findViewById(R.id.context_list_item_expanded_tags_layout).setVisibility(View.VISIBLE);
+                ((HiveViewHolder) holder).hiveTags.removeAllViews();
+                ((HiveViewHolder) holder).hiveTags.invalidate();
+                for (int i = 0; i < tagsArray.length; i++) {
+                    LinearLayout textContainer = new LinearLayout(context);
+                    textContainer.setLayoutParams(params);
+                    TextView tv = new TextView(context);
+                    tv.setLayoutParams(params);
+                    tv.setBackgroundResource(R.drawable.explore_tags_border);
+                    tv.setText(tagsArray[i]);
+                    tv.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
+                    tv.setTextColor(Color.BLACK);
+                    textContainer.addView(tv);
+                    ((HiveViewHolder) holder).hiveTags.addView(textContainer);
+                }
+                ((HiveViewHolder) holder).hiveTags.requestLayout();
+            }
+            if (tagsArray.length == 0) {
+                convertView.findViewById(R.id.context_list_item_expanded_tags_layout).setVisibility(View.GONE);
+            }
+
+
         } else if (type == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Chats)) {
             String GroupName = "";
             SpannableString LastMessage = new SpannableString("");
@@ -349,14 +391,14 @@ public class LeftPanelListAdapter extends BaseAdapter {
             String LastMessageTimestamp = "";
 
             try {
-                lastMessage = ((Chat)item).getConversation().getLastMessage();
+                lastMessage = ((Chat) item).getConversation().getLastMessage();
                 Date timeStamp = lastMessage.getOrdinationTimeStamp();
-                Date fiveMinutesAgo = new Date((new Date()).getTime() - 5*60*1000);
+                Date fiveMinutesAgo = new Date((new Date()).getTime() - 5 * 60 * 1000);
                 Date today = DateFormatter.toDate(DateFormatter.toString(new Date()));
                 Calendar yesterday = Calendar.getInstance();
                 yesterday.setTime(today);
                 yesterday.roll(Calendar.DATE, false);
-                if (timeStamp.after( fiveMinutesAgo ))
+                if (timeStamp.after(fiveMinutesAgo))
                     LastMessageTimestamp = this.context.getString(R.string.left_panel_imprecise_time_now);
                 else if (timeStamp.after(today))
                     LastMessageTimestamp = TimestampFormatter.toLocaleString(timeStamp);
@@ -367,29 +409,32 @@ public class LeftPanelListAdapter extends BaseAdapter {
             } catch (Exception e) {
                 //Log.w("ChatItem","Unable to recover last message: "+e.getMessage());
             }
-            if (((Chat)item).getChatKind() == null) return null;
+            if (((Chat) item).getChatKind() == null) return null;
 
-            ((ChatViewHolder)holder).chatHiveImage.setImageResource(R.drawable.default_hive_image);
+            ((ChatViewHolder) holder).chatHiveImage.setImageResource(R.drawable.default_hive_image);
 
-            switch (((Chat)item).getChatKind()) {
+            switch (((Chat) item).getChatKind()) {
                 case PUBLIC_SINGLE:
-                    ((ChatViewHolder)holder).chatHiveImage.setVisibility(View.VISIBLE);
-                    ((ChatViewHolder)holder).chatTypeImage.setImageResource(R.drawable.pestanha_chats_arroba);
-                    ((ChatViewHolder)holder).chatImage.setImageResource(R.drawable.chats_users_online);
+                    ((ChatViewHolder) holder).chatHiveImage.setVisibility(View.VISIBLE);
+                    ((ChatViewHolder) holder).chatTypeImage.setImageResource(R.drawable.pestanha_chats_arroba);
+                    ((ChatViewHolder) holder).chatImage.setImageResource(R.drawable.chats_users_online);
                     try {
                         ((Chat) item).getParentHive().getHiveImage().OnImageLoaded.add(new EventHandler<EventArgs>(holder, "loadHiveImage", EventArgs.class));
                         ((Chat) item).getParentHive().getHiveImage().loadImage(Image.ImageSize.small, 0);
-                        ((ChatViewHolder)holder).hiveName = context.getResources().getString(R.string.hivename_identifier_character).concat(((Chat) item).getParentHive().getName());
-                    } catch (Exception e) { }
+                        ((ChatViewHolder) holder).hiveName = context.getResources().getString(R.string.hivename_identifier_character).concat(((Chat) item).getParentHive().getName());
+                    } catch (Exception e) {
+                    }
                     for (User user : ((Chat) item).getMembers())
                         if (!user.isMe()) {
-                            ((ChatViewHolder)holder).user = user;
+                            ((ChatViewHolder) holder).user = user;
                             if ((user.getUserPublicProfile() != null) && (user.getUserPublicProfile().getShowingName() != null)) {
                                 GroupName = context.getResources().getString(R.string.public_username_identifier_character).concat(user.getUserPublicProfile().getShowingName());
                                 try {
-                                    user.getUserPublicProfile().getProfileImage().OnImageLoaded.add(new EventHandler<EventArgs>(holder,"loadChatImage",EventArgs.class));
-                                    user.getUserPublicProfile().getProfileImage().loadImage(Image.ImageSize.medium,0);
-                                } catch (Exception e) { e.printStackTrace(); }
+                                    user.getUserPublicProfile().getProfileImage().OnImageLoaded.add(new EventHandler<EventArgs>(holder, "loadChatImage", EventArgs.class));
+                                    user.getUserPublicProfile().getProfileImage().loadImage(Image.ImageSize.medium, 0);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
                             } else
                                 user.UserLoaded.add(new EventHandler<EventArgs>(this, "OnAddItem", EventArgs.class));
                         }
@@ -403,35 +448,36 @@ public class LeftPanelListAdapter extends BaseAdapter {
                         } else {
                             img = this.context.getResources().getDrawable(R.drawable.ic_action_previous_item);
                         }
-                        img.setBounds(0,0,((ChatViewHolder) holder).chatLastMessage.getLineHeight(),((ChatViewHolder) holder).chatLastMessage.getLineHeight());
-                        LastMessage.setSpan(new ImageSpan(img,ImageSpan.ALIGN_BOTTOM), 0, 1, Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
+                        img.setBounds(0, 0, ((ChatViewHolder) holder).chatLastMessage.getLineHeight(), ((ChatViewHolder) holder).chatLastMessage.getLineHeight());
+                        LastMessage.setSpan(new ImageSpan(img, ImageSpan.ALIGN_BOTTOM), 0, 1, Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
                     }
-                    ((ChatViewHolder)holder).chatLastMessageTimestamp.setVisibility(View.VISIBLE);
-                    ((ChatViewHolder)holder).chatPendingMessagesNumber.setVisibility(View.INVISIBLE);
+                    ((ChatViewHolder) holder).chatLastMessageTimestamp.setVisibility(View.VISIBLE);
+                    ((ChatViewHolder) holder).chatPendingMessagesNumber.setVisibility(View.INVISIBLE);
 
 
-                    ((ChatViewHolder)holder).profileType = Profile.ProfileType.Public;
-                    ((ChatViewHolder)holder).chatImage.setOnClickListener(((ChatViewHolder)holder).thumbnailClickListener);
-                    ((ChatViewHolder)holder).chatImage.setClickable(true);
+                    ((ChatViewHolder) holder).profileType = Profile.ProfileType.Public;
+                    ((ChatViewHolder) holder).chatImage.setOnClickListener(((ChatViewHolder) holder).thumbnailClickListener);
+                    ((ChatViewHolder) holder).chatImage.setClickable(true);
 
                     break;
                 case PUBLIC_GROUP:
-                    ((ChatViewHolder)holder).chatHiveImage.setVisibility(View.VISIBLE);
-                    ((ChatViewHolder)holder).chatTypeImage.setImageResource(R.drawable.pestanha_hives_show_more_users);
-                    ((ChatViewHolder)holder).chatImage.setImageResource(R.drawable.chats_users_online);
+                    ((ChatViewHolder) holder).chatHiveImage.setVisibility(View.VISIBLE);
+                    ((ChatViewHolder) holder).chatTypeImage.setImageResource(R.drawable.pestanha_hives_show_more_users);
+                    ((ChatViewHolder) holder).chatImage.setImageResource(R.drawable.chats_users_online);
                     try {
-                    ((Chat)item).getParentHive().getHiveImage().OnImageLoaded.add(new EventHandler<EventArgs>(holder,"loadHiveImage",EventArgs.class));
-                    ((Chat)item).getParentHive().getHiveImage().loadImage(Image.ImageSize.small,0);
-                    } catch (Exception e) { }
-                    if ((((Chat)item).getName() != null) && (!((Chat)item).getName().isEmpty()))
-                        GroupName = ((Chat)item).getName();
+                        ((Chat) item).getParentHive().getHiveImage().OnImageLoaded.add(new EventHandler<EventArgs>(holder, "loadHiveImage", EventArgs.class));
+                        ((Chat) item).getParentHive().getHiveImage().loadImage(Image.ImageSize.small, 0);
+                    } catch (Exception e) {
+                    }
+                    if ((((Chat) item).getName() != null) && (!((Chat) item).getName().isEmpty()))
+                        GroupName = ((Chat) item).getName();
                     else
                         for (User user : ((Chat) item).getMembers())
                             if (!user.isMe()) {
                                 if ((user.getUserPublicProfile() != null) && (user.getUserPublicProfile().getShowingName() != null))
-                                    GroupName += ((GroupName.isEmpty())?"":", ").concat(context.getResources().getString(R.string.public_username_identifier_character).concat(user.getUserPublicProfile().getShowingName()));
+                                    GroupName += ((GroupName.isEmpty()) ? "" : ", ").concat(context.getResources().getString(R.string.public_username_identifier_character).concat(user.getUserPublicProfile().getShowingName()));
                                 else
-                                    user.UserLoaded.add(new EventHandler<EventArgs>(this,"OnAddItem",EventArgs.class));
+                                    user.UserLoaded.add(new EventHandler<EventArgs>(this, "OnAddItem", EventArgs.class));
                             }
 
                     if (lastMessage != null) {
@@ -443,52 +489,53 @@ public class LeftPanelListAdapter extends BaseAdapter {
                         } else {
                             img = this.context.getResources().getDrawable(R.drawable.ic_action_previous_item);
                         }
-                        img.setBounds(0,0,((ChatViewHolder) holder).chatLastMessage.getLineHeight(),((ChatViewHolder) holder).chatLastMessage.getLineHeight());
-                        LastMessage.setSpan(new ImageSpan(img,ImageSpan.ALIGN_BOTTOM), 0, 1, Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
+                        img.setBounds(0, 0, ((ChatViewHolder) holder).chatLastMessage.getLineHeight(), ((ChatViewHolder) holder).chatLastMessage.getLineHeight());
+                        LastMessage.setSpan(new ImageSpan(img, ImageSpan.ALIGN_BOTTOM), 0, 1, Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
                     }
-                    ((ChatViewHolder)holder).chatLastMessageTimestamp.setVisibility(View.VISIBLE);
-                    ((ChatViewHolder)holder).chatPendingMessagesNumber.setVisibility(View.INVISIBLE);
+                    ((ChatViewHolder) holder).chatLastMessageTimestamp.setVisibility(View.VISIBLE);
+                    ((ChatViewHolder) holder).chatPendingMessagesNumber.setVisibility(View.INVISIBLE);
 
-                    ((ChatViewHolder)holder).chatImage.setOnClickListener(null);
-                    ((ChatViewHolder)holder).chatImage.setClickable(false);
+                    ((ChatViewHolder) holder).chatImage.setOnClickListener(null);
+                    ((ChatViewHolder) holder).chatImage.setClickable(false);
                     break;
                 case HIVE:
-                    ((ChatViewHolder)holder).chatHiveImage.setVisibility(View.GONE);
-                    ((ChatViewHolder)holder).chatTypeImage.setImageResource(R.drawable.pestanha_chats_public_chat);
-                    ((ChatViewHolder)holder).chatImage.setImageResource(R.drawable.default_hive_image);
+                    ((ChatViewHolder) holder).chatHiveImage.setVisibility(View.GONE);
+                    ((ChatViewHolder) holder).chatTypeImage.setImageResource(R.drawable.pestanha_chats_public_chat);
+                    ((ChatViewHolder) holder).chatImage.setImageResource(R.drawable.default_hive_image);
                     try {
-                        ((Chat)item).getParentHive().getHiveImage().OnImageLoaded.add(new EventHandler<EventArgs>(holder,"loadChatImage",EventArgs.class));
-                        ((Chat)item).getParentHive().getHiveImage().loadImage(Image.ImageSize.medium,0);
-                    } catch (Exception e) { }
+                        ((Chat) item).getParentHive().getHiveImage().OnImageLoaded.add(new EventHandler<EventArgs>(holder, "loadChatImage", EventArgs.class));
+                        ((Chat) item).getParentHive().getHiveImage().loadImage(Image.ImageSize.medium, 0);
+                    } catch (Exception e) {
+                    }
                     if (((Chat) item).getParentHive() != null)
                         GroupName = context.getResources().getString(R.string.hivename_identifier_character).concat(((Chat) item).getParentHive().getName());
                     if ((lastMessage != null) && (lastMessage.getUser() != null) && (lastMessage.getUser().getUserPublicProfile() != null) && (lastMessage.getUser().getUserPublicProfile().getShowingName() != null) && (lastMessage.getMessageContent() != null) && (lastMessage.getMessageContent().getContent() != null)) {
                         LastMessage = new SpannableString(context.getResources().getString(R.string.public_username_identifier_character).concat(lastMessage.getUser().getUserPublicProfile().getShowingName()).concat(": ").concat(lastMessage.getMessageContent().getContent()));
                     }
-                    ((ChatViewHolder)holder).chatLastMessageTimestamp.setVisibility(View.GONE);
-                    ((ChatViewHolder)holder).chatPendingMessagesNumber.setVisibility(View.INVISIBLE);
-                    ((ChatViewHolder)holder).chatImage.setAdjustViewBounds(true);
-                    ((ChatViewHolder)holder).chatImage.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                    ((ChatViewHolder) holder).chatLastMessageTimestamp.setVisibility(View.GONE);
+                    ((ChatViewHolder) holder).chatPendingMessagesNumber.setVisibility(View.INVISIBLE);
+                    ((ChatViewHolder) holder).chatImage.setAdjustViewBounds(true);
+                    ((ChatViewHolder) holder).chatImage.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
 
-                    ((ChatViewHolder)holder).chatImage.setOnClickListener(null);
-                    ((ChatViewHolder)holder).chatImage.setClickable(false);
+                    ((ChatViewHolder) holder).chatImage.setOnClickListener(null);
+                    ((ChatViewHolder) holder).chatImage.setClickable(false);
                     break;
                 case PRIVATE_SINGLE:
-                    ((ChatViewHolder)holder).chatHiveImage.setVisibility(View.GONE);
-                    ((ChatViewHolder)holder).chatTypeImage.setImageResource(R.drawable.pestanha_chats_user);
-                    ((ChatViewHolder)holder).chatImage.setImageResource(R.drawable.default_profile_image_male);
+                    ((ChatViewHolder) holder).chatHiveImage.setVisibility(View.GONE);
+                    ((ChatViewHolder) holder).chatTypeImage.setImageResource(R.drawable.pestanha_chats_user);
+                    ((ChatViewHolder) holder).chatImage.setImageResource(R.drawable.default_profile_image_male);
 
                     for (User user : ((Chat) item).getMembers())
                         if (!user.isMe()) {
-                            ((ChatViewHolder)holder).user = user;
+                            ((ChatViewHolder) holder).user = user;
                             if ((user.getUserPrivateProfile() != null) && (user.getUserPrivateProfile().getShowingName() != null)) {
                                 GroupName = user.getUserPrivateProfile().getShowingName();
                                 if (user.getUserPrivateProfile().getProfileImage() == null) {
                                     if ((user.getUserPrivateProfile().getSex() != null) && (user.getUserPrivateProfile().getSex().equalsIgnoreCase("female")))
-                                        ((ChatViewHolder)holder).chatImage.setImageResource(R.drawable.default_profile_image_female);
+                                        ((ChatViewHolder) holder).chatImage.setImageResource(R.drawable.default_profile_image_female);
                                 } else {
-                                    user.getUserPrivateProfile().getProfileImage().OnImageLoaded.add(new EventHandler<EventArgs>(holder,"loadChatImage",EventArgs.class));
-                                    user.getUserPrivateProfile().getProfileImage().loadImage(Image.ImageSize.medium,0);
+                                    user.getUserPrivateProfile().getProfileImage().OnImageLoaded.add(new EventHandler<EventArgs>(holder, "loadChatImage", EventArgs.class));
+                                    user.getUserPrivateProfile().getProfileImage().loadImage(Image.ImageSize.medium, 0);
                                 }
                             } else
                                 user.UserLoaded.add(new EventHandler<EventArgs>(this, "OnAddItem", EventArgs.class));
@@ -502,31 +549,31 @@ public class LeftPanelListAdapter extends BaseAdapter {
                         } else {
                             img = this.context.getResources().getDrawable(R.drawable.ic_action_previous_item);
                         }
-                        img.setBounds(0,0,((ChatViewHolder) holder).chatLastMessage.getLineHeight(),((ChatViewHolder) holder).chatLastMessage.getLineHeight());
-                        LastMessage.setSpan(new ImageSpan(img,ImageSpan.ALIGN_BOTTOM), 0, 1, Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
+                        img.setBounds(0, 0, ((ChatViewHolder) holder).chatLastMessage.getLineHeight(), ((ChatViewHolder) holder).chatLastMessage.getLineHeight());
+                        LastMessage.setSpan(new ImageSpan(img, ImageSpan.ALIGN_BOTTOM), 0, 1, Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
                     }
-                    ((ChatViewHolder)holder).chatLastMessageTimestamp.setVisibility(View.VISIBLE);
-                    ((ChatViewHolder)holder).chatPendingMessagesNumber.setVisibility(View.INVISIBLE);
+                    ((ChatViewHolder) holder).chatLastMessageTimestamp.setVisibility(View.VISIBLE);
+                    ((ChatViewHolder) holder).chatPendingMessagesNumber.setVisibility(View.INVISIBLE);
 
-                    ((ChatViewHolder)holder).profileType = Profile.ProfileType.Private;
-                    ((ChatViewHolder)holder).hiveName = null;
+                    ((ChatViewHolder) holder).profileType = Profile.ProfileType.Private;
+                    ((ChatViewHolder) holder).hiveName = null;
 
-                    ((ChatViewHolder)holder).chatImage.setOnClickListener(((ChatViewHolder)holder).thumbnailClickListener);
-                    ((ChatViewHolder)holder).chatImage.setClickable(true);
+                    ((ChatViewHolder) holder).chatImage.setOnClickListener(((ChatViewHolder) holder).thumbnailClickListener);
+                    ((ChatViewHolder) holder).chatImage.setClickable(true);
                     break;
                 case PRIVATE_GROUP:
-                    ((ChatViewHolder)holder).chatHiveImage.setVisibility(View.GONE);
-                    ((ChatViewHolder)holder).chatTypeImage.setImageResource(R.drawable.pestanha_chats_group);
-                    ((ChatViewHolder)holder).chatImage.setImageResource(R.drawable.chats_users_online);
+                    ((ChatViewHolder) holder).chatHiveImage.setVisibility(View.GONE);
+                    ((ChatViewHolder) holder).chatTypeImage.setImageResource(R.drawable.pestanha_chats_group);
+                    ((ChatViewHolder) holder).chatImage.setImageResource(R.drawable.chats_users_online);
                     if (((Chat) item).getName() != null)
-                        GroupName = ((Chat)item).getName();
+                        GroupName = ((Chat) item).getName();
                     else
                         for (User user : ((Chat) item).getMembers())
                             if (!user.isMe()) {
                                 if ((user.getUserPrivateProfile() != null) && (user.getUserPrivateProfile().getShowingName() != null))
-                                    GroupName += ((GroupName.isEmpty())?"":", ") + user.getUserPrivateProfile().getFirstName();
+                                    GroupName += ((GroupName.isEmpty()) ? "" : ", ") + user.getUserPrivateProfile().getFirstName();
                                 else
-                                    user.UserLoaded.add(new EventHandler<EventArgs>(this,"OnAddItem",EventArgs.class));
+                                    user.UserLoaded.add(new EventHandler<EventArgs>(this, "OnAddItem", EventArgs.class));
                             }
                     if (lastMessage != null) {
                         LastMessage = new SpannableString(" ".concat(lastMessage.getMessageContent().getContent()));
@@ -537,24 +584,24 @@ public class LeftPanelListAdapter extends BaseAdapter {
                         } else {
                             img = this.context.getResources().getDrawable(R.drawable.ic_action_previous_item);
                         }
-                        img.setBounds(0,0,((ChatViewHolder) holder).chatLastMessage.getLineHeight(),((ChatViewHolder) holder).chatLastMessage.getLineHeight());
-                        LastMessage.setSpan(new ImageSpan(img,ImageSpan.ALIGN_BOTTOM), 0, 1, Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
+                        img.setBounds(0, 0, ((ChatViewHolder) holder).chatLastMessage.getLineHeight(), ((ChatViewHolder) holder).chatLastMessage.getLineHeight());
+                        LastMessage.setSpan(new ImageSpan(img, ImageSpan.ALIGN_BOTTOM), 0, 1, Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
                     }
-                    ((ChatViewHolder)holder).chatLastMessageTimestamp.setVisibility(View.VISIBLE);
-                    ((ChatViewHolder)holder).chatPendingMessagesNumber.setVisibility(View.INVISIBLE);
+                    ((ChatViewHolder) holder).chatLastMessageTimestamp.setVisibility(View.VISIBLE);
+                    ((ChatViewHolder) holder).chatPendingMessagesNumber.setVisibility(View.INVISIBLE);
 
-                    ((ChatViewHolder)holder).chatImage.setOnClickListener(null);
-                    ((ChatViewHolder)holder).chatImage.setClickable(false);
+                    ((ChatViewHolder) holder).chatImage.setOnClickListener(null);
+                    ((ChatViewHolder) holder).chatImage.setClickable(false);
                     break;
                 default:
                     return null;
             }
 
-            ((ChatViewHolder)holder).chatLastMessageTimestamp.setText(LastMessageTimestamp);
-            ((ChatViewHolder)holder).chatName.setText(((GroupName == null) || (GroupName.isEmpty()))?"No chat name":GroupName);
+            ((ChatViewHolder) holder).chatLastMessageTimestamp.setText(LastMessageTimestamp);
+            ((ChatViewHolder) holder).chatName.setText(((GroupName == null) || (GroupName.isEmpty())) ? "No chat name" : GroupName);
             ((ChatViewHolder) holder).chatLastMessage.setText(LastMessage);
 
-            ((ChatViewHolder)holder).chatItem.setTag(R.id.BO_Chat,item);
+            ((ChatViewHolder) holder).chatItem.setTag(R.id.BO_Chat, item);
         } /*else if (type == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Mates)) {
 
         }*/
@@ -562,12 +609,13 @@ public class LeftPanelListAdapter extends BaseAdapter {
         return convertView;
     }
 
-    private void openProfile(User user,Profile.ProfileType profileType, String hiveName) {
+    private void openProfile(User user, Profile.ProfileType profileType, String hiveName) {
         if (user != null)
-            ((Main)context).OpenWindow(new Profile(context,user,profileType, hiveName));
+            ((Main) context).OpenWindow(new Profile(context, user, profileType, hiveName));
     }
 
-    private abstract class ViewHolder{}
+    private abstract class ViewHolder {
+    }
 
     private class HiveViewHolder extends ViewHolder {
         public LinearLayout hiveItem;
@@ -577,17 +625,20 @@ public class LeftPanelListAdapter extends BaseAdapter {
         public TextView hiveCategoryName;
         public ImageView hiveCategoryImage;
         public TextView hiveSubscribedUsers;
+        public TextView hiveCardLanguage;
+        public WrapLayout hiveTags;
+        public ImageView hiveImageSmall;
 
-        public void loadHiveImage(Object sender,EventArgs eventArgs) {
+        public void loadHiveImage(Object sender, EventArgs eventArgs) {
             if (!(sender instanceof Image)) return;
 
-            final Image image = (Image)sender;
+            final Image image = (Image) sender;
             final HiveViewHolder thisViewHolder = this;
 
-            ((Activity)context).runOnUiThread( new Runnable() {
+            ((Activity) context).runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    InputStream is = image.getImage(Image.ImageSize.medium,0);
+                    InputStream is = image.getImage(Image.ImageSize.medium, 0);
                     if (is != null) {
                         hiveImage.setImageBitmap(BitmapFactory.decodeStream(is));
                         try {
@@ -596,8 +647,16 @@ public class LeftPanelListAdapter extends BaseAdapter {
                             e.printStackTrace();
                         }
                     }
-
-                    image.OnImageLoaded.remove(new EventHandler<EventArgs>(thisViewHolder,"loadHiveImage",EventArgs.class));
+                    InputStream iss = image.getImage(Image.ImageSize.small, 0);
+                    if (is != null) {
+                        hiveImageSmall.setImageBitmap(BitmapFactory.decodeStream(iss));
+                        try {
+                            iss.reset();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    image.OnImageLoaded.remove(new EventHandler<EventArgs>(thisViewHolder, "loadHiveImage", EventArgs.class));
                     //image.freeMemory();
                 }
             });
@@ -622,20 +681,20 @@ public class LeftPanelListAdapter extends BaseAdapter {
             @Override
             public void onClick(View v) {
                 if ((user != null) && (profileType != null))
-                    openProfile(user,profileType,hiveName);
+                    openProfile(user, profileType, hiveName);
             }
         };
 
-        public void loadHiveImage(Object sender,EventArgs eventArgs) {
+        public void loadHiveImage(Object sender, EventArgs eventArgs) {
             if (!(sender instanceof Image)) return;
 
-            final Image image = (Image)sender;
+            final Image image = (Image) sender;
             final ChatViewHolder thisViewHolder = this;
 
-            ((Activity)context).runOnUiThread( new Runnable() {
+            ((Activity) context).runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    InputStream is = image.getImage(Image.ImageSize.small,0);
+                    InputStream is = image.getImage(Image.ImageSize.small, 0);
                     if (is != null) {
                         chatHiveImage.setImageBitmap(BitmapFactory.decodeStream(is));
                         try {
@@ -645,22 +704,22 @@ public class LeftPanelListAdapter extends BaseAdapter {
                         }
                     }
 
-                    image.OnImageLoaded.remove(new EventHandler<EventArgs>(thisViewHolder,"loadHiveImage",EventArgs.class));
+                    image.OnImageLoaded.remove(new EventHandler<EventArgs>(thisViewHolder, "loadHiveImage", EventArgs.class));
                     //image.freeMemory();
                 }
             });
         }
 
-        public void loadChatImage(Object sender,EventArgs eventArgs) {
+        public void loadChatImage(Object sender, EventArgs eventArgs) {
             if (!(sender instanceof Image)) return;
 
-            final Image image = (Image)sender;
+            final Image image = (Image) sender;
             final ChatViewHolder thisViewHolder = this;
 
-            ((Activity)context).runOnUiThread( new Runnable() {
+            ((Activity) context).runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    InputStream is = image.getImage(Image.ImageSize.medium,0);
+                    InputStream is = image.getImage(Image.ImageSize.medium, 0);
                     if (is != null) {
                         chatImage.setImageBitmap(BitmapFactory.decodeStream(is));
                         try {
@@ -670,7 +729,7 @@ public class LeftPanelListAdapter extends BaseAdapter {
                         }
                     }
 
-                    image.OnImageLoaded.remove(new EventHandler<EventArgs>(thisViewHolder,"loadChatImage",EventArgs.class));
+                    image.OnImageLoaded.remove(new EventHandler<EventArgs>(thisViewHolder, "loadChatImage", EventArgs.class));
                     //image.freeMemory();
                 }
             });
