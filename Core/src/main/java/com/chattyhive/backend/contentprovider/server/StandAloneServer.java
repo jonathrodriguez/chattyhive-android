@@ -474,7 +474,7 @@ public class StandAloneServer {
             String content_type = "";
             String messageContent = "";
 
-            if ((Images.length > 0) && (random.nextDouble() <= ((double)1/15))) {
+            if ((Images.length > 0) && (random.nextDouble() <= ((double)10/15))) {
                 //Send Image
                 content_type = "IMAGE";
                 messageContent = Images[random.nextInt(Images.length)];
