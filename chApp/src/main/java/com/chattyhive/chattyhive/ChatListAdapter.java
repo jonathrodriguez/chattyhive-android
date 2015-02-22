@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -42,6 +43,7 @@ public class ChatListAdapter extends BaseAdapter {
     private Conversation channelConversation;
 
     private ArrayList<Message> messages;
+    private Boolean firstLoad = true;
 
     public ChatListAdapter (Context activityContext,Conversation channelConversation) {
         this.channelConversation = channelConversation;
@@ -62,7 +64,13 @@ public class ChatListAdapter extends BaseAdapter {
                 messages = null;
                 while (messages == null)
                     try { messages = new ArrayList<Message>(channelConversation.getMessages()); } catch (Exception e) { messages = null; }
+                //if (firstLoad)
+                //    listView.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
                 notifyDataSetChanged();
+                if (firstLoad) {
+                    listView.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_NORMAL);
+                    firstLoad = false;
+                }
             }
         });
     }
@@ -202,18 +210,20 @@ public class ChatListAdapter extends BaseAdapter {
                 }
             }
 
-            holder.messageImage.setVisibility(View.GONE);
-            holder.messageText.setVisibility(View.VISIBLE);
-            holder.messageText.setText(message.getMessageContent().getContent());
-
             if ((message.getMessageContent().getContentType() != null) && (message.getMessageContent().getContentType().equalsIgnoreCase("IMAGE")))
             {
                 Image image = null;
                 try { image = message.getMessageContent().getImage(); } catch (Exception e) {}
                 if (image != null) {
+                    holder.messageText.setVisibility(View.GONE);
+                    holder.messageImage.setVisibility(View.VISIBLE);
                     image.OnImageLoaded.add(new EventHandler<EventArgs>(holder, "onMessageImageLoaded", EventArgs.class));
                     image.loadImage(Image.ImageSize.xlarge, 0);
                 }
+            } else {
+                holder.messageImage.setVisibility(View.GONE);
+                holder.messageText.setVisibility(View.VISIBLE);
+                holder.messageText.setText(message.getMessageContent().getContent());
             }
 
             /*if (message.getServerTimeStamp() != null)
@@ -295,10 +305,9 @@ public class ChatListAdapter extends BaseAdapter {
                     InputStream is = image.getImage(Image.ImageSize.xlarge,0);
                     if ((is != null) && (messageImage != null)) {
                         messageImage.setImageBitmap(BitmapFactory.decodeStream(is));
-                        messageImage.setVisibility(View.VISIBLE);
-                        messageText.setVisibility(View.GONE);
+
                         if ((chatKind == ChatKind.PRIVATE_SINGLE) || (chatKind == ChatKind.PUBLIC_SINGLE))
-                            ((LinearLayout.LayoutParams)chatItem.getLayoutParams()).weight = 1;
+                            ((LinearLayout.LayoutParams) chatItem.getLayoutParams()).weight = 1;
                         try {
                             is.reset();
                         } catch (IOException e) {

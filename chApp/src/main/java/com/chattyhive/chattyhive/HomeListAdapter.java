@@ -230,6 +230,7 @@ public class HomeListAdapter extends BaseAdapter {
             this.updateMessage(hc);
             this.updateHiveImage(hc);
             this.updateUserImage(hc);
+            this.updateMessageImage(hc);
         }
 
         private void updateHiveName(HiveMessageCard hc) {
