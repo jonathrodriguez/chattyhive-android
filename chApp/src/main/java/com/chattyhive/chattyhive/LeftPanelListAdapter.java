@@ -3,9 +3,13 @@ package com.chattyhive.chattyhive;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.text.Spannable;
 import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.TextUtils;
 import android.text.style.ImageSpan;
 import android.util.Log;
 import android.util.TypedValue;
@@ -395,16 +399,30 @@ public class LeftPanelListAdapter extends BaseAdapter {
                         }
 
                     if (lastMessage != null) {
-                        LastMessage = new SpannableString(" ".concat(lastMessage.getMessageContent().getContent()));
-                        Drawable img = null;
-                        if (lastMessage.getUser().isMe()) {
-                            img = this.context.getResources().getDrawable(R.drawable.ic_action_next_item);
+                        String lastMessageString = "";
+                        Drawable typeIcon = null;
 
-                        } else {
-                            img = this.context.getResources().getDrawable(R.drawable.ic_action_previous_item);
+                        if (lastMessage.getMessageContent().getContentType().equalsIgnoreCase(this.context.getString(R.string.default_left_panel_image_content_type))) {
+                            lastMessageString = "   ".concat(this.context.getString(R.string.default_left_panel_image_text));
+                            typeIcon = this.context.getResources().getDrawable(R.drawable.default_left_panel_image_icon);
+                        } else { //if (lastMessage.getMessageContent().getContentType().equalsIgnoreCase("TEXT")) {
+                            lastMessageString = " ".concat(lastMessage.getMessageContent().getContent());
                         }
-                        img.setBounds(0,0,((ChatViewHolder) holder).chatLastMessage.getLineHeight(),((ChatViewHolder) holder).chatLastMessage.getLineHeight());
-                        LastMessage.setSpan(new ImageSpan(img,ImageSpan.ALIGN_BOTTOM), 0, 1, Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
+
+                        Drawable directionImg = this.context.getResources().getDrawable( (lastMessage.getUser().isMe()) ? R.drawable.default_left_panel_last_message_outgoing_icon : R.drawable.default_left_panel_last_message_incoming_icon );
+                        directionImg.setBounds(0, 0, ((ChatViewHolder) holder).chatLastMessage.getLineHeight(), ((ChatViewHolder) holder).chatLastMessage.getLineHeight());
+                        if (typeIcon != null) {
+                            typeIcon.setBounds(0, 0, ((ChatViewHolder) holder).chatLastMessage.getLineHeight(), ((ChatViewHolder) holder).chatLastMessage.getLineHeight());
+                            typeIcon.setColorFilter(Color.parseColor("#808080"), PorterDuff.Mode.SRC_ATOP);
+                        }
+
+                        LastMessage = new SpannableString(lastMessageString);
+
+                        if (typeIcon != null) {
+                            LastMessage.setSpan(new ImageSpan(typeIcon,ImageSpan.ALIGN_BOTTOM),1,2, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+                        }
+
+                        LastMessage.setSpan(new ImageSpan(directionImg,ImageSpan.ALIGN_BOTTOM), 0, 1, Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
                     }
                     ((ChatViewHolder)holder).chatLastMessageTimestamp.setVisibility(View.VISIBLE);
                     ((ChatViewHolder)holder).chatPendingMessagesNumber.setVisibility(View.INVISIBLE);
@@ -435,16 +453,30 @@ public class LeftPanelListAdapter extends BaseAdapter {
                             }
 
                     if (lastMessage != null) {
-                        LastMessage = new SpannableString(" ".concat(lastMessage.getMessageContent().getContent()));
-                        Drawable img = null;
-                        if (lastMessage.getUser().isMe()) {
-                            img = this.context.getResources().getDrawable(R.drawable.ic_action_next_item);
+                        String lastMessageString = "";
+                        Drawable typeIcon = null;
 
-                        } else {
-                            img = this.context.getResources().getDrawable(R.drawable.ic_action_previous_item);
+                        if (lastMessage.getMessageContent().getContentType().equalsIgnoreCase(this.context.getString(R.string.default_left_panel_image_content_type))) {
+                            lastMessageString = "   ".concat(this.context.getString(R.string.default_left_panel_image_text));
+                            typeIcon = this.context.getResources().getDrawable(R.drawable.default_left_panel_image_icon);
+                        } else { //if (lastMessage.getMessageContent().getContentType().equalsIgnoreCase("TEXT")) {
+                            lastMessageString = " ".concat(lastMessage.getMessageContent().getContent());
                         }
-                        img.setBounds(0,0,((ChatViewHolder) holder).chatLastMessage.getLineHeight(),((ChatViewHolder) holder).chatLastMessage.getLineHeight());
-                        LastMessage.setSpan(new ImageSpan(img,ImageSpan.ALIGN_BOTTOM), 0, 1, Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
+
+                        Drawable directionImg = this.context.getResources().getDrawable( (lastMessage.getUser().isMe()) ? R.drawable.default_left_panel_last_message_outgoing_icon : R.drawable.default_left_panel_last_message_incoming_icon );
+                        directionImg.setBounds(0, 0, ((ChatViewHolder) holder).chatLastMessage.getLineHeight(), ((ChatViewHolder) holder).chatLastMessage.getLineHeight());
+                        if (typeIcon != null) {
+                            typeIcon.setBounds(0, 0, ((ChatViewHolder) holder).chatLastMessage.getLineHeight(), ((ChatViewHolder) holder).chatLastMessage.getLineHeight());
+                            typeIcon.setColorFilter(Color.parseColor("#808080"), PorterDuff.Mode.SRC_ATOP);
+                        }
+
+                        LastMessage = new SpannableString(lastMessageString);
+
+                        if (typeIcon != null) {
+                            LastMessage.setSpan(new ImageSpan(typeIcon,ImageSpan.ALIGN_BOTTOM),1,2, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+                        }
+
+                        LastMessage.setSpan(new ImageSpan(directionImg,ImageSpan.ALIGN_BOTTOM), 0, 1, Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
                     }
                     ((ChatViewHolder)holder).chatLastMessageTimestamp.setVisibility(View.VISIBLE);
                     ((ChatViewHolder)holder).chatPendingMessagesNumber.setVisibility(View.INVISIBLE);
@@ -462,9 +494,42 @@ public class LeftPanelListAdapter extends BaseAdapter {
                     } catch (Exception e) { }
                     if (((Chat) item).getParentHive() != null)
                         GroupName = context.getResources().getString(R.string.hivename_identifier_character).concat(((Chat) item).getParentHive().getName());
-                    if ((lastMessage != null) && (lastMessage.getUser() != null) && (lastMessage.getUser().getUserPublicProfile() != null) && (lastMessage.getUser().getUserPublicProfile().getShowingName() != null) && (lastMessage.getMessageContent() != null) && (lastMessage.getMessageContent().getContent() != null)) {
-                        LastMessage = new SpannableString(context.getResources().getString(R.string.public_username_identifier_character).concat(lastMessage.getUser().getUserPublicProfile().getShowingName()).concat(": ").concat(lastMessage.getMessageContent().getContent()));
+
+                    if (lastMessage != null) {
+                        String userName = "";
+                        String lastMessageString = "";
+                        Drawable typeIcon = null;
+
+                        if ((lastMessage.getUser() != null) && (lastMessage.getUser().getUserPublicProfile() != null) && (lastMessage.getUser().getUserPublicProfile().getShowingName() != null)) {
+                            userName = context.getResources().getString(R.string.public_username_identifier_character).concat(lastMessage.getUser().getUserPublicProfile().getShowingName()).concat(":");
+                        }
+
+                        if (lastMessage.getMessageContent().getContentType().equalsIgnoreCase(this.context.getString(R.string.default_left_panel_image_content_type))) {
+                            lastMessageString = "   ".concat(this.context.getString(R.string.default_left_panel_image_text));
+                            typeIcon = this.context.getResources().getDrawable(R.drawable.default_left_panel_image_icon);
+                        } else { //if (lastMessage.getMessageContent().getContentType().equalsIgnoreCase("TEXT")) {
+                            lastMessageString = " ".concat(lastMessage.getMessageContent().getContent());
+                        }
+
+                        if (typeIcon != null) {
+                            typeIcon.setBounds(0, 0, ((ChatViewHolder) holder).chatLastMessage.getLineHeight(), ((ChatViewHolder) holder).chatLastMessage.getLineHeight());
+                            typeIcon.setColorFilter(Color.parseColor("#808080"), PorterDuff.Mode.SRC_ATOP);
+                        }
+
+                        LastMessage = new SpannableString(lastMessageString);
+
+                        if (typeIcon != null) {
+                            LastMessage.setSpan(new ImageSpan(typeIcon,ImageSpan.ALIGN_BOTTOM),1,2, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+                        }
+
+                        LastMessage = new SpannableString(TextUtils.concat(new SpannableString(userName),LastMessage));
+
+                        //LastMessage.setSpan(new SpannableString(userName), 0, 1, Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
                     }
+
+                    /*if ((lastMessage != null) && (lastMessage.getUser() != null) && (lastMessage.getUser().getUserPublicProfile() != null) && (lastMessage.getUser().getUserPublicProfile().getShowingName() != null) && (lastMessage.getMessageContent() != null) && (lastMessage.getMessageContent().getContent() != null)) {
+                        LastMessage = new SpannableString(context.getResources().getString(R.string.public_username_identifier_character).concat(lastMessage.getUser().getUserPublicProfile().getShowingName()).concat(": ").concat(lastMessage.getMessageContent().getContent()));
+                    }*/
                     ((ChatViewHolder)holder).chatLastMessageTimestamp.setVisibility(View.GONE);
                     ((ChatViewHolder)holder).chatPendingMessagesNumber.setVisibility(View.INVISIBLE);
                     ((ChatViewHolder)holder).chatImage.setAdjustViewBounds(true);
@@ -494,16 +559,30 @@ public class LeftPanelListAdapter extends BaseAdapter {
                                 user.UserLoaded.add(new EventHandler<EventArgs>(this, "OnAddItem", EventArgs.class));
                         }
                     if (lastMessage != null) {
-                        LastMessage = new SpannableString(" ".concat(lastMessage.getMessageContent().getContent()));
-                        Drawable img = null;
-                        if (lastMessage.getUser().isMe()) {
-                            img = this.context.getResources().getDrawable(R.drawable.ic_action_next_item);
+                        String lastMessageString = "";
+                        Drawable typeIcon = null;
 
-                        } else {
-                            img = this.context.getResources().getDrawable(R.drawable.ic_action_previous_item);
+                        if (lastMessage.getMessageContent().getContentType().equalsIgnoreCase(this.context.getString(R.string.default_left_panel_image_content_type))) {
+                            lastMessageString = "   ".concat(this.context.getString(R.string.default_left_panel_image_text));
+                            typeIcon = this.context.getResources().getDrawable(R.drawable.default_left_panel_image_icon);
+                        } else { //if (lastMessage.getMessageContent().getContentType().equalsIgnoreCase("TEXT")) {
+                            lastMessageString = " ".concat(lastMessage.getMessageContent().getContent());
                         }
-                        img.setBounds(0,0,((ChatViewHolder) holder).chatLastMessage.getLineHeight(),((ChatViewHolder) holder).chatLastMessage.getLineHeight());
-                        LastMessage.setSpan(new ImageSpan(img,ImageSpan.ALIGN_BOTTOM), 0, 1, Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
+
+                        Drawable directionImg = this.context.getResources().getDrawable( (lastMessage.getUser().isMe()) ? R.drawable.default_left_panel_last_message_outgoing_icon : R.drawable.default_left_panel_last_message_incoming_icon );
+                        directionImg.setBounds(0, 0, ((ChatViewHolder) holder).chatLastMessage.getLineHeight(), ((ChatViewHolder) holder).chatLastMessage.getLineHeight());
+                        if (typeIcon != null) {
+                            typeIcon.setBounds(0, 0, ((ChatViewHolder) holder).chatLastMessage.getLineHeight(), ((ChatViewHolder) holder).chatLastMessage.getLineHeight());
+                            typeIcon.setColorFilter(Color.parseColor("#808080"), PorterDuff.Mode.SRC_ATOP);
+                        }
+
+                        LastMessage = new SpannableString(lastMessageString);
+
+                        if (typeIcon != null) {
+                            LastMessage.setSpan(new ImageSpan(typeIcon,ImageSpan.ALIGN_BOTTOM),1,2, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+                        }
+
+                        LastMessage.setSpan(new ImageSpan(directionImg,ImageSpan.ALIGN_BOTTOM), 0, 1, Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
                     }
                     ((ChatViewHolder)holder).chatLastMessageTimestamp.setVisibility(View.VISIBLE);
                     ((ChatViewHolder)holder).chatPendingMessagesNumber.setVisibility(View.INVISIBLE);
@@ -529,16 +608,30 @@ public class LeftPanelListAdapter extends BaseAdapter {
                                     user.UserLoaded.add(new EventHandler<EventArgs>(this,"OnAddItem",EventArgs.class));
                             }
                     if (lastMessage != null) {
-                        LastMessage = new SpannableString(" ".concat(lastMessage.getMessageContent().getContent()));
-                        Drawable img = null;
-                        if (lastMessage.getUser().isMe()) {
-                            img = this.context.getResources().getDrawable(R.drawable.ic_action_next_item);
+                        String lastMessageString = "";
+                        Drawable typeIcon = null;
 
-                        } else {
-                            img = this.context.getResources().getDrawable(R.drawable.ic_action_previous_item);
+                        if (lastMessage.getMessageContent().getContentType().equalsIgnoreCase(this.context.getString(R.string.default_left_panel_image_content_type))) {
+                            lastMessageString = "   ".concat(this.context.getString(R.string.default_left_panel_image_text));
+                            typeIcon = this.context.getResources().getDrawable(R.drawable.default_left_panel_image_icon);
+                        } else { //if (lastMessage.getMessageContent().getContentType().equalsIgnoreCase("TEXT")) {
+                            lastMessageString = " ".concat(lastMessage.getMessageContent().getContent());
                         }
-                        img.setBounds(0,0,((ChatViewHolder) holder).chatLastMessage.getLineHeight(),((ChatViewHolder) holder).chatLastMessage.getLineHeight());
-                        LastMessage.setSpan(new ImageSpan(img,ImageSpan.ALIGN_BOTTOM), 0, 1, Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
+
+                        Drawable directionImg = this.context.getResources().getDrawable( (lastMessage.getUser().isMe()) ? R.drawable.default_left_panel_last_message_outgoing_icon : R.drawable.default_left_panel_last_message_incoming_icon );
+                        directionImg.setBounds(0, 0, ((ChatViewHolder) holder).chatLastMessage.getLineHeight(), ((ChatViewHolder) holder).chatLastMessage.getLineHeight());
+                        if (typeIcon != null) {
+                            typeIcon.setBounds(0, 0, ((ChatViewHolder) holder).chatLastMessage.getLineHeight(), ((ChatViewHolder) holder).chatLastMessage.getLineHeight());
+                            typeIcon.setColorFilter(Color.parseColor("#808080"), PorterDuff.Mode.SRC_ATOP);
+                        }
+
+                        LastMessage = new SpannableString(lastMessageString);
+
+                        if (typeIcon != null) {
+                            LastMessage.setSpan(new ImageSpan(typeIcon,ImageSpan.ALIGN_BOTTOM),1,2, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+                        }
+
+                        LastMessage.setSpan(new ImageSpan(directionImg,ImageSpan.ALIGN_BOTTOM), 0, 1, Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
                     }
                     ((ChatViewHolder)holder).chatLastMessageTimestamp.setVisibility(View.VISIBLE);
                     ((ChatViewHolder)holder).chatPendingMessagesNumber.setVisibility(View.INVISIBLE);
