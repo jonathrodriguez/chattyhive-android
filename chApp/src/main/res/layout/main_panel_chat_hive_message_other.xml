@@ -29,16 +29,14 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginBottom="4dp">
+            android:layout_marginBottom="-3dp">
 
             <TextView
                 android:id="@+id/main_panel_chat_username"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="left|top"
-                android:layout_marginTop="2.5dp"
+                android:layout_height="20dp"
                 android:gravity="left|bottom"
                 android:singleLine="true"
                 android:text="\@other"
@@ -46,7 +44,7 @@
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="#0000ff"
                 android:textSize="14.75dp"
-                android:layout_marginLeft="1.5dp"/>
+                android:layout_marginLeft="1.5dp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -73,7 +71,9 @@
             android:adjustViewBounds="true"
             android:scaleType="fitXY"
             android:visibility="gone"
-            android:layout_marginRight="4dp" />
+            android:layout_marginRight="4dp"
+            android:layout_marginTop="12dp"
+            android:src="@drawable/default_loading_chat_image" />
 
         <TextView
             android:id="@+id/main_panel_chat_messageText"
@@ -88,7 +88,8 @@
             android:textColor="#333333"
             android:textSize="14.5sp"
             android:layout_marginRight="4dp"
-            android:visibility="visible" />
+            android:visibility="visible"
+            android:layout_marginTop="7.5dp" />
     </LinearLayout>
 
 
