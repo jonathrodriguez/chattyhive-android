@@ -18,21 +18,21 @@
         <View
             android:layout_height="0dp"
             android:layout_width="0dp"
-            custom:layout="@layout/left_panel_layout"
+            custom:childLayout="@layout/left_panel_layout"
             custom:stepOrder="0"
             android:id="@+id/left_panel_chat_list"/>
 
         <View
             android:layout_height="0dp"
             android:layout_width="0dp"
-            custom:layout="@layout/left_panel_layout"
+            custom:childLayout="@layout/left_panel_layout"
             custom:stepOrder="1"
             android:id="@+id/left_panel_hive_list"/>
 
         <View
             android:layout_height="0dp"
             android:layout_width="0dp"
-            custom:layout="@layout/left_panel_layout"
+            custom:childLayout="@layout/left_panel_layout"
             custom:stepOrder="2"
             android:id="@+id/left_panel_friend_list"/>
     </com.chattyhive.chattyhive.framework.CustomViews.ViewGroup.SlidingStepsLayout>

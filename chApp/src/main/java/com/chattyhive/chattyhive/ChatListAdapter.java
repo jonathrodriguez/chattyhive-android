@@ -219,6 +219,9 @@ public class ChatListAdapter extends BaseAdapter {
                     holder.messageImage.setVisibility(View.VISIBLE);
                     image.OnImageLoaded.add(new EventHandler<EventArgs>(holder, "onMessageImageLoaded", EventArgs.class));
                     image.loadImage(Image.ImageSize.xlarge, 0);
+
+                    if ((chatKind == ChatKind.PRIVATE_SINGLE) || (chatKind == ChatKind.PUBLIC_SINGLE))
+                        ((LinearLayout.LayoutParams) holder.chatItem.getLayoutParams()).weight = 1;
                 }
             } else {
                 holder.messageImage.setVisibility(View.GONE);
@@ -305,9 +308,6 @@ public class ChatListAdapter extends BaseAdapter {
                     InputStream is = image.getImage(Image.ImageSize.xlarge,0);
                     if ((is != null) && (messageImage != null)) {
                         messageImage.setImageBitmap(BitmapFactory.decodeStream(is));
-
-                        if ((chatKind == ChatKind.PRIVATE_SINGLE) || (chatKind == ChatKind.PUBLIC_SINGLE))
-                            ((LinearLayout.LayoutParams) chatItem.getLayoutParams()).weight = 1;
                         try {
                             is.reset();
                         } catch (IOException e) {

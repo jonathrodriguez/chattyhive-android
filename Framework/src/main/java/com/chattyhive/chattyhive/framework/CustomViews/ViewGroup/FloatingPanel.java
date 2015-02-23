@@ -991,9 +991,10 @@ public class FloatingPanel extends ViewGroup {
 
             final int indexCount = a.getIndexCount();
             for (int index = 0; index < indexCount; index++) {
-                if (a.getIndex(index) == R.styleable.FloatingPanel_Child_layout_position) {
+                int value = a.getIndex(index);
+                if (value == R.styleable.FloatingPanel_Child_layout_position) {
                     pos = a.getInt(R.styleable.FloatingPanel_Child_layout_position,-1);
-                } else if (a.getIndex(index) == R.styleable.FloatingPanel_Child_layout_type) {
+                } else if (value == R.styleable.FloatingPanel_Child_layout_type) {
                     typ = a.getInt(R.styleable.FloatingPanel_Child_layout_type,-1);
                 }
             }

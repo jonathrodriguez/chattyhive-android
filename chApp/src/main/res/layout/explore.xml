@@ -36,31 +36,31 @@
         <View
             android:layout_height="0dp"
             android:layout_width="0dp"
-            custom:layout="@layout/explore_list"
+            custom:childLayout="@layout/explore_list"
             custom:stepOrder="0"
             android:id="@+id/list_0"/>
         <View
             android:layout_height="0dp"
             android:layout_width="0dp"
-            custom:layout="@layout/explore_list"
+            custom:childLayout="@layout/explore_list"
             custom:stepOrder="1"
             android:id="@+id/list_1"/>
         <View
             android:layout_height="0dp"
             android:layout_width="0dp"
-            custom:layout="@layout/explore_list"
+            custom:childLayout="@layout/explore_list"
             custom:stepOrder="2"
             android:id="@+id/list_2"/>
         <View
             android:layout_height="0dp"
             android:layout_width="0dp"
-            custom:layout="@layout/explore_list"
+            custom:childLayout="@layout/explore_list"
             custom:stepOrder="3"
             android:id="@+id/list_3"/>
         <View
             android:layout_height="0dp"
             android:layout_width="0dp"
-            custom:layout="@layout/explore_categories"
+            custom:childLayout="@layout/explore_categories"
             custom:stepOrder="4" />
 
     <!--FrameLayout

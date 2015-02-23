@@ -10,7 +10,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -1167,25 +1166,19 @@ public class SlidingStepsLayout extends ViewGroup {
 
             final int indexCount = a.getIndexCount();
             for (int index = 0; index < indexCount; index++) {
-                switch (a.getIndex(index)) {
-                    case R.styleable.SlidingStepsLayout_Child_layout:
-                        layout = a.getResourceId(R.styleable.SlidingStepsLayout_Child_layout,-1);
-                        break;
-                    case R.styleable.SlidingStepsLayout_Child_stepOrder:
-                        stepOrder = a.getInt(R.styleable.SlidingStepsLayout_Child_stepOrder,-1);
-                        break;
-                    case R.styleable.SlidingStepsLayout_Child_previousStepButton:
-                        previousStepButton = a.getResourceId(R.styleable.SlidingStepsLayout_Child_previousStepButton,-1);
-                        break;
-                    case R.styleable.SlidingStepsLayout_Child_nextStepButton:
-                        nextStepButton = a.getResourceId(R.styleable.SlidingStepsLayout_Child_nextStepButton,-1);
-                        break;
-                    case R.styleable.SlidingStepsLayout_Child_stepTitle:
-                        stepTitle = a.getString(R.styleable.SlidingStepsLayout_Child_stepTitle);
-                        break;
-                    case R.styleable.SlidingStepsLayout_Child_stepSubtitle:
-                        stepSubtitle = a.getString(R.styleable.SlidingStepsLayout_Child_stepSubtitle);
-                        break;
+                int value = a.getIndex(index);
+                if (value == R.styleable.SlidingStepsLayout_Child_childLayout) {
+                    layout = a.getResourceId(R.styleable.SlidingStepsLayout_Child_childLayout,-1);
+                } else if (value == R.styleable.SlidingStepsLayout_Child_stepOrder) {
+                    stepOrder = a.getInt(R.styleable.SlidingStepsLayout_Child_stepOrder,-1);
+                } else if (value == R.styleable.SlidingStepsLayout_Child_previousStepButton) {
+                    previousStepButton = a.getResourceId(R.styleable.SlidingStepsLayout_Child_previousStepButton,-1);
+                } else if (value == R.styleable.SlidingStepsLayout_Child_nextStepButton) {
+                    nextStepButton = a.getResourceId(R.styleable.SlidingStepsLayout_Child_nextStepButton,-1);
+                } else if (value == R.styleable.SlidingStepsLayout_Child_stepTitle) {
+                    stepTitle = a.getString(R.styleable.SlidingStepsLayout_Child_stepTitle);
+                } else if (value == R.styleable.SlidingStepsLayout_Child_stepSubtitle) {
+                    stepSubtitle = a.getString(R.styleable.SlidingStepsLayout_Child_stepSubtitle);
                 }
             }
 
