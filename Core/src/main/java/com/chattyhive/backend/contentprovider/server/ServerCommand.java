@@ -264,6 +264,17 @@ public class ServerCommand {
         requiredCookies = new ArrayList<String>() {{add(CSRFTokenCookie); add(SessionCookie);}};
         returningCookies = null;
         ServerCommand.AddServerCommand(command,method,commandType,url,paramFormats,inputFormats,requiredCookies,returningCookies);
+
+        // FriendList
+        command = AvailableCommands.FriendList;
+        method = Method.GET;
+        commandType = CommandType.Pull;
+        url = "android.recover_friend_list";
+        paramFormats = null;
+        inputFormats = null;
+        requiredCookies = new ArrayList<String>() {{add(CSRFTokenCookie); add(SessionCookie);}};
+        returningCookies = null;
+        ServerCommand.AddServerCommand(command,method,commandType,url,paramFormats,inputFormats,requiredCookies,returningCookies);
     }
 
     private static void AddServerCommand(AvailableCommands command, Method method, CommandType commandType, String url,ArrayList<Class<?>> paramFormats, ArrayList<Class<?>> inputFormats, ArrayList<String> requiredCookies, ArrayList<String> returningCookies) {

@@ -504,6 +504,8 @@ public class Controller {
             if (LocalUserReceived != null)
                 LocalUserReceived.fire(this,EventArgs.Empty());
 
+            this.dataProvider.InvokeServerCommand(AvailableCommands.FriendList,null);
+
         } else if (format instanceof USER_PROFILE) {
             if (userID == null) throw new NullPointerException("UserID must not be null.");
             else if (userID.isEmpty()) throw new IllegalArgumentException("UserID must not be empty.");
@@ -526,7 +528,11 @@ public class Controller {
             this.me = (User)sender;
             if (LocalUserReceived != null)
                 LocalUserReceived.fire(sender,EventArgs.Empty());
+
+            this.dataProvider.InvokeServerCommand(AvailableCommands.FriendList,null);
         }
+
+        ((User)sender).UserLoaded.remove(new EventHandler<EventArgs>(this,"onUserLoaded",EventArgs.class));
     }
 
     public Event<EventArgs> LocalUserReceived;
