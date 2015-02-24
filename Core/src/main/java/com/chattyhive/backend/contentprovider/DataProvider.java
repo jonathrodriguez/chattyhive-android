@@ -5,6 +5,7 @@ import com.chattyhive.backend.StaticParameters;
 import com.chattyhive.backend.businessobjects.Chats.Chat;
 import com.chattyhive.backend.businessobjects.Chats.Hive;
 import com.chattyhive.backend.businessobjects.Explore;
+import com.chattyhive.backend.businessobjects.Users.User;
 import com.chattyhive.backend.contentprovider.OSStorageProvider.ChatLocalStorageInterface;
 import com.chattyhive.backend.contentprovider.OSStorageProvider.HiveLocalStorageInterface;
 import com.chattyhive.backend.contentprovider.OSStorageProvider.LoginLocalStorageInterface;
@@ -16,6 +17,7 @@ import com.chattyhive.backend.contentprovider.formats.CHAT_LIST;
 import com.chattyhive.backend.contentprovider.formats.CHAT_SYNC;
 import com.chattyhive.backend.contentprovider.formats.COMMON;
 import com.chattyhive.backend.contentprovider.formats.EXPLORE_FILTER;
+import com.chattyhive.backend.contentprovider.formats.FRIEND_LIST;
 import com.chattyhive.backend.contentprovider.formats.Format;
 import com.chattyhive.backend.contentprovider.formats.HIVE;
 import com.chattyhive.backend.contentprovider.formats.HIVE_ID;
@@ -24,6 +26,7 @@ import com.chattyhive.backend.contentprovider.formats.LOCAL_USER_PROFILE;
 import com.chattyhive.backend.contentprovider.formats.MESSAGE;
 import com.chattyhive.backend.contentprovider.formats.MESSAGE_ACK;
 import com.chattyhive.backend.contentprovider.formats.MESSAGE_LIST;
+import com.chattyhive.backend.contentprovider.formats.PROFILE_ID;
 import com.chattyhive.backend.contentprovider.formats.USER_PROFILE;
 import com.chattyhive.backend.contentprovider.local.LocalStorageInterface;
 import com.chattyhive.backend.contentprovider.pubsubservice.ConnectionState;
@@ -356,6 +359,7 @@ public class DataProvider {
     private void ProcessReceivedFormats(Collection<Format> receivedFormats) {
         ArrayList<Format> MessageFormats = new ArrayList<Format>();
         ArrayList<Format> UserProfileFormats = new ArrayList<Format>();
+        ArrayList<Format> FriendFormats = new ArrayList<Format>();
         ArrayList<Format> HiveProfileFormats = new ArrayList<Format>();
         ArrayList<Format> ChatProfileFormats = new ArrayList<Format>();
 
@@ -365,6 +369,9 @@ public class DataProvider {
             }
             if ((format instanceof USER_PROFILE) || (format instanceof LOCAL_USER_PROFILE)) {
                 UserProfileFormats.add(format);
+            }
+            if (format instanceof FRIEND_LIST) {
+                FriendFormats.add(format);
             }
             if ((format instanceof HIVE) || (format instanceof HIVE_ID)) {
                 HiveProfileFormats.add(format);
@@ -384,6 +391,9 @@ public class DataProvider {
         if (UserProfileFormats.size() > 0)
             this.ProcessUserReceivedFormats(UserProfileFormats);
             //onUserProfileReceived.fire(this,new FormatReceivedEventArgs(UserProfileFormats));
+
+        if (FriendFormats.size() > 0)
+            this.ProcessFriendReceivedFormats(FriendFormats);
 
         if ((onHiveProfileReceived != null) && (HiveProfileFormats.size() > 0))
             onHiveProfileReceived.fire(this,new FormatReceivedEventArgs(HiveProfileFormats));
@@ -437,6 +447,33 @@ public class DataProvider {
         }
     }
 
+    private void ProcessFriendReceivedFormats (Collection<Format> receivedFormats) {
+        if (this.controller == null)
+            this.controller = Controller.GetRunningController(this.localStorage);
+
+        User me = this.controller.getMe();
+        if (me == null) return;
+
+        ArrayList<User> friends = me.getFriends();
+
+        if (friends == null) {
+            friends = new ArrayList<User>();
+            me.setFriends(friends);
+        }
+
+        Boolean friendsChanged = false;
+
+        for (Format format : receivedFormats) {
+            if (format instanceof FRIEND_LIST) {
+                for (PROFILE_ID profile_id : ((FRIEND_LIST) format).LIST) {
+                    friendsChanged = friends.add(this.controller.getUser(profile_id)) || friendsChanged;
+                }
+            }
+        }
+
+        if (friendsChanged)
+            me.FriendListChanged.fire(me,EventArgs.Empty());
+    }
     /************************************************************************/
     private ServerUser serverUser;
 

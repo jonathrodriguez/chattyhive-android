@@ -19,6 +19,7 @@ import com.chattyhive.backend.contentprovider.formats.CHAT_SYNC;
 import com.chattyhive.backend.contentprovider.formats.COMMON;
 import com.chattyhive.backend.contentprovider.formats.CSRF_TOKEN;
 import com.chattyhive.backend.contentprovider.formats.EXPLORE_FILTER;
+import com.chattyhive.backend.contentprovider.formats.FRIEND_LIST;
 import com.chattyhive.backend.contentprovider.formats.Format;
 import com.chattyhive.backend.contentprovider.formats.HIVE;
 import com.chattyhive.backend.contentprovider.formats.HIVE_ID;
@@ -134,35 +135,35 @@ public class StandAloneServer {
         /*              Login: coolest_thing_21 Pass: 87654321                  */
         /*              Login: akamatsu         Pass: Shizue_86                 */
         /************************************************************************/
-        user = createUser("jonathan@chattyhive.com", "Jonathan", "Rodriguez", "jonathan", "#AA22AA", "file_avatar_jonathan.jpg", "file_private_jonathan.jpg", "08/12/1987", "Vigo, Pontevedra, Espa\u00f1a", "MALE", true, false, true, true, "Espa\u00f1ol", "Franc\u00e9s", "Ingl\u00e9s", "Gallego", "Portugu\u00e9s");
+        user = createUser("jonathan@chattyhive.com", "Jonathan", "Rodriguez", "jonathan", "#AA22AA", "file_avatar_jonathan.jpg", "file_private_jonathan.jpg", "08/12/1987", "Vigo, Pontevedra, Espa\u00f1a", "MALE", true, false, true, true,"","", "Espa\u00f1ol", "Franc\u00e9s", "Ingl\u00e9s", "Gallego", "Portugu\u00e9s");
         LoginUser.put(user.getUserPublicProfile().getPublicName(), user);
         LoginPassword.put(user.getEmail(), "12345678");
 
-        user = createUser("cassini91@hotmail.com", "Cassandra", "Prieto", "cassini91", "#55dd9f", "file_avatar_cassini91.jpg", "file_private_cassini91.jpg", "31/03/1991", "Vigo, Pontevedra, Espa\u00f1a", "FEMALE", false, false, false, false, "Espa\u00f1ol", "Gallego");
+        user = createUser("cassini91@hotmail.com", "Cassandra", "Prieto", "cassini91", "#55dd9f", "file_avatar_cassini91.jpg", "file_private_cassini91.jpg", "31/03/1991", "Vigo, Pontevedra, Espa\u00f1a", "FEMALE", false, false, false, false,"","", "Espa\u00f1ol", "Gallego");
         LoginUser.put(user.getUserPublicProfile().getPublicName(), user);
         LoginPassword.put(user.getEmail(), "huygens");
 
-        user = createUser("monchuco@yahoo.es", "Ramon", "Araujo", "trabuco", "#dfada0", "file_avatar_trabuco.jpg", "file_private_trabuco.jpg", "15/08/1968", "Andorra", "MALE", true, true, true, true, "Espa\u00f1ol", "Franc\u00e9s", "Ingl\u00e9s", "Catal\u00e1n");
+        user = createUser("monchuco@yahoo.es", "Ramon", "Araujo", "trabuco", "#dfada0", "file_avatar_trabuco.jpg", "file_private_trabuco.jpg", "15/08/1968", "Andorra", "MALE", true, true, true, true,"Yepa! Qu\u00e9 no toy, le\u00f1e!","Aburrido de la vida", "Espa\u00f1ol", "Franc\u00e9s", "Ingl\u00e9s", "Catal\u00e1n");
         LoginUser.put(user.getUserPublicProfile().getPublicName(), user);
         LoginPassword.put(user.getEmail(), "15081968");
 
-        user = createUser("serpalina@gmail.com", "Serezade", "Agth\u00eb\u00e3\u00e7ykn", "serezy", "#16a46a", "file_avatar_serezy.jpg", "file_private_serezy.jpg", "04/07/1302", "Ankara, Ankara, Turqu\u00eda", "FEMALE", true, true, false, false, "Ingl\u00e9s", "Turco");
+        user = createUser("serpalina@gmail.com", "Serezade", "Agth\u00eb\u00e3\u00e7ykn", "serezy", "#16a46a", "file_avatar_serezy.jpg", "file_private_serezy.jpg", "04/07/1302", "Ankara, Ankara, Turqu\u00eda", "FEMALE", true, true, false, false,"Like a strawberry cake, a fresh sweet in a hot world","Hey! I'm moving to Amsterdam next month.", "Ingl\u00e9s", "Turco");
         LoginUser.put(user.getUserPublicProfile().getPublicName(), user);
         LoginPassword.put(user.getEmail(), "Istikl\u00e2l Marsi");
 
-        user = createUser("ramoncete_1985@gmail.com", "Ram\u00f3n Fern\u00e1ndez", "Guiti\u00e9rrez Ib\u00e1\u00f1ez", "homer_ou", "#5D00FF", "file_avatar_homer_ou.jpg", "file_private_homer_ou.jpg", "22/10/1985", "Ourense, Ourense, Espa\u00f1a", "MALE", false, true, false, true, "Espa\u00f1ol", "Gallego");
+        user = createUser("ramoncete_1985@gmail.com", "Ram\u00f3n Fern\u00e1ndez", "Guiti\u00e9rrez Ib\u00e1\u00f1ez", "homer_ou", "#5D00FF", "file_avatar_homer_ou.jpg", "file_private_homer_ou.jpg", "22/10/1985", "Ourense, Ourense, Espa\u00f1a", "MALE", false, true, false, true,"Nunca m\u00e1is!\n...penso traballar!","", "Espa\u00f1ol", "Gallego");
         LoginUser.put(user.getUserPublicProfile().getPublicName(), user);
         LoginPassword.put(user.getEmail(), "bartsimpson");
 
-        user = createUser("laura.gaza5@gmail.com", "Laura", "Gaza Moya", "weirdalien", "#00AF98", "file_avatar_weirdalien.jpg", "file_private_weirdalien.jpg", "04/07/1982", "Valladolid, Valladolid, Espa\u00f1a", "FEMALE", true, true, true, true, "Espa\u00f1ol", "Alem\u00e1n", "Franc\u00e9s");
+        user = createUser("laura.gaza5@gmail.com", "Laura", "Gaza Moya", "weirdalien", "#00AF98", "file_avatar_weirdalien.jpg", "file_private_weirdalien.jpg", "04/07/1982", "Valladolid, Valladolid, Espa\u00f1a", "FEMALE", true, true, true, true,"I want to believe","Truth is out there", "Espa\u00f1ol", "Alem\u00e1n", "Franc\u00e9s");
         LoginUser.put(user.getUserPublicProfile().getPublicName(), user);
         LoginPassword.put(user.getEmail(), "AFD45ADE");
 
-        user = createUser("cool_cooper@gmail.com", "Charles L.", "Cooper", "coolest_thing_21", "#586000", "file_avatar_coolest_thing_21.jpg", "file_private_coolest_thing_21.jpg", "04/07/1990", "Big Thicket Creekmore Village, Texas, EEUU", "MALE", true, false, false, true, "Ingl\u00e9s");
+        user = createUser("cool_cooper@gmail.com", "Charles L.", "Cooper", "coolest_thing_21", "#586000", "file_avatar_coolest_thing_21.jpg", "file_private_coolest_thing_21.jpg", "04/07/1990", "Big Thicket Creekmore Village, Texas, EEUU", "MALE", true, false, false, true,"On line","Death to all these white cops!", "Ingl\u00e9s");
         LoginUser.put(user.getUserPublicProfile().getPublicName(), user);
         LoginPassword.put(user.getEmail(), "87654321");
 
-        user = createUser("akamatsu@gmail.com", "Clair", "Moreau", "akamatsu", "#820600", "file_avatar_akamatsu.jpg", "file_private_akamatsu.jpg", "04/07/1998", "Paris, \u00cele-de-France, France", "FEMALE", false, true, true, true, "Franc\u00e9s", "Ingl\u00e9s");
+        user = createUser("akamatsu@gmail.com", "Clair", "Moreau", "akamatsu", "#820600", "file_avatar_akamatsu.jpg", "file_private_akamatsu.jpg", "04/07/1998", "Paris, \u00cele-de-France, France", "FEMALE", false, true, true, true,"\u304A\u306F\u3088\u3046","Nous sommes tous Charly!", "Franc\u00e9s", "Ingl\u00e9s");
         LoginUser.put(user.getUserPublicProfile().getPublicName(), user);
         LoginPassword.put(user.getEmail(), "Shizue_86");
 
@@ -628,13 +629,15 @@ public class StandAloneServer {
 
         return hive;
     }
-    private static User createUser(String email, String firstName, String lastName, String publicName, String color, String avatarURL, String profileURL, String birthdate, String location, String sex, Boolean privateShowAge, Boolean publicShowAge, Boolean publicShowSex, Boolean publicShowLocation, String... languages) {
+    private static User createUser(String email, String firstName, String lastName, String publicName, String color, String avatarURL, String profileURL, String birthdate, String location, String sex, Boolean privateShowAge, Boolean publicShowAge, Boolean publicShowSex, Boolean publicShowLocation,String publicStatusMsg, String privateStatusMsg, String... languages) {
         User user = new User(email);
         user.setUserID(publicName);
         user.getUserPrivateProfile().setFirstName(firstName);
         user.getUserPrivateProfile().setLastName(lastName);
         user.getUserPrivateProfile().setImageURL(profileURL);
         user.getUserPrivateProfile().setShowAge(privateShowAge);
+        user.getUserPrivateProfile().setShowLocation(true);
+        user.getUserPrivateProfile().setStatusMessage(privateStatusMsg);
         user.getUserPublicProfile().setShowSex(publicShowSex);
         user.getUserPublicProfile().setShowLocation(publicShowLocation);
         user.getUserPublicProfile().setShowAge(publicShowAge);
@@ -647,6 +650,7 @@ public class StandAloneServer {
             user.getUserPublicProfile().setLanguages(Arrays.asList(languages));
         user.getUserPublicProfile().setSex(sex);
         user.getUserPublicProfile().setID(user.getUserID());
+        user.getUserPublicProfile().setStatusMessage(publicStatusMsg);
         user.getUserPrivateProfile().setLanguages(user.getUserPublicProfile().getLanguages());
         user.getUserPrivateProfile().setLocation(user.getUserPublicProfile().getLocation());
         user.getUserPrivateProfile().setBirthdate(user.getUserPublicProfile().getBirthdate());
@@ -725,6 +729,9 @@ public class StandAloneServer {
                     break;
                 case CreateHive:
                     response = CreateHive(server, formats);
+                    break;
+                case FriendList:
+                    response = FriendList(server, formats);
                     break;
             }
 
@@ -943,7 +950,7 @@ public class StandAloneServer {
                         if (local_user_profile.USER_PRIVATE_PROFILE.LANGUAGE != null)
                             languages = local_user_profile.USER_PRIVATE_PROFILE.LANGUAGE.toArray(new String[local_user_profile.USER_PRIVATE_PROFILE.LANGUAGE.size()]);
 
-                        User user = createUser(local_user_profile.EMAIL,local_user_profile.USER_BASIC_PRIVATE_PROFILE.FIRST_NAME,local_user_profile.USER_BASIC_PRIVATE_PROFILE.LAST_NAME,local_user_profile.USER_BASIC_PUBLIC_PROFILE.PUBLIC_NAME,"#808080",null,null,DateFormatter.toShortHumanReadableString(local_user_profile.USER_PRIVATE_PROFILE.BIRTHDATE),local_user_profile.USER_PRIVATE_PROFILE.LOCATION,local_user_profile.USER_PRIVATE_PROFILE.SEX,local_user_profile.USER_PRIVATE_PROFILE.PRIVATE_SHOW_AGE,local_user_profile.USER_PUBLIC_PROFILE.PUBLIC_SHOW_AGE,local_user_profile.USER_PUBLIC_PROFILE.PUBLIC_SHOW_SEX,local_user_profile.USER_PUBLIC_PROFILE.PUBLIC_SHOW_LOCATION,languages);
+                        User user = createUser(local_user_profile.EMAIL,local_user_profile.USER_BASIC_PRIVATE_PROFILE.FIRST_NAME,local_user_profile.USER_BASIC_PRIVATE_PROFILE.LAST_NAME,local_user_profile.USER_BASIC_PUBLIC_PROFILE.PUBLIC_NAME,"#808080",null,null,DateFormatter.toShortHumanReadableString(local_user_profile.USER_PRIVATE_PROFILE.BIRTHDATE),local_user_profile.USER_PRIVATE_PROFILE.LOCATION,local_user_profile.USER_PRIVATE_PROFILE.SEX,local_user_profile.USER_PRIVATE_PROFILE.PRIVATE_SHOW_AGE,local_user_profile.USER_PUBLIC_PROFILE.PUBLIC_SHOW_AGE,local_user_profile.USER_PUBLIC_PROFILE.PUBLIC_SHOW_SEX,local_user_profile.USER_PUBLIC_PROFILE.PUBLIC_SHOW_LOCATION,"","",languages);
                         LoginUser.put(user.getUserPublicProfile().getPublicName(), user);
                         LoginPassword.put(user.getEmail(), local_user_profile.PASS);
 
@@ -1605,6 +1612,7 @@ public class StandAloneServer {
                         boolean lastNameChanged = false;
 
                         boolean showAgePrivateChanged = false;
+                        boolean showLocationPrivateChanged = false;
 
                         if ((local_user_profile.EMAIL != null) && (!user.getEmail().equalsIgnoreCase(local_user_profile.EMAIL)) && (!LoginPassword.containsKey(local_user_profile.EMAIL))) {
                             if (local_user_profile.EMAIL.isEmpty())
@@ -1644,6 +1652,11 @@ public class StandAloneServer {
 
                             if ((local_user_profile.USER_PRIVATE_PROFILE.PRIVATE_SHOW_AGE != null) && (user.getUserPrivateProfile().getShowAge() != local_user_profile.USER_PRIVATE_PROFILE.PRIVATE_SHOW_AGE)) {
                                 showAgePrivateChanged = true;
+                                anyUpdate = true;
+                            }
+
+                            if ((local_user_profile.USER_PRIVATE_PROFILE.PRIVATE_SHOW_LOCATION != null) && (user.getUserPrivateProfile().getShowAge() != local_user_profile.USER_PRIVATE_PROFILE.PRIVATE_SHOW_LOCATION)) {
+                                showLocationPrivateChanged = true;
                                 anyUpdate = true;
                             }
 
@@ -1785,6 +1798,10 @@ public class StandAloneServer {
 
                             if (showAgePrivateChanged) {
                                 user.getUserPrivateProfile().setShowAge(local_user_profile.USER_PRIVATE_PROFILE.PRIVATE_SHOW_AGE);
+                            }
+
+                            if (showLocationPrivateChanged) {
+                                user.getUserPrivateProfile().setShowLocation(local_user_profile.USER_PRIVATE_PROFILE.PRIVATE_SHOW_LOCATION);
                             }
 
                             if (sexChanged) {
@@ -2390,6 +2407,63 @@ public class StandAloneServer {
                 }
             }
         }
+
+        if ((responseCode != null) && (responseCode == 200) && (responseFormats.size() > 0)) {
+            responseBody = "";
+            for (Format format : responseFormats)
+                responseBody += ((responseBody.isEmpty())?"{":", ")+format.toJSON().toString().substring(1,format.toJSON().toString().length()-1);
+            responseBody += "}";
+        }
+
+        return new AbstractMap.SimpleEntry<Integer,String>((responseCode != null)?responseCode:-1,(responseBody != null)?responseBody:"");
+    }
+
+    private static AbstractMap.SimpleEntry<Integer, String> FriendList(Server server, Format... formats) {
+        Integer responseCode = null;
+        String responseBody = null;
+
+/*        EXPLORE_FILTER message = null;
+        if (formats != null)
+            for (Format format : formats)
+                if (format instanceof EXPLORE_FILTER)
+                    message = (EXPLORE_FILTER)format;*/
+
+        COMMON common = new COMMON();
+
+        ArrayList<Format> responseFormats = new ArrayList<Format>();
+        responseFormats.add(common);
+
+        /*if (message == null) {
+            common.STATUS = "ERROR";
+            common.ERROR = -1;
+        } else {*/
+        HttpCookie csrfCookie = checkCSRFCookie(server.getAppName());
+
+        if ((csrfCookie == null) || (csrfCookie.hasExpired()) || (!CSRFTokens.contains(csrfCookie.getValue())))
+            responseCode = 403;
+        else {
+            responseCode = 200;
+            User user = checkSessionCookie(csrfCookie,server.getAppName());
+
+            if (user != null) {
+                //Lets return friends
+                FRIEND_LIST result = new FRIEND_LIST();
+                result.LIST = new ArrayList<>();
+                responseFormats.add(result);
+
+                for (String friendID : UserFriendList.get(user.getUserID())) {
+                    PROFILE_ID friend_profile = new PROFILE_ID();
+                    friend_profile.USER_ID = friendID;
+                    friend_profile.PROFILE_TYPE = "BASIC_PRIVATE";
+                    result.LIST.add(friend_profile);
+                }
+
+                common.STATUS = "OK";
+            } else {
+                common.STATUS = "SESSION EXPIRED";
+            }
+        }
+        //}
 
         if ((responseCode != null) && (responseCode == 200) && (responseFormats.size() > 0)) {
             responseBody = "";
