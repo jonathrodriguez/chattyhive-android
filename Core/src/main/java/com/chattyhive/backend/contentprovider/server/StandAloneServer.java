@@ -19,10 +19,12 @@ import com.chattyhive.backend.contentprovider.formats.CHAT_SYNC;
 import com.chattyhive.backend.contentprovider.formats.COMMON;
 import com.chattyhive.backend.contentprovider.formats.CSRF_TOKEN;
 import com.chattyhive.backend.contentprovider.formats.EXPLORE_FILTER;
+import com.chattyhive.backend.contentprovider.formats.FRIEND_LIST;
 import com.chattyhive.backend.contentprovider.formats.Format;
 import com.chattyhive.backend.contentprovider.formats.HIVE;
 import com.chattyhive.backend.contentprovider.formats.HIVE_ID;
 import com.chattyhive.backend.contentprovider.formats.HIVE_LIST;
+import com.chattyhive.backend.contentprovider.formats.HIVE_USERS_FILTER;
 import com.chattyhive.backend.contentprovider.formats.LOCAL_USER_PROFILE;
 import com.chattyhive.backend.contentprovider.formats.LOGIN;
 import com.chattyhive.backend.contentprovider.formats.MESSAGE;
@@ -36,6 +38,7 @@ import com.chattyhive.backend.contentprovider.formats.PUBLIC_PROFILE;
 import com.chattyhive.backend.contentprovider.formats.USERNAME;
 import com.chattyhive.backend.contentprovider.formats.USER_EMAIL;
 import com.chattyhive.backend.contentprovider.formats.USER_PROFILE;
+import com.chattyhive.backend.contentprovider.formats.USER_PROFILE_LIST;
 import com.chattyhive.backend.util.RandomString;
 import com.chattyhive.backend.util.events.CommandCallbackEventArgs;
 import com.chattyhive.backend.util.events.ConnectionEventArgs;
@@ -92,6 +95,7 @@ public class StandAloneServer {
 
     private static HashMap<String, ArrayList<String>> UserFriendList;
     private static String[] Words = new String[]{"Lorem","ipsum","dolor","sit","amet","consectetuer","adipiscing","elit. Aenean","commodo","ligula","eget","dolor. Aenean","massa. Cum","sociis","natoque","penatibus","et","magnis","dis","parturient","montes,","nascetur","ridiculus","mus. Donec","quam","felis,","ultricies","nec,","pellentesque","eu,","pretium","quis,","sem. Nulla","consequat","massa","quis","enim. Donec","pede","justo","fringilla","vel,","aliquet","nec","vulputate","eget,","arcu. In","enim","justo","rhoncus","ut,","imperdiet","a","venenatis","vitae","justo","nullam","dictum","felis","eu","pede","mollis","pretium. Integer","tincidunt. Cras","dapibus","vivamus","elementum","semper","nisi. Aenean","vulputate","eleifend","tellus. Aenean","leo","ligula,","porttitor","eu,","consequat","vitae","eleifend","ac","enim. Aliquam","lorem","ante","dapibus","in,","viverra","quis,","feugiat","a,","tellus. Phasellus","viverra","nulla","ut","metus","varius","laoreet. Quisque","rutrum","aenean","imperdiet","etiam","ultricies","nisi","vel","augue. Curabitur","ullamcorper","ultricies","nisi","nam","eget","dui. Etiam","rhoncus","maecenas","tempus,","tellus","eget","condimentum","rhoncus","sem","quam","semper","libero,","sit","amet","adipiscing","sem","neque","sed","ipsum. Nam","quam","nunc,","blandit","vel","luctus","pulvinar","hendrerit","id","lorem. Maecenas","nec","odio","et","ante","tincidunt","tempus. Donec","vitae","sapien","ut","libero","venenatis","faucibus. Nullam","quis,","ante. Etiam","sit","amet","orci","eget","eros","faucibus","tincidunt","duis","leo","sed","fringilla","mauris","sit","amet","nibh. Donec","sodales","sagittis","magna. Sed","consequat","leo","eget","bibendum","sodales,","augue","velit","cursus","nunc"};
+    private static String[] Images = new String[]{"file_chat_001.jpg","file_chat_002.jpg","file_chat_003.jpg","file_chat_004.jpg","file_chat_005.jpg","file_chat_006.jpg","file_chat_007.jpg","file_chat_008.jpg","file_chat_009.jpg","file_chat_010.jpg","file_chat_011.jpg","file_chat_012.jpg","file_chat_013.jpg","file_chat_014.jpg","file_chat_015.jpg","file_chat_016.jpg","file_chat_017.jpg","file_chat_018.jpg","file_chat_019.jpg","file_chat_020.jpg","file_chat_021.jpg","file_chat_022.jpg","file_chat_023.jpg","file_chat_024.jpg","file_chat_025.jpg","file_chat_026.jpg","file_chat_027.jpg","file_chat_028.jpg","file_chat_029.jpg","file_chat_030.jpg","file_chat_031.jpg","file_chat_032.jpg","file_chat_033.jpg","file_chat_034.jpg","file_chat_035.jpg","file_chat_036.jpg","file_chat_037.jpg","file_chat_038.jpg","file_chat_039.jpg","file_chat_040.jpg"};
     static {
         if (StaticParameters.StandAlone) {
             CSRFTokens = new ArrayList<String>();
@@ -131,35 +135,35 @@ public class StandAloneServer {
         /*              Login: coolest_thing_21 Pass: 87654321                  */
         /*              Login: akamatsu         Pass: Shizue_86                 */
         /************************************************************************/
-        user = createUser("jonathan@chattyhive.com", "Jonathan", "Rodriguez", "jonathan", "#AA22AA", "file_avatar_jonathan.jpg", "file_private_jonathan.jpg", "08/12/1987", "Vigo, Pontevedra, Espa\u00f1a", "MALE", true, false, true, true, "Espa\u00f1ol", "Franc\u00e9s", "Ingl\u00e9s", "Gallego", "Portugu\u00e9s");
+        user = createUser("jonathan@chattyhive.com", "Jonathan", "Rodriguez", "jonathan", "#AA22AA", "file_avatar_jonathan.jpg", "file_private_jonathan.jpg", "08/12/1987", "Vigo, Pontevedra, Espa\u00f1a", "MALE", true, false, true, true,"","", "Espa\u00f1ol", "Franc\u00e9s", "Ingl\u00e9s", "Gallego", "Portugu\u00e9s");
         LoginUser.put(user.getUserPublicProfile().getPublicName(), user);
         LoginPassword.put(user.getEmail(), "12345678");
 
-        user = createUser("cassini91@hotmail.com", "Cassandra", "Prieto", "cassini91", "#55dd9f", "file_avatar_cassini91.jpg", "file_private_cassini91.jpg", "31/03/1991", "Vigo, Pontevedra, Espa\u00f1a", "FEMALE", false, false, false, false, "Espa\u00f1ol", "Gallego");
+        user = createUser("cassini91@hotmail.com", "Cassandra", "Prieto", "cassini91", "#55dd9f", "file_avatar_cassini91.jpg", "file_private_cassini91.jpg", "31/03/1991", "Vigo, Pontevedra, Espa\u00f1a", "FEMALE", false, false, false, false,"","", "Espa\u00f1ol", "Gallego");
         LoginUser.put(user.getUserPublicProfile().getPublicName(), user);
         LoginPassword.put(user.getEmail(), "huygens");
 
-        user = createUser("monchuco@yahoo.es", "Ramon", "Araujo", "trabuco", "#dfada0", "file_avatar_trabuco.jpg", "file_private_trabuco.jpg", "15/08/1968", "Andorra", "MALE", true, true, true, true, "Espa\u00f1ol", "Franc\u00e9s", "Ingl\u00e9s", "Catal\u00e1n");
+        user = createUser("monchuco@yahoo.es", "Ramon", "Araujo", "trabuco", "#dfada0", "file_avatar_trabuco.jpg", "file_private_trabuco.jpg", "15/08/1968", "Andorra", "MALE", true, true, true, true,"Yepa! Qu\u00e9 no toy, le\u00f1e!","Aburrido de la vida", "Espa\u00f1ol", "Franc\u00e9s", "Ingl\u00e9s", "Catal\u00e1n");
         LoginUser.put(user.getUserPublicProfile().getPublicName(), user);
         LoginPassword.put(user.getEmail(), "15081968");
 
-        user = createUser("serpalina@gmail.com", "Serezade", "Agth\u00eb\u00e3\u00e7ykn", "serezy", "#16a46a", "file_avatar_serezy.jpg", "file_private_serezy.jpg", "04/07/1302", "Ankara, Ankara, Turqu\u00eda", "FEMALE", true, true, false, false, "Ingl\u00e9s", "Turco");
+        user = createUser("serpalina@gmail.com", "Serezade", "Agth\u00eb\u00e3\u00e7ykn", "serezy", "#16a46a", "file_avatar_serezy.jpg", "file_private_serezy.jpg", "04/07/1302", "Ankara, Ankara, Turqu\u00eda", "FEMALE", true, true, false, false,"Like a strawberry cake, a fresh sweet in a hot world","Hey! I'm moving to Amsterdam next month.", "Ingl\u00e9s", "Turco");
         LoginUser.put(user.getUserPublicProfile().getPublicName(), user);
         LoginPassword.put(user.getEmail(), "Istikl\u00e2l Marsi");
 
-        user = createUser("ramoncete_1985@gmail.com", "Ram\u00f3n Fern\u00e1ndez", "Guiti\u00e9rrez Ib\u00e1\u00f1ez", "homer_ou", "#5D00FF", "file_avatar_homer_ou.jpg", "file_private_homer_ou.jpg", "22/10/1985", "Ourense, Ourense, Espa\u00f1a", "MALE", false, true, false, true, "Espa\u00f1ol", "Gallego");
+        user = createUser("ramoncete_1985@gmail.com", "Ram\u00f3n Fern\u00e1ndez", "Guiti\u00e9rrez Ib\u00e1\u00f1ez", "homer_ou", "#5D00FF", "file_avatar_homer_ou.jpg", "file_private_homer_ou.jpg", "22/10/1985", "Ourense, Ourense, Espa\u00f1a", "MALE", false, true, false, true,"Nunca m\u00e1is!\n...penso traballar!","", "Espa\u00f1ol", "Gallego");
         LoginUser.put(user.getUserPublicProfile().getPublicName(), user);
         LoginPassword.put(user.getEmail(), "bartsimpson");
 
-        user = createUser("laura.gaza5@gmail.com", "Laura", "Gaza Moya", "weirdalien", "#00AF98", "file_avatar_weirdalien.jpg", "file_private_weirdalien.jpg", "04/07/1982", "Valladolid, Valladolid, Espa\u00f1a", "FEMALE", true, true, true, true, "Espa\u00f1ol", "Alem\u00e1n", "Franc\u00e9s");
+        user = createUser("laura.gaza5@gmail.com", "Laura", "Gaza Moya", "weirdalien", "#00AF98", "file_avatar_weirdalien.jpg", "file_private_weirdalien.jpg", "04/07/1982", "Valladolid, Valladolid, Espa\u00f1a", "FEMALE", true, true, true, true,"I want to believe","Truth is out there", "Espa\u00f1ol", "Alem\u00e1n", "Franc\u00e9s");
         LoginUser.put(user.getUserPublicProfile().getPublicName(), user);
         LoginPassword.put(user.getEmail(), "AFD45ADE");
 
-        user = createUser("cool_cooper@gmail.com", "Charles L.", "Cooper", "coolest_thing_21", "#586000", "file_avatar_coolest_thing_21.jpg", "file_private_coolest_thing_21.jpg", "04/07/1990", "Big Thicket Creekmore Village, Texas, EEUU", "MALE", true, false, false, true, "Ingl\u00e9s");
+        user = createUser("cool_cooper@gmail.com", "Charles L.", "Cooper", "coolest_thing_21", "#586000", "file_avatar_coolest_thing_21.jpg", "file_private_coolest_thing_21.jpg", "04/07/1990", "Big Thicket Creekmore Village, Texas, EEUU", "MALE", true, false, false, true,"On line","Death to all these white cops!", "Ingl\u00e9s");
         LoginUser.put(user.getUserPublicProfile().getPublicName(), user);
         LoginPassword.put(user.getEmail(), "87654321");
 
-        user = createUser("akamatsu@gmail.com", "Clair", "Moreau", "akamatsu", "#820600", "file_avatar_akamatsu.jpg", "file_private_akamatsu.jpg", "04/07/1998", "Paris, \u00cele-de-France, France", "FEMALE", false, true, true, true, "Franc\u00e9s", "Ingl\u00e9s");
+        user = createUser("akamatsu@gmail.com", "Clair", "Moreau", "akamatsu", "#820600", "file_avatar_akamatsu.jpg", "file_private_akamatsu.jpg", "04/07/1998", "Paris, \u00cele-de-France, France", "FEMALE", false, true, true, true,"\u304A\u306F\u3088\u3046","Nous sommes tous Charly!", "Franc\u00e9s", "Ingl\u00e9s");
         LoginUser.put(user.getUserPublicProfile().getPublicName(), user);
         LoginPassword.put(user.getEmail(), "Shizue_86");
 
@@ -468,10 +472,22 @@ public class StandAloneServer {
         }
         if (sender != null) {
 
-            int messageLength = random.nextInt(30) + 1;
+            String content_type = "";
             String messageContent = "";
-            for (int wordCount = 0; wordCount < messageLength; wordCount++)
-                messageContent = messageContent.concat(((messageContent.isEmpty())?"":" ")).concat(Words[random.nextInt(Words.length)]);
+
+            if ((Images.length > 0) && (random.nextDouble() <= ((double)1/15))) {
+                //Send Image
+                content_type = "IMAGE";
+                messageContent = Images[random.nextInt(Images.length)];
+            } else {
+                //Send text
+                content_type = "TEXT";
+                int messageLength = random.nextInt(30) + 1;
+                for (int wordCount = 0; wordCount < messageLength; wordCount++)
+                    messageContent = messageContent.concat(((messageContent.isEmpty())?"":" ")).concat(Words[random.nextInt(Words.length)]);
+            }
+
+
 
             long minDate = (new Date()).getTime() - (30L*24*60*60*1000);//chat.getCreationDate().getTime();
             if ((chat.getConversation().getCount() > 0) && (chat.getConversation().getLastMessage() != null))
@@ -488,7 +504,7 @@ public class StandAloneServer {
             message.SERVER_TIMESTAMP = new Date(date);
             message.USER_ID = sender.getUserID();
             message.CONTENT = new MESSAGE_CONTENT();
-            message.CONTENT.CONTENT_TYPE = "TEXT";
+            message.CONTENT.CONTENT_TYPE = content_type;
             message.CONTENT.CONTENT = messageContent;
             sendMessage(sender, chat,message,notify);
         }
@@ -613,13 +629,15 @@ public class StandAloneServer {
 
         return hive;
     }
-    private static User createUser(String email, String firstName, String lastName, String publicName, String color, String avatarURL, String profileURL, String birthdate, String location, String sex, Boolean privateShowAge, Boolean publicShowAge, Boolean publicShowSex, Boolean publicShowLocation, String... languages) {
+    private static User createUser(String email, String firstName, String lastName, String publicName, String color, String avatarURL, String profileURL, String birthdate, String location, String sex, Boolean privateShowAge, Boolean publicShowAge, Boolean publicShowSex, Boolean publicShowLocation,String publicStatusMsg, String privateStatusMsg, String... languages) {
         User user = new User(email);
         user.setUserID(publicName);
         user.getUserPrivateProfile().setFirstName(firstName);
         user.getUserPrivateProfile().setLastName(lastName);
         user.getUserPrivateProfile().setImageURL(profileURL);
         user.getUserPrivateProfile().setShowAge(privateShowAge);
+        user.getUserPrivateProfile().setShowLocation(true);
+        user.getUserPrivateProfile().setStatusMessage(privateStatusMsg);
         user.getUserPublicProfile().setShowSex(publicShowSex);
         user.getUserPublicProfile().setShowLocation(publicShowLocation);
         user.getUserPublicProfile().setShowAge(publicShowAge);
@@ -632,6 +650,7 @@ public class StandAloneServer {
             user.getUserPublicProfile().setLanguages(Arrays.asList(languages));
         user.getUserPublicProfile().setSex(sex);
         user.getUserPublicProfile().setID(user.getUserID());
+        user.getUserPublicProfile().setStatusMessage(publicStatusMsg);
         user.getUserPrivateProfile().setLanguages(user.getUserPublicProfile().getLanguages());
         user.getUserPrivateProfile().setLocation(user.getUserPublicProfile().getLocation());
         user.getUserPrivateProfile().setBirthdate(user.getUserPublicProfile().getBirthdate());
@@ -705,8 +724,14 @@ public class StandAloneServer {
                 case HiveInfo:
                     response = HiveInfo(server, formats);
                     break;
+                case HiveUsers:
+                    response = HiveUsers(server,formats);
+                    break;
                 case CreateHive:
                     response = CreateHive(server, formats);
+                    break;
+                case FriendList:
+                    response = FriendList(server, formats);
                     break;
             }
 
@@ -925,7 +950,7 @@ public class StandAloneServer {
                         if (local_user_profile.USER_PRIVATE_PROFILE.LANGUAGE != null)
                             languages = local_user_profile.USER_PRIVATE_PROFILE.LANGUAGE.toArray(new String[local_user_profile.USER_PRIVATE_PROFILE.LANGUAGE.size()]);
 
-                        User user = createUser(local_user_profile.EMAIL,local_user_profile.USER_BASIC_PRIVATE_PROFILE.FIRST_NAME,local_user_profile.USER_BASIC_PRIVATE_PROFILE.LAST_NAME,local_user_profile.USER_BASIC_PUBLIC_PROFILE.PUBLIC_NAME,"#808080",null,null,DateFormatter.toShortHumanReadableString(local_user_profile.USER_PRIVATE_PROFILE.BIRTHDATE),local_user_profile.USER_PRIVATE_PROFILE.LOCATION,local_user_profile.USER_PRIVATE_PROFILE.SEX,local_user_profile.USER_PRIVATE_PROFILE.PRIVATE_SHOW_AGE,local_user_profile.USER_PUBLIC_PROFILE.PUBLIC_SHOW_AGE,local_user_profile.USER_PUBLIC_PROFILE.PUBLIC_SHOW_SEX,local_user_profile.USER_PUBLIC_PROFILE.PUBLIC_SHOW_LOCATION,languages);
+                        User user = createUser(local_user_profile.EMAIL,local_user_profile.USER_BASIC_PRIVATE_PROFILE.FIRST_NAME,local_user_profile.USER_BASIC_PRIVATE_PROFILE.LAST_NAME,local_user_profile.USER_BASIC_PUBLIC_PROFILE.PUBLIC_NAME,"#808080",null,null,DateFormatter.toShortHumanReadableString(local_user_profile.USER_PRIVATE_PROFILE.BIRTHDATE),local_user_profile.USER_PRIVATE_PROFILE.LOCATION,local_user_profile.USER_PRIVATE_PROFILE.SEX,local_user_profile.USER_PRIVATE_PROFILE.PRIVATE_SHOW_AGE,local_user_profile.USER_PUBLIC_PROFILE.PUBLIC_SHOW_AGE,local_user_profile.USER_PUBLIC_PROFILE.PUBLIC_SHOW_SEX,local_user_profile.USER_PUBLIC_PROFILE.PUBLIC_SHOW_LOCATION,"","",languages);
                         LoginUser.put(user.getUserPublicProfile().getPublicName(), user);
                         LoginPassword.put(user.getEmail(), local_user_profile.PASS);
 
@@ -1587,6 +1612,7 @@ public class StandAloneServer {
                         boolean lastNameChanged = false;
 
                         boolean showAgePrivateChanged = false;
+                        boolean showLocationPrivateChanged = false;
 
                         if ((local_user_profile.EMAIL != null) && (!user.getEmail().equalsIgnoreCase(local_user_profile.EMAIL)) && (!LoginPassword.containsKey(local_user_profile.EMAIL))) {
                             if (local_user_profile.EMAIL.isEmpty())
@@ -1626,6 +1652,11 @@ public class StandAloneServer {
 
                             if ((local_user_profile.USER_PRIVATE_PROFILE.PRIVATE_SHOW_AGE != null) && (user.getUserPrivateProfile().getShowAge() != local_user_profile.USER_PRIVATE_PROFILE.PRIVATE_SHOW_AGE)) {
                                 showAgePrivateChanged = true;
+                                anyUpdate = true;
+                            }
+
+                            if ((local_user_profile.USER_PRIVATE_PROFILE.PRIVATE_SHOW_LOCATION != null) && (user.getUserPrivateProfile().getShowAge() != local_user_profile.USER_PRIVATE_PROFILE.PRIVATE_SHOW_LOCATION)) {
+                                showLocationPrivateChanged = true;
                                 anyUpdate = true;
                             }
 
@@ -1767,6 +1798,10 @@ public class StandAloneServer {
 
                             if (showAgePrivateChanged) {
                                 user.getUserPrivateProfile().setShowAge(local_user_profile.USER_PRIVATE_PROFILE.PRIVATE_SHOW_AGE);
+                            }
+
+                            if (showLocationPrivateChanged) {
+                                user.getUserPrivateProfile().setShowLocation(local_user_profile.USER_PRIVATE_PROFILE.PRIVATE_SHOW_LOCATION);
                             }
 
                             if (sexChanged) {
@@ -2100,6 +2135,214 @@ public class StandAloneServer {
         return new AbstractMap.SimpleEntry<Integer,String>((responseCode != null)?responseCode:-1,(responseBody != null)?responseBody:"");
     }
 
+    private static AbstractMap.SimpleEntry<Integer, String> HiveUsers(Server server, Format... formats) {
+        Integer responseCode = null;
+        String responseBody = null;
+
+        HIVE_USERS_FILTER hiveUsersFilter = null;
+        HIVE_ID hiveId = null;
+        if (formats != null)
+            for (Format format : formats)
+                if (format instanceof HIVE_USERS_FILTER)
+                    hiveUsersFilter = (HIVE_USERS_FILTER)format;
+                else if (format instanceof HIVE_ID)
+                    hiveId = (HIVE_ID)format;
+
+        COMMON common = new COMMON();
+
+        ArrayList<Format> responseFormats = new ArrayList<Format>();
+        responseFormats.add(common);
+
+        if ((hiveUsersFilter == null) || (hiveId == null)) {
+            common.STATUS = "ERROR";
+            common.ERROR = -1;
+        } else {
+            HttpCookie csrfCookie = checkCSRFCookie(server.getAppName());
+
+            if ((csrfCookie == null) || (csrfCookie.hasExpired()) || (!CSRFTokens.contains(csrfCookie.getValue())))
+                responseCode = 403;
+            else {
+                responseCode = 200;
+                User user = checkSessionCookie(csrfCookie,server.getAppName());
+
+                if (user != null) {
+                    //Lets GET HIVE USERS
+                    if ((hiveId.NAME_URL == null) || (!Hives.containsKey(hiveId.NAME_URL)) || (!UserHiveSubscriptions.containsKey(user.getUserID())) || (!UserHiveSubscriptions.get(user.getUserID()).contains(hiveId.NAME_URL))) {
+                        common.STATUS = "ERROR";
+                        common.ERROR = -13;
+                    } else {
+                        Hive hive = Hives.get(hiveId.NAME_URL);
+
+                        Comparator<User> comparator = null;
+
+                        if (hiveUsersFilter.TYPE.equalsIgnoreCase("OUTSTANDING")) {
+                            comparator = new Comparator<User>() {
+                                @Override
+                                public int compare(User o1, User o2) { //o1 < o2 => res < 0 | o1 = o2 => res = 0 | o1 > o2 => res > 0
+                                    if ((o1 == null) && (o2 != null))
+                                        return -1;
+                                    else if ((o1 != null) && (o2 == null))
+                                        return 1;
+                                    else if ((o1 == null) && (o2 == null))
+                                        return 0;
+
+                                    String u1 = o1.getUserID();
+                                    String u2 = o2.getUserID();
+
+                                    int res = u1.compareTo(u2);
+
+                                    return ((res==0)?o1.getEmail().compareToIgnoreCase(o2.getEmail()):res);
+                                }
+                            };
+                        } else if (hiveUsersFilter.TYPE.equalsIgnoreCase("LOCATION")) {
+                            comparator = new Comparator<User>() {
+                                @Override
+                                public int compare(User o1, User o2) { //o1 < o2 => res < 0 | o1 = o2 => res = 0 | o1 > o2 => res > 0
+                                    if ((o1 == null) && (o2 != null))
+                                        return -1;
+                                    else if ((o1 != null) && (o2 == null))
+                                        return 1;
+                                    else if ((o1 == null) && (o2 == null))
+                                        return 0;
+
+                                    String l1 = o1.getUserPublicProfile().getLocation();
+                                    String l2 = o2.getUserPublicProfile().getLocation();
+
+                                    return l1.compareTo(l2);
+                                }
+                            };
+                        } else if (hiveUsersFilter.TYPE.equalsIgnoreCase("RECENTLY_ONLINE")) {
+                            comparator = new Comparator<User>() {
+                                @Override
+                                public int compare(User o1, User o2) { //o1 < o2 => res < 0 | o1 = o2 => res = 0 | o1 > o2 => res > 0
+                                    if ((o1 == null) && (o2 != null))
+                                        return -1;
+                                    else if ((o1 != null) && (o2 == null))
+                                        return 1;
+                                    else if ((o1 == null) && (o2 == null))
+                                        return 0;
+
+                                    long d1 = o1.getUserPublicProfile().getBirthdate().getTime();
+                                    long d2 = o2.getUserPublicProfile().getBirthdate().getTime();
+
+                                    long res = d2-d1;
+
+                                    return ((res > Integer.MAX_VALUE)?Integer.MAX_VALUE:((res < Integer.MIN_VALUE)?Integer.MIN_VALUE:((res==0)?o1.getUserID().compareToIgnoreCase(o2.getUserID()):(int)res)));
+                                }
+                            };
+                        } else {
+                            comparator = null;
+                        }
+
+                        Collection<User> resultSet = null;
+                        if (comparator != null)
+                            resultSet = new TreeSet<User>(comparator);
+                        else
+                            resultSet = new ArrayList<User>();
+
+                        ArrayList<String> allUsers = null;
+                        if (HiveUserSubscriptions.containsKey(hive.getNameUrl()))
+                            allUsers = HiveUserSubscriptions.get(hive.getNameUrl());
+                        else
+                            allUsers = new ArrayList<String>();
+
+                        for (String userLogin : allUsers)
+                            if (!userLogin.equalsIgnoreCase(user.getUserID()))
+                                resultSet.add(LoginUser.get(userLogin));
+
+                        USER_PROFILE_LIST list = new USER_PROFILE_LIST();
+                        list.LIST = new ArrayList<USER_PROFILE>();
+
+                        responseFormats.add(list);
+
+                        User[] results = resultSet.toArray(new User[resultSet.size()]);
+
+                        int length = results.length;
+                        if (length > 0) {
+                            int start = -1;
+                            int count = -1;
+                            int end = -1;
+
+                            if ((hiveUsersFilter.RESULT_INTERVAL != null) && (hiveUsersFilter.RESULT_INTERVAL.START_INDEX != null) && (!hiveUsersFilter.RESULT_INTERVAL.START_INDEX.isEmpty()))
+                                start = ((hiveUsersFilter.RESULT_INTERVAL.START_INDEX.equalsIgnoreCase("FIRST")) ? 0 : ((hiveUsersFilter.RESULT_INTERVAL.START_INDEX.equalsIgnoreCase("LAST")) ? length : Integer.parseInt(hiveUsersFilter.RESULT_INTERVAL.START_INDEX)));
+
+                            if ((hiveUsersFilter.RESULT_INTERVAL != null) && (hiveUsersFilter.RESULT_INTERVAL.END_INDEX != null) && (!hiveUsersFilter.RESULT_INTERVAL.END_INDEX.isEmpty()))
+                                end = ((hiveUsersFilter.RESULT_INTERVAL.END_INDEX.equalsIgnoreCase("FIRST")) ? 0 : ((hiveUsersFilter.RESULT_INTERVAL.END_INDEX.equalsIgnoreCase("LAST")) ? length : Integer.parseInt(hiveUsersFilter.RESULT_INTERVAL.END_INDEX)));
+
+                            if ((hiveUsersFilter.RESULT_INTERVAL != null) && (hiveUsersFilter.RESULT_INTERVAL.COUNT != null))
+                                count = hiveUsersFilter.RESULT_INTERVAL.COUNT;
+
+                            int finalStart = 0;
+                            int finalEnd = length;
+
+                            if ((start < 0) && (count >= 0) && (end >= 0)) {
+                                if (end < finalEnd)
+                                    finalEnd = end;
+
+                                finalStart = finalEnd - count;
+                            } else if ((start >= 0) && (count >= 0) && (end < 0)) {
+                                if (start > finalStart)
+                                    finalStart = start;
+
+                                finalEnd = finalStart + count;
+                            } else if ((start >= 0) && (count < 0) && (end >= 0)) {
+                                finalEnd = end;
+                                finalStart = start;
+                            } else if ((start >= 0) && (count >= 0) && (end >= 0)) {
+                                if (start > finalStart)
+                                    finalStart = start;
+
+                                finalEnd = finalStart + count;
+
+                                if (end < finalEnd)
+                                    finalEnd = end;
+                            }
+
+                            if (finalStart < 0)
+                                finalStart = 0;
+                            else if (finalStart >= length)
+                                finalStart = length - 1;
+
+                            if (finalEnd < 0)
+                                finalEnd = 0;
+                            else if (finalEnd > length)
+                                finalEnd = length;
+
+                            if (finalStart > finalEnd) {
+                                int tmp = finalStart;
+                                finalStart = finalEnd;
+                                finalEnd = tmp;
+                            }
+
+                            if ((finalEnd - finalStart) > 0) {
+                                results = Arrays.copyOfRange(results, finalStart, finalEnd);
+
+                                for (User u : results) {
+                                    USER_PROFILE user_profile = new USER_PROFILE();
+                                    user_profile.USER_BASIC_PUBLIC_PROFILE = (BASIC_PUBLIC_PROFILE)u.getUserPublicProfile().toFormat(new BASIC_PUBLIC_PROFILE());
+                                    list.LIST.add(user_profile);
+                                }
+                            }
+                        }
+
+                        common.STATUS = "OK";
+                    }
+                } else {
+                    common.STATUS = "SESSION EXPIRED";
+                }
+            }
+        }
+
+        if ((responseCode != null) && (responseCode == 200) && (responseFormats.size() > 0)) {
+            responseBody = "";
+            for (Format format : responseFormats)
+                responseBody += ((responseBody.isEmpty())?"{":", ")+format.toJSON().toString().substring(1,format.toJSON().toString().length()-1);
+            responseBody += "}";
+        }
+
+        return new AbstractMap.SimpleEntry<Integer,String>((responseCode != null)?responseCode:-1,(responseBody != null)?responseBody:"");
+    }
+
     private static AbstractMap.SimpleEntry<Integer, String> CreateHive(Server server, Format... formats) {
         Integer responseCode = null;
         String responseBody = null;
@@ -2164,6 +2407,63 @@ public class StandAloneServer {
                 }
             }
         }
+
+        if ((responseCode != null) && (responseCode == 200) && (responseFormats.size() > 0)) {
+            responseBody = "";
+            for (Format format : responseFormats)
+                responseBody += ((responseBody.isEmpty())?"{":", ")+format.toJSON().toString().substring(1,format.toJSON().toString().length()-1);
+            responseBody += "}";
+        }
+
+        return new AbstractMap.SimpleEntry<Integer,String>((responseCode != null)?responseCode:-1,(responseBody != null)?responseBody:"");
+    }
+
+    private static AbstractMap.SimpleEntry<Integer, String> FriendList(Server server, Format... formats) {
+        Integer responseCode = null;
+        String responseBody = null;
+
+/*        EXPLORE_FILTER message = null;
+        if (formats != null)
+            for (Format format : formats)
+                if (format instanceof EXPLORE_FILTER)
+                    message = (EXPLORE_FILTER)format;*/
+
+        COMMON common = new COMMON();
+
+        ArrayList<Format> responseFormats = new ArrayList<Format>();
+        responseFormats.add(common);
+
+        /*if (message == null) {
+            common.STATUS = "ERROR";
+            common.ERROR = -1;
+        } else {*/
+        HttpCookie csrfCookie = checkCSRFCookie(server.getAppName());
+
+        if ((csrfCookie == null) || (csrfCookie.hasExpired()) || (!CSRFTokens.contains(csrfCookie.getValue())))
+            responseCode = 403;
+        else {
+            responseCode = 200;
+            User user = checkSessionCookie(csrfCookie,server.getAppName());
+
+            if (user != null) {
+                //Lets return friends
+                FRIEND_LIST result = new FRIEND_LIST();
+                result.LIST = new ArrayList<>();
+                responseFormats.add(result);
+
+                for (String friendID : UserFriendList.get(user.getUserID())) {
+                    PROFILE_ID friend_profile = new PROFILE_ID();
+                    friend_profile.USER_ID = friendID;
+                    friend_profile.PROFILE_TYPE = "BASIC_PRIVATE";
+                    result.LIST.add(friend_profile);
+                }
+
+                common.STATUS = "OK";
+            } else {
+                common.STATUS = "SESSION EXPIRED";
+            }
+        }
+        //}
 
         if ((responseCode != null) && (responseCode == 200) && (responseFormats.size() > 0)) {
             responseBody = "";

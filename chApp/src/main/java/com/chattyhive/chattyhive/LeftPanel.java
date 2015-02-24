@@ -152,6 +152,12 @@ public class LeftPanel {
 
         Hive.HiveListChanged.add(new EventHandler<EventArgs>(leftPanelListAdapter[1], "OnAddItem", EventArgs.class));
         Chat.ChatListChanged.add(new EventHandler<EventArgs>(leftPanelListAdapter[0], "OnAddItem", EventArgs.class));
+        if (((Main)context).controller.getMe() != null) {
+            ((Main)context).controller.getMe().FriendListChanged.add(new EventHandler<EventArgs>(leftPanelListAdapter[2],"OnAddItem",EventArgs.class));
+        } else {
+            ((Main)context).controller.LocalUserReceived.add(new EventHandler<EventArgs>(this,"OnLocalUserReceived",EventArgs.class));
+        }
+
 
         this.leftPanelListAdapter[0].ListSizeChanged.add(new EventHandler<EventArgs>(this, "OnListSizeChanged", EventArgs.class));
         this.leftPanelListAdapter[1].ListSizeChanged.add(new EventHandler<EventArgs>(this, "OnListSizeChanged", EventArgs.class));
@@ -163,6 +169,9 @@ public class LeftPanel {
         active_emptyMessage.setText(getEmptyMessage(this.activeStep));
   }
 
+    public void OnLocalUserReceived(Object sender, EventArgs eventArgs) {
+        ((Main)context).controller.getMe().FriendListChanged.add(new EventHandler<EventArgs>(leftPanelListAdapter[2],"OnAddItem",EventArgs.class));
+    }
     protected int getEmptyMessage(int list) {
         if (list == 0)
             return R.string.left_panel_chats_empty_list;

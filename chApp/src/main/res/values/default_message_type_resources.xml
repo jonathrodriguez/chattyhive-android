@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <drawable name="default_left_panel_last_message_incoming_icon">@drawable/ic_action_previous_item</drawable>
+    <drawable name="default_left_panel_last_message_outgoing_icon">@drawable/ic_action_next_item</drawable>
+
+    <drawable name="default_loading_chat_image">@drawable/xlarge_chat_thumbnail_holder</drawable>
+
+    <string name="default_left_panel_image_content_type">IMAGE</string>
+    <string name="default_left_panel_image_text">Image</string>
+    <drawable name="default_left_panel_image_icon">@drawable/category_06_08</drawable>
+</resources>

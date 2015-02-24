@@ -47,7 +47,7 @@
     <attr name="slidingStepsLayoutStyle" format="reference" />
 
     <declare-styleable name="SlidingStepsLayout_Child">
-        <attr name="layout" format="reference"/>
+        <attr name="childLayout" format="reference"/>
         <attr name="stepOrder" format="integer"/>
         <attr name="previousStepButton" format="reference"/>
         <attr name="nextStepButton" format="reference"/>
