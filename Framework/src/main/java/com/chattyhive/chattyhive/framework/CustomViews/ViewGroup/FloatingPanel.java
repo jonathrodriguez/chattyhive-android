@@ -516,7 +516,7 @@ public class FloatingPanel extends ViewGroup {
                     float deltaY = y-this.StartEventY;
                     if ((Math.abs(deltaX) > Math.abs(deltaY)) && (Math.abs(deltaX) > this.actionMoveThreshold)) {
                         getParent().requestDisallowInterceptTouchEvent(true);
-                    } else if (this.isOpen() && (Math.abs(deltaX) < Math.abs(deltaY)) /*&& (Math.abs(deltaY) > this.actionMoveThreshold)*/) {
+                    } else if (this.isOpen() && ((Math.abs(deltaX) < Math.abs(deltaY)) || (Math.abs(deltaX) < this.actionMoveThreshold)) /*&& (Math.abs(deltaY) > this.actionMoveThreshold)*/) {
                         if ((actualPosition > 0) && (this.StartEventX >= (mainPanels.get("left").getMeasuredWidth()+((LayoutParams)mainPanels.get("left").getLayoutParams()).leftMargin+((LayoutParams)mainPanels.get("left").getLayoutParams()).rightMargin))) {
                             showCenter = true;
                             getParent().requestDisallowInterceptTouchEvent(true);
