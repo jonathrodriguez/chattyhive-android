@@ -378,7 +378,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/profile_default_public_status_message"
+                        android:text="@string/profile_edit_default_public_status_message"
                         android:id="@+id/profile_status_message"
                         android:layout_gravity="center_horizontal"
                         android:gravity="center_horizontal"
