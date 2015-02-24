@@ -404,8 +404,12 @@ public class FloatingPanel extends ViewGroup {
                             result = true;
                         } else if (actualPosition > 0) {
                             result = ((!this.leftSwipeCheckMainBoundaries) || (this.StartEventX >= (mainPanels.get("left").getMeasuredWidth() + ((LayoutParams) mainPanels.get("left").getLayoutParams()).leftMargin + ((LayoutParams) mainPanels.get("left").getLayoutParams()).rightMargin)));
+                            if (result && ((Math.abs(deltaX) < Math.abs(deltaY)) || (Math.abs(deltaX) < this.actionMoveThreshold)) && (this.StartEventX < (mainPanels.get("left").getMeasuredWidth() + ((LayoutParams) mainPanels.get("left").getLayoutParams()).leftMargin + ((LayoutParams) mainPanels.get("left").getLayoutParams()).rightMargin)))
+                                result = false;
                         } else if (actualPosition < 0) {
                             result = ((!this.rightSwipeCheckMainBoundaries) || (this.StartEventX <= (mainPanels.get("center").getMeasuredWidth() + ((LayoutParams) mainPanels.get("center").getLayoutParams()).leftMargin + ((LayoutParams) mainPanels.get("center").getLayoutParams()).rightMargin - (mainPanels.get("right").getMeasuredWidth() + ((LayoutParams) mainPanels.get("right").getLayoutParams()).leftMargin + ((LayoutParams) mainPanels.get("right").getLayoutParams()).rightMargin))));
+                            if (result && (((Math.abs(deltaX) > Math.abs(deltaY)) && (Math.abs(deltaX) < this.actionMoveThreshold)) || ((Math.abs(deltaX) < Math.abs(deltaY)) && (Math.abs(deltaY) < this.actionMoveThreshold))))
+                                result = false;
                         }
                     }
                     break;
@@ -566,7 +570,9 @@ public class FloatingPanel extends ViewGroup {
                     return false;
                 } else if (((this.isOpen() && ((actualPosition > 0) && (this.StartEventX >= (mainPanels.get("left").getMeasuredWidth()+((LayoutParams)mainPanels.get("left").getLayoutParams()).leftMargin+((LayoutParams)mainPanels.get("left").getLayoutParams()).rightMargin)))) ||
                         (this.isOpen() && ((actualPosition < 0) && (this.StartEventX <= (mainPanels.get("center").getMeasuredWidth()+((LayoutParams)mainPanels.get("center").getLayoutParams()).leftMargin+((LayoutParams)mainPanels.get("center").getLayoutParams()).rightMargin-(mainPanels.get("right").getMeasuredWidth()+((LayoutParams)mainPanels.get("right").getLayoutParams()).leftMargin+((LayoutParams)mainPanels.get("right").getLayoutParams()).rightMargin)))))) &&
-                        ((Math.abs(x-this.StartEventX) < Math.abs(y-this.StartEventY)) && (Math.abs(y-this.StartEventY) > this.actionMoveThreshold)))  { //It may be a vertical movement
+                        ((Math.abs(x-this.StartEventX) < Math.abs(y-this.StartEventY)) || (Math.abs(x-this.StartEventX) < this.actionMoveThreshold) ||
+                                ((actualPosition < 0) && ((x-this.StartEventX) < 0)) || ((actualPosition > 0) && ((x-this.StartEventX) > 0))
+                        ))  { //It may be a vertical movement or click
                     finalPosition = 0;
                 } else if (actualPosition > Math.round((mainPanels.get("left").getMeasuredWidth()+((LayoutParams)mainPanels.get("left").getLayoutParams()).leftMargin+((LayoutParams)mainPanels.get("left").getLayoutParams()).rightMargin) / 2)) { //Go to left
                     finalPosition = 1;
