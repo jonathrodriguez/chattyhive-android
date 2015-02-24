@@ -15,7 +15,7 @@
         android:cacheColorHint="#00000000"
         android:choiceMode="none"
         android:divider="@null"
-        android:fastScrollEnabled="true"
+        android:fastScrollEnabled="false"
         android:scrollingCache="true"
         android:smoothScrollbar="true"
         android:stackFromBottom="true"

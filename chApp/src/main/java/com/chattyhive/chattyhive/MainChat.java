@@ -267,6 +267,11 @@ public class MainChat extends Window {
         if (this.channelConversation == null)
             this.channelConversation = this.channelChat.getConversation();
 
+        //Log.w("MainChat", "Notify core that channel conversation window is active.");
+        this.channelConversation.setChatWindowActive(true);
+        //Log.w("MainChat", "Show().End");
+
+
         //Log.w("MainChat", "Set chatListAdapter if needed.");
         if (this.chatListAdapter == null)
             this.chatListAdapter = new ChatListAdapter(context, this.channelConversation);
@@ -275,6 +280,12 @@ public class MainChat extends Window {
         ViewPair viewPair = ((Main)context).ShowLayout(R.layout.main_panel_chat_layout,R.layout.chat_action_bar);
         this.actionBar = viewPair.getActionBarView();
         this.mainChat = viewPair.getMainView();
+
+        //Log.w("MainChat", "Establish list adapter.");
+        ((ListView)mainChat.findViewById(R.id.main_panel_chat_message_list)).setAdapter(chatListAdapter);
+
+        //Log.w("MainChat", "Subscribe to conversation changes.");
+        this.channelConversation.MessageListModifiedEvent.add(new EventHandler<EventArgs>(this.chatListAdapter,"OnAddItem",EventArgs.class));
 
         //Log.w("MainChat", "Remember the textInput and set click listener for send button.");
         this.textInput = ((TextView)mainChat.findViewById(R.id.main_panel_chat_textBox));
@@ -287,22 +298,12 @@ public class MainChat extends Window {
         if (((Main)context).floatingPanel.isOpen())
             ((Main)context).floatingPanel.close();
 
-        //Log.w("MainChat", "Establish list adapter.");
-        ((ListView)mainChat.findViewById(R.id.main_panel_chat_message_list)).setAdapter(chatListAdapter);
-
-        //Log.w("MainChat", "Subscribe to conversation changes.");
-        this.channelConversation.MessageListModifiedEvent.add(new EventHandler<EventArgs>(this.chatListAdapter,"OnAddItem",EventArgs.class));
-
         //Log.w("MainChat", "Set bottom bar left icon.");
         if(((TextView)mainChat.findViewById(R.id.main_panel_chat_textBox)).didTouchFocusSelect()){////????????????????????????????????????
             ((ImageView)mainChat.findViewById(R.id.main_panel_chat_smyles_icon)).setBackgroundResource(R.drawable.launcher_launcher_a);
         }else{
             ((ImageView)mainChat.findViewById(R.id.main_panel_chat_smyles_icon)).setBackgroundResource(R.drawable.chats_isotipo_puro_recto_01);
         }
-
-        //Log.w("MainChat", "Notify core that channel conversation window is active.");
-        this.channelConversation.setChatWindowActive(true);
-        //Log.w("MainChat", "Show().End");
     }
 
     @Override

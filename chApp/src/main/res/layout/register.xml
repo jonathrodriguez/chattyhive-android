@@ -28,7 +28,7 @@
     <View
         android:layout_height="0dp"
         android:layout_width="0dp"
-        custom:layout="@layout/register_first_step"
+        custom:childLayout="@layout/register_first_step"
         custom:stepOrder="0"
         custom:nextStepButton="@+id/register_first_step_next_button"
         custom:stepTitle="@string/register_first_step_title"
@@ -38,7 +38,7 @@
     <View
         android:layout_height="0dp"
         android:layout_width="0dp"
-        custom:layout="@layout/register_second_step"
+        custom:childLayout="@layout/register_second_step"
         custom:stepOrder="1"
         custom:previousStepButton="@+id/register_second_step_back_button"
         custom:nextStepButton="@+id/register_second_step_next_button"
@@ -49,7 +49,7 @@
     <View
         android:layout_height="0dp"
         android:layout_width="0dp"
-        custom:layout="@layout/register_third_step"
+        custom:childLayout="@layout/register_third_step"
         custom:stepOrder="2"
         custom:previousStepButton="@+id/register_third_step_back_button"
         custom:stepTitle="@string/register_third_step_title"
