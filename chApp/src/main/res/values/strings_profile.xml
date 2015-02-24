@@ -10,8 +10,10 @@
     <string name="profile_status">Status</string>
     <string name="profile_status_for_friends">For friends</string>
     <string name="profile_status_for_all">Public</string>
-    <string name="profile_default_private_status_message">This is a private status message up to 100 characters and may include smileys.</string>
-    <string name="profile_default_public_status_message">This is a public status message up to 100 characters and may include smileys.</string>
+    <string name="profile_edit_default_private_status_message">This is a private status message up to 100 characters and may include smileys.</string>
+    <string name="profile_edit_default_public_status_message">This is a public status message up to 100 characters and may include smileys.</string>
+    <string name="profile_default_private_status_message">&lt;No status message&gt;</string>
+    <string name="profile_default_public_status_message">&lt;No status message&gt;</string>
 
     <string name="profile_information">Information</string>
     <string name="profile_information_location">Location</string>
