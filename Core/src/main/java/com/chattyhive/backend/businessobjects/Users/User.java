@@ -36,6 +36,7 @@ import java.util.TreeMap;
  */
 public class User {
     public Event<EventArgs> UserLoaded;
+    public Event<EventArgs> FriendListChanged;
 
     private Controller controller;
     private Boolean loading;
@@ -46,6 +47,8 @@ public class User {
     private String userID; //ID for any user. (This will be the public username).
     private PublicProfile userPublicProfile; //Public profile for any user.
     private PrivateProfile userPrivateProfile; //Private profile for any user.
+
+    private ArrayList<User> friends;
 
     public Boolean hasController() {
         return (this.controller != null);
@@ -83,6 +86,12 @@ public class User {
         return this.userPrivateProfile;
     }
 
+    public ArrayList<User> getFriends() {
+        return this.friends;
+    }
+    public void setFriends(ArrayList<User> friends) {
+        this.friends = friends;
+    }
     /********************************************************************************************/
 
     public User(String email) {
@@ -94,8 +103,10 @@ public class User {
         this.isMe = true;
         this.userPrivateProfile = new PrivateProfile();
         this.userPublicProfile = new PublicProfile();
+        this.friends = new ArrayList<User>();
         this.controller = controller;
         this.UserLoaded = new Event<EventArgs>();
+        this.FriendListChanged = new Event<EventArgs>();
     }
 
     public User (Format format) {
@@ -106,8 +117,10 @@ public class User {
         if (!this.fromFormat(format))
             throw new IllegalArgumentException("LOCAL_USER_PROFILE or USER_PROFILE expected.");
 
+        this.friends = new ArrayList<User>();
         this.controller = controller;
         this.UserLoaded = new Event<EventArgs>();
+        this.FriendListChanged = new Event<EventArgs>();
     }
 
     public User(String userID, PROFILE_ID requestProfile) {
@@ -118,12 +131,15 @@ public class User {
         this.controller = controller;
         this.userID = userID;
 
+        this.friends = new ArrayList<User>();
+
         if (this.controller == null) return;
 
         this.controller.getDataProvider().RunCommand(AvailableCommands.UserProfile, new EventHandler<CommandCallbackEventArgs>(this, "loadCallback", CommandCallbackEventArgs.class), requestProfile);
         this.loading = true;
 
         this.UserLoaded = new Event<EventArgs>();
+        this.FriendListChanged = new Event<EventArgs>();
     }
 
     public void loadCallback (Object sender, CommandCallbackEventArgs args) {
