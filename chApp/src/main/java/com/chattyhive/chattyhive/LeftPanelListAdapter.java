@@ -27,6 +27,8 @@ import com.chattyhive.backend.businessobjects.Chats.Chat;
 import com.chattyhive.backend.businessobjects.Chats.Hive;
 import com.chattyhive.backend.businessobjects.Chats.Messages.Message;
 import com.chattyhive.backend.businessobjects.Image;
+import com.chattyhive.backend.businessobjects.Users.ProfileLevel;
+import com.chattyhive.backend.businessobjects.Users.ProfileType;
 import com.chattyhive.backend.businessobjects.Users.User;
 import com.chattyhive.backend.util.events.Event;
 import com.chattyhive.backend.util.events.EventArgs;
@@ -58,6 +60,7 @@ public class LeftPanelListAdapter extends BaseAdapter {
     public Event<EventArgs> ListSizeChanged;
     public ArrayList<Hive> hiveList;
     public ArrayList<Chat> chatList;
+    public ArrayList<User> friendList;
 
     public void SetVisibleList(int LeftPanel_ListKind) {
         this.visibleList = LeftPanel_ListKind;
@@ -77,6 +80,7 @@ public class LeftPanelListAdapter extends BaseAdapter {
             public void run() {
                 hiveList = null;
                 chatList = null;
+                friendList = null;
                 if (visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Hives)) {
                     while (hiveList == null)
                         try { CaptureHives(); } catch (Exception e) { hiveList = null; }
@@ -86,8 +90,10 @@ public class LeftPanelListAdapter extends BaseAdapter {
                             CaptureChats();
                         } catch (Exception e) { chatList = null; }
                 } else if (visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Mates)) {
-                    hiveList = null;
-                    chatList = null;
+                    while (friendList == null)
+                        try {
+                            CaptureFriends();
+                        } catch (Exception e) { friendList = null; }
                 }
 
                 notifyDataSetChanged();
@@ -203,6 +209,62 @@ public class LeftPanelListAdapter extends BaseAdapter {
         hiveList = new ArrayList<Hive>(list);
     }
 
+    private void CaptureFriends() {
+        TreeSet<User> list = new TreeSet<User>(new Comparator<User>() {
+            @Override
+            public int compare(User lhs, User rhs) { // lhs < rhs => return < 0 | lhs = rhs => return = 0 | lhs > rhs => return > 0
+                int res = 0;
+                if ((lhs == null) && (rhs != null))
+                    res = 1;
+                else if ((lhs != null) && (rhs == null))
+                    res = -1;
+                else if (lhs == null) //&& (rhs == null)) <- Which is always true
+                    res = 0;
+                else {
+                    String lhsName = null;
+                    String rhsName = null;
+
+
+                    if (lhs.getUserPrivateProfile() != null)
+                        lhsName = lhs.getUserPrivateProfile().getShowingName();
+
+                    if (rhs.getUserPrivateProfile() != null)
+                        rhsName = rhs.getUserPrivateProfile().getShowingName();
+
+                    if ((lhsName == null) && (rhsName != null))
+                        res = 1;
+                    else if ((lhsName != null) && (rhsName == null))
+                        res = -1;
+                    else if (lhsName != null) //&& (rhsName != null)) <- Which is always true
+                        res = lhsName.compareToIgnoreCase(rhsName);
+                    else {
+                        if (lhs.getUserPublicProfile() != null)
+                            lhsName = lhs.getUserPublicProfile().getShowingName();
+                        if (rhs.getUserPublicProfile() != null)
+                            rhsName = rhs.getUserPublicProfile().getShowingName();
+
+                        if ((lhsName == null) && (rhsName != null))
+                            res = 1;
+                        else if ((lhsName != null) && (rhsName == null))
+                            res = -1;
+                        else if (lhsName != null) //&& (rhsName != null)) <- Which is always true
+                            res = lhsName.compareTo(rhsName);
+                        else {
+                            res = 0;
+                        }
+                    }
+                }
+
+                return res;
+            }
+        });
+        User me = ((Main)context).controller.getMe();
+        if (me != null)
+            list.addAll(me.getFriends());
+
+        friendList = new ArrayList<User>(list);
+    }
+
     public LeftPanelListAdapter (Context activityContext) {
         super();
         this.context = activityContext;
@@ -212,14 +274,17 @@ public class LeftPanelListAdapter extends BaseAdapter {
         //this.listView.setAdapter(this);
 
         if (visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Hives)) {
-            CaptureHives();
             chatList = null;
+            friendList = null;
+            CaptureHives();
         } else if (visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Chats)) {
             hiveList = null;
+            friendList = null;
             CaptureChats();
         } else if (visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Mates)) {
             hiveList = null;
             chatList = null;
+            CaptureFriends();
         }
 
         notifyDataSetChanged();
@@ -243,7 +308,7 @@ public class LeftPanelListAdapter extends BaseAdapter {
         } else if (this.visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Chats)) {
             result = chatList.size();
         } else if (this.visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Mates)) {
-            result = 0;
+            result = friendList.size();
         }
         return result;
     }
@@ -255,7 +320,7 @@ public class LeftPanelListAdapter extends BaseAdapter {
         } else if (this.visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Chats)) {
             return chatList.get(position);
         } else if (this.visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Mates)) {
-            return null;
+            return friendList.get(position);
         }
 
         return null;
@@ -309,8 +374,8 @@ public class LeftPanelListAdapter extends BaseAdapter {
                 convertView.getContext().getResources().getValue(R.color.left_panel_chat_list_item_item_type_img_alpha, alpha, true);
                 StaticMethods.SetAlpha(((ChatViewHolder)holder).chatTypeImage,alpha.getFloat());
             } else if (type == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Mates)) {
-                //convertView = this.inflater.inflate(R.layout.main_panel_chat_hive_message_me,parent,false);
-                holder = new FriendViewHolder();
+                convertView = this.inflater.inflate(R.layout.left_panel_friend_list_item,parent,false);
+                holder = new FriendViewHolder(convertView);
             }
 
             if (convertView != null)
@@ -648,9 +713,9 @@ public class LeftPanelListAdapter extends BaseAdapter {
             ((ChatViewHolder) holder).chatLastMessage.setText(LastMessage);
 
             ((ChatViewHolder)holder).chatItem.setTag(R.id.BO_Chat,item);
-        } /*else if (type == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Mates)) {
-
-        }*/
+        } else if (type == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Mates)) {
+            ((FriendViewHolder)holder).setFriend((User)item);
+        }
 
         return convertView;
     }
@@ -771,6 +836,145 @@ public class LeftPanelListAdapter extends BaseAdapter {
     }
 
     private class FriendViewHolder extends ViewHolder {
+        private View cardView;
+        private User cardFriend;
 
+        private ImageView friendImage;
+
+        private TextView friendFullName;
+        private TextView friendNickname;
+        private TextView friendStatusMsg;
+
+        public void setCardView(View cardView) {
+            if (this.cardView != cardView) {
+                this.cardView = cardView;
+
+                if (this.cardView != null) {
+                    this.friendImage = ((ImageView) cardView.findViewById(R.id.left_panel_friend_list_item_image));
+                    this.friendFullName = ((TextView) cardView.findViewById(R.id.left_panel_friend_list_item_full_name));
+                    this.friendNickname = ((TextView) cardView.findViewById(R.id.left_panel_friend_list_item_nickname));
+                    this.friendStatusMsg = ((TextView) cardView.findViewById(R.id.left_panel_friend_list_item_status));
+
+                    if (this.cardFriend != null)
+                        this.updateData();
+                } else {
+                    this.friendImage = null;
+                    this.friendFullName = null;
+                    this.friendNickname = null;
+                    this.friendStatusMsg = null;
+                }
+            }
+        }
+
+        public void setFriend(User friend) {
+            if (this.cardFriend != friend) {
+                this.cardFriend = friend;
+
+                if ((this.cardFriend != null) && (this.cardView != null))
+                    this.updateData();
+            }
+        }
+
+        public FriendViewHolder() {
+            this(null,null);
+        }
+        public FriendViewHolder(View cardView) {
+            this(cardView,null);
+        }
+        public FriendViewHolder(User friend) {
+            this(null,friend);
+        }
+        public FriendViewHolder(View cardView, User friend) {
+            this.setCardView(cardView);
+            this.setFriend(friend);
+        }
+
+        private View.OnClickListener onCardClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onImageClickListener.onClick(v);
+            }
+        };
+
+        private View.OnClickListener onImageClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openProfile(cardFriend, Profile.ProfileType.Private,null);
+            }
+        };
+
+        private void updateData() {
+            if ((this.cardFriend.getUserPrivateProfile() == null) || (this.cardFriend.getUserPrivateProfile().getLoadedProfileLevel().ordinal() < ProfileLevel.Basic.ordinal())) {
+                this.cardFriend.UserLoaded.add(new EventHandler<EventArgs>(this,"onUserLoaded",EventArgs.class));
+                this.cardFriend.loadProfile(ProfileType.PRIVATE,ProfileLevel.Basic);
+                return;
+            }
+            if ((this.cardFriend.getUserPublicProfile() == null) || (this.cardFriend.getUserPublicProfile().getLoadedProfileLevel().ordinal() < ProfileLevel.Basic.ordinal())) {
+                this.cardFriend.UserLoaded.add(new EventHandler<EventArgs>(this,"onUserLoaded",EventArgs.class));
+                this.cardFriend.loadProfile(ProfileType.PUBLIC,ProfileLevel.Basic);
+                return;
+            }
+            this.friendFullName.setText(this.cardFriend.getUserPrivateProfile().getShowingName());
+            this.friendNickname.setText(context.getText(R.string.public_username_identifier_character).toString().concat(this.cardFriend.getUserPublicProfile().getPublicName()));
+
+            String statusMessage = null;
+
+            if (this.cardFriend.getUserPrivateProfile().getStatusMessage() != null)
+                statusMessage = this.cardFriend.getUserPrivateProfile().getStatusMessage();
+
+            if ((statusMessage == null) || (statusMessage.isEmpty())) {
+                statusMessage = context.getString(R.string.profile_default_private_status_message);
+            }
+            this.friendStatusMsg.setText("\"".concat(statusMessage).concat("\""));
+
+            if ((this.cardFriend.getUserPrivateProfile().getSex() != null) && (this.cardFriend.getUserPrivateProfile().getSex().equalsIgnoreCase("female")))
+                this.friendImage.setImageResource(R.drawable.default_profile_image_female);
+            else
+                this.friendImage.setImageResource(R.drawable.default_profile_image_male);
+
+
+            if (this.cardFriend.getUserPrivateProfile().getProfileImage() != null) {
+                this.cardFriend.getUserPrivateProfile().getProfileImage().OnImageLoaded.add(new EventHandler<EventArgs>(this,"onImageLoaded",EventArgs.class));
+                this.cardFriend.getUserPrivateProfile().getProfileImage().loadImage(Image.ImageSize.medium,0);
+            }
+
+            this.friendImage.setOnClickListener(onImageClickListener);
+            this.cardView.setOnClickListener(onCardClickListener);
+        }
+
+        public void onUserLoaded(Object sender, EventArgs eventArgs) {
+            this.cardFriend.UserLoaded.remove(new EventHandler<EventArgs>(this, "onUserLoaded", EventArgs.class));
+            ((Activity)context).runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    updateData();
+                }
+            });
+        }
+
+        public void onImageLoaded(Object sender, EventArgs eventArgs) {
+            if (!(sender instanceof Image)) return;
+
+            final Image image = (Image)sender;
+            final FriendViewHolder thisViewHolder = this;
+
+            ((Activity)context).runOnUiThread( new Runnable() {
+                @Override
+                public void run() {
+                    InputStream is = image.getImage(Image.ImageSize.medium,0);
+                    if (is != null) {
+                        friendImage.setImageBitmap(BitmapFactory.decodeStream(is));
+                        try {
+                            is.reset();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    image.OnImageLoaded.remove(new EventHandler<EventArgs>(thisViewHolder,"onImageLoaded",EventArgs.class));
+                    //image.freeMemory();
+                }
+            });
+        }
     }
 }

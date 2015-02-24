@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingBottom="@dimen/left_panel_list_item_margin_bottom"
+    android:background="@color/left_panel_friend_list_item_background">
+
+    <ImageView
+        android:layout_width="@dimen/left_panel_friend_list_item_img_width"
+        android:layout_height="@dimen/left_panel_friend_list_item_img_height"
+        android:id="@+id/left_panel_friend_list_item_image"
+        android:adjustViewBounds="true"
+        android:layout_marginLeft="@dimen/left_panel_friend_list_item_img_margin_left"
+        android:layout_marginTop="@dimen/left_panel_friend_list_item_img_margin_top"
+        android:layout_marginRight="@dimen/left_panel_friend_list_item_img_margin_right"
+        android:layout_marginBottom="@dimen/left_panel_friend_list_item_img_margin_bottom"
+        android:scaleType="centerInside" />
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="@dimen/left_panel_list_item_margin_right">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/left_panel_friend_list_item_full_name"
+            android:layout_marginTop="@dimen/left_panel_friend_list_item_full_name_text_margin_top"
+            android:textSize="@dimen/left_panel_friend_list_item_full_name_text_size"
+            android:background="#00000000"
+            android:textColor="@color/left_panel_friend_list_item_full_name"
+            android:maxLines="1"
+            android:minLines="1"
+            android:lines="1"
+            android:singleLine="true"
+            android:ellipsize="end" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/left_panel_friend_list_item_nickname"
+            android:textSize="@dimen/left_panel_friend_list_item_nickname_text_size"
+            android:layout_marginTop="@dimen/left_panel_friend_list_item_nickname_text_margin_top"
+            android:background="#00000000"
+            android:textColor="@color/left_panel_friend_list_item_nick_name"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:minLines="1"
+            android:maxLines="1"
+            android:lines="1" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/left_panel_friend_list_item_status"
+            android:layout_marginTop="@dimen/left_panel_friend_list_item_status_text_margin_top"
+            android:textSize="@dimen/left_panel_friend_list_item_status_text_size"
+            android:background="#00000000"
+            android:textColor="@color/left_panel_friend_list_item_status"
+            android:ellipsize="end"
+            android:lines="1"
+            android:maxLines="1"
+            android:minLines="1"
+            android:singleLine="true" />
+    </LinearLayout>
+</LinearLayout>
