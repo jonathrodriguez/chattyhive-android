@@ -516,13 +516,21 @@ public class FloatingPanel extends ViewGroup {
                     float deltaY = y-this.StartEventY;
                     if ((Math.abs(deltaX) > Math.abs(deltaY)) && (Math.abs(deltaX) > this.actionMoveThreshold)) {
                         getParent().requestDisallowInterceptTouchEvent(true);
-                    } else if (this.isOpen() && (Math.abs(deltaX) < Math.abs(deltaY)) && (Math.abs(deltaY) > this.actionMoveThreshold)) {
+                    } else if (this.isOpen() && (Math.abs(deltaX) < Math.abs(deltaY)) /*&& (Math.abs(deltaY) > this.actionMoveThreshold)*/) {
                         if ((actualPosition > 0) && (this.StartEventX >= (mainPanels.get("left").getMeasuredWidth()+((LayoutParams)mainPanels.get("left").getLayoutParams()).leftMargin+((LayoutParams)mainPanels.get("left").getLayoutParams()).rightMargin))) {
                             showCenter = true;
                             getParent().requestDisallowInterceptTouchEvent(true);
                         } else if ((actualPosition < 0) && (this.StartEventX <= (mainPanels.get("center").getMeasuredWidth()+((LayoutParams)mainPanels.get("center").getLayoutParams()).leftMargin+((LayoutParams)mainPanels.get("center").getLayoutParams()).rightMargin-(mainPanels.get("right").getMeasuredWidth()+((LayoutParams)mainPanels.get("right").getLayoutParams()).leftMargin+((LayoutParams)mainPanels.get("right").getLayoutParams()).rightMargin)))) {
                             showCenter = true;
                             getParent().requestDisallowInterceptTouchEvent(true);
+                        } else {
+                            velocityTracker.clear();
+                            scroller.abortAnimation();
+                            moving = false;
+                            this.StartEventX = -1;
+                            this.StartEventY = -1;
+                            this.LastEventX = -1;
+                            return false;
                         }
                     } else {
                         velocityTracker.clear();
@@ -554,7 +562,7 @@ public class FloatingPanel extends ViewGroup {
                     } else { //show center
                         finalPosition = 0;
                     }
-                } else if (this.isOpen() && (Math.abs(velocityTracker.getXVelocity()) <= Math.abs(velocityTracker.getYVelocity())) && (Math.abs(velocityTracker.getYVelocity()) > this.flingSpeedThreshold)) { //Vertical fling in center panel
+                } else if ((showCenter) || (this.isOpen() && (Math.abs(velocityTracker.getXVelocity()) <= Math.abs(velocityTracker.getYVelocity())) && (Math.abs(velocityTracker.getYVelocity()) > this.flingSpeedThreshold))) { //Vertical fling in center panel
                     finalPosition = 0;
                 /*} else if (((this.isOpen() && ((actualPosition > 0) && (this.StartEventX >= (mainPanels.get("left").getMeasuredWidth()+((LayoutParams)mainPanels.get("left").getLayoutParams()).leftMargin+((LayoutParams)mainPanels.get("left").getLayoutParams()).rightMargin)))) ||
                            (this.isOpen() && ((actualPosition < 0) && (this.StartEventX <= (mainPanels.get("center").getMeasuredWidth()+((LayoutParams)mainPanels.get("center").getLayoutParams()).leftMargin+((LayoutParams)mainPanels.get("center").getLayoutParams()).rightMargin-(mainPanels.get("right").getMeasuredWidth()+((LayoutParams)mainPanels.get("right").getLayoutParams()).leftMargin+((LayoutParams)mainPanels.get("right").getLayoutParams()).rightMargin))))) ||
