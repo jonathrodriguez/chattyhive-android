@@ -746,7 +746,7 @@ public class Profile extends Window {
                         if (selectedLanguages.size() != 0) {
                             String languagesString = selectedLanguages.get(0);
                             for (int i = 1; i < selectedLanguages.size(); i++) {
-                                languagesString = languagesString +"; "+ selectedLanguages.get(i);
+                                languagesString = languagesString +", "+ selectedLanguages.get(i);
                             }
                             modifiedUser.getUserPublicProfile().setLanguages(selectedLanguages);
                             modifiedUser.getUserPrivateProfile().setLanguages(selectedLanguages);
@@ -924,7 +924,7 @@ public class Profile extends Window {
                     String Language = "";
                     ArrayList<String> Languages = user.getUserPrivateProfile().getLanguages();
                     for (String lang : Languages)
-                        Language += ((Language.isEmpty()) ? "" : "; ") + lang;
+                        Language += ((Language.isEmpty()) ? "" : ", ") + lang;
                     ((TextView) profileView.findViewById(R.id.profile_information_languages_value)).setText(Language);
                 }
 
@@ -973,7 +973,7 @@ public class Profile extends Window {
                     String Language = "";
                     ArrayList<String> Languages = user.getUserPublicProfile().getLanguages();
                     for (String lang : Languages)
-                        Language += ((Language.isEmpty()) ? "" : "; ") + lang;
+                        Language += ((Language.isEmpty()) ? "" : ", ") + lang;
                     ((TextView) profileView.findViewById(R.id.profile_information_languages_value)).setText(Language);
                 }
 
@@ -1037,13 +1037,17 @@ public class Profile extends Window {
                     String Language = "";
                     ArrayList<String> Languages = user.getUserPrivateProfile().getLanguages();
                     for (String lang : Languages)
-                        Language += ((Language.isEmpty()) ? "" : "; ") + lang;
+                        Language += ((Language.isEmpty()) ? "" : ", ") + lang;
                     ((TextView) profileView.findViewById(R.id.profile_information_languages_value)).setText(Language);
                 }
 
-                showInProfile = ShowInProfile.Both;
-                if (!user.getUserPublicProfile().getShowLocation())
+                showInProfile = ShowInProfile.None;
+                if (user.getUserPrivateProfile().getShowLocation())
                     showInProfile = ShowInProfile.Private;
+                if (user.getUserPublicProfile().getShowLocation()) {
+                    if (showInProfile == ShowInProfile.Private) showInProfile = ShowInProfile.Both;
+                    else showInProfile = ShowInProfile.Public;
+                }
                 ((ImageView) profileView.findViewById(R.id.my_profile_information_location_show)).setImageResource(getImageResourceToShowInProfile(showInProfile));
 
                 showInProfile = ShowInProfile.None;
@@ -1123,7 +1127,7 @@ public class Profile extends Window {
                     String Language = "";
                     ArrayList<String> Languages = modifiedUser.getUserPrivateProfile().getLanguages();
                     for (String lang : Languages)
-                        Language += ((Language.isEmpty()) ? "" : "; ") + lang;
+                        Language += ((Language.isEmpty()) ? "" : ", ") + lang;
                     ((TextView) profileView.findViewById(R.id.profile_information_languages_value)).setText(Language);
                 }
 
