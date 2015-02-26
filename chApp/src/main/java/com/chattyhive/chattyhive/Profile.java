@@ -1041,9 +1041,12 @@ public class Profile extends Window {
                     ((TextView) profileView.findViewById(R.id.profile_information_languages_value)).setText(Language);
                 }
 
-                showInProfile = ShowInProfile.Both;
-                if (!user.getUserPublicProfile().getShowLocation())
+                showInProfile = ShowInProfile.None;
+                if (user.getUserPrivateProfile().getShowLocation())
                     showInProfile = ShowInProfile.Private;
+                if (user.getUserPublicProfile().getShowLocation()) {
+                    if (showInProfile == ShowInProfile.Private) showInProfile = ShowInProfile.Both;
+                    else showInProfile = ShowInProfile.Public;
                 ((ImageView) profileView.findViewById(R.id.my_profile_information_location_show)).setImageResource(getImageResourceToShowInProfile(showInProfile));
 
                 showInProfile = ShowInProfile.None;
