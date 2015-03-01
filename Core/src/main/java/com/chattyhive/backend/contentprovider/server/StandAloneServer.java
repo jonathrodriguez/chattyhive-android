@@ -465,7 +465,7 @@ public class StandAloneServer {
         Chat chat = Chats.values().toArray(new Chat[Chats.size()])[random.nextInt(Chats.size())];
         User sender = null;
         if (chat.getChatKind() != ChatKind.HIVE)
-            sender = chat.getUsers().get(random.nextInt(chat.getUsers().size()));
+            sender = chat.getMembers().get(random.nextInt(chat.getMembers().size()));
         else {
             if ((HiveUserSubscriptions.containsKey(chat.getParentHive().getNameUrl())) && (HiveUserSubscriptions.get(chat.getParentHive().getNameUrl()) != null) && (HiveUserSubscriptions.get(chat.getParentHive().getNameUrl()).size() > 0))
                 sender = LoginUser.get(HiveUserSubscriptions.get(chat.getParentHive().getNameUrl()).get(random.nextInt(HiveUserSubscriptions.get(chat.getParentHive().getNameUrl()).size())));
@@ -527,7 +527,7 @@ public class StandAloneServer {
         if (notify) {
             ArrayList<User> members;
             if (destination.getChatKind() != ChatKind.HIVE)
-                members = destination.getUsers();
+                members = destination.getMembers();
             else {
                 members = new ArrayList<User>();
                 if ((ChatUserSubscriptions.containsKey(destination.getChannelUnicode())) && (ChatUserSubscriptions.get(destination.getChannelUnicode()) != null))
@@ -2448,7 +2448,7 @@ public class StandAloneServer {
             if (user != null) {
                 //Lets return friends
                 FRIEND_LIST result = new FRIEND_LIST();
-                result.LIST = new ArrayList<>();
+                result.LIST = new ArrayList<PROFILE_ID>();
                 responseFormats.add(result);
 
                 for (String friendID : UserFriendList.get(user.getUserID())) {

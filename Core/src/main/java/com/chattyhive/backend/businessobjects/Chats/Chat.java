@@ -24,7 +24,6 @@ import com.chattyhive.backend.util.events.EventHandler;
 import com.chattyhive.backend.util.events.FormatReceivedEventArgs;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
-import com.sun.javafx.collections.UnmodifiableListSet;
 
 import java.util.ArrayList;
 import java.util.Collection;
