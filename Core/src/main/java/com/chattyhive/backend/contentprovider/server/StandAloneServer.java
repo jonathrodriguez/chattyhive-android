@@ -461,7 +461,7 @@ public class StandAloneServer {
         Chat chat = Chats.values().toArray(new Chat[Chats.size()])[random.nextInt(Chats.size())];
         User sender = null;
         if (chat.getChatKind() != ChatKind.HIVE)
-            sender = chat.getMembers().get(random.nextInt(chat.getMembers().size()));
+            sender = chat.getUsers().get(random.nextInt(chat.getUsers().size()));
         else {
             if ((HiveUserSubscriptions.containsKey(chat.getParentHive().getNameUrl())) && (HiveUserSubscriptions.get(chat.getParentHive().getNameUrl()) != null) && (HiveUserSubscriptions.get(chat.getParentHive().getNameUrl()).size() > 0))
                 sender = LoginUser.get(HiveUserSubscriptions.get(chat.getParentHive().getNameUrl()).get(random.nextInt(HiveUserSubscriptions.get(chat.getParentHive().getNameUrl()).size())));
@@ -511,7 +511,7 @@ public class StandAloneServer {
         if (notify) {
             ArrayList<User> members;
             if (destination.getChatKind() != ChatKind.HIVE)
-                members = destination.getMembers();
+                members = destination.getUsers();
             else {
                 members = new ArrayList<User>();
                 if ((ChatUserSubscriptions.containsKey(destination.getChannelUnicode())) && (ChatUserSubscriptions.get(destination.getChannelUnicode()) != null))

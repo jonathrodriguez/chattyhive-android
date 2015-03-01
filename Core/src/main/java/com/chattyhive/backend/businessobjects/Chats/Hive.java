@@ -30,7 +30,7 @@ import java.util.TreeMap;
  * This class represents a hive. A hive is one of the most basic business objects.
  */
 
-public class Hive implements IContextualizable {
+public class Hive {
 
     /**************************
        Static hive management
@@ -425,10 +425,5 @@ public class Hive implements IContextualizable {
             if (this.fromFormat(format)) return;
 
         throw  new IllegalArgumentException("Expected HIVE or HIVE_ID formats.");
-    }
-
-    @Override
-    public ContextObj getOpenedChat() {
-        return null;
     }
 }
