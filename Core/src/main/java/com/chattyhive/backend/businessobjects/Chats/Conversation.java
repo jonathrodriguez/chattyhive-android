@@ -51,8 +51,13 @@ public class Conversation { //TODO: implements SortedSet<Message>
                 if (format instanceof MESSAGE) {
                     Chat.getChat(((MESSAGE) format).CHANNEL_UNICODE).getConversation().addMessage(new Message(format));
                 } else if (format instanceof MESSAGE_LIST) {
-                    if (((MESSAGE_LIST) format).NUMBER_MESSAGES > 0)
-                        Conversation.onFormatReceived(sender, new FormatReceivedEventArgs(((MESSAGE_LIST) format).MESSAGES));
+                    if (((MESSAGE_LIST) format).MESSAGES.size() > 0) {
+                        int lastReceived = ((MESSAGE_LIST) format).MESSAGES.size()-1;
+                        for (int i = 0; i <= lastReceived; i++) {
+                            MESSAGE message = ((MESSAGE_LIST) format).MESSAGES.get(i);
+                            Chat.getChat(message.CHANNEL_UNICODE).getConversation().addMessage(new Message(message),(i == lastReceived));
+                        }
+                    }
                 }
             }
         }
@@ -215,6 +220,10 @@ public class Conversation { //TODO: implements SortedSet<Message>
     }
 
     public void addMessage(Message message) {
+        this.addMessage(message,true);
+    }
+
+    public void addMessage(Message message,boolean lastMessage) {
         if (message == null) throw new NullPointerException("message must not be null.");
 
         Message previous = this.messages.floor(message);
@@ -250,14 +259,20 @@ public class Conversation { //TODO: implements SortedSet<Message>
             this.messagesByID.put(message.getId(),message);
         }
 
-        if ((messageListModified) && (this.MessageListModifiedEvent != null))
-            this.MessageListModifiedEvent.fire(this, EventArgs.Empty());
 
-        if ((messageListModified) && (this.getParent().chatKind == ChatKind.HIVE) && (Hive.HiveListChanged != null))
-            Hive.HiveListChanged.fire(null,EventArgs.Empty());
+        //Fire changed events
 
-        if ((messageListModified) && (Chat.ChatListChanged != null))
-            Chat.ChatListChanged.fire(null,EventArgs.Empty());
+        if (lastMessage) {
+            if ((messageListModified) && (this.MessageListModifiedEvent != null))
+                this.MessageListModifiedEvent.fire(this, EventArgs.Empty());
+
+            if ((messageListModified) && (this.getParent().chatKind == ChatKind.HIVE) && (Hive.HiveListChanged != null))
+                Hive.HiveListChanged.fire(null, EventArgs.Empty());
+
+            if ((messageListModified) && (Chat.ChatListChanged != null))
+                Chat.ChatListChanged.fire(null, EventArgs.Empty());
+        }
+
 
         if ((message.getId() != null) && (!message.getId().isEmpty())) {
             if (StaticParameters.MaxLocalMessages != 0) {

@@ -16,11 +16,11 @@ repositories {
 }
 
 android {
-    compileSdkVersion 19
-    buildToolsVersion '19.1.0'
+    compileSdkVersion 21
+    buildToolsVersion '21.1.2'
     defaultConfig {
         minSdkVersion 10
-        targetSdkVersion 19
+        targetSdkVersion 21
     }
     signingConfigs {
         release {
@@ -43,9 +43,9 @@ android {
 dependencies {
     compile project(':Framework')
     compile project(':Core')
-    compile 'com.android.support:support-v4:19.0.0'
+    compile 'com.android.support:support-v4:21.0.0'
     compile 'com.pusher:pusher-java-client:0.2.0'
-    compile 'com.android.support:appcompat-v7:19.0.0'
+    compile 'com.android.support:appcompat-v7:21.0.0'
 }
 
 task getPasswords << {

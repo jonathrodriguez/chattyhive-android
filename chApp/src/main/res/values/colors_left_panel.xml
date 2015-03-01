@@ -55,4 +55,11 @@
     <item name="left_panel_hive_list_item_hive_category_img_alpha" format="float" type="color">0.35</item>
     <item name="left_panel_hive_list_item_hive_subscribed_users_img_alpha" format="float" type="color">0.35</item>
 
+    <!--  HIVE ITEM COLORS -->
+    <!-- _________________ -->
+    <color name="left_panel_friend_list_item_background">#ffffff</color>
+    <color name="left_panel_friend_list_item_full_name">#000000</color>
+    <color name="left_panel_friend_list_item_nick_name">#808080</color>
+    <color name="left_panel_friend_list_item_status">#404040</color>
+
 </resources>

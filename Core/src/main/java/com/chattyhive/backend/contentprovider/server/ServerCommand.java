@@ -6,6 +6,7 @@ import com.chattyhive.backend.contentprovider.formats.EXPLORE_FILTER;
 import com.chattyhive.backend.contentprovider.formats.Format;
 import com.chattyhive.backend.contentprovider.formats.HIVE;
 import com.chattyhive.backend.contentprovider.formats.HIVE_ID;
+import com.chattyhive.backend.contentprovider.formats.HIVE_USERS_FILTER;
 import com.chattyhive.backend.contentprovider.formats.LOCAL_USER_PROFILE;
 import com.chattyhive.backend.contentprovider.formats.LOGIN;
 import com.chattyhive.backend.contentprovider.formats.MESSAGE;
@@ -242,6 +243,17 @@ public class ServerCommand {
         returningCookies = null;
         ServerCommand.AddServerCommand(command,method,commandType,url,paramFormats,inputFormats,requiredCookies,returningCookies);
 
+        // HiveUsers
+        command = AvailableCommands.HiveUsers;
+        method = Method.GET;
+        commandType = CommandType.Query;
+        url = "android.get_hive_users/[HIVE_ID.NAME_URL]";
+        paramFormats = new ArrayList<Class<?>>() {{add(HIVE_ID.class); add(HIVE_USERS_FILTER.class);}};
+        inputFormats = null;
+        requiredCookies = new ArrayList<String>() {{add(CSRFTokenCookie); add(SessionCookie);}};
+        returningCookies = null;
+        ServerCommand.AddServerCommand(command,method,commandType,url,paramFormats,inputFormats,requiredCookies,returningCookies);
+
         // CreateHive
         command = AvailableCommands.CreateHive;
         method = Method.POST;
@@ -249,6 +261,17 @@ public class ServerCommand {
         url = "android.hives";
         paramFormats = null;
         inputFormats = new ArrayList<Class<?>>() {{add(HIVE.class);}};
+        requiredCookies = new ArrayList<String>() {{add(CSRFTokenCookie); add(SessionCookie);}};
+        returningCookies = null;
+        ServerCommand.AddServerCommand(command,method,commandType,url,paramFormats,inputFormats,requiredCookies,returningCookies);
+
+        // FriendList
+        command = AvailableCommands.FriendList;
+        method = Method.GET;
+        commandType = CommandType.Pull;
+        url = "android.recover_friend_list";
+        paramFormats = null;
+        inputFormats = null;
         requiredCookies = new ArrayList<String>() {{add(CSRFTokenCookie); add(SessionCookie);}};
         returningCookies = null;
         ServerCommand.AddServerCommand(command,method,commandType,url,paramFormats,inputFormats,requiredCookies,returningCookies);
