@@ -66,6 +66,8 @@ public abstract class Format {
                     f = new CHAT(data);
                 } else if (entry.getKey().equalsIgnoreCase("CHAT_ID")) {
                     f = new CHAT_ID(data);
+                } else if (entry.getKey().equalsIgnoreCase("CONTEXT")) {
+                        f = new CONTEXT(data);
                 } else if (entry.getKey().equalsIgnoreCase("CHAT_LIST")) {
                     f = new CHAT_LIST(data);
                 } else if (entry.getKey().equalsIgnoreCase("CHAT_SYNC")) {

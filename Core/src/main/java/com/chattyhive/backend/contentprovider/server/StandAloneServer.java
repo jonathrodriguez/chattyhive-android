@@ -17,6 +17,7 @@ import com.chattyhive.backend.contentprovider.formats.CHAT_ID;
 import com.chattyhive.backend.contentprovider.formats.CHAT_LIST;
 import com.chattyhive.backend.contentprovider.formats.CHAT_SYNC;
 import com.chattyhive.backend.contentprovider.formats.COMMON;
+import com.chattyhive.backend.contentprovider.formats.CONTEXT;
 import com.chattyhive.backend.contentprovider.formats.CSRF_TOKEN;
 import com.chattyhive.backend.contentprovider.formats.EXPLORE_FILTER;
 import com.chattyhive.backend.contentprovider.formats.FRIEND_LIST;
@@ -714,6 +715,9 @@ public class StandAloneServer {
                     break;
                 case ChatInfo:
                     response = ChatInfo(server, formats);
+                    break;
+                case ChatContext:
+                    response = ChatContext(server, formats);
                     break;
                 case ChatList:
                     response = ChatList(server, formats);
@@ -1920,6 +1924,101 @@ public class StandAloneServer {
                     } else {
                         Chat chatInfo = Chats.get(chatId.CHANNEL_UNICODE);
                         responseFormats.add(chatInfo.toFormat(new CHAT()));
+                        common.STATUS = "OK";
+                    }
+
+                } else {
+                    common.STATUS = "SESSION EXPIRED";
+                }
+            }
+        }
+
+        if ((responseCode != null) && (responseCode == 200) && (responseFormats.size() > 0)) {
+            responseBody = "";
+            for (Format format : responseFormats)
+                responseBody += ((responseBody.isEmpty())?"{":", ")+format.toJSON().toString().substring(1,format.toJSON().toString().length()-1);
+            responseBody += "}";
+        }
+
+        return new AbstractMap.SimpleEntry<Integer,String>((responseCode != null)?responseCode:-1,(responseBody != null)?responseBody:"");
+    }
+
+    private static AbstractMap.SimpleEntry<Integer, String> ChatContext(Server server, Format... formats) {
+        Integer responseCode = null;
+        String responseBody = null;
+
+        CONTEXT contextRequest = null;
+        if (formats != null)
+            for (Format format : formats)
+                if (format instanceof CONTEXT)
+                    contextRequest = (CONTEXT)format;
+
+        COMMON common = new COMMON();
+
+        ArrayList<Format> responseFormats = new ArrayList<Format>();
+        responseFormats.add(common);
+
+        if (contextRequest == null) {
+            common.STATUS = "ERROR";
+            common.ERROR = -1;
+        } else {
+            HttpCookie csrfCookie = checkCSRFCookie(server.getAppName());
+
+            if ((csrfCookie == null) || (csrfCookie.hasExpired()) || (!CSRFTokens.contains(csrfCookie.getValue())))
+                responseCode = 403;
+            else {
+                responseCode = 200;
+                User user = checkSessionCookie(csrfCookie,server.getAppName());
+
+                if (user != null) {
+                    //Lets GET the info
+                    if ((contextRequest.CHANNEL_UNICODE == null) || (!Chats.containsKey(contextRequest.CHANNEL_UNICODE)) || (!UserChatSubscriptions.containsKey(user.getUserID())) || (!UserChatSubscriptions.get(user.getUserID()).contains(contextRequest.CHANNEL_UNICODE))) {
+                        common.STATUS = "ERROR";
+                        common.ERROR = -10;
+                    } else {
+                        Chat chat = Chats.get(contextRequest.CHANNEL_UNICODE);
+                        Hive hive = null;
+                        Conversation conversation = chat.getConversation();
+                        if (chat.getChatKind() == ChatKind.HIVE)
+                            hive = chat.getParentHive();
+
+                        CONTEXT context = new CONTEXT();
+                        responseFormats.add(context);
+
+
+                        if (hive != null) {
+                            ArrayList<String> subscribedUsersID = HiveUserSubscriptions.get(hive.getNameUrl());
+                            if ((contextRequest.NEW_USERS_COUNT > 0) && (subscribedUsersID != null) && (!subscribedUsersID.isEmpty())) {
+                                int count = 0;
+                                for (int i = (subscribedUsersID.size()-1); (i >= 0) && (count < contextRequest.NEW_USERS_COUNT); i--) {
+                                    if ((!user.getUserID().equalsIgnoreCase(subscribedUsersID.get(i))) && (LoginUser.get(subscribedUsersID.get(i)).getUserPublicProfile() != null)) {
+                                        USER_PROFILE user_profile = new USER_PROFILE();
+                                        user_profile.USER_BASIC_PUBLIC_PROFILE = ((BASIC_PUBLIC_PROFILE) LoginUser.get(subscribedUsersID.get(i)).getUserPublicProfile().toFormat(new BASIC_PUBLIC_PROFILE()));
+                                        if (context.NEW_USERS_LIST == null)
+                                            context.NEW_USERS_LIST = new ArrayList<USER_PROFILE>();
+                                        context.NEW_USERS_LIST.add(user_profile);
+                                        count++;
+                                    }
+                                }
+                            }
+
+                            //TODO: implement buzzes recovering
+                        }
+
+                        if (conversation != null) {
+                            ArrayList<Message> messages = new ArrayList<Message>(conversation.getMessages());
+                            int count = 0;
+                            for (int i = (messages.size()-1); (i >= 0) && (count < contextRequest.IMAGES_COUNT); i--) {
+                                Message m = messages.get(i);
+                                if (m.getMessageContent().getContentType().equalsIgnoreCase("IMAGE")) {
+                                    if (context.SHARED_IMAGES_LIST == null)
+                                        context.SHARED_IMAGES_LIST = new ArrayList<MESSAGE>();
+                                    if (context.SHARED_IMAGES_LIST.add((MESSAGE)m.toFormat(new MESSAGE())))
+                                        count++;
+                                }
+                            }
+                        }
+
                         common.STATUS = "OK";
                     }
 

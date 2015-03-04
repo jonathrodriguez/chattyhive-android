@@ -13,10 +13,14 @@ import com.chattyhive.backend.contentprovider.OSStorageProvider.ChatLocalStorage
 import com.chattyhive.backend.contentprovider.formats.CHAT;
 import com.chattyhive.backend.contentprovider.formats.CHAT_ID;
 import com.chattyhive.backend.contentprovider.formats.CHAT_SYNC;
+import com.chattyhive.backend.contentprovider.formats.COMMON;
+import com.chattyhive.backend.contentprovider.formats.CONTEXT;
 import com.chattyhive.backend.contentprovider.formats.Format;
 import com.chattyhive.backend.contentprovider.formats.HIVE_ID;
 import com.chattyhive.backend.contentprovider.formats.MESSAGE;
+import com.chattyhive.backend.contentprovider.formats.MESSAGE_LIST;
 import com.chattyhive.backend.contentprovider.formats.PROFILE_ID;
+import com.chattyhive.backend.contentprovider.formats.USER_PROFILE_LIST;
 import com.chattyhive.backend.util.events.CommandCallbackEventArgs;
 import com.chattyhive.backend.util.events.Event;
 import com.chattyhive.backend.util.events.EventArgs;
@@ -382,6 +386,9 @@ public class Chat implements IContextualizable {
      ******************************************/
     public Event<EventArgs> OnContextLoaded;
 
+    private ArrayList<Message> sharedImages;
+    private ArrayList<Message> topBuzzes;
+
     @Override
     public Event<EventArgs> getOnContextLoaded() {
         return this.OnContextLoaded;
@@ -390,13 +397,63 @@ public class Chat implements IContextualizable {
     public void contextLoadedCallback(Object sender,CommandCallbackEventArgs eventArgs) {
         //TODO: process received data
 
+        CONTEXT context = null;
+        Boolean requestOK = false;
+
+        ArrayList<Format> received = eventArgs.getReceivedFormats();
+        for (Format format : received) {
+            if ((format instanceof COMMON) && (((COMMON) format).STATUS.equalsIgnoreCase("OK")))
+                requestOK = true;
+            else if (format instanceof CONTEXT)
+                context = (CONTEXT)format;
+        }
+
+
+        if ((requestOK) && (context != null)) {
+            if ((this.getParentHive() != null) && (context.NEW_USERS_LIST != null) && (!context.NEW_USERS_LIST.isEmpty()))
+                this.parentHive.setContextUsers(context.NEW_USERS_LIST);
+
+            if ((context.SHARED_IMAGES_LIST != null) && (!context.SHARED_IMAGES_LIST.isEmpty())) {
+                if (this.sharedImages == null)
+                    this.sharedImages = new ArrayList<Message>();
+
+                boolean sharedImagesListChanged = false;
+                for (MESSAGE message : context.SHARED_IMAGES_LIST) {
+                    try {
+                        Message m = new Message(message);
+                        sharedImagesListChanged = this.sharedImages.add(m) || sharedImagesListChanged;
+                    } catch (Exception e) {
+                    }
+                }
+            }
+
+            if ((this.getParentHive() != null) && (context.TOP_BUZZES_LIST != null) && (!context.TOP_BUZZES_LIST.isEmpty())) {
+                if (this.topBuzzes == null)
+                    this.topBuzzes = new ArrayList<Message>();
+
+                boolean topBuzzesListChanged = false;
+                for (MESSAGE message : context.TOP_BUZZES_LIST) {
+                    try {
+                        Message m = new Message(message);
+                        topBuzzesListChanged = this.topBuzzes.add(m) || topBuzzesListChanged;
+                    } catch (Exception e) {
+                    }
+                }
+            }
+        }
+
         if (this.OnContextLoaded != null)
             this.OnContextLoaded.fire(this, EventArgs.Empty());
     }
 
     @Override
     public void loadContext(int numberImages, int numberNewUsers, int numberBuzzes) {
-        Controller.GetRunningController().getDataProvider().InvokeServerCommand(AvailableCommands.ChatInfo,new EventHandler<CommandCallbackEventArgs>(this,"contextLoadedCallback",CommandCallbackEventArgs.class),null);
+        CONTEXT context = new CONTEXT();
+        context.CHANNEL_UNICODE = this.channelUnicode;
+        context.IMAGES_COUNT = numberImages;
+        context.NEW_USERS_COUNT = numberNewUsers;
+        context.BUZZES_COUNT = numberBuzzes;
+        Controller.GetRunningController().getDataProvider().InvokeServerCommand(AvailableCommands.ChatContext,new EventHandler<CommandCallbackEventArgs>(this,"contextLoadedCallback",CommandCallbackEventArgs.class),context);
     }
 
     @Override
@@ -448,12 +505,18 @@ public class Chat implements IContextualizable {
 
     @Override
     public List<Message> getSharedImages() {
-        return null;
+        if (this.sharedImages != null)
+            return Collections.unmodifiableList(this.sharedImages);
+        else
+            return null;
     }
 
     @Override
     public List<User> getNewUsers() {
-        return null;
+        if (this.chatKind == ChatKind.HIVE)
+            return this.parentHive.getContextUsers();
+        else
+            return null;
     }
 
     @Override
@@ -469,7 +532,10 @@ public class Chat implements IContextualizable {
 
     @Override
     public List<Message> getTrendingBuzzes() {
-        return null;
+        if ((this.chatKind == ChatKind.HIVE) && (this.topBuzzes != null))
+            return Collections.unmodifiableList(this.topBuzzes);
+        else
+            return null;
     }
 
     @Override

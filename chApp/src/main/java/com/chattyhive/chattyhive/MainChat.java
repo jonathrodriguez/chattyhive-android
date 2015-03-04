@@ -12,6 +12,8 @@ import android.widget.TextView;
 
 import com.chattyhive.backend.Controller;
 import com.chattyhive.backend.businessobjects.Chats.Chat;
+import com.chattyhive.backend.businessobjects.Chats.Context.ContextElement;
+import com.chattyhive.backend.businessobjects.Chats.Context.IContextualizable;
 import com.chattyhive.backend.businessobjects.Chats.Conversation;
 import com.chattyhive.backend.businessobjects.Chats.Messages.Message;
 import com.chattyhive.backend.businessobjects.Chats.Messages.MessageContent;
@@ -23,7 +25,9 @@ import com.chattyhive.chattyhive.framework.Util.ViewPair;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by Jonathan on 27/03/14.
@@ -267,6 +271,10 @@ public class MainChat extends Window {
         if (this.channelConversation == null)
             this.channelConversation = this.channelChat.getConversation();
 
+        //TODO: This is for testing. Remove after tested.
+        ((IContextualizable)this.channelChat).getOnContextLoaded().add(new EventHandler<EventArgs>(this,"OnContextLoaded",EventArgs.class));
+        ((IContextualizable)this.channelChat).loadContext(4,4,4);
+
         //Log.w("MainChat", "Notify core that channel conversation window is active.");
         this.channelConversation.setChatWindowActive(true);
         //Log.w("MainChat", "Show().End");
@@ -325,5 +333,94 @@ public class MainChat extends Window {
         this.mainChat = null;
         this.textInput = null;
         this.actionBar = null;
+    }
+
+    //TODO: This is for testing. Remove after tested.
+    public void OnContextLoaded(Object sender,EventArgs eventArgs) {
+        ContextElement parentContext = ((IContextualizable)this.channelChat).getParentContext();
+        ContextElement baseContext = ((IContextualizable)this.channelChat).getBaseContext();
+        ContextElement communityContext = ((IContextualizable)this.channelChat).getCommunityContext();
+        List<Message> sharedImages = ((IContextualizable)this.channelChat).getSharedImages();
+        List<Message> topBuzzes = ((IContextualizable)this.channelChat).getTrendingBuzzes();
+        List<User> newUsers = ((IContextualizable)this.channelChat).getNewUsers();
+        List<User> users = ((IContextualizable)this.channelChat).getUsers();
+        List<ContextElement> otherChats = ((IContextualizable)this.channelChat).getOtherChats();
+        List<ContextElement> publicChats = ((IContextualizable)this.channelChat).getPublicChats();
+
+        Log.w("Context",String.format("COMMUNITY CONTEXT\nImage: %s\tCommunity name: %s",(((communityContext != null) && (communityContext.getImage() != null))?"Ok!":"NULL"),(((communityContext != null) && (communityContext.getName() != null))?"\"".concat(communityContext.getName()).concat("\""):"NULL")));
+        Log.w("Context",String.format("BASE CONTEXT\nImage: %s\tChat name: %s",(((baseContext != null) && (baseContext.getImage() != null))?"Ok!":"NULL"),(((baseContext != null) && (baseContext.getName() != null))?"\"".concat(((baseContext.getElementType() == ContextElement.ElementType.Hive)?this.context.getString(R.string.hivename_identifier_character):((baseContext.getElementType() == ContextElement.ElementType.PublicUser)?this.context.getString(R.string.public_username_identifier_character):""))).concat(baseContext.getName()).concat("\""):"NULL")));
+        Log.w("Context",String.format("PARENT CONTEXT\nImage: %s\tHive name: %s",(((parentContext != null) && (parentContext.getImage() != null))?"Ok!":"NULL"),(((parentContext != null) && (parentContext.getName() != null))?"\"".concat(this.context.getString(R.string.hivename_identifier_character)).concat(parentContext.getName()).concat("\""):"NULL")));
+
+        String elementList = "";
+        if ((publicChats != null) && (!publicChats.isEmpty())) {
+            for (ContextElement publicChat : publicChats) {
+                if (!elementList.isEmpty())
+                    elementList = elementList.concat("\n");
+                elementList = elementList.concat(String.format("\tImage: %s\tChat name: %s",(((publicChat != null) && (publicChat.getImage() != null))?"Ok!":"NULL"),(((publicChat != null) && (publicChat.getName() != null))?"\"".concat(publicChat.getName()).concat("\""):"NULL")));
+            }
+        } else {
+            elementList = "\tEmpty!";
+        }
+        Log.w("Context",String.format("PUBLIC CHATS\n%s",elementList));
+
+        elementList = "";
+        if ((sharedImages != null) && (!sharedImages.isEmpty())) {
+            for (Message message : sharedImages) {
+                if (!elementList.isEmpty())
+                    elementList = elementList.concat("\n");
+                elementList = elementList.concat(String.format("\tTimestamp: %s\tImage URL: %s",message.getOrdinationTimeStamp().toString(),message.getMessageContent().getContent()));
+            }
+        } else {
+            elementList = "\tEmpty!";
+        }
+        Log.w("Context",String.format("SHARED IMAGES\n%s",elementList));
+
+        elementList = "";
+        if ((newUsers != null) && (!newUsers.isEmpty())) {
+            for (User user : newUsers) {
+                if (!elementList.isEmpty())
+                    elementList = elementList.concat("\n");
+                elementList = elementList.concat(String.format("\tUsername: %s",this.context.getString(R.string.public_username_identifier_character).concat(user.getUserPublicProfile().getShowingName())));
+            }
+        } else {
+            elementList = "\tEmpty!";
+        }
+        Log.w("Context",String.format("NEW USERS\n%s",elementList));
+
+        elementList = "";
+        if ((users != null) && (!users.isEmpty())) {
+            for (User user : users) {
+                if (!elementList.isEmpty())
+                    elementList = elementList.concat("\n");
+                elementList = elementList.concat(String.format("\tUser: %s",(baseContext.getElementType() == ContextElement.ElementType.PublicUser)?this.context.getString(R.string.public_username_identifier_character).concat(user.getUserPublicProfile().getShowingName()):user.getUserPrivateProfile().getShowingName()));
+            }
+        } else {
+            elementList = "\tEmpty!";
+        }
+        Log.w("Context",String.format("USERS\n%s",elementList));
+
+        elementList = "";
+        if ((topBuzzes != null) && (!topBuzzes.isEmpty())) {
+            for (Message message : topBuzzes) {
+                if (!elementList.isEmpty())
+                    elementList = elementList.concat("\n");
+                elementList = elementList.concat(String.format("\tTimestamp: %s\tMessage Content: %s",message.getOrdinationTimeStamp().toString(),message.getMessageContent().getContent()));
+            }
+        } else {
+            elementList = "\tEmpty!";
+        }
+        Log.w("Context",String.format("TRENDING BUZZES\n%s",elementList));
+
+        elementList = "";
+        if ((otherChats != null) && (!otherChats.isEmpty())) {
+            for (ContextElement otherChat : otherChats) {
+                if (!elementList.isEmpty())
+                    elementList = elementList.concat("\n");
+                elementList = elementList.concat(String.format("\tImage: %s\tChat name: %s",(((otherChat != null) && (otherChat.getImage() != null))?"Ok!":"NULL"),(((otherChat != null) && (otherChat.getName() != null))?"\"".concat(otherChat.getName()).concat("\""):"NULL")));
+            }
+        } else {
+            elementList = "\tEmpty!";
+        }
+        Log.w("Context",String.format("OTHER CHATS\n%s",elementList));
     }
 }

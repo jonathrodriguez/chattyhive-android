@@ -270,7 +270,8 @@ public class Hive {
     public enum HiveUsersType {
         OUTSTANDING,
         LOCATION,
-        RECENTLY_ONLINE
+        RECENTLY_ONLINE,
+        NEW
     }
     private HiveUsersType lastRequestedUserList;
     public Event<EventArgs> OnSubscribedUsersListUpdated;
@@ -315,6 +316,41 @@ public class Hive {
             if (OnSubscribedUsersListUpdated != null)
                 this.OnSubscribedUsersListUpdated.fire(this, EventArgs.Empty());
         }
+    }
+
+    private ArrayList<User> contextUsers;
+    protected boolean setContextUsers(List<USER_PROFILE> newUsersList) {
+        boolean result = false;
+        ArrayList<User> newUsers = new ArrayList<User>();
+
+        if (this.contextUsers == null)
+            this.contextUsers = new ArrayList<User>();
+
+        if (newUsersList != null) {
+            boolean listChanged = false;
+            for (USER_PROFILE user_profile : newUsersList) {
+                try {
+                    User u = new User(user_profile, Controller.GetRunningController());
+                    listChanged = newUsers.add(u) || listChanged;
+                    result = (!this.contextUsers.contains(u)) || result;
+                } catch (Exception e) { }
+            }
+            if (listChanged && result) {
+                this.contextUsers.clear();
+                this.contextUsers.addAll(newUsers);
+            } else {
+                result = false;
+            }
+        }
+
+
+        return result;
+    }
+    protected List<User> getContextUsers() {
+        if (this.contextUsers != null)
+            return Collections.unmodifiableList(this.contextUsers);
+        else
+            return null;
     }
 
     /*****************************************
