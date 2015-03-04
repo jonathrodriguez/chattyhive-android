@@ -311,10 +311,13 @@ public class Hive implements IContextualizable {
                     } catch (Exception e) { }
                 }
             }
-
-            if (OnSubscribedUsersListUpdated != null)
-                this.OnSubscribedUsersListUpdated.fire(this, EventArgs.Empty());
+        } else {
+            if (this.subscribedUsers == null)
+                this.subscribedUsers = new ArrayList<User>();
         }
+
+        if (OnSubscribedUsersListUpdated != null)
+            this.OnSubscribedUsersListUpdated.fire(this, EventArgs.Empty());
     }
 
     /*****************************************
