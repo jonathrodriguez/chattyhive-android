@@ -15,6 +15,7 @@ import com.chattyhive.backend.contentprovider.formats.Format;
 import com.chattyhive.backend.contentprovider.formats.HIVE_ID;
 import com.chattyhive.backend.contentprovider.formats.MESSAGE;
 import com.chattyhive.backend.contentprovider.formats.PROFILE_ID;
+import com.chattyhive.backend.util.events.CommandCallbackEventArgs;
 import com.chattyhive.backend.util.events.Event;
 import com.chattyhive.backend.util.events.EventArgs;
 import com.chattyhive.backend.util.events.EventHandler;
@@ -84,6 +85,36 @@ public class Chat implements IContextualizable {
                 }
             }
         }
+    }
+
+    public static Chat CreateChat(User user,Hive hive, EventHandler<CommandCallbackEventArgs> Callback) {
+        Chat result = null;
+        if ((user == null) || ((hive == null) && (user.getUserPrivateProfile() == null)) || ((hive != null) && (user.getUserPublicProfile() == null))) return result;
+        Format[] formats = null;
+        if (hive == null) {
+            PROFILE_ID profile_id = new PROFILE_ID();
+            profile_id.USER_ID = user.getUserID();
+            profile_id.PROFILE_TYPE = "BASIC_PRIVATE";
+
+            formats = new Format[]{profile_id};
+        } else {
+            PROFILE_ID profile_id = new PROFILE_ID();
+            profile_id.USER_ID = user.getUserID();
+            profile_id.PROFILE_TYPE = "BASIC_PUBLIC";
+
+            HIVE_ID hive_id = (HIVE_ID)hive.toFormat(new HIVE_ID());
+
+            formats = new Format[]{profile_id, hive_id};
+        }
+
+        if (formats != null) {
+            result = new Chat(hive,user);
+            result.OnChatCreated.add(Callback);
+
+            controller.getDataProvider().RunCommand(AvailableCommands.CreateChat,new EventHandler<CommandCallbackEventArgs>(result,"OnChatCreatedCallback",CommandCallbackEventArgs.class),formats);
+        }
+
+        return result;
     }
 
     public Boolean isLoaded() {
@@ -162,6 +193,7 @@ public class Chat implements IContextualizable {
                  Constructor
      *****************************************/
     public Chat(Format format, Hive hive) {
+        this.OnChatCreated = new Event<CommandCallbackEventArgs>();
         this.members = new TreeMap<String, User>();
         this.conversation = new Conversation(this);
         if (hive != null)
@@ -170,6 +202,7 @@ public class Chat implements IContextualizable {
     }
 
     protected Chat(String channelUnicode) {
+        this.OnChatCreated = new Event<CommandCallbackEventArgs>();
         this.members = new TreeMap<String, User>();
         String localGroup = Chat.localStorage.RecoverGroup(channelUnicode);
         if (localGroup != null) {
@@ -201,12 +234,26 @@ public class Chat implements IContextualizable {
     }
 
     public Chat(ChatKind chatKind, Hive parentHive) {
+        this.OnChatCreated = new Event<CommandCallbackEventArgs>();
         if ((chatKind != ChatKind.PRIVATE_SINGLE) && (chatKind != ChatKind.PRIVATE_GROUP) && (parentHive == null))
             throw new IllegalArgumentException("If chat is not private, parentHive CAN'T be null.");
         this.chatKind = chatKind;
         this.parentHive = parentHive;
         this.conversation = new Conversation(this);
         this.creationDate = new Date();
+    }
+
+    private Chat(Hive parentHive, User user) {
+        this.OnChatCreated = new Event<CommandCallbackEventArgs>();
+        this.members = new TreeMap<String, User>();
+        if (parentHive != null) {
+            this.parentHive = parentHive;
+            this.chatKind = ChatKind.PUBLIC_SINGLE;
+        } else {
+            this.chatKind = ChatKind.PRIVATE_SINGLE;
+        }
+        this.conversation = new Conversation(this);
+
     }
 
     public static Chat getChat(String channelUnicode) {
@@ -365,6 +412,26 @@ public class Chat implements IContextualizable {
         //TODO: implement server request (NOT AVAILABLE)
     }
 
+    public Event<CommandCallbackEventArgs> OnChatCreated;
+    public void OnChatCreatedCallback(Object sender, CommandCallbackEventArgs args) {
+        if (args.countReceivedFormats() > 0) {
+            ArrayList<Format> formats = args.getReceivedFormats();
+            for (Format format : formats) {
+                if ((format instanceof CHAT) || (format instanceof CHAT_ID) || (format instanceof CHAT_SYNC)) {
+                    if (this.fromFormat(format)) {
+                        if (!Chats.containsKey(this.channelUnicode)) {
+                            Chats.put(this.channelUnicode,this);
+                            if (ChatListChanged != null)
+                                ChatListChanged.fire(this,EventArgs.Empty());
+                        }
+                    }
+                }
+            }
+        }
+
+        if (this.OnChatCreated != null)
+            this.OnChatCreated.fire(this,args);
+    }
     /*****************************************
            context (group shared files, ...)
      *****************************************/
@@ -377,8 +444,6 @@ public class Chat implements IContextualizable {
     protected String name;
     protected Hive parentHive;
     protected String pusherChannel;
-
-
 
     public String getChannelUnicode() { return this.channelUnicode; }
     public void setChannelUnicode(String value) { this.channelUnicode = value; }

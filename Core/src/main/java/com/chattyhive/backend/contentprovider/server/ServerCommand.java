@@ -219,6 +219,16 @@ public class ServerCommand {
         returningCookies = null;
         ServerCommand.AddServerCommand(command,method,commandType,url,paramFormats,inputFormats,requiredCookies,returningCookies);
 
+        // CreateChat
+        command = AvailableCommands.CreateChat;
+        method = Method.POST;
+        commandType = CommandType.ImmediateResponsePush;
+        url = "android.chats/";
+        paramFormats = null;
+        inputFormats = new ArrayList<Class<?>>() {{add(PROFILE_ID.class);}};
+        requiredCookies = new ArrayList<String>() {{add(CSRFTokenCookie); add(SessionCookie);}};
+        returningCookies = null;
+        ServerCommand.AddServerCommand(command,method,commandType,url,paramFormats,inputFormats,requiredCookies,returningCookies);
 
         // UserProfile
         command = AvailableCommands.UserProfile;

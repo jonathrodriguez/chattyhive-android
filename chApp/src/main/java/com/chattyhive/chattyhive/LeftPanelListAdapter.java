@@ -83,17 +83,28 @@ public class LeftPanelListAdapter extends BaseAdapter {
                 friendList = null;
                 if (visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Hives)) {
                     while (hiveList == null)
-                        try { CaptureHives(); } catch (Exception e) { hiveList = null; }
+                        try {
+                            CaptureHives();
+                        } catch (Exception e) {
+                           // e.printStackTrace();
+                            hiveList = null;
+                        }
                 } else if (visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Chats)) {
                     while (chatList == null)
                         try {
                             CaptureChats();
-                        } catch (Exception e) { chatList = null; }
+                        } catch (Exception e) {
+                           // e.printStackTrace();
+                            chatList = null;
+                        }
                 } else if (visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Mates)) {
                     while (friendList == null)
                         try {
                             CaptureFriends();
-                        } catch (Exception e) { friendList = null; }
+                        } catch (Exception e) {
+                          //  e.printStackTrace();
+                            friendList = null;
+                        }
                 }
 
                 notifyDataSetChanged();
@@ -120,9 +131,13 @@ public class LeftPanelListAdapter extends BaseAdapter {
 
                     if ((lhs.getConversation() != null) && (lhs.getConversation().getLastMessage() != null))
                         lhsDate = lhs.getConversation().getLastMessage().getOrdinationTimeStamp();
+                    else
+                        lhsDate = lhs.getCreationDate();
 
                     if ((rhs.getConversation() != null) && (rhs.getConversation().getLastMessage() != null))
                         rhsDate = rhs.getConversation().getLastMessage().getOrdinationTimeStamp();
+                    else
+                        rhsDate = rhs.getCreationDate();
 
                     if ((lhsDate == null) && (rhsDate != null))
                         res = 1;
@@ -892,7 +907,8 @@ public class LeftPanelListAdapter extends BaseAdapter {
         private View.OnClickListener onCardClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onImageClickListener.onClick(v);
+                //onImageClickListener.onClick(v);
+                ((Main)context).OpenWindow(new MainChat(context, null, cardFriend));
             }
         };
 
