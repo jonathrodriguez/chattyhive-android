@@ -1,6 +1,7 @@
 package com.chattyhive.backend.contentprovider.server;
 
 import com.chattyhive.backend.contentprovider.AvailableCommands;
+import com.chattyhive.backend.contentprovider.ExecutionLevel;
 import com.chattyhive.backend.contentprovider.formats.Format;
 
 import java.lang.reflect.Field;
@@ -25,8 +26,13 @@ public class ServerCommand {
     private ServerCommandDefinition command;
     private IServerUser serverUser;
 
+    private ExecutionLevel executionLevel;
+
     private ArrayList<Format> inputFormats;
     private ArrayList<Format> paramFormats;
+
+    private ArrayList<Format> resultFormats;
+    private int resultCode;
 
     public ServerCommand (IServerUser serverUser, AvailableCommands command, Format... formats) {
         this.serverUser = serverUser;
