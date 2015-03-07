@@ -10,8 +10,10 @@ import java.net.CookieManager;
 import java.net.CookieStore;
 import java.net.HttpCookie;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -56,42 +58,158 @@ public class ServerCommand {
     public ServerCommandDefinition getCommand() {
         return this.command;
     }
-    public String getUrl() { //TODO: Edit this to support optional parameters
+    public String getUrl() {
         String url = this.command.getUrl();
-        int paramIndex = url.indexOf('[');
-        //TODO: Algoritmo: 1) Buscar un %_ o un %+. 2) Buscar el %% correspondiente a éste abrir. 3) Enviar lo del medio a recursiveParseURL 4) Sustituir y repetir hasta terminar la url
-        while (paramIndex > -1) {
-            int endParamIndex = url.indexOf(']');
-            if (endParamIndex > -1) {
-                String parameter = url.substring(paramIndex + 1, endParamIndex);
-                int dotIndex = parameter.indexOf('.');
-                if (dotIndex > -1) {
-                    try {
-                        String value = this.getUrlParameterValue(parameter, paramFormats);
-                        url = url.replace(String.format("[%s]", parameter), value);
-                    } catch (NoSuchFieldException e) {
-                        e.printStackTrace();
-                    } catch (IllegalAccessException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-            paramIndex = url.indexOf('[',paramIndex);
-        }
+
+        if (url.contains("(?P<") || url.contains("(?O<"))
+            url = (new ParseURL(url)).getParsedURL();
+
         return url;
     }
 
-    private String recursiveParseURL(String fragment,boolean Optional) {
-        String url = fragment;
-        //TODO: Algoritmo. Si comienza con %+ es un parámetro. Si comienza con %_ debe contener
-        // un %+ con el parámtro; además el parámetro será opcional. Entre %_ y %+ está el prefijo.
-        // Entre los cierres, %% y %%, está el sufijo.
-        if (!Optional) {
-            //Estoy en el último nivel. Resuelvo y devuelvo un valor.
-        } else {
-            //Quizá no esté en el último nivel. Verifico y ya devuelvo según si hay valor o no.
+    private class ParseURL {
+        private String initialValue;
+        private ArrayList<ReplacementGroup> replacementGroups;
+        private String parsedValue;
+
+        private ParseURL(String initialValue) {
+            this.initialValue = initialValue;
+            replacementGroups = new ArrayList<ReplacementGroup>();
+            this.parse();
         }
-        return url;
+
+        private void parse() {
+            //Ejemplo: users/(?P<>[USER.USER_ID]) <- Parámetro obligatorio USER.USER_ID sin nombre. Esto se resolvería a: users/jonathan
+            //Ejemplo: users/(?O<>[USER.USER_ID]/) <- Parámetro opcional USER.USER_ID sin nombre. Esto se resolvería a: users/jonathan/ ó si no existe a: users/
+            //                                        Sólo es posible definir este tipo de parámetros como último elemento de la consulta, pero pueden encadenarse varios
+            //Ejemplo: users/(?P<username>[USER.USER_ID]) <- Parámetro obligatorio USER.USER_ID con nombre. Esto se resolvería a: users/?username=jonathan
+            //Ejemplo: users/(?O<username>[USER.USER_ID]) <- Parámetro opcional USER.USER_ID con nombre. Esto se resolvería a: users/?username=jonathan ó si no existe a: users/
+            //Ejemplo: explore/(?O<query>[EXPLORE.QUERY])(?P<category>[EXPLORE.CATEGORY]) <- Parámtros opcional y obligatorio con nombre. Esto se resolvería a: explore/?query=universo&category=10.01 ó a: explore/?category=10.01
+            //Ejemplo: explore/(?O<query>[EXPLORE.QUERY])(?O<category>[EXPLORE.CATEGORY]) <- Parámtros opcionales con nombre. Esto se resolvería a: explore/?query=universo&category=10.01 ó a: explore/?category=10.01 ó a: explore/?query=universo ó a: explore/
+            //                                           Los parámetros con nombre sólo pueden figurar al final de la URL. Siempre se generarán como "query parameters". Es posible encadenarlos de forma que la existencia de algunos dependa de la existencia del que los contiene.
+
+            TreeSet<Integer> paramIndexOpenings = new TreeSet<Integer>();
+            TreeSet<Integer> optionIndexOpenings = new TreeSet<Integer>();
+
+            Integer paramIndex = this.initialValue.indexOf("(?P");
+            while (paramIndex > -1) {
+                paramIndexOpenings.add(paramIndex);
+                paramIndex = this.initialValue.indexOf("(?P",paramIndex+1);
+            }
+
+            Integer optionIndex = this.initialValue.indexOf("(?O");
+            while (optionIndex > -1) {
+                optionIndexOpenings.add(optionIndex);
+                optionIndex = this.initialValue.indexOf("(?O",optionIndex+1);
+            }
+
+            int nextCloseIndex = this.initialValue.indexOf(")");
+
+            while (nextCloseIndex > -1) {
+                if ((paramIndexOpenings.isEmpty()) && (optionIndexOpenings.isEmpty()))
+                    throw new RuntimeException("Unexpected usage of parenthesis in url.");
+
+                ReplacementGroup rg = new ReplacementGroup();
+                paramIndex = paramIndexOpenings.floor(nextCloseIndex);
+                optionIndex = optionIndexOpenings.floor(nextCloseIndex);
+
+                if ((paramIndex != null) && ((optionIndex == null) || (paramIndex > optionIndex))) {
+                    rg.startPosition = paramIndex;
+                    rg.optional = false;
+                    paramIndexOpenings.remove(paramIndex);
+                }else if ((optionIndex != null) && ((paramIndex == null) || (optionIndex > paramIndex))) {
+                    rg.startPosition = optionIndex;
+                    rg.optional = true;
+                    optionIndexOpenings.remove(optionIndex);
+                } else
+                    throw new RuntimeException("Bad syntax in url.");
+
+                rg.endPosition = nextCloseIndex;
+                int indexOfOpenName = this.initialValue.indexOf("<",rg.startPosition);
+                int indexOfCloseName = this.initialValue.indexOf(">",rg.startPosition);
+                int indexOfOpenValue = this.initialValue.indexOf("[",rg.startPosition);
+                int indexOfCloseValue = this.initialValue.indexOf("]",rg.startPosition);
+
+                if (indexOfCloseName == (indexOfOpenName+1)) {
+                    rg.parameterName = "";
+                    rg.queryParameter = false;
+                } else {
+                    rg.queryParameter = true;
+                    rg.parameterName = this.initialValue.substring(indexOfOpenName+1,indexOfCloseName);
+                }
+
+                if (indexOfOpenValue == (indexOfCloseValue+1)) {
+                    throw new RuntimeException("URL parameter declaration without value association.");
+                } else {
+                    rg.value = this.initialValue.substring(indexOfOpenValue+1,indexOfCloseValue);
+                }
+
+                if (nextCloseIndex > (indexOfCloseValue+1)) {
+                    rg.suffix = new ParseURL(this.initialValue.substring(indexOfCloseValue+1,nextCloseIndex));
+                }
+
+                this.replacementGroups.add(rg);
+
+                nextCloseIndex = this.initialValue.indexOf(")",nextCloseIndex+1);
+            }
+
+            if ((!paramIndexOpenings.isEmpty()) || (!optionIndexOpenings.isEmpty()))
+                throw new RuntimeException("Bad syntax in url.");
+
+            String finalURL = this.initialValue;
+            Boolean queryParametersStarted = false;
+            for (ReplacementGroup rg : replacementGroups) {
+                String begin = finalURL.substring(0,rg.startPosition);
+                String end = ((rg.endPosition+1)<finalURL.length())?finalURL.substring(rg.endPosition+1,finalURL.length()):"";
+
+                String middle = "";
+                String value = "";
+                try { value = getUrlParameterValue(rg.value); } catch (Exception e) { value = ""; }
+
+                if ((!rg.optional) && (value.isEmpty()))
+                    throw new RuntimeException("Non optional parameter without value.");
+
+                if ((rg.queryParameter) && ((rg.parameterName == null) || (rg.parameterName.isEmpty())))
+                    throw new RuntimeException("Query parameter without name.");
+
+                if (!rg.optional || !value.isEmpty()) {
+                    if (rg.queryParameter) {
+                        middle = ((queryParametersStarted)?"&":"?") + rg.parameterName + "=" + value;
+                        queryParametersStarted = true;
+                    } else {
+                        middle = value;
+                        queryParametersStarted = false;
+                    }
+                }
+
+                if (rg.suffix != null)
+                    middle += rg.suffix.getParsedURL();
+
+                finalURL = begin + middle + end;
+            }
+
+            this.parsedValue = finalURL;
+        }
+
+        public String getParsedURL() {
+            return parsedValue;
+        }
+
+        public String getInitialURL() {
+            return initialValue;
+        }
+    }
+    private class ReplacementGroup {
+        int startPosition;
+        int endPosition;
+
+        Boolean optional;
+        Boolean queryParameter;
+
+        String parameterName;
+        String value;
+
+        ParseURL suffix;
     }
 
     private String getUrlParameterValue(String parameter) throws NoSuchFieldException, IllegalAccessException {
