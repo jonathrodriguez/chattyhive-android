@@ -1,4 +1,4 @@
-package com.chattyhive.backend.contentprovider.server;
+package com.chattyhive.backend.ContentProvider.server;
 
 /**
  * Enumerator to define the server status.

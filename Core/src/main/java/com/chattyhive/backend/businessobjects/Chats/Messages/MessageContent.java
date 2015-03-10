@@ -1,10 +1,9 @@
-package com.chattyhive.backend.businessobjects.Chats.Messages;
+package com.chattyhive.backend.BusinessObjects.Chats.Messages;
 
-import com.chattyhive.backend.businessobjects.Image;
-import com.chattyhive.backend.contentprovider.formats.Format;
-import com.chattyhive.backend.contentprovider.formats.MESSAGE_CONTENT;
+import com.chattyhive.backend.BusinessObjects.Image;
+import com.chattyhive.backend.ContentProvider.formats.Format;
+import com.chattyhive.backend.ContentProvider.formats.MESSAGE_CONTENT;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonNull;
 
 /**
  * Created by Jonathan on 11/12/13.

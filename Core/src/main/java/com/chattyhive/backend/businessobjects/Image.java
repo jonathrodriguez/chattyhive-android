@@ -1,12 +1,10 @@
-package com.chattyhive.backend.businessobjects;
+package com.chattyhive.backend.BusinessObjects;
 
 import com.chattyhive.backend.Controller;
-import com.chattyhive.backend.contentprovider.DataProvider;
-import com.chattyhive.backend.util.events.Event;
-import com.chattyhive.backend.util.events.EventArgs;
+import com.chattyhive.backend.ContentProvider.DataProvider;
+import com.chattyhive.backend.Util.Events.Event;
+import com.chattyhive.backend.Util.Events.EventArgs;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.security.InvalidParameterException;
 

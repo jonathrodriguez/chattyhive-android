@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -18,10 +17,10 @@ import android.widget.ImageButton;
 import com.chattyhive.backend.Controller;
 import com.chattyhive.backend.StaticParameters;
 
-import com.chattyhive.backend.businessobjects.Chats.Chat;
-import com.chattyhive.backend.businessobjects.Chats.Hive;
-import com.chattyhive.backend.contentprovider.AvailableCommands;
-import com.chattyhive.backend.contentprovider.DataProvider;
+import com.chattyhive.backend.BusinessObjects.Chats.Chat;
+import com.chattyhive.backend.BusinessObjects.Chats.Hive;
+import com.chattyhive.backend.ContentProvider.SynchronousDataPath.AvailableCommands;
+import com.chattyhive.backend.ContentProvider.DataProvider;
 import com.chattyhive.chattyhive.framework.OSStorageProvider.ChatLocalStorage;
 import com.chattyhive.chattyhive.framework.OSStorageProvider.CookieStore;
 import com.chattyhive.chattyhive.framework.OSStorageProvider.HiveLocalStorage;

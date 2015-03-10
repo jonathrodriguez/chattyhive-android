@@ -1,17 +1,17 @@
-package com.chattyhive.backend.businessobjects;
+package com.chattyhive.backend.BusinessObjects;
 
 import com.chattyhive.backend.Controller;
 import com.chattyhive.backend.StaticParameters;
-import com.chattyhive.backend.businessobjects.Chats.Hive;
-import com.chattyhive.backend.contentprovider.DataProvider;
-import com.chattyhive.backend.contentprovider.formats.EXPLORE_FILTER;
-import com.chattyhive.backend.contentprovider.formats.Format;
-import com.chattyhive.backend.contentprovider.formats.HIVE;
-import com.chattyhive.backend.contentprovider.formats.HIVE_LIST;
-import com.chattyhive.backend.util.events.CommandCallbackEventArgs;
-import com.chattyhive.backend.util.events.Event;
-import com.chattyhive.backend.util.events.EventArgs;
-import com.chattyhive.backend.util.events.EventHandler;
+import com.chattyhive.backend.BusinessObjects.Chats.Hive;
+import com.chattyhive.backend.ContentProvider.DataProvider;
+import com.chattyhive.backend.ContentProvider.formats.EXPLORE_FILTER;
+import com.chattyhive.backend.ContentProvider.formats.Format;
+import com.chattyhive.backend.ContentProvider.formats.HIVE;
+import com.chattyhive.backend.ContentProvider.formats.HIVE_LIST;
+import com.chattyhive.backend.Util.Events.CommandCallbackEventArgs;
+import com.chattyhive.backend.Util.Events.Event;
+import com.chattyhive.backend.Util.Events.EventArgs;
+import com.chattyhive.backend.Util.Events.EventHandler;
 
 import java.util.ArrayList;
 

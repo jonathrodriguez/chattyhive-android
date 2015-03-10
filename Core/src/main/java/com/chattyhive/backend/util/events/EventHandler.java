@@ -1,4 +1,4 @@
-package com.chattyhive.backend.util.events;
+package com.chattyhive.backend.Util.Events;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

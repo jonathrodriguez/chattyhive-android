@@ -1,32 +1,74 @@
-package com.chattyhive.backend.contentprovider.server;
+package com.chattyhive.backend.ContentProvider.SynchronousDataPath;
 
-import com.chattyhive.backend.contentprovider.AvailableCommands;
-import com.chattyhive.backend.contentprovider.ExecutionLevel;
-import com.chattyhive.backend.contentprovider.formats.Format;
+import com.chattyhive.backend.ContentProvider.formats.Format;
+import com.chattyhive.backend.ContentProvider.server.IServerUser;
+import com.chattyhive.backend.Util.CallbackDelegate;
 
 import java.lang.reflect.Field;
-import java.net.CookieHandler;
-import java.net.CookieManager;
-import java.net.CookieStore;
-import java.net.HttpCookie;
 import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.SortedSet;
-import java.util.TreeMap;
 import java.util.TreeSet;
 
 /*
  * Created by Jonathan on 11/07/2014.
  */
-public class ServerCommand {
+public class Command {
     /*************************************/
     /*      SERVER COMMAND CLASS         */
     /*************************************/
 
-    private ServerCommandDefinition command;
+    private final ArrayList<CallbackDelegate> callbackDelegates;
+
+    private CommandDefinition commandDefinition;
     private IServerUser serverUser;
+
+    public void addCallbackDelegate(CallbackDelegate callbackDelegate) {
+        synchronized (callbackDelegates) {
+            this.callbackDelegates.add(callbackDelegate);
+            this.callbackDelegates.notify();
+        }
+    }
+    public int countCallbackDelegates() {
+        synchronized (callbackDelegates) {
+            return this.callbackDelegates.size();
+        }
+    }
+    public CallbackDelegate popCallbackDelegate(long timeout) {
+        CallbackDelegate callback = null;
+        synchronized (callbackDelegates) {
+            if (this.callbackDelegates.isEmpty())
+                try { this.callbackDelegates.wait(timeout); } catch (InterruptedException e) { } finally {
+                    if (!this.callbackDelegates.isEmpty())
+                        callback = callbackDelegates.remove(0);
+                }
+        }
+        return callback;
+    }
+
+    public ExecutionLevel getExecutionLevel() {
+        return executionLevel;
+    }
+
+    public void setExecutionLevel(ExecutionLevel executionLevel) {
+        this.executionLevel = executionLevel;
+    }
+
+    public List<Format> getResultFormats() {
+        return Collections.unmodifiableList(resultFormats);
+    }
+
+    public void setResultFormats(ArrayList<Format> resultFormats) {
+        this.resultFormats = resultFormats;
+    }
+
+    public int getResultCode() {
+        return resultCode;
+    }
+
+    public void setResultCode(int resultCode) {
+        this.resultCode = resultCode;
+    }
 
     private ExecutionLevel executionLevel;
 
@@ -36,18 +78,20 @@ public class ServerCommand {
     private ArrayList<Format> resultFormats;
     private int resultCode;
 
-    public ServerCommand (IServerUser serverUser, AvailableCommands command, Format... formats) {
+    public Command(IServerUser serverUser, AvailableCommands commandDefinition, Format... formats) {
         this.serverUser = serverUser;
-        this.command = ServerCommandDefinition.GetCommand(command);
+        this.commandDefinition = CommandDefinition.GetCommand(commandDefinition);
+
+        this.callbackDelegates = new ArrayList<CallbackDelegate>();
 
         this.inputFormats = new ArrayList<Format>();
         this.paramFormats = new ArrayList<Format>();
 
         for (Format format : formats) {
-            if (this.command.getInputFormats().contains(format.getClass()))
+            if (this.commandDefinition.getInputFormats().contains(format.getClass()))
                this.inputFormats.add(format);
 
-            if (this.command.getParamFormats().contains(format.getClass()))
+            if (this.commandDefinition.getParamFormats().contains(format.getClass()))
                 this.paramFormats.add(format);
         }
 
@@ -55,16 +99,43 @@ public class ServerCommand {
             throw new IllegalArgumentException("Required formats not specified.");
     }
 
-    public ServerCommandDefinition getCommand() {
-        return this.command;
+    public CommandDefinition getCommandDefinition() {
+        return this.commandDefinition;
     }
     public String getUrl() {
-        String url = this.command.getUrl();
+        String url = this.commandDefinition.getUrl();
 
         if (url.contains("(?P<") || url.contains("(?O<"))
             url = (new ParseURL(url)).getParsedURL();
 
         return url;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Command command = (Command) o;
+
+        if (!commandDefinition.equals(command.commandDefinition)) return false;
+        if (inputFormats != null ? !inputFormats.equals(command.inputFormats) : command.inputFormats != null)
+            return false;
+        if (paramFormats != null ? !paramFormats.equals(command.paramFormats) : command.paramFormats != null)
+            return false;
+        if (serverUser != null ? !serverUser.equals(command.serverUser) : command.serverUser != null)
+            return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = commandDefinition.hashCode();
+        result = 31 * result + (serverUser != null ? serverUser.hashCode() : 0);
+        result = 31 * result + (inputFormats != null ? inputFormats.hashCode() : 0);
+        result = 31 * result + (paramFormats != null ? paramFormats.hashCode() : 0);
+        return result;
     }
 
     private class ParseURL {
@@ -221,7 +292,7 @@ public class ServerCommand {
         String formatName = parameter.substring(preIndex,dotIndex);
 
         for (Format f : this.paramFormats)
-            if (this.command.getParamFormats().contains(f.getClass()))
+            if (this.commandDefinition.getParamFormats().contains(f.getClass()))
                 if (f.getClass().getSimpleName().equalsIgnoreCase(formatName)) {
                     parameterFormat = f;
                     break;
@@ -251,12 +322,12 @@ public class ServerCommand {
         return field.get(parameterFormat).toString();
     }
     public String getBodyData() {
-        if ((this.inputFormats == null) || (this.inputFormats.isEmpty()) || (this.command.getInputFormats().isEmpty())) return null;
+        if ((this.inputFormats == null) || (this.inputFormats.isEmpty()) || (this.commandDefinition.getInputFormats().isEmpty())) return null;
 
         String bodyData = "";
 
         for (Format format : this.inputFormats) {
-            if (this.command.getInputFormats().contains(format.getClass())) {
+            if (this.commandDefinition.getInputFormats().contains(format.getClass())) {
                 String jsonString = format.toJSON().toString();
                 bodyData += ((bodyData.isEmpty())?"{":", ") + jsonString.substring(1,jsonString.length()-1);
             }
@@ -268,9 +339,9 @@ public class ServerCommand {
     }
 
     public Boolean checkCookies() {
-        if (this.command.getRequiredCookies() == null) return true;
+        if (this.commandDefinition.getRequiredCookies() == null) return true;
 
-        for (String cookie : this.command.getRequiredCookies())
+        for (String cookie : this.commandDefinition.getRequiredCookies())
             if (this.serverUser.getAuthToken(cookie) == null)
                 return false;
 
@@ -279,9 +350,9 @@ public class ServerCommand {
     public ArrayList<String> getUnsatisfyingCookies() {
         ArrayList<String> result = new ArrayList<String>();
 
-        if (this.command.getRequiredCookies() == null) return null;
+        if (this.commandDefinition.getRequiredCookies() == null) return null;
 
-        for (String cookie : this.command.getRequiredCookies())
+        for (String cookie : this.commandDefinition.getRequiredCookies())
             if (this.serverUser.getAuthToken(cookie) == null)
                 result.add(cookie);
 
@@ -293,17 +364,19 @@ public class ServerCommand {
         for (Format format : this.inputFormats)
             inputFormatClasses.add(format.getClass());
 
-        for (Class<?> formatClass : this.command.getRequiredInputFormats())
+        for (Class<?> formatClass : this.commandDefinition.getRequiredInputFormats())
             if (!inputFormatClasses.contains(formatClass)) return false;
 
         TreeSet<Class<?>> paramFormatClasses = new TreeSet<Class<?>>();
         for (Format format : this.paramFormats)
             paramFormatClasses.add(format.getClass());
 
-        for (Class<?> formatClass : this.command.getRequiredParamFormats())
+        for (Class<?> formatClass : this.commandDefinition.getRequiredParamFormats())
             if (!paramFormatClasses.contains(formatClass)) return false;
 
         return true;
     }
+
+
 }
 

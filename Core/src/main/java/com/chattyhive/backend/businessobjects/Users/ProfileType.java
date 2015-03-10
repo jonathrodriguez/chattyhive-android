@@ -1,4 +1,4 @@
-package com.chattyhive.backend.businessobjects.Users;
+package com.chattyhive.backend.BusinessObjects.Users;
 
 /**
  * Created by Jonathan on 29/09/2014.

@@ -1,13 +1,11 @@
-package com.chattyhive.backend.contentprovider.server;
-import com.chattyhive.backend.util.events.CommandCallbackEventArgs;
-import com.chattyhive.backend.util.events.EventHandler;
+package com.chattyhive.backend.ContentProvider.server;
+import com.chattyhive.backend.ContentProvider.SynchronousDataPath.Command;
+import com.chattyhive.backend.Util.Events.CommandCallbackEventArgs;
+import com.chattyhive.backend.Util.Events.EventHandler;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.TreeSet;
 
 /**
@@ -20,7 +18,7 @@ public class ServerQueue {
     private Server server;
 
     private final TreeSet<Request> requests;
-    private final HashMap<ServerCommand,Request> crMap;
+    private final HashMap<Command,Request> crMap;
 
     public void setServer(Server server) {
         this.server = server;
@@ -66,12 +64,12 @@ public class ServerQueue {
 
     public ServerQueue() {
         requests = new TreeSet<Request>();
-        crMap = new HashMap<ServerCommand, Request>();
+        crMap = new HashMap<Command, Request>();
         startProcessor();
     }
 
     public void addRequest() {
-        ServerCommand command = null;
+        Command command = null;
         Request request = null;
         Priority priority = Priority.RealTime;
         EventHandler<CommandCallbackEventArgs>[] callbacks = null;
@@ -95,7 +93,7 @@ public class ServerQueue {
             synchronized (requests) {
                 requests.add(request);
                 synchronized (crMap) {
-                    crMap.put(request.serverCommand,request);
+                    crMap.put(request.command,request);
                 }
                 if ((!requests.isEmpty()) && (server != null))
                     requests.notify();
@@ -114,7 +112,7 @@ public class ServerQueue {
     protected class Request {
         private Priority priority;
         private Date timestamp;
-        private ServerCommand serverCommand;
+        private Command command;
         private TreeSet<EventHandler<CommandCallbackEventArgs>> commandCallbacks;
 
     }

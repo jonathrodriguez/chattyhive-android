@@ -1,13 +1,11 @@
-package com.chattyhive.backend.contentprovider.formats;
+package com.chattyhive.backend.ContentProvider.formats;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
 
- import java.util.Date;
-import com.chattyhive.backend.util.formatters.TimestampFormatter;
+import java.util.Date;
+import com.chattyhive.backend.Util.Formatters.TimestampFormatter;
     
 
  /*

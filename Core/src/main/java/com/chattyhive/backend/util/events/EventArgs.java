@@ -1,4 +1,4 @@
-package com.chattyhive.backend.util.events;
+package com.chattyhive.backend.Util.Events;
 
 /**
  * Created by Jonathan on 15/12/13.

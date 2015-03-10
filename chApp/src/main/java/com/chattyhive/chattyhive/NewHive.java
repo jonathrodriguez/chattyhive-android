@@ -17,12 +17,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.chattyhive.backend.businessobjects.Chats.Hive;
-import com.chattyhive.backend.util.events.CommandCallbackEventArgs;
-import com.chattyhive.backend.util.events.EventHandler;
+import com.chattyhive.backend.BusinessObjects.Chats.Hive;
+import com.chattyhive.backend.Util.Events.CommandCallbackEventArgs;
+import com.chattyhive.backend.Util.Events.EventHandler;
 import com.chattyhive.chattyhive.util.Category;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 

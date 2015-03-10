@@ -1,4 +1,4 @@
-package com.chattyhive.backend.util;
+package com.chattyhive.backend.Util;
 
 import java.util.Random;
 

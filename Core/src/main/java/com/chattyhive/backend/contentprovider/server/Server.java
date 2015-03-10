@@ -1,40 +1,25 @@
-package com.chattyhive.backend.contentprovider.server;
+package com.chattyhive.backend.ContentProvider.server;
 
 
 import com.chattyhive.backend.StaticParameters;
-import com.chattyhive.backend.contentprovider.AvailableCommands;
-import com.chattyhive.backend.contentprovider.DataProvider;
-import com.chattyhive.backend.contentprovider.formats.COMMON;
-import com.chattyhive.backend.contentprovider.formats.Format;
-import com.chattyhive.backend.util.events.CommandCallbackEventArgs;
-import com.chattyhive.backend.util.events.ConnectionEventArgs;
-import com.chattyhive.backend.util.events.Event;
-import com.chattyhive.backend.util.events.EventArgs;
-import com.chattyhive.backend.util.events.EventHandler;
-import com.chattyhive.backend.util.events.FormatReceivedEventArgs;
-import com.google.gson.JsonParser;
+import com.chattyhive.backend.ContentProvider.SynchronousDataPath.AvailableCommands;
+import com.chattyhive.backend.ContentProvider.SynchronousDataPath.CommandDefinition;
+import com.chattyhive.backend.Util.Events.Event;
+import com.chattyhive.backend.Util.Events.EventArgs;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.lang.reflect.InvocationTargetException;
-import java.net.CookieHandler;
-import java.net.CookieManager;
-import java.net.CookieStore;
 import java.net.HttpCookie;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
-import java.util.AbstractMap;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by Jonathan on 20/11/13.
@@ -116,8 +101,8 @@ public class Server {
     /************************************************************************/
 
     public void StartSession() {
-        ServerCommandDefinition serverCommandDefinition = ServerCommandDefinition.GetCommand(AvailableCommands.StartSession);
-        ServerResponse result = this.ExecuteCommand(serverCommandDefinition.getMethod().name(),serverCommandDefinition.getUrl(),null,null);
+        CommandDefinition commandDefinition = CommandDefinition.GetCommand(AvailableCommands.StartSession);
+        ServerResponse result = this.ExecuteCommand(commandDefinition.getMethod().name(), commandDefinition.getUrl(),null,null);
 
         if ((result.getResultCode() == 200) && (result.getResultHeaders().containsKey("Set-Cookie"))) {
             for (String setCookie : result.getResultHeaders().get("Set-Cookie")) {

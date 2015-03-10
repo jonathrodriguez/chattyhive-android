@@ -1,6 +1,5 @@
-package com.chattyhive.backend.contentprovider.server;
+package com.chattyhive.backend.ContentProvider.server;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 

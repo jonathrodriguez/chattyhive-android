@@ -1,4 +1,4 @@
-package com.chattyhive.backend.contentprovider.server;
+package com.chattyhive.backend.ContentProvider.server;
 
 /**
  * Created by Jonathan on 11/02/2015.

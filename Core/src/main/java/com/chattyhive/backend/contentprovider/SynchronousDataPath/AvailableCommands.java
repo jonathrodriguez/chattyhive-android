@@ -1,4 +1,4 @@
-package com.chattyhive.backend.contentprovider;
+package com.chattyhive.backend.ContentProvider.SynchronousDataPath;
 
 /**
  * Created by Jonathan on 14/09/2014.

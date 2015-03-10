@@ -1,10 +1,7 @@
-package com.chattyhive.backend.util.events;
+package com.chattyhive.backend.Util.Events;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
 
 /**
  * Created by Jonathan on 15/12/13.

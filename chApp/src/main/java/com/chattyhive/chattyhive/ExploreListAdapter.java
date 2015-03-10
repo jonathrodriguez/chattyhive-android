@@ -16,11 +16,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.chattyhive.backend.Controller;
-import com.chattyhive.backend.businessobjects.*;
-import com.chattyhive.backend.businessobjects.Chats.Hive;
-import com.chattyhive.backend.businessobjects.Explore;
-import com.chattyhive.backend.util.events.EventArgs;
-import com.chattyhive.backend.util.events.EventHandler;
+import com.chattyhive.backend.BusinessObjects.*;
+import com.chattyhive.backend.BusinessObjects.Chats.Hive;
+import com.chattyhive.backend.BusinessObjects.Explore;
+import com.chattyhive.backend.Util.Events.EventArgs;
+import com.chattyhive.backend.Util.Events.EventHandler;
 import com.chattyhive.chattyhive.util.Category;
 
 import java.io.IOException;

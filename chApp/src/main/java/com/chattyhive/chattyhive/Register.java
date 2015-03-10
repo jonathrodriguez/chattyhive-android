@@ -15,16 +15,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.chattyhive.backend.Controller;
-import com.chattyhive.backend.businessobjects.Image;
-import com.chattyhive.backend.businessobjects.Users.User;
-import com.chattyhive.backend.contentprovider.formats.COMMON;
-import com.chattyhive.backend.contentprovider.formats.Format;
-import com.chattyhive.backend.util.events.CommandCallbackEventArgs;
-import com.chattyhive.backend.util.events.EventArgs;
-import com.chattyhive.backend.util.events.EventHandler;
-import com.chattyhive.backend.util.formatters.DateFormatter;
+import com.chattyhive.backend.BusinessObjects.Image;
+import com.chattyhive.backend.BusinessObjects.Users.User;
+import com.chattyhive.backend.ContentProvider.formats.COMMON;
+import com.chattyhive.backend.ContentProvider.formats.Format;
+import com.chattyhive.backend.Util.Events.CommandCallbackEventArgs;
+import com.chattyhive.backend.Util.Events.EventArgs;
+import com.chattyhive.backend.Util.Events.EventHandler;
+import com.chattyhive.backend.Util.Formatters.DateFormatter;
 import com.chattyhive.chattyhive.framework.CustomViews.Listener.OnInflateLayoutListener;
-import com.chattyhive.chattyhive.framework.CustomViews.Listener.OnRemoveLayoutListener;
 import com.chattyhive.chattyhive.framework.CustomViews.Listener.OnTransitionListener;
 import com.chattyhive.chattyhive.framework.CustomViews.ViewGroup.SlidingStepsLayout;
 

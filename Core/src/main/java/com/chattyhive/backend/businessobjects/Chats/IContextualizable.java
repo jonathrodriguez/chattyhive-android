@@ -1,4 +1,4 @@
-package com.chattyhive.backend.businessobjects.Chats;
+package com.chattyhive.backend.BusinessObjects.Chats;
 
 /**
  * Created by Jonathan on 10/11/2014.
