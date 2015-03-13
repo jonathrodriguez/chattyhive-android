@@ -17,7 +17,7 @@ public final class StaticParameters {
 
     public static final String ProjectName = "chattyhive"; //The name of the project.
     public static final String ApplicationBase = "android"; //The name of the application.
-    public static final String ApplicationVersion = "0.3.0"; //Application version.
+    public static final String ApplicationVersion = "0.4.5"; //Application version.
     public static final String ServerBase = "server"; //A name to identify the server.
     public static final String ServerVersion = "0.5.0"; //The server version for which application is designed.
 

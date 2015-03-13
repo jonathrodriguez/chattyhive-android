@@ -10,6 +10,8 @@ public interface IServerUser {
     public String getAuthToken(String name);
     public String getAuthTokens();
 
+    public void updateAuthToken(String name, String value);
+
     public SessionStatus getStatus();
 
     public void invalidateAuthToken(String name);

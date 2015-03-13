@@ -5,6 +5,7 @@ import com.chattyhive.backend.ContentProvider.formats.CHAT_ID;
 import com.chattyhive.backend.ContentProvider.formats.CHAT_LIST;
 import com.chattyhive.backend.ContentProvider.formats.CSRF_TOKEN;
 import com.chattyhive.backend.ContentProvider.formats.EXPLORE_FILTER;
+import com.chattyhive.backend.ContentProvider.formats.Format;
 import com.chattyhive.backend.ContentProvider.formats.HIVE;
 import com.chattyhive.backend.ContentProvider.formats.HIVE_ID;
 import com.chattyhive.backend.ContentProvider.formats.HIVE_LIST;
@@ -30,6 +31,10 @@ import java.util.List;
  * Created by Jonathan on 28/01/2015.
  */
 public class CommandDefinition {
+
+    public static final String CSRFTokenCookie = "csrftoken";
+    public static final String SessionCookie = "sessionid";
+
     public enum Method { GET, POST } //Http protocol method.
     public enum CommandType {
         Session, //Commands used to set up a server session. (In this category there are only a few commands, Start_Session and Login).
@@ -47,9 +52,6 @@ public class CommandDefinition {
         CommandDefinition.Initialize();
     }
     private static void Initialize() {
-        final String CSRFTokenCookie = "csrftoken";
-        final String SessionCookie = "sessionid";
-
         CommandDefinition.CommandDefinitions = new HashMap<AvailableCommands, CommandDefinition>();
         CommandDefinition.CookieProductionCommands = new HashMap<String, ArrayList<AvailableCommands>>();
 
@@ -61,7 +63,7 @@ public class CommandDefinition {
         ArrayList<Class<?>> requiredParamFormats;
         ArrayList<Class<?>> inputFormats;
         ArrayList<Class<?>> paramFormats;
-        ArrayList<Class<?>> returningFormats;
+        ArrayList<Class<? extends Format>> returningFormats;
         ArrayList<String> requiredCookies;
         ArrayList<String> returningCookies;
 
@@ -74,7 +76,7 @@ public class CommandDefinition {
         requiredInputFormats = null;
         paramFormats = null;
         inputFormats = null;
-        returningFormats = new ArrayList<Class<?>>() {{add(CSRF_TOKEN.class);}};
+        returningFormats = new ArrayList<Class<? extends Format>>() {{add(CSRF_TOKEN.class);}};
         requiredCookies = null;
         returningCookies = new ArrayList<String>() {{add(CSRFTokenCookie);}};
         CommandDefinition.AddServerCommand(command, method, commandType, url, requiredParamFormats, requiredInputFormats, paramFormats, inputFormats, returningFormats, requiredCookies, returningCookies);
@@ -147,7 +149,7 @@ public class CommandDefinition {
         requiredInputFormats = null;
         paramFormats = null;
         inputFormats = null;
-        returningFormats = new ArrayList<Class<?>>() {{add(HIVE_LIST.class);}};
+        returningFormats = new ArrayList<Class<? extends Format>>() {{add(HIVE_LIST.class);}};
         requiredCookies = new ArrayList<String>() {{add(CSRFTokenCookie); add(SessionCookie);}};
         returningCookies = null;
         CommandDefinition.AddServerCommand(command, method, commandType, url, requiredParamFormats, requiredInputFormats, paramFormats, inputFormats, returningFormats, requiredCookies, returningCookies);
@@ -162,7 +164,7 @@ public class CommandDefinition {
         requiredInputFormats = new ArrayList<Class<?>>() {{add(HIVE_ID.class);}};
         paramFormats = null;
         inputFormats = null;
-        returningFormats = new ArrayList<Class<?>>() {{add(CHAT.class);}};
+        returningFormats = new ArrayList<Class<? extends Format>>() {{add(CHAT.class);}};
         requiredCookies = new ArrayList<String>() {{add(CSRFTokenCookie); add(SessionCookie);}};
         returningCookies = null;
         CommandDefinition.AddServerCommand(command, method, commandType, url, requiredParamFormats, requiredInputFormats, paramFormats, inputFormats, returningFormats, requiredCookies, returningCookies);
@@ -177,7 +179,7 @@ public class CommandDefinition {
         requiredInputFormats = new ArrayList<Class<?>>() {{add(MESSAGE.class);}};
         paramFormats = null;
         inputFormats = null;
-        returningFormats = new ArrayList<Class<?>>() {{add(MESSAGE_ACK.class);}};
+        returningFormats = new ArrayList<Class<? extends Format>>() {{add(MESSAGE_ACK.class);}};
         requiredCookies = new ArrayList<String>() {{add(CSRFTokenCookie); add(SessionCookie);}};
         returningCookies = null;
         CommandDefinition.AddServerCommand(command, method, commandType, url, requiredParamFormats, requiredInputFormats, paramFormats, inputFormats, returningFormats, requiredCookies, returningCookies);
@@ -192,7 +194,7 @@ public class CommandDefinition {
         requiredInputFormats = null;
         paramFormats = null;
         inputFormats = null;
-        returningFormats = new ArrayList<Class<?>>() {{add(MESSAGE_LIST.class);}};
+        returningFormats = new ArrayList<Class<? extends Format>>() {{add(MESSAGE_LIST.class);}};
         requiredCookies = new ArrayList<String>() {{add(CSRFTokenCookie); add(SessionCookie);}};
         returningCookies = null;
         CommandDefinition.AddServerCommand(command, method, commandType, url, requiredParamFormats, requiredInputFormats, paramFormats, inputFormats, returningFormats, requiredCookies, returningCookies);
@@ -207,7 +209,7 @@ public class CommandDefinition {
         requiredInputFormats = null;
         paramFormats = null;
         inputFormats = null;
-        returningFormats = new ArrayList<Class<?>>() {{add(LOCAL_USER_PROFILE.class);}};
+        returningFormats = new ArrayList<Class<? extends Format>>() {{add(LOCAL_USER_PROFILE.class);}};
         requiredCookies = new ArrayList<String>() {{add(CSRFTokenCookie); add(SessionCookie);}};
         returningCookies = null;
         CommandDefinition.AddServerCommand(command, method, commandType, url, requiredParamFormats, requiredInputFormats, paramFormats, inputFormats, returningFormats, requiredCookies, returningCookies);
@@ -235,7 +237,7 @@ public class CommandDefinition {
         requiredInputFormats = null;
         paramFormats = null;
         inputFormats = null;
-        returningFormats = new ArrayList<Class<?>>() {{add(CHAT.class);}};
+        returningFormats = new ArrayList<Class<? extends Format>>() {{add(CHAT.class);}};
         requiredCookies = new ArrayList<String>() {{add(CSRFTokenCookie); add(SessionCookie);}};
         returningCookies = null;
         CommandDefinition.AddServerCommand(command, method, commandType, url, requiredParamFormats, requiredInputFormats, paramFormats, inputFormats, returningFormats, requiredCookies, returningCookies);
@@ -250,7 +252,7 @@ public class CommandDefinition {
         requiredInputFormats = null;
         paramFormats = null;
         inputFormats = null;
-        returningFormats = new ArrayList<Class<?>>() {{add(CHAT_LIST.class);}};
+        returningFormats = new ArrayList<Class<? extends Format>>() {{add(CHAT_LIST.class);}};
         requiredCookies = new ArrayList<String>() {{add(CSRFTokenCookie); add(SessionCookie);}};
         returningCookies = null;
         CommandDefinition.AddServerCommand(command, method, commandType, url, requiredParamFormats, requiredInputFormats, paramFormats, inputFormats, returningFormats, requiredCookies, returningCookies);
@@ -265,7 +267,7 @@ public class CommandDefinition {
         requiredInputFormats = new ArrayList<Class<?>>() {{add(PROFILE_ID.class);}};
         paramFormats = null;
         inputFormats = null;
-        returningFormats = new ArrayList<Class<?>>() {{add(USER_PROFILE.class);}};
+        returningFormats = new ArrayList<Class<? extends Format>>() {{add(USER_PROFILE.class);}};
         requiredCookies = new ArrayList<String>() {{add(CSRFTokenCookie); add(SessionCookie);}};
         returningCookies = null;
         CommandDefinition.AddServerCommand(command, method, commandType, url, requiredParamFormats, requiredInputFormats, paramFormats, inputFormats, returningFormats, requiredCookies, returningCookies);
@@ -280,7 +282,7 @@ public class CommandDefinition {
         requiredInputFormats = null;
         paramFormats = null;
         inputFormats = null;
-        returningFormats = new ArrayList<Class<?>>() {{add(HIVE.class);}};
+        returningFormats = new ArrayList<Class<? extends Format>>() {{add(HIVE.class);}};
         requiredCookies = new ArrayList<String>() {{add(CSRFTokenCookie); add(SessionCookie);}};
         returningCookies = null;
         CommandDefinition.AddServerCommand(command, method, commandType, url, requiredParamFormats, requiredInputFormats, paramFormats, inputFormats, returningFormats, requiredCookies, returningCookies);
@@ -294,7 +296,7 @@ public class CommandDefinition {
         requiredInputFormats = null;
         paramFormats = null;
         inputFormats = null;
-        returningFormats = new ArrayList<Class<?>>() {{add(USER_PROFILE_LIST.class);}};
+        returningFormats = new ArrayList<Class<? extends Format>>() {{add(USER_PROFILE_LIST.class);}};
         requiredCookies = new ArrayList<String>() {{add(CSRFTokenCookie); add(SessionCookie);}};
         returningCookies = null;
         CommandDefinition.AddServerCommand(command, method, commandType, url, requiredParamFormats, requiredInputFormats, paramFormats, inputFormats, returningFormats, requiredCookies, returningCookies);
@@ -308,12 +310,12 @@ public class CommandDefinition {
         requiredInputFormats = new ArrayList<Class<?>>() {{add(HIVE.class);}};
         paramFormats = null;
         inputFormats = null;
-        returningFormats = new ArrayList<Class<?>>() {{add(HIVE_ID.class); add(CHAT.class);}};
+        returningFormats = new ArrayList<Class<? extends Format>>() {{add(HIVE_ID.class); add(CHAT.class);}};
         requiredCookies = new ArrayList<String>() {{add(CSRFTokenCookie); add(SessionCookie);}};
         returningCookies = null;
         CommandDefinition.AddServerCommand(command, method, commandType, url, requiredParamFormats, requiredInputFormats, paramFormats, inputFormats, returningFormats, requiredCookies, returningCookies);
     }
-    private static void AddServerCommand(AvailableCommands command, Method method, CommandType commandType, String url, ArrayList<Class<?>> requiredParamFormats, ArrayList<Class<?>> requiredInputFormats, ArrayList<Class<?>> paramFormats, ArrayList<Class<?>> inputFormats, ArrayList<Class<?>> returningFormats, ArrayList<String> requiredCookies, ArrayList<String> returningCookies) {
+    private static void AddServerCommand(AvailableCommands command, Method method, CommandType commandType, String url, ArrayList<Class<?>> requiredParamFormats, ArrayList<Class<?>> requiredInputFormats, ArrayList<Class<?>> paramFormats, ArrayList<Class<?>> inputFormats, ArrayList<Class<? extends Format>> returningFormats, ArrayList<String> requiredCookies, ArrayList<String> returningCookies) {
         CommandDefinition commandDefinition = new CommandDefinition(command, method, commandType, url, requiredParamFormats, requiredInputFormats, paramFormats, inputFormats, returningFormats, requiredCookies, returningCookies);
         CommandDefinition.CommandDefinitions.put(command, commandDefinition);
         if (returningCookies != null)
@@ -343,12 +345,12 @@ public class CommandDefinition {
     private final List<Class<?>> inputFormats;
     private final List<Class<?>> paramFormats;
 
-    private final List<Class<?>> returningFormats;
+    private final List<Class<? extends Format>> returningFormats;
 
     private final List<String> requiredCookies;
     private final List<String> returningCookies;
 
-    private CommandDefinition(AvailableCommands command, Method method, CommandType commandType, String url, ArrayList<Class<?>> requiredParamFormats, ArrayList<Class<?>> requiredInputFormats, ArrayList<Class<?>> paramFormats, ArrayList<Class<?>> inputFormats, ArrayList<Class<?>> returningFormats, ArrayList<String> requiredCookies, ArrayList<String> returningCookies) {
+    private CommandDefinition(AvailableCommands command, Method method, CommandType commandType, String url, ArrayList<Class<?>> requiredParamFormats, ArrayList<Class<?>> requiredInputFormats, ArrayList<Class<?>> paramFormats, ArrayList<Class<?>> inputFormats, ArrayList<Class<? extends Format>> returningFormats, ArrayList<String> requiredCookies, ArrayList<String> returningCookies) {
         this.command = command;
         this.method = method;
         this.commandType = commandType;
@@ -413,7 +415,7 @@ public class CommandDefinition {
     public List<Class<?>> getParamFormats() {
         return this.paramFormats;
     }
-    public List<Class<?>> getReturningFormats() {
+    public List<Class<? extends Format>> getReturningFormats() {
         return this.returningFormats;
     }
     public List<String> getRequiredCookies() {

@@ -1,5 +1,6 @@
 package com.chattyhive.backend.ContentProvider.server;
 
+import com.chattyhive.backend.ContentProvider.SynchronousDataPath.IOrigin;
 import com.chattyhive.backend.StaticParameters;
 import com.chattyhive.backend.BusinessObjects.Chats.Chat;
 import com.chattyhive.backend.BusinessObjects.Chats.ChatKind;
@@ -71,7 +72,7 @@ import java.util.TreeSet;
 /**
  * Created by Jonathan on 15/09/2014.
  */
-public class StandAloneServer {
+public class StandAloneServer implements IOrigin {
 
     private static Boolean StandAloneServerOutput = false;
 

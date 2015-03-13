@@ -2,6 +2,8 @@ package com.chattyhive.backend.ContentProvider.SynchronousDataPath;
 
 import com.chattyhive.backend.ContentProvider.formats.Format;
 import com.chattyhive.backend.ContentProvider.server.IServerUser;
+import com.chattyhive.backend.ContentProvider.server.Server;
+import com.chattyhive.backend.ContentProvider.server.ServerResponse;
 import com.chattyhive.backend.Util.CallbackDelegate;
 
 import java.lang.reflect.Field;
@@ -15,13 +17,22 @@ import java.util.TreeSet;
  */
 public class Command {
     /*************************************/
-    /*      SERVER COMMAND CLASS         */
+    /*          COMMAND CLASS            */
     /*************************************/
 
     private final ArrayList<CallbackDelegate> callbackDelegates;
 
     private CommandDefinition commandDefinition;
     private IServerUser serverUser;
+
+    private ServerResponse serverResponse;
+
+    public void setServerResponse(ServerResponse serverResponse) {
+        this.serverResponse = serverResponse;
+    }
+    public ServerResponse getServerResponse() {
+        return this.serverResponse;
+    }
 
     public void addCallbackDelegate(CallbackDelegate callbackDelegate) {
         synchronized (callbackDelegates) {
@@ -38,10 +49,10 @@ public class Command {
         CallbackDelegate callback = null;
         synchronized (callbackDelegates) {
             if (this.callbackDelegates.isEmpty())
-                try { this.callbackDelegates.wait(timeout); } catch (InterruptedException e) { } finally {
-                    if (!this.callbackDelegates.isEmpty())
-                        callback = callbackDelegates.remove(0);
-                }
+                try { this.callbackDelegates.wait(timeout); } catch (InterruptedException e) { }
+
+            if (!this.callbackDelegates.isEmpty())
+                callback = callbackDelegates.remove(0);
         }
         return callback;
     }
@@ -49,7 +60,6 @@ public class Command {
     public ExecutionLevel getExecutionLevel() {
         return executionLevel;
     }
-
     public void setExecutionLevel(ExecutionLevel executionLevel) {
         this.executionLevel = executionLevel;
     }
@@ -57,7 +67,6 @@ public class Command {
     public List<Format> getResultFormats() {
         return Collections.unmodifiableList(resultFormats);
     }
-
     public void setResultFormats(ArrayList<Format> resultFormats) {
         this.resultFormats = resultFormats;
     }
@@ -65,7 +74,6 @@ public class Command {
     public int getResultCode() {
         return resultCode;
     }
-
     public void setResultCode(int resultCode) {
         this.resultCode = resultCode;
     }
@@ -101,6 +109,9 @@ public class Command {
 
     public CommandDefinition getCommandDefinition() {
         return this.commandDefinition;
+    }
+    public IServerUser getServerUser() {
+        return this.serverUser;
     }
     public String getUrl() {
         String url = this.commandDefinition.getUrl();

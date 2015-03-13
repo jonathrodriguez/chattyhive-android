@@ -106,9 +106,10 @@ public class CommandExecutor implements Runnable {
         CommandDefinition commandDefinition = command.getCommandDefinition();
         switch (commandDefinition.getCommandType()) {
             case Query:
-                //TODO: ¿GO TO SERVER?
+                //TODO: GO TO SERVER?
                 if (this.dataOrigins.containsKey(DataOriginTypes.RemoteServer)) // Go to server
                     this.dataOrigins.get(DataOriginTypes.RemoteServer).ProcessCommand(command,priority,remoteCallback);
+                //TODO: Process callbacks?
                 break;
         }
     }
@@ -117,9 +118,10 @@ public class CommandExecutor implements Runnable {
         CommandDefinition commandDefinition = command.getCommandDefinition();
         switch (commandDefinition.getCommandType()) {
             case Pull:
-                //TODO: ¿GO TO SERVER?
+                //TODO: GO TO SERVER?
                 if (this.dataOrigins.containsKey(DataOriginTypes.RemoteServer)) // Go to server
                     this.dataOrigins.get(DataOriginTypes.RemoteServer).ProcessCommand(command,priority,remoteCallback);
+                //TODO: Process callbacks?
                 break;
         }
     }
@@ -129,10 +131,12 @@ public class CommandExecutor implements Runnable {
         switch (commandDefinition.getCommandType()) {
             case Session:
                 //TODO: DO SOMETHING?
+                //TODO: Process callbacks
                 break;
             case Query:
                 if (this.dataOrigins.containsKey(DataOriginTypes.Cache)) // Update cache
                     this.dataOrigins.get(DataOriginTypes.Cache).ProcessCommand(command,priority,null);
+                //TODO: Process callbacks?
                 break;
             case Pull:
             case ForcePush:
@@ -140,6 +144,7 @@ public class CommandExecutor implements Runnable {
             case DelayedResponsePush:
                 if (this.dataOrigins.containsKey(DataOriginTypes.Local)) // Update local
                     this.dataOrigins.get(DataOriginTypes.Local).ProcessCommand(command,priority,null);
+                //TODO: Process callbacks?
                 break;
         }
     }
