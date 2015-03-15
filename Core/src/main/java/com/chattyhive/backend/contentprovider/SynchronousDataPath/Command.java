@@ -1,9 +1,9 @@
 package com.chattyhive.backend.ContentProvider.SynchronousDataPath;
 
 import com.chattyhive.backend.ContentProvider.formats.Format;
-import com.chattyhive.backend.ContentProvider.server.IServerUser;
-import com.chattyhive.backend.ContentProvider.server.Server;
-import com.chattyhive.backend.ContentProvider.server.ServerResponse;
+import com.chattyhive.backend.ContentProvider.Server.IServerUser;
+import com.chattyhive.backend.ContentProvider.Server.Server;
+import com.chattyhive.backend.ContentProvider.Server.ServerResponse;
 import com.chattyhive.backend.Util.CallbackDelegate;
 
 import java.lang.reflect.Field;

@@ -29,8 +29,8 @@ import com.chattyhive.backend.ContentProvider.formats.USER_PROFILE;
 import com.chattyhive.backend.ContentProvider.local.LocalStorageInterface;
 import com.chattyhive.backend.ContentProvider.pubsubservice.ConnectionState;
 import com.chattyhive.backend.ContentProvider.pubsubservice.ConnectionStateChange;
-import com.chattyhive.backend.ContentProvider.server.Server;
-import com.chattyhive.backend.ContentProvider.server.UserSession;
+import com.chattyhive.backend.ContentProvider.Server.Server;
+import com.chattyhive.backend.ContentProvider.Server.UserSession;
 import com.chattyhive.backend.ContentProvider.pubsubservice.PubSub;
 
 import com.chattyhive.backend.Util.Events.CancelableEventArgs;

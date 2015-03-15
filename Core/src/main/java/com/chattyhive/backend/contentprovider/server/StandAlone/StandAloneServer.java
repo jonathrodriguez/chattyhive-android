@@ -1,4 +1,4 @@
-package com.chattyhive.backend.ContentProvider.server;
+package com.chattyhive.backend.ContentProvider.Server.StandAlone;
 
 import com.chattyhive.backend.ContentProvider.SynchronousDataPath.IOrigin;
 import com.chattyhive.backend.StaticParameters;

@@ -24,7 +24,7 @@ import com.chattyhive.backend.ContentProvider.formats.USERNAME;
 import com.chattyhive.backend.ContentProvider.formats.USER_EMAIL;
 import com.chattyhive.backend.ContentProvider.formats.USER_PROFILE;
 import com.chattyhive.backend.ContentProvider.local.LocalStorageInterface;
-import com.chattyhive.backend.ContentProvider.server.UserSession;
+import com.chattyhive.backend.ContentProvider.Server.UserSession;
 import com.chattyhive.backend.Util.Events.CancelableEventArgs;
 import com.chattyhive.backend.Util.Events.CommandCallbackEventArgs;
 import com.chattyhive.backend.Util.Events.ConnectionEventArgs;

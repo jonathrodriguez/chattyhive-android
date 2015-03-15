@@ -1,4 +1,4 @@
-package com.chattyhive.backend.ContentProvider.server;
+package com.chattyhive.backend.ContentProvider.Server;
 
 import com.chattyhive.backend.ContentProvider.SynchronousDataPath.Command;
 import com.chattyhive.backend.ContentProvider.SynchronousDataPath.CommandDefinition;

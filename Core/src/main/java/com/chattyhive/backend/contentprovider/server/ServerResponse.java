@@ -1,4 +1,4 @@
-package com.chattyhive.backend.ContentProvider.server;
+package com.chattyhive.backend.ContentProvider.Server;
 
 import java.util.List;
 import java.util.Map;

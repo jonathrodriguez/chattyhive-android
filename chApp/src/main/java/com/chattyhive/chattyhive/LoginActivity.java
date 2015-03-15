@@ -14,7 +14,7 @@ import com.chattyhive.backend.Controller;
 import com.chattyhive.backend.ContentProvider.DataProvider;
 import com.chattyhive.backend.ContentProvider.formats.COMMON;
 import com.chattyhive.backend.ContentProvider.formats.Format;
-import com.chattyhive.backend.ContentProvider.server.UserSession;
+import com.chattyhive.backend.ContentProvider.Server.UserSession;
 import com.chattyhive.backend.Util.Events.CommandCallbackEventArgs;
 import com.chattyhive.backend.Util.Events.ConnectionEventArgs;
 import com.chattyhive.backend.Util.Events.EventHandler;

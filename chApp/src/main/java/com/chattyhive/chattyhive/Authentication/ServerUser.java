@@ -7,9 +7,9 @@ import android.accounts.AuthenticatorException;
 import android.accounts.OperationCanceledException;
 import android.content.Context;
 
-import com.chattyhive.backend.ContentProvider.server.IServerUser;
-import com.chattyhive.backend.ContentProvider.server.ServerConfiguration;
-import com.chattyhive.backend.ContentProvider.server.SessionStatus;
+import com.chattyhive.backend.ContentProvider.Server.IServerUser;
+import com.chattyhive.backend.ContentProvider.Server.ServerConfiguration;
+import com.chattyhive.backend.ContentProvider.Server.SessionStatus;
 
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
