@@ -13,14 +13,14 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.chattyhive.backend.BusinessObjects.Chats.ChatKind;
-import com.chattyhive.backend.BusinessObjects.Chats.Conversation;
-import com.chattyhive.backend.BusinessObjects.Chats.Messages.Message;
-import com.chattyhive.backend.BusinessObjects.Image;
-import com.chattyhive.backend.Util.Events.EventArgs;
-import com.chattyhive.backend.Util.Events.EventHandler;
-import com.chattyhive.backend.Util.Formatters.DateFormatter;
-import com.chattyhive.backend.Util.Formatters.TimestampFormatter;
+import com.chattyhive.Core.BusinessObjects.Chats.ChatKind;
+import com.chattyhive.Core.BusinessObjects.Chats.Conversation;
+import com.chattyhive.Core.BusinessObjects.Chats.Messages.Message;
+import com.chattyhive.Core.BusinessObjects.Image;
+import com.chattyhive.Core.Util.Events.EventArgs;
+import com.chattyhive.Core.Util.Events.EventHandler;
+import com.chattyhive.Core.Util.Formatters.DateFormatter;
+import com.chattyhive.Core.Util.Formatters.TimestampFormatter;
 import com.chattyhive.chattyhive.framework.Util.StaticMethods;
 
 import java.io.IOException;

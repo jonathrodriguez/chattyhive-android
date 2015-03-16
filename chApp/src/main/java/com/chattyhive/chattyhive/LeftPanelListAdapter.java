@@ -19,16 +19,16 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.chattyhive.backend.BusinessObjects.Chats.Chat;
-import com.chattyhive.backend.BusinessObjects.Chats.Hive;
-import com.chattyhive.backend.BusinessObjects.Chats.Messages.Message;
-import com.chattyhive.backend.BusinessObjects.Image;
-import com.chattyhive.backend.BusinessObjects.Users.User;
-import com.chattyhive.backend.Util.Events.Event;
-import com.chattyhive.backend.Util.Events.EventArgs;
-import com.chattyhive.backend.Util.Events.EventHandler;
-import com.chattyhive.backend.Util.Formatters.DateFormatter;
-import com.chattyhive.backend.Util.Formatters.TimestampFormatter;
+import com.chattyhive.Core.BusinessObjects.Chats.Chat;
+import com.chattyhive.Core.BusinessObjects.Chats.Hive;
+import com.chattyhive.Core.BusinessObjects.Chats.Messages.Message;
+import com.chattyhive.Core.BusinessObjects.Image;
+import com.chattyhive.Core.BusinessObjects.Users.User;
+import com.chattyhive.Core.Util.Events.Event;
+import com.chattyhive.Core.Util.Events.EventArgs;
+import com.chattyhive.Core.Util.Events.EventHandler;
+import com.chattyhive.Core.Util.Formatters.DateFormatter;
+import com.chattyhive.Core.Util.Formatters.TimestampFormatter;
 import com.chattyhive.chattyhive.framework.Util.StaticMethods;
 import com.chattyhive.chattyhive.util.Category;
 

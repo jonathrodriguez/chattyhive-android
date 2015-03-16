@@ -8,14 +8,14 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.chattyhive.backend.BusinessObjects.Chats.Chat;
-import com.chattyhive.backend.BusinessObjects.Chats.Conversation;
-import com.chattyhive.backend.BusinessObjects.Chats.Messages.Message;
-import com.chattyhive.backend.BusinessObjects.Chats.Messages.MessageContent;
-import com.chattyhive.backend.BusinessObjects.Image;
-import com.chattyhive.backend.BusinessObjects.Users.User;
-import com.chattyhive.backend.Util.Events.EventArgs;
-import com.chattyhive.backend.Util.Events.EventHandler;
+import com.chattyhive.Core.BusinessObjects.Chats.Chat;
+import com.chattyhive.Core.BusinessObjects.Chats.Conversation;
+import com.chattyhive.Core.BusinessObjects.Chats.Messages.Message;
+import com.chattyhive.Core.BusinessObjects.Chats.Messages.MessageContent;
+import com.chattyhive.Core.BusinessObjects.Image;
+import com.chattyhive.Core.BusinessObjects.Users.User;
+import com.chattyhive.Core.Util.Events.EventArgs;
+import com.chattyhive.Core.Util.Events.EventHandler;
 import com.chattyhive.chattyhive.framework.Util.ViewPair;
 
 import java.io.IOException;

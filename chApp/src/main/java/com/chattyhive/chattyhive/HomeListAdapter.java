@@ -11,16 +11,16 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.chattyhive.backend.Controller;
-import com.chattyhive.backend.BusinessObjects.Chats.Chat;
-import com.chattyhive.backend.BusinessObjects.Home.Cards.HiveMessageCard;
-import com.chattyhive.backend.BusinessObjects.Home.HomeCard;
-import com.chattyhive.backend.BusinessObjects.Home.HomeCardType;
-import com.chattyhive.backend.BusinessObjects.Image;
-import com.chattyhive.backend.Util.Events.EventArgs;
-import com.chattyhive.backend.Util.Events.EventHandler;
-import com.chattyhive.backend.Util.Formatters.DateFormatter;
-import com.chattyhive.backend.Util.Formatters.TimestampFormatter;
+import com.chattyhive.Core.Controller;
+import com.chattyhive.Core.BusinessObjects.Chats.Chat;
+import com.chattyhive.Core.BusinessObjects.Home.Cards.HiveMessageCard;
+import com.chattyhive.Core.BusinessObjects.Home.HomeCard;
+import com.chattyhive.Core.BusinessObjects.Home.HomeCardType;
+import com.chattyhive.Core.BusinessObjects.Image;
+import com.chattyhive.Core.Util.Events.EventArgs;
+import com.chattyhive.Core.Util.Events.EventHandler;
+import com.chattyhive.Core.Util.Formatters.DateFormatter;
+import com.chattyhive.Core.Util.Formatters.TimestampFormatter;
 
 import java.io.IOException;
 import java.io.InputStream;

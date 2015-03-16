@@ -17,9 +17,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.chattyhive.backend.BusinessObjects.Chats.Hive;
-import com.chattyhive.backend.Util.Events.CommandCallbackEventArgs;
-import com.chattyhive.backend.Util.Events.EventHandler;
+import com.chattyhive.Core.BusinessObjects.Chats.Hive;
+import com.chattyhive.Core.Util.Events.CommandCallbackEventArgs;
+import com.chattyhive.Core.Util.Events.EventHandler;
 import com.chattyhive.chattyhive.util.Category;
 import java.util.ArrayList;
 import java.util.TreeMap;

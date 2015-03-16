@@ -16,17 +16,17 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.chattyhive.backend.BusinessObjects.Image;
-import com.chattyhive.backend.BusinessObjects.Users.ProfileLevel;
-import com.chattyhive.backend.BusinessObjects.Users.User;
-import com.chattyhive.backend.ContentProvider.formats.COMMON;
-import com.chattyhive.backend.ContentProvider.formats.Format;
-import com.chattyhive.backend.ContentProvider.formats.LOCAL_USER_PROFILE;
-import com.chattyhive.backend.ContentProvider.formats.USER_PROFILE;
-import com.chattyhive.backend.Util.Events.CommandCallbackEventArgs;
-import com.chattyhive.backend.Util.Events.EventArgs;
-import com.chattyhive.backend.Util.Events.EventHandler;
-import com.chattyhive.backend.Util.Formatters.DateFormatter;
+import com.chattyhive.Core.BusinessObjects.Image;
+import com.chattyhive.Core.BusinessObjects.Users.ProfileLevel;
+import com.chattyhive.Core.BusinessObjects.Users.User;
+import com.chattyhive.Core.ContentProvider.formats.COMMON;
+import com.chattyhive.Core.ContentProvider.formats.Format;
+import com.chattyhive.Core.ContentProvider.formats.LOCAL_USER_PROFILE;
+import com.chattyhive.Core.ContentProvider.formats.USER_PROFILE;
+import com.chattyhive.Core.Util.Events.CommandCallbackEventArgs;
+import com.chattyhive.Core.Util.Events.EventArgs;
+import com.chattyhive.Core.Util.Events.EventHandler;
+import com.chattyhive.Core.Util.Formatters.DateFormatter;
 import com.chattyhive.chattyhive.framework.Util.Keyboard;
 import com.chattyhive.chattyhive.framework.Util.StaticMethods;
 import com.chattyhive.chattyhive.framework.Util.ViewPair;
@@ -147,9 +147,9 @@ public class Profile extends Window {
         } else {
             user.UserLoaded.add(new EventHandler<EventArgs>(this,"OnUserProfileLoaded",EventArgs.class));
 
-            com.chattyhive.backend.BusinessObjects.Users.ProfileType requestProfile = com.chattyhive.backend.BusinessObjects.Users.ProfileType.PUBLIC;
+            com.chattyhive.Core.BusinessObjects.Users.ProfileType requestProfile = com.chattyhive.Core.BusinessObjects.Users.ProfileType.PUBLIC;
             if (this.profileType == ProfileType.Private)
-                requestProfile = com.chattyhive.backend.BusinessObjects.Users.ProfileType.PRIVATE;
+                requestProfile = com.chattyhive.Core.BusinessObjects.Users.ProfileType.PRIVATE;
 
             user.loadProfile(requestProfile, ProfileLevel.Complete);
         }

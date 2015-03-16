@@ -12,10 +12,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
-import com.chattyhive.backend.Controller;
-import com.chattyhive.backend.BusinessObjects.Chats.Hive;
-import com.chattyhive.backend.Util.Events.EventArgs;
-import com.chattyhive.backend.Util.Events.EventHandler;
+import com.chattyhive.Core.Controller;
+import com.chattyhive.Core.BusinessObjects.Chats.Hive;
+import com.chattyhive.Core.Util.Events.EventArgs;
+import com.chattyhive.Core.Util.Events.EventHandler;
 import com.chattyhive.chattyhive.framework.CustomViews.Listener.OnTransitionListener;
 import com.chattyhive.chattyhive.framework.CustomViews.ViewGroup.SlidingStepsLayout;
 import com.chattyhive.chattyhive.framework.Util.StaticMethods;
@@ -31,7 +31,7 @@ public class Explore extends Activity {
 
     int[] exploreListHeaders;
     int[] tabButtonIDs;
-    com.chattyhive.backend.BusinessObjects.Explore.SortType[] sortTypes;
+    com.chattyhive.Core.BusinessObjects.Explore.SortType[] sortTypes;
 
     int activeList;
     int joined;
@@ -89,7 +89,7 @@ public class Explore extends Activity {
 
         this.exploreListHeaders = new int[] { R.string.explore_outstanding_hives, R.string.explore_hives_by_date, R.string.explore_trending_hives, R.string.explore_hives_by_users };
         this.tabButtonIDs = new int[] {R.id.explore_tab_list_favourites_button,R.id.explore_tab_list_location_button,R.id.explore_tab_list_recent_button,R.id.explore_tab_list_trending_button,R.id.explore_button_categories };
-        this.sortTypes = new com.chattyhive.backend.BusinessObjects.Explore.SortType[] {com.chattyhive.backend.BusinessObjects.Explore.SortType.OUTSTANDING, com.chattyhive.backend.BusinessObjects.Explore.SortType.CREATION_DATE, com.chattyhive.backend.BusinessObjects.Explore.SortType.TRENDING, com.chattyhive.backend.BusinessObjects.Explore.SortType.USERS };
+        this.sortTypes = new com.chattyhive.Core.BusinessObjects.Explore.SortType[] {com.chattyhive.Core.BusinessObjects.Explore.SortType.OUTSTANDING, com.chattyhive.Core.BusinessObjects.Explore.SortType.CREATION_DATE, com.chattyhive.Core.BusinessObjects.Explore.SortType.TRENDING, com.chattyhive.Core.BusinessObjects.Explore.SortType.USERS };
         this.controller = Controller.GetRunningController();
 
         this.slidingPanel = (SlidingStepsLayout)findViewById(R.id.explore_slidingsteps);

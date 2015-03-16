@@ -12,9 +12,9 @@ import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.chattyhive.backend.BusinessObjects.Image;
-import com.chattyhive.backend.Util.Events.EventArgs;
-import com.chattyhive.backend.Util.Events.EventHandler;
+import com.chattyhive.Core.BusinessObjects.Image;
+import com.chattyhive.Core.Util.Events.EventArgs;
+import com.chattyhive.Core.Util.Events.EventHandler;
 
 import java.io.IOException;
 import java.io.InputStream;

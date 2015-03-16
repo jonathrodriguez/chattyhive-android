@@ -14,13 +14,13 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 
-import com.chattyhive.backend.Controller;
-import com.chattyhive.backend.StaticParameters;
+import com.chattyhive.Core.Controller;
+import com.chattyhive.Core.StaticParameters;
 
-import com.chattyhive.backend.BusinessObjects.Chats.Chat;
-import com.chattyhive.backend.BusinessObjects.Chats.Hive;
-import com.chattyhive.backend.ContentProvider.SynchronousDataPath.AvailableCommands;
-import com.chattyhive.backend.ContentProvider.DataProvider;
+import com.chattyhive.Core.BusinessObjects.Chats.Chat;
+import com.chattyhive.Core.BusinessObjects.Chats.Hive;
+import com.chattyhive.Core.ContentProvider.SynchronousDataPath.AvailableCommands;
+import com.chattyhive.Core.ContentProvider.DataProvider;
 import com.chattyhive.chattyhive.framework.OSStorageProvider.ChatLocalStorage;
 import com.chattyhive.chattyhive.framework.OSStorageProvider.CookieStore;
 import com.chattyhive.chattyhive.framework.OSStorageProvider.HiveLocalStorage;

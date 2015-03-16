@@ -10,14 +10,14 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
-import com.chattyhive.backend.Controller;
-import com.chattyhive.backend.ContentProvider.DataProvider;
-import com.chattyhive.backend.ContentProvider.formats.COMMON;
-import com.chattyhive.backend.ContentProvider.formats.Format;
-import com.chattyhive.backend.ContentProvider.Server.UserSession;
-import com.chattyhive.backend.Util.Events.CommandCallbackEventArgs;
-import com.chattyhive.backend.Util.Events.ConnectionEventArgs;
-import com.chattyhive.backend.Util.Events.EventHandler;
+import com.chattyhive.Core.Controller;
+import com.chattyhive.Core.ContentProvider.DataProvider;
+import com.chattyhive.Core.ContentProvider.formats.COMMON;
+import com.chattyhive.Core.ContentProvider.formats.Format;
+import com.chattyhive.Core.ContentProvider.Server.UserSession;
+import com.chattyhive.Core.Util.Events.CommandCallbackEventArgs;
+import com.chattyhive.Core.Util.Events.ConnectionEventArgs;
+import com.chattyhive.Core.Util.Events.EventHandler;
 
 public class LoginActivity extends Activity {
     static final int OP_CODE_REGISTER = 3;

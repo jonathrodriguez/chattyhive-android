@@ -3,13 +3,8 @@ package com.chattyhive.chattyhive.backgroundservice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.os.Bundle;
-import android.os.IBinder;
-import android.util.Log;
 
-import com.chattyhive.backend.StaticParameters;
+import com.chattyhive.Core.StaticParameters;
 
 /**
  * Created by Jonathan on 4/02/14.
