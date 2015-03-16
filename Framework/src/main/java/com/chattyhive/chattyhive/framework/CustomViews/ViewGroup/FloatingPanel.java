@@ -18,6 +18,7 @@ import android.view.WindowManager;
 import android.widget.Scroller;
 
 import com.chattyhive.chattyhive.framework.R;
+import com.chattyhive.chattyhive.framework.Util.Keyboard;
 
 import java.util.Map;
 import java.util.TreeMap;
@@ -68,6 +69,20 @@ public class FloatingPanel extends ViewGroup {
     private float fixedLeftPanelWidth;
 
     private boolean allowSwipeToMovePanels;
+    private boolean baseAllowSwipeToMovePanels;
+    private boolean changedAllowSwipeToMovePanels;
+    public void setAllowSwipeToMovePanels(boolean allowSwipeToMovePanels) {
+        this.allowSwipeToMovePanels = allowSwipeToMovePanels;
+        this.changedAllowSwipeToMovePanels = true;
+    }
+    public void resetAllowSwipeToMovePanels() {
+        this.allowSwipeToMovePanels = this.baseAllowSwipeToMovePanels;
+        this.changedAllowSwipeToMovePanels = false;
+    }
+    public boolean getAllowSwipeToMovePanels() {
+        return this.allowSwipeToMovePanels;
+    }
+
     private boolean leftSwipeCheckMainBoundaries;
     private boolean rightSwipeCheckMainBoundaries;
 
@@ -99,6 +114,7 @@ public class FloatingPanel extends ViewGroup {
 
     private Boolean restored = false;
     private int actualState; //Center: 0; Left: 1; Right: 2
+    private int previousState; //Center: 0; Left: 1; Right: 2
 
     private float StartEventX = -1;
     private float StartEventY = -1;
@@ -111,6 +127,8 @@ public class FloatingPanel extends ViewGroup {
 
     private View mainPanelCover;
     private int centerMainPanelCoverColor;
+
+    private View focusedView;
 
     public FloatingPanel(Context context) {
         this(context, null);
@@ -158,6 +176,7 @@ public class FloatingPanel extends ViewGroup {
         this.fixedLeftPanelWidth = a.getDimension(R.styleable.FloatingPanel_fixedLeftPanelWidth,defaultFixedLeftPanelWidth);
 
         this.allowSwipeToMovePanels = a.getBoolean(R.styleable.FloatingPanel_allowSwipeToMovePanels,defaultAllowSwipeToMovePanels);
+        this.baseAllowSwipeToMovePanels = this.allowSwipeToMovePanels;
         this.leftSwipeCheckMainBoundaries = a.getBoolean(R.styleable.FloatingPanel_leftSwipeCheckMainBoundaries,defaultLeftSwipeCheckMainBoundaries);
         this.rightSwipeCheckMainBoundaries = a.getBoolean(R.styleable.FloatingPanel_rightSwipeCheckMainBoundaries,defaultRightSwipeCheckMainBoundaries);
 
@@ -190,11 +209,23 @@ public class FloatingPanel extends ViewGroup {
 
     public void openLeft() {
         if (this.fixLeftPanel) return;
+        //Keyboard.HideKeyboard(this.getRootView().findFocus());
         openLeft(this.buttonPressedAnimationDuration);
     }
 
     public void openLeft(int animationDuration) {
-        if (this.fixLeftPanel) return;
+        if (this.fixLeftPanel) {
+           /* if ((this.focusedView != null) && (this.previousState == 0))
+                Keyboard.ShowKeyboard(this.focusedView);
+            this.focusedView = null;*/
+
+            return;
+        }
+
+       /* if ((this.focusedView != null) && (this.previousState == 1))
+            Keyboard.ShowKeyboard(this.focusedView);
+        this.focusedView = null;*/
+
         float leftWidth = mainPanels.get("left").getMeasuredWidth();
         int leftMargin = ((LayoutParams)mainPanels.get("left").getLayoutParams()).leftMargin;
         int rightMargin = ((LayoutParams)mainPanels.get("left").getLayoutParams()).rightMargin;
@@ -203,10 +234,15 @@ public class FloatingPanel extends ViewGroup {
     }
 
     public void openRight() {
+        //Keyboard.HideKeyboard(this.getRootView().findFocus());
         openRight(this.buttonPressedAnimationDuration);
     }
 
     public void openRight(int animationDuration) {
+        /*if ((this.focusedView != null) && (this.previousState == 2))
+            Keyboard.ShowKeyboard(this.focusedView);
+        this.focusedView = null;*/
+
         float rightWidth = mainPanels.get("right").getMeasuredWidth();
         int leftMargin = ((LayoutParams)mainPanels.get("right").getLayoutParams()).leftMargin;
         int rightMargin = ((LayoutParams)mainPanels.get("right").getLayoutParams()).rightMargin;
@@ -215,10 +251,15 @@ public class FloatingPanel extends ViewGroup {
     }
 
     public void close() {
+        //Keyboard.HideKeyboard(this.getRootView().findFocus());
         close(this.buttonPressedAnimationDuration);
     }
 
     public void close(int animationDuration) {
+        /*if ((this.focusedView != null) && (this.previousState == 0))
+            Keyboard.ShowKeyboard(this.focusedView);
+        this.focusedView = null;*/
+
         movePanels(-actualPosition,animationDuration);
     }
 
@@ -417,7 +458,12 @@ public class FloatingPanel extends ViewGroup {
                     }
                 }
                 velocityTracker.addMovement(ev);
-
+                /*if (this.focusedView == null) {
+                    previousState = this.actualState;
+                    this.focusedView = this.getRootView().findFocus();
+                    if (!Keyboard.HideKeyboard(this.focusedView))
+                        this.focusedView = null;
+                }*/
                 movePanels(x-this.LastEventX);
                 this.LastEventX = x;
                 break;
@@ -557,16 +603,24 @@ public class FloatingPanel extends ViewGroup {
         switch (actualState) {
             case 0:
                 actualPosition = 0;
+                if (previousState != actualState)
+                    Keyboard.HideKeyboard(this.getRootView().findFocus());
                 break;
             case 1:
                 actualPosition = leftBound;
+                if (previousState != actualState)
+                    Keyboard.HideKeyboard(this.getRootView().findFocus());
                 this.mainPanelCover.setVisibility(VISIBLE);
                 break;
             case 2:
                 actualPosition = rightBound;
+                if (previousState != actualState)
+                    Keyboard.HideKeyboard(this.getRootView().findFocus());
                 this.mainPanelCover.setVisibility(VISIBLE);
                 break;
         }
+
+        this.previousState = actualState;
 
         invalidate();
         requestLayout();
@@ -592,12 +646,20 @@ public class FloatingPanel extends ViewGroup {
     }
 
     protected void movePanels (float distance, int duration) {
-        int animationDuration = Math.min(duration,this.maxAnimationDuration);
-        float finalDistance = saturateNewPosition(actualPosition+distance) - actualPosition;
-        scroller.abortAnimation();
-        scrolling = true;
-        scroller.startScroll(Math.round(actualPosition), 0, Math.round(finalDistance), 0, animationDuration);
-        invalidate();
+        if (duration > 0) {
+            int animationDuration = Math.min(duration, this.maxAnimationDuration);
+            float finalDistance = saturateNewPosition(actualPosition + distance) - actualPosition;
+            scroller.abortAnimation();
+            scrolling = true;
+            scroller.startScroll(Math.round(actualPosition), 0, Math.round(finalDistance), 0, animationDuration);
+            invalidate();
+        } else {
+            scroller.abortAnimation();
+            scrolling = false;
+            actualPosition = saturateNewPosition(actualPosition+distance);
+            computePosition();
+            setStaticPosition();
+        }
     }
 
     @Override
@@ -994,6 +1056,8 @@ public class FloatingPanel extends ViewGroup {
         SavedState savedState = new SavedState(super.onSaveInstanceState());
 
         savedState.actualState = actualState;
+        savedState.changedAllowSwipeToMovePanels = changedAllowSwipeToMovePanels;
+        savedState.allowSwipeToMovePanels = allowSwipeToMovePanels;
 
         return savedState;
     }
@@ -1004,6 +1068,9 @@ public class FloatingPanel extends ViewGroup {
         super.onRestoreInstanceState(savedState.getSuperState());
 
         actualState = savedState.actualState;
+        previousState = actualState;
+        if (changedAllowSwipeToMovePanels = savedState.changedAllowSwipeToMovePanels)
+            allowSwipeToMovePanels = savedState.allowSwipeToMovePanels;
         restored = true;
 
         requestLayout();
@@ -1012,6 +1079,8 @@ public class FloatingPanel extends ViewGroup {
 
     public static class SavedState extends BaseSavedState {
         private int actualState;
+        private boolean changedAllowSwipeToMovePanels;
+        private boolean allowSwipeToMovePanels;
 
         SavedState(Parcelable superState) {
             super(superState);
@@ -1021,6 +1090,11 @@ public class FloatingPanel extends ViewGroup {
             super(in);
 
             actualState = in.readInt();
+            boolean[] swipeToMovePanels = new boolean[2];
+            in.readBooleanArray(swipeToMovePanels);
+
+            changedAllowSwipeToMovePanels = swipeToMovePanels[0];
+            allowSwipeToMovePanels = swipeToMovePanels[1];
         }
 
         @Override
@@ -1028,6 +1102,7 @@ public class FloatingPanel extends ViewGroup {
             super.writeToParcel(out, flags);
 
             out.writeInt(actualState);
+            out.writeBooleanArray(new boolean[] {changedAllowSwipeToMovePanels, allowSwipeToMovePanels});
         }
 
         public static final Parcelable.Creator<SavedState> CREATOR = new Parcelable.Creator<SavedState>() {

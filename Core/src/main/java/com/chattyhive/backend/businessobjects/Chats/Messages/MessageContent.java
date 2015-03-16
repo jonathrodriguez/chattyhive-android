@@ -1,9 +1,9 @@
-package com.chattyhive.backend.businessobjects.Chats.Messages;
+package com.chattyhive.backend.BusinessObjects.Chats.Messages;
 
-import com.chattyhive.backend.contentprovider.formats.Format;
-import com.chattyhive.backend.contentprovider.formats.MESSAGE_CONTENT;
+import com.chattyhive.backend.BusinessObjects.Image;
+import com.chattyhive.backend.ContentProvider.formats.Format;
+import com.chattyhive.backend.ContentProvider.formats.MESSAGE_CONTENT;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonNull;
 
 /**
  * Created by Jonathan on 11/12/13.
@@ -12,6 +12,7 @@ import com.google.gson.JsonNull;
 public class MessageContent {
     String text;
     String contentType;
+    Image image;
 
     /**
      * Public constructor.
@@ -54,6 +55,12 @@ public class MessageContent {
         return this.text;
     }
 
+    public Image getImage() throws NoSuchFieldException {
+        if (this.contentType.equalsIgnoreCase("IMAGE"))
+            return this.image;
+        else
+            throw new NoSuchFieldException("Message has no image");
+    }
 
     public void setContentType(String value) {
         this.contentType = value;
@@ -91,6 +98,8 @@ public class MessageContent {
         if (format instanceof MESSAGE_CONTENT) {
             this.text = ((MESSAGE_CONTENT)format).CONTENT;
             this.contentType = ((MESSAGE_CONTENT)format).CONTENT_TYPE;
+            if (this.contentType.equalsIgnoreCase("IMAGE"))
+                this.image = new Image(this.text);
         } else {
             throw new IllegalArgumentException("MESSAGE_CONTENT format expected in format parser.");
         }

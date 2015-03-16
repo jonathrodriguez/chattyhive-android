@@ -1,12 +1,10 @@
-package com.chattyhive.backend.businessobjects;
+package com.chattyhive.backend.BusinessObjects;
 
 import com.chattyhive.backend.Controller;
-import com.chattyhive.backend.contentprovider.DataProvider;
-import com.chattyhive.backend.util.events.Event;
-import com.chattyhive.backend.util.events.EventArgs;
+import com.chattyhive.backend.ContentProvider.DataProvider;
+import com.chattyhive.backend.Util.Events.Event;
+import com.chattyhive.backend.Util.Events.EventArgs;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.security.InvalidParameterException;
 
@@ -174,7 +172,7 @@ public class Image {
     }
 
     public void freeMemory () {
-        if (smallThumbnail != null)
+        /*if (smallThumbnail != null)
             try { smallThumbnail.close(); } catch (IOException e) { e.printStackTrace(); } finally { smallThumbnail = null; }
         if (mediumThumbnail != null)
             try { mediumThumbnail.close(); } catch (IOException e) { e.printStackTrace(); } finally { mediumThumbnail = null; }
@@ -183,6 +181,6 @@ public class Image {
         if (xlargeThumbnail != null)
             try { xlargeThumbnail.close(); } catch (IOException e) { e.printStackTrace(); } finally { xlargeThumbnail = null; }
         if (fileImage != null)
-            try { fileImage.close(); } catch (IOException e) { e.printStackTrace(); } finally { fileImage = null; }
+            try { fileImage.close(); } catch (IOException e) { e.printStackTrace(); } finally { fileImage = null; }*/
     }
 }

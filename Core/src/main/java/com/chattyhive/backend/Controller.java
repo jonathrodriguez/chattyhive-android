@@ -1,37 +1,37 @@
 package com.chattyhive.backend;
 
-import com.chattyhive.backend.businessobjects.Chats.Chat;
-import com.chattyhive.backend.businessobjects.Chats.Conversation;
-import com.chattyhive.backend.businessobjects.Chats.Hive;
-import com.chattyhive.backend.businessobjects.Chats.Messages.Message;
-import com.chattyhive.backend.businessobjects.Explore;
-import com.chattyhive.backend.businessobjects.Home.Cards.HiveMessageCard;
-import com.chattyhive.backend.businessobjects.Home.HomeCard;
-import com.chattyhive.backend.businessobjects.Users.ProfileLevel;
-import com.chattyhive.backend.businessobjects.Users.User;
-import com.chattyhive.backend.contentprovider.AvailableCommands;
-import com.chattyhive.backend.contentprovider.DataProvider;
-import com.chattyhive.backend.contentprovider.OSStorageProvider.ChatLocalStorageInterface;
-import com.chattyhive.backend.contentprovider.OSStorageProvider.HiveLocalStorageInterface;
-import com.chattyhive.backend.contentprovider.OSStorageProvider.LoginLocalStorageInterface;
-import com.chattyhive.backend.contentprovider.OSStorageProvider.MessageLocalStorageInterface;
-import com.chattyhive.backend.contentprovider.OSStorageProvider.UserLocalStorageInterface;
-import com.chattyhive.backend.contentprovider.formats.COMMON;
-import com.chattyhive.backend.contentprovider.formats.Format;
-import com.chattyhive.backend.contentprovider.formats.LOCAL_USER_PROFILE;
-import com.chattyhive.backend.contentprovider.formats.PROFILE_ID;
-import com.chattyhive.backend.contentprovider.formats.USERNAME;
-import com.chattyhive.backend.contentprovider.formats.USER_EMAIL;
-import com.chattyhive.backend.contentprovider.formats.USER_PROFILE;
-import com.chattyhive.backend.contentprovider.local.LocalStorageInterface;
-import com.chattyhive.backend.contentprovider.server.UserSession;
-import com.chattyhive.backend.util.events.CancelableEventArgs;
-import com.chattyhive.backend.util.events.CommandCallbackEventArgs;
-import com.chattyhive.backend.util.events.ConnectionEventArgs;
-import com.chattyhive.backend.util.events.Event;
-import com.chattyhive.backend.util.events.EventArgs;
-import com.chattyhive.backend.util.events.EventHandler;
-import com.chattyhive.backend.util.events.PubSubConnectionEventArgs;
+import com.chattyhive.backend.BusinessObjects.Chats.Chat;
+import com.chattyhive.backend.BusinessObjects.Chats.Conversation;
+import com.chattyhive.backend.BusinessObjects.Chats.Hive;
+import com.chattyhive.backend.BusinessObjects.Chats.Messages.Message;
+import com.chattyhive.backend.BusinessObjects.Explore;
+import com.chattyhive.backend.BusinessObjects.Home.Cards.HiveMessageCard;
+import com.chattyhive.backend.BusinessObjects.Home.HomeCard;
+import com.chattyhive.backend.BusinessObjects.Users.ProfileLevel;
+import com.chattyhive.backend.BusinessObjects.Users.User;
+import com.chattyhive.backend.ContentProvider.SynchronousDataPath.AvailableCommands;
+import com.chattyhive.backend.ContentProvider.DataProvider;
+import com.chattyhive.backend.ContentProvider.OSStorageProvider.ChatLocalStorageInterface;
+import com.chattyhive.backend.ContentProvider.OSStorageProvider.HiveLocalStorageInterface;
+import com.chattyhive.backend.ContentProvider.OSStorageProvider.LoginLocalStorageInterface;
+import com.chattyhive.backend.ContentProvider.OSStorageProvider.MessageLocalStorageInterface;
+import com.chattyhive.backend.ContentProvider.OSStorageProvider.UserLocalStorageInterface;
+import com.chattyhive.backend.ContentProvider.formats.COMMON;
+import com.chattyhive.backend.ContentProvider.formats.Format;
+import com.chattyhive.backend.ContentProvider.formats.LOCAL_USER_PROFILE;
+import com.chattyhive.backend.ContentProvider.formats.PROFILE_ID;
+import com.chattyhive.backend.ContentProvider.formats.USERNAME;
+import com.chattyhive.backend.ContentProvider.formats.USER_EMAIL;
+import com.chattyhive.backend.ContentProvider.formats.USER_PROFILE;
+import com.chattyhive.backend.ContentProvider.local.LocalStorageInterface;
+import com.chattyhive.backend.ContentProvider.Server.UserSession;
+import com.chattyhive.backend.Util.Events.CancelableEventArgs;
+import com.chattyhive.backend.Util.Events.CommandCallbackEventArgs;
+import com.chattyhive.backend.Util.Events.ConnectionEventArgs;
+import com.chattyhive.backend.Util.Events.Event;
+import com.chattyhive.backend.Util.Events.EventArgs;
+import com.chattyhive.backend.Util.Events.EventHandler;
+import com.chattyhive.backend.Util.Events.PubSubConnectionEventArgs;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -40,6 +40,7 @@ import java.net.CookieManager;
 import java.net.CookiePolicy;
 import java.net.CookieStore;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.TreeMap;
 
@@ -70,25 +71,27 @@ public class Controller {
         return (Initialized = true);
     }
     public static void Initialize() {
-        Controller.PrivateInitialize();
-        CookieHandler.setDefault(new CookieManager());
+        if (Controller.PrivateInitialize())
+            CookieHandler.setDefault(new CookieManager());
     }
     public static void Initialize(Object... LocalStorage) {
-        PrivateInitialize();
-        setLocalStorage(LocalStorage);
-        DataProvider.Initialize(LocalStorage);
-        CookieHandler.setDefault(new CookieManager());
+        if (Controller.PrivateInitialize()) {
+            setLocalStorage(LocalStorage);
+            DataProvider.Initialize(LocalStorage);
+            CookieHandler.setDefault(new CookieManager());
+        }
     }
     public static void Initialize(CookieStore cookieStore) {
-        PrivateInitialize();
-        CookieHandler.setDefault(new CookieManager(cookieStore, CookiePolicy.ACCEPT_ALL));
+        if (Controller.PrivateInitialize()) {
+            CookieHandler.setDefault(new CookieManager(cookieStore, CookiePolicy.ACCEPT_ALL));
+        }
     }
     public static void Initialize(CookieStore cookieStore, Object... LocalStorage) {
-        PrivateInitialize();
-        setLocalStorage(LocalStorage);
-        DataProvider.Initialize(LocalStorage);
-
-        CookieHandler.setDefault(new CookieManager(cookieStore, CookiePolicy.ACCEPT_ALL));
+        if (Controller.PrivateInitialize()) {
+            setLocalStorage(LocalStorage);
+            DataProvider.Initialize(LocalStorage);
+            CookieHandler.setDefault(new CookieManager(cookieStore, CookiePolicy.ACCEPT_ALL));
+        }
     }
 
     //COMMON STATIC
@@ -322,41 +325,6 @@ public class Controller {
      * @param
      */
 
-
-
-/*    public void onExploreHivesCallback(Object sender,CommandCallbackEventArgs eventArgs) {
-        ArrayList<Format> receivedFormats = eventArgs.getReceivedFormats();
-        ArrayList<Format> sentFormats = eventArgs.getSentFormats();
-
-        Explore.SortType sortType = null;
-
-        for (Format format : sentFormats)
-            if (format instanceof EXPLORE_FILTER) {
-                if (((EXPLORE_FILTER) format).TYPE.equalsIgnoreCase(Explore.SortType.OUTSTANDING.toString()))
-                    sortType = Explore.SortType.OUTSTANDING;
-                else if (((EXPLORE_FILTER) format).TYPE.equalsIgnoreCase(Explore.SortType.USERS.toString()))
-                    sortType = Explore.SortType.USERS;
-                else if (((EXPLORE_FILTER) format).TYPE.equalsIgnoreCase(Explore.SortType.TRENDING.toString()))
-                    sortType = Explore.SortType.TRENDING;
-                else if (((EXPLORE_FILTER) format).TYPE.equalsIgnoreCase(Explore.SortType.CREATION_DATE.toString()))
-                    sortType = Explore.SortType.CREATION_DATE;
-            }
-
-        if (sortType == null) return;
-
-        if ((!this.exploreHives.containsKey(sortType)) || (this.exploreHives.get(sortType) == null))
-            this.exploreHives.put(sortType,new ArrayList<Hive>());
-
-        for (Format format : receivedFormats)
-            if (format instanceof HIVE)
-                this.exploreHives.get(sortType).add(new Hive((HIVE)format));
-            else if (format instanceof HIVE_LIST)
-                for (HIVE hive : ((HIVE_LIST) format).LIST)
-                    this.exploreHives.get(sortType).add(new Hive(hive));
-
-        if (this.ExploreHivesListChange != null)
-            this.ExploreHivesListChange.fire(this.exploreHives,EventArgs.Empty());
-    }*/
 
     public void JoinHive(Hive hive) {
         this.dataProvider.JoinHive(hive);
@@ -601,7 +569,19 @@ public class Controller {
                 if (homeCards != null)
                     homeCards.clear();
                 else
-                    homeCards = new TreeMap<Date, HomeCard>();
+                    homeCards = new TreeMap<Date, HomeCard>(new Comparator<Date>() {
+                        @Override
+                        public int compare(Date o1, Date o2) {
+                            if ((o1 == null) && (o2 != null))
+                                return 1;
+                            else if ((o1 != null) && (o2 == null))
+                                return -1;
+                            else if (o1 != null) //&& (o2 != null)) <- Which is always true
+                                return o2.compareTo(o1);
+                            else
+                                return 0;
+                        }
+                    });
 
                 int hiveCount = Hive.getHiveCount();
                 Hive hive;

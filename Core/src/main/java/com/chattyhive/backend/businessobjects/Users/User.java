@@ -1,34 +1,25 @@
-package com.chattyhive.backend.businessobjects.Users;
+package com.chattyhive.backend.BusinessObjects.Users;
 
 import com.chattyhive.backend.Controller;
-import com.chattyhive.backend.businessobjects.Chats.Hive;
-import com.chattyhive.backend.contentprovider.AvailableCommands;
-import com.chattyhive.backend.contentprovider.DataProvider;
-import com.chattyhive.backend.contentprovider.OSStorageProvider.UserLocalStorageInterface;
-import com.chattyhive.backend.contentprovider.formats.BASIC_PRIVATE_PROFILE;
-import com.chattyhive.backend.contentprovider.formats.BASIC_PUBLIC_PROFILE;
-import com.chattyhive.backend.contentprovider.formats.COMMON;
-import com.chattyhive.backend.contentprovider.formats.Format;
-import com.chattyhive.backend.contentprovider.formats.HIVE_ID;
-import com.chattyhive.backend.contentprovider.formats.LOCAL_USER_PROFILE;
-import com.chattyhive.backend.contentprovider.formats.LOGIN;
-import com.chattyhive.backend.contentprovider.formats.PRIVATE_PROFILE;
-import com.chattyhive.backend.contentprovider.formats.PROFILE_ID;
-import com.chattyhive.backend.contentprovider.formats.PUBLIC_PROFILE;
-import com.chattyhive.backend.contentprovider.formats.USERNAME;
-import com.chattyhive.backend.contentprovider.formats.USER_EMAIL;
-import com.chattyhive.backend.contentprovider.formats.USER_PROFILE;
-import com.chattyhive.backend.util.events.CommandCallbackEventArgs;
-import com.chattyhive.backend.util.events.Event;
-import com.chattyhive.backend.util.events.EventArgs;
-import com.chattyhive.backend.util.events.EventHandler;
-import com.chattyhive.backend.util.events.FormatReceivedEventArgs;
+import com.chattyhive.backend.BusinessObjects.Chats.Hive;
+import com.chattyhive.backend.ContentProvider.SynchronousDataPath.AvailableCommands;
+import com.chattyhive.backend.ContentProvider.formats.BASIC_PRIVATE_PROFILE;
+import com.chattyhive.backend.ContentProvider.formats.BASIC_PUBLIC_PROFILE;
+import com.chattyhive.backend.ContentProvider.formats.Format;
+import com.chattyhive.backend.ContentProvider.formats.HIVE_ID;
+import com.chattyhive.backend.ContentProvider.formats.LOCAL_USER_PROFILE;
+import com.chattyhive.backend.ContentProvider.formats.LOGIN;
+import com.chattyhive.backend.ContentProvider.formats.PRIVATE_PROFILE;
+import com.chattyhive.backend.ContentProvider.formats.PROFILE_ID;
+import com.chattyhive.backend.ContentProvider.formats.PUBLIC_PROFILE;
+import com.chattyhive.backend.ContentProvider.formats.USER_PROFILE;
+import com.chattyhive.backend.Util.Events.CommandCallbackEventArgs;
+import com.chattyhive.backend.Util.Events.Event;
+import com.chattyhive.backend.Util.Events.EventArgs;
+import com.chattyhive.backend.Util.Events.EventHandler;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.TreeMap;
 
 /**
  * Created by Jonathan on 11/12/13.
@@ -153,6 +144,8 @@ public class User {
     }
     public void EditProfile(EventHandler<CommandCallbackEventArgs> Callback,User newUser) {
         // TODO: compare newUser with this and send only fields which differ.
+        this.getUserPrivateProfile().setStatusMessage(newUser.getUserPrivateProfile().getStatusMessage());
+        this.getUserPublicProfile().setStatusMessage(newUser.getUserPublicProfile().getStatusMessage());
         this.controller.getDataProvider().RunCommand(AvailableCommands.UpdateProfile,Callback,newUser.toFormat(new LOCAL_USER_PROFILE()));
     }
 
@@ -163,12 +156,18 @@ public class User {
         profile_id.USER_ID = this.userID;
 
         if (profileType == ProfileType.PUBLIC) {
-            if ((this.userPublicProfile != null) && (this.userPublicProfile.getLoadedProfileLevel().ordinal() >= profileLevel.ordinal()))
+            if ((this.userPublicProfile != null) && (this.userPublicProfile.getLoadedProfileLevel().ordinal() >= profileLevel.ordinal())) {
+                if (this.UserLoaded != null)
+                    this.UserLoaded.fire(this,EventArgs.Empty());
                 return;
+            }
             profile_id.PROFILE_TYPE = "_PUBLIC";
         } else if (profileType == ProfileType.PRIVATE) {
-            if ((this.userPrivateProfile != null) && (this.userPrivateProfile.getLoadedProfileLevel().ordinal() >= profileLevel.ordinal()))
+            if ((this.userPrivateProfile != null) && (this.userPrivateProfile.getLoadedProfileLevel().ordinal() >= profileLevel.ordinal())) {
+                if (this.UserLoaded != null)
+                    this.UserLoaded.fire(this,EventArgs.Empty());
                 return;
+            }
             profile_id.PROFILE_TYPE = "_PRIVATE";
         } else return;
 
@@ -193,8 +192,16 @@ public class User {
 
         ProfileLevel profileLevel = (profile_id.PROFILE_TYPE.startsWith("BASIC_"))?ProfileLevel.Basic:((profile_id.PROFILE_TYPE.startsWith("EXTENDED_"))?ProfileLevel.Extended:((profile_id.PROFILE_TYPE.startsWith("COMPLETE_"))?ProfileLevel.Complete:ProfileLevel.None));
 
-        if ((profile_id.PROFILE_TYPE.endsWith("_PUBLIC")) && (this.userPublicProfile != null) && (this.userPublicProfile.getLoadedProfileLevel().ordinal() >= profileLevel.ordinal())) return;
-        else if ((profile_id.PROFILE_TYPE.endsWith("_PRIVATE")) && (this.userPrivateProfile != null) && (this.userPrivateProfile.getLoadedProfileLevel().ordinal() >= profileLevel.ordinal())) return;
+        if ((profile_id.PROFILE_TYPE.endsWith("_PUBLIC")) && (this.userPublicProfile != null) && (this.userPublicProfile.getLoadedProfileLevel().ordinal() >= profileLevel.ordinal()))  {
+            if (this.UserLoaded != null)
+                this.UserLoaded.fire(this,EventArgs.Empty());
+            return;
+        }
+        else if ((profile_id.PROFILE_TYPE.endsWith("_PRIVATE")) && (this.userPrivateProfile != null) && (this.userPrivateProfile.getLoadedProfileLevel().ordinal() >= profileLevel.ordinal()))  {
+            if (this.UserLoaded != null)
+                this.UserLoaded.fire(this,EventArgs.Empty());
+            return;
+        }
 
         this.loading = true;
         this.controller.getDataProvider().RunCommand(AvailableCommands.UserProfile,new EventHandler<CommandCallbackEventArgs>(this,"loadCallback",CommandCallbackEventArgs.class),profile_id);

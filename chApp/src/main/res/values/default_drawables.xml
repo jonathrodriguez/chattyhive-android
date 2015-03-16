@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <drawable name="default_hive_image">@drawable/explore_new_hive_hive_without_picture</drawable>
+    <drawable name="default_profile_image_male">@drawable/other_profile_no_profile_picture_male</drawable>
+    <drawable name="default_profile_image_female">@drawable/other_profile_no_profile_picture_female</drawable>
+</resources>

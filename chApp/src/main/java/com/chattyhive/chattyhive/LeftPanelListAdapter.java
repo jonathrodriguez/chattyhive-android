@@ -19,16 +19,16 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.chattyhive.backend.businessobjects.Chats.Chat;
-import com.chattyhive.backend.businessobjects.Chats.Hive;
-import com.chattyhive.backend.businessobjects.Chats.Messages.Message;
-import com.chattyhive.backend.businessobjects.Image;
-import com.chattyhive.backend.businessobjects.Users.User;
-import com.chattyhive.backend.util.events.Event;
-import com.chattyhive.backend.util.events.EventArgs;
-import com.chattyhive.backend.util.events.EventHandler;
-import com.chattyhive.backend.util.formatters.DateFormatter;
-import com.chattyhive.backend.util.formatters.TimestampFormatter;
+import com.chattyhive.backend.BusinessObjects.Chats.Chat;
+import com.chattyhive.backend.BusinessObjects.Chats.Hive;
+import com.chattyhive.backend.BusinessObjects.Chats.Messages.Message;
+import com.chattyhive.backend.BusinessObjects.Image;
+import com.chattyhive.backend.BusinessObjects.Users.User;
+import com.chattyhive.backend.Util.Events.Event;
+import com.chattyhive.backend.Util.Events.EventArgs;
+import com.chattyhive.backend.Util.Events.EventHandler;
+import com.chattyhive.backend.Util.Formatters.DateFormatter;
+import com.chattyhive.backend.Util.Formatters.TimestampFormatter;
 import com.chattyhive.chattyhive.framework.Util.StaticMethods;
 import com.chattyhive.chattyhive.util.Category;
 
@@ -38,7 +38,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.TreeMap;
 import java.util.TreeSet;
 
 /**
@@ -76,57 +75,11 @@ public class LeftPanelListAdapter extends BaseAdapter {
                 chatList = null;
                 if (visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Hives)) {
                     while (hiveList == null)
-                        try { hiveList = new ArrayList<Hive>(Hive.getHives()); } catch (Exception e) { hiveList = null; }
+                        try { CaptureHives(); } catch (Exception e) { hiveList = null; }
                 } else if (visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Chats)) {
                     while (chatList == null)
                         try {
-                            TreeSet<Chat> list = new TreeSet<Chat>(new Comparator<Chat>() {
-                                @Override
-                                public int compare(Chat lhs, Chat rhs) { // lhs < rhs => return < 0 | lhs = rhs => return = 0 | lhs > rhs => return > 0
-                                    int res = 0;
-                                    if ((lhs == null) && (rhs != null))
-                                        res = 1;
-                                    else if ((lhs != null) && (rhs == null))
-                                        res = -1;
-                                    else if ((lhs == null) && (rhs == null))
-                                        res = 0;
-                                    else {
-                                        Date lhsDate = null;
-                                        Date rhsDate = null;
-
-                                        if ((lhs.getConversation() != null) && (lhs.getConversation().getLastMessage() != null))
-                                            lhsDate = lhs.getConversation().getLastMessage().getOrdinationTimeStamp();
-
-                                        if ((rhs.getConversation() != null) && (rhs.getConversation().getLastMessage() != null))
-                                            rhsDate = rhs.getConversation().getLastMessage().getOrdinationTimeStamp();
-
-                                        if ((lhsDate == null) && (rhsDate != null))
-                                            res = 1;
-                                        else if ((lhsDate != null) && (rhsDate == null))
-                                            res = -1;
-                                        else if ((lhsDate != null) && (rhsDate != null))
-                                            res = rhsDate.compareTo(lhsDate);
-                                        else {
-                                            lhsDate = lhs.getCreationDate();
-                                            rhsDate = rhs.getCreationDate();
-
-                                            if ((lhsDate == null) && (rhsDate != null))
-                                                res = 1;
-                                            else if ((lhsDate != null) && (rhsDate == null))
-                                                res = -1;
-                                            else if ((lhsDate != null) && (rhsDate != null))
-                                                res = rhsDate.compareTo(lhsDate);
-                                            else {
-                                                res = 0;
-                                            }
-                                        }
-                                    }
-
-                                    return res;
-                                }
-                            });
-                            list.addAll(Chat.getChats());
-                            chatList = new ArrayList<Chat>(list);
+                            CaptureChats();
                         } catch (Exception e) { chatList = null; }
                 } else if (visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Mates)) {
                     hiveList = null;
@@ -140,6 +93,112 @@ public class LeftPanelListAdapter extends BaseAdapter {
         });
     }
 
+    private void CaptureChats() {
+        TreeSet<Chat> list = new TreeSet<Chat>(new Comparator<Chat>() {
+            @Override
+            public int compare(Chat lhs, Chat rhs) { // lhs < rhs => return < 0 | lhs = rhs => return = 0 | lhs > rhs => return > 0
+                int res = 0;
+                if ((lhs == null) && (rhs != null))
+                    res = 1;
+                else if ((lhs != null) && (rhs == null))
+                    res = -1;
+                else if (lhs == null) //&& (rhs == null)) <- Which is always true
+                    res = 0;
+                else {
+                    Date lhsDate = null;
+                    Date rhsDate = null;
+
+                    if ((lhs.getConversation() != null) && (lhs.getConversation().getLastMessage() != null))
+                        lhsDate = lhs.getConversation().getLastMessage().getOrdinationTimeStamp();
+
+                    if ((rhs.getConversation() != null) && (rhs.getConversation().getLastMessage() != null))
+                        rhsDate = rhs.getConversation().getLastMessage().getOrdinationTimeStamp();
+
+                    if ((lhsDate == null) && (rhsDate != null))
+                        res = 1;
+                    else if ((lhsDate != null) && (rhsDate == null))
+                        res = -1;
+                    else if (lhsDate != null) //&& (rhsDate != null)) <- Which is always true
+                        res = rhsDate.compareTo(lhsDate);
+                    else {
+                        lhsDate = lhs.getCreationDate();
+                        rhsDate = rhs.getCreationDate();
+
+                        if ((lhsDate == null) && (rhsDate != null))
+                            res = 1;
+                        else if ((lhsDate != null) && (rhsDate == null))
+                            res = -1;
+                        else if (lhsDate != null) //&& (rhsDate != null)) <- Which is always true
+                            res = rhsDate.compareTo(lhsDate);
+                        else {
+                            res = 0;
+                        }
+                    }
+                }
+
+                return res;
+            }
+        });
+        list.addAll(Chat.getChats());
+        chatList = new ArrayList<Chat>(list);
+    }
+
+    private void CaptureHives() {
+        TreeSet<Hive> list = new TreeSet<Hive>(new Comparator<Hive>() {
+            @Override
+            public int compare(Hive lhs, Hive rhs) { // lhs < rhs => return < 0 | lhs = rhs => return = 0 | lhs > rhs => return > 0
+                int res = 0;
+                if ((lhs == null) && (rhs != null))
+                    res = 1;
+                else if ((lhs != null) && (rhs == null))
+                    res = -1;
+                else if (lhs == null) //&& (rhs == null)) <- Which is always true
+                    res = 0;
+                else {
+                    Date lhsDate = null;
+                    Date rhsDate = null;
+
+                    //TODO: Change comparison method. Instead of creation date use lastLocalUserActivityDate. Find a way to determine this value.
+
+                    /*if ((lhs.getPublicChat().getConversation() != null) && (lhs.getPublicChat().getConversation().getCount() > 0) && (lhs.getPublicChat().getConversation().getLastMessage() != null))
+                        lhsDate = lhs.getPublicChat().getConversation().getLastMessage().getOrdinationTimeStamp();
+                    else if (lhs.getCreationDate() != null)*/
+                        lhsDate = lhs.getCreationDate();
+
+                   /* if ((rhs.getPublicChat().getConversation() != null) && (rhs.getPublicChat().getConversation().getCount() > 0) && (rhs.getPublicChat().getConversation().getLastMessage() != null))
+                        rhsDate = rhs.getPublicChat().getConversation().getLastMessage().getOrdinationTimeStamp();
+                    else if (rhs.getCreationDate() != null)*/
+                        rhsDate = rhs.getCreationDate();
+
+                    if ((lhsDate == null) && (rhsDate != null))
+                        res = 1;
+                    else if ((lhsDate != null) && (rhsDate == null))
+                        res = -1;
+                    else if (lhsDate != null) //&& (rhsDate != null)) <- Which is always true
+                        res = rhsDate.compareTo(lhsDate);
+                    else {
+                        lhsDate = lhs.getCreationDate();
+                        rhsDate = rhs.getCreationDate();
+
+                        if ((lhsDate == null) && (rhsDate != null))
+                            res = 1;
+                        else if ((lhsDate != null) && (rhsDate == null))
+                            res = -1;
+                        else if ((lhsDate != null) && (rhsDate != null))
+                            res = rhsDate.compareTo(lhsDate);
+                        else {
+                            res = 0;
+                        }
+                    }
+                }
+
+                return res;
+            }
+        });
+        list.addAll(Hive.getHives());
+        hiveList = new ArrayList<Hive>(list);
+    }
+
     public LeftPanelListAdapter (Context activityContext) {
         super();
         this.context = activityContext;
@@ -149,11 +208,11 @@ public class LeftPanelListAdapter extends BaseAdapter {
         //this.listView.setAdapter(this);
 
         if (visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Hives)) {
-            hiveList = new ArrayList<Hive>(Hive.getHives());
+            CaptureHives();
             chatList = null;
         } else if (visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Chats)) {
             hiveList = null;
-            chatList = new ArrayList<Chat>(Chat.getChats());
+            CaptureChats();
         } else if (visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Mates)) {
             hiveList = null;
             chatList = null;
@@ -275,13 +334,14 @@ public class LeftPanelListAdapter extends BaseAdapter {
                 ((HiveViewHolder) holder).hiveCategoryImage.setImageResource(R.drawable.registro_important_note_orange);
                 ((HiveViewHolder) holder).hiveCategoryName.setText("Unknown category");
             }
-            ((HiveViewHolder)holder).hiveSubscribedUsers.setText(String.valueOf(((Hive) item).getSubscribedUsers()));
+            ((HiveViewHolder)holder).hiveSubscribedUsers.setText(String.valueOf(((Hive) item).getSubscribedUsersCount()));
             ((HiveViewHolder)holder).hiveItem.setTag(R.id.BO_Hive,item);
-            ((HiveViewHolder)holder).hiveImage.setImageResource(R.drawable.pestanha_chats_public_chat);
-            try {
+            if (((Hive) item).getHiveImage() == null)
+                ((HiveViewHolder)holder).hiveImage.setImageResource(R.drawable.default_hive_image);
+            else {
                 ((Hive) item).getHiveImage().OnImageLoaded.add(new EventHandler<EventArgs>(holder, "loadHiveImage", EventArgs.class));
                 ((Hive) item).getHiveImage().loadImage(Image.ImageSize.medium, 0);
-            } catch (Exception e) { }
+            }
         } else if (type == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Chats)) {
             String GroupName = "";
             SpannableString LastMessage = new SpannableString("");
@@ -309,6 +369,8 @@ public class LeftPanelListAdapter extends BaseAdapter {
             }
             if (((Chat)item).getChatKind() == null) return null;
 
+            ((ChatViewHolder)holder).chatHiveImage.setImageResource(R.drawable.default_hive_image);
+
             switch (((Chat)item).getChatKind()) {
                 case PUBLIC_SINGLE:
                     ((ChatViewHolder)holder).chatHiveImage.setVisibility(View.VISIBLE);
@@ -317,9 +379,11 @@ public class LeftPanelListAdapter extends BaseAdapter {
                     try {
                         ((Chat) item).getParentHive().getHiveImage().OnImageLoaded.add(new EventHandler<EventArgs>(holder, "loadHiveImage", EventArgs.class));
                         ((Chat) item).getParentHive().getHiveImage().loadImage(Image.ImageSize.small, 0);
+                        ((ChatViewHolder)holder).hiveName = context.getResources().getString(R.string.hivename_identifier_character).concat(((Chat) item).getParentHive().getName());
                     } catch (Exception e) { }
                     for (User user : ((Chat) item).getMembers())
                         if (!user.isMe()) {
+                            ((ChatViewHolder)holder).user = user;
                             if ((user.getUserPublicProfile() != null) && (user.getUserPublicProfile().getShowingName() != null)) {
                                 GroupName = context.getResources().getString(R.string.public_username_identifier_character).concat(user.getUserPublicProfile().getShowingName());
                                 try {
@@ -344,6 +408,12 @@ public class LeftPanelListAdapter extends BaseAdapter {
                     }
                     ((ChatViewHolder)holder).chatLastMessageTimestamp.setVisibility(View.VISIBLE);
                     ((ChatViewHolder)holder).chatPendingMessagesNumber.setVisibility(View.INVISIBLE);
+
+
+                    ((ChatViewHolder)holder).profileType = Profile.ProfileType.Public;
+                    ((ChatViewHolder)holder).chatImage.setOnClickListener(((ChatViewHolder)holder).thumbnailClickListener);
+                    ((ChatViewHolder)holder).chatImage.setClickable(true);
+
                     break;
                 case PUBLIC_GROUP:
                     ((ChatViewHolder)holder).chatHiveImage.setVisibility(View.VISIBLE);
@@ -378,11 +448,14 @@ public class LeftPanelListAdapter extends BaseAdapter {
                     }
                     ((ChatViewHolder)holder).chatLastMessageTimestamp.setVisibility(View.VISIBLE);
                     ((ChatViewHolder)holder).chatPendingMessagesNumber.setVisibility(View.INVISIBLE);
+
+                    ((ChatViewHolder)holder).chatImage.setOnClickListener(null);
+                    ((ChatViewHolder)holder).chatImage.setClickable(false);
                     break;
                 case HIVE:
                     ((ChatViewHolder)holder).chatHiveImage.setVisibility(View.GONE);
                     ((ChatViewHolder)holder).chatTypeImage.setImageResource(R.drawable.pestanha_chats_public_chat);
-                    ((ChatViewHolder)holder).chatImage.setImageResource(R.drawable.pestanha_chats_public_chat);
+                    ((ChatViewHolder)holder).chatImage.setImageResource(R.drawable.default_hive_image);
                     try {
                         ((Chat)item).getParentHive().getHiveImage().OnImageLoaded.add(new EventHandler<EventArgs>(holder,"loadChatImage",EventArgs.class));
                         ((Chat)item).getParentHive().getHiveImage().loadImage(Image.ImageSize.medium,0);
@@ -396,19 +469,27 @@ public class LeftPanelListAdapter extends BaseAdapter {
                     ((ChatViewHolder)holder).chatPendingMessagesNumber.setVisibility(View.INVISIBLE);
                     ((ChatViewHolder)holder).chatImage.setAdjustViewBounds(true);
                     ((ChatViewHolder)holder).chatImage.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+
+                    ((ChatViewHolder)holder).chatImage.setOnClickListener(null);
+                    ((ChatViewHolder)holder).chatImage.setClickable(false);
                     break;
                 case PRIVATE_SINGLE:
                     ((ChatViewHolder)holder).chatHiveImage.setVisibility(View.GONE);
                     ((ChatViewHolder)holder).chatTypeImage.setImageResource(R.drawable.pestanha_chats_user);
-                    ((ChatViewHolder)holder).chatImage.setImageResource(R.drawable.chats_users_online);
+                    ((ChatViewHolder)holder).chatImage.setImageResource(R.drawable.default_profile_image_male);
+
                     for (User user : ((Chat) item).getMembers())
                         if (!user.isMe()) {
+                            ((ChatViewHolder)holder).user = user;
                             if ((user.getUserPrivateProfile() != null) && (user.getUserPrivateProfile().getShowingName() != null)) {
                                 GroupName = user.getUserPrivateProfile().getShowingName();
-                                try {
+                                if (user.getUserPrivateProfile().getProfileImage() == null) {
+                                    if ((user.getUserPrivateProfile().getSex() != null) && (user.getUserPrivateProfile().getSex().equalsIgnoreCase("female")))
+                                        ((ChatViewHolder)holder).chatImage.setImageResource(R.drawable.default_profile_image_female);
+                                } else {
                                     user.getUserPrivateProfile().getProfileImage().OnImageLoaded.add(new EventHandler<EventArgs>(holder,"loadChatImage",EventArgs.class));
                                     user.getUserPrivateProfile().getProfileImage().loadImage(Image.ImageSize.medium,0);
-                                } catch (Exception e) { e.printStackTrace(); }
+                                }
                             } else
                                 user.UserLoaded.add(new EventHandler<EventArgs>(this, "OnAddItem", EventArgs.class));
                         }
@@ -426,6 +507,12 @@ public class LeftPanelListAdapter extends BaseAdapter {
                     }
                     ((ChatViewHolder)holder).chatLastMessageTimestamp.setVisibility(View.VISIBLE);
                     ((ChatViewHolder)holder).chatPendingMessagesNumber.setVisibility(View.INVISIBLE);
+
+                    ((ChatViewHolder)holder).profileType = Profile.ProfileType.Private;
+                    ((ChatViewHolder)holder).hiveName = null;
+
+                    ((ChatViewHolder)holder).chatImage.setOnClickListener(((ChatViewHolder)holder).thumbnailClickListener);
+                    ((ChatViewHolder)holder).chatImage.setClickable(true);
                     break;
                 case PRIVATE_GROUP:
                     ((ChatViewHolder)holder).chatHiveImage.setVisibility(View.GONE);
@@ -455,6 +542,9 @@ public class LeftPanelListAdapter extends BaseAdapter {
                     }
                     ((ChatViewHolder)holder).chatLastMessageTimestamp.setVisibility(View.VISIBLE);
                     ((ChatViewHolder)holder).chatPendingMessagesNumber.setVisibility(View.INVISIBLE);
+
+                    ((ChatViewHolder)holder).chatImage.setOnClickListener(null);
+                    ((ChatViewHolder)holder).chatImage.setClickable(false);
                     break;
                 default:
                     return null;
@@ -470,6 +560,11 @@ public class LeftPanelListAdapter extends BaseAdapter {
         }*/
 
         return convertView;
+    }
+
+    private void openProfile(User user,Profile.ProfileType profileType, String hiveName) {
+        if (user != null)
+            ((Main)context).OpenWindow(new Profile(context,user,profileType, hiveName));
     }
 
     private abstract class ViewHolder{}
@@ -518,6 +613,18 @@ public class LeftPanelListAdapter extends BaseAdapter {
         public ImageView chatTypeImage;
         public TextView chatLastMessageTimestamp;
         public TextView chatPendingMessagesNumber;
+
+        public User user;
+        public String hiveName;
+        public Profile.ProfileType profileType;
+
+        public View.OnClickListener thumbnailClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if ((user != null) && (profileType != null))
+                    openProfile(user,profileType,hiveName);
+            }
+        };
 
         public void loadHiveImage(Object sender,EventArgs eventArgs) {
             if (!(sender instanceof Image)) return;

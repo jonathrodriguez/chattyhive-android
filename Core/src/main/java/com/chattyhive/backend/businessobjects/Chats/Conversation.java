@@ -1,22 +1,22 @@
-package com.chattyhive.backend.businessobjects.Chats;
+package com.chattyhive.backend.BusinessObjects.Chats;
 
 import com.chattyhive.backend.Controller;
 import com.chattyhive.backend.StaticParameters;
-import com.chattyhive.backend.businessobjects.Chats.Messages.Message;
-import com.chattyhive.backend.contentprovider.AvailableCommands;
-import com.chattyhive.backend.contentprovider.DataProvider;
-import com.chattyhive.backend.contentprovider.OSStorageProvider.MessageLocalStorageInterface;
-import com.chattyhive.backend.contentprovider.formats.CHAT_ID;
-import com.chattyhive.backend.contentprovider.formats.Format;
-import com.chattyhive.backend.contentprovider.formats.MESSAGE;
-import com.chattyhive.backend.contentprovider.formats.MESSAGE_INTERVAL;
-import com.chattyhive.backend.contentprovider.formats.MESSAGE_LIST;
-import com.chattyhive.backend.util.events.ChannelEventArgs;
-import com.chattyhive.backend.util.events.Event;
-import com.chattyhive.backend.util.events.EventArgs;
-import com.chattyhive.backend.util.events.EventHandler;
-import com.chattyhive.backend.util.events.FormatReceivedEventArgs;
-import com.chattyhive.backend.util.formatters.DateFormatter;
+import com.chattyhive.backend.BusinessObjects.Chats.Messages.Message;
+import com.chattyhive.backend.ContentProvider.SynchronousDataPath.AvailableCommands;
+import com.chattyhive.backend.ContentProvider.DataProvider;
+import com.chattyhive.backend.ContentProvider.OSStorageProvider.MessageLocalStorageInterface;
+import com.chattyhive.backend.ContentProvider.formats.CHAT_ID;
+import com.chattyhive.backend.ContentProvider.formats.Format;
+import com.chattyhive.backend.ContentProvider.formats.MESSAGE;
+import com.chattyhive.backend.ContentProvider.formats.MESSAGE_INTERVAL;
+import com.chattyhive.backend.ContentProvider.formats.MESSAGE_LIST;
+import com.chattyhive.backend.Util.Events.ChannelEventArgs;
+import com.chattyhive.backend.Util.Events.Event;
+import com.chattyhive.backend.Util.Events.EventArgs;
+import com.chattyhive.backend.Util.Events.EventHandler;
+import com.chattyhive.backend.Util.Events.FormatReceivedEventArgs;
+import com.chattyhive.backend.Util.Formatters.DateFormatter;
 
 import java.util.ArrayList;
 import java.util.SortedSet;
@@ -51,7 +51,8 @@ public class Conversation { //TODO: implements SortedSet<Message>
                 if (format instanceof MESSAGE) {
                     Chat.getChat(((MESSAGE) format).CHANNEL_UNICODE).getConversation().addMessage(new Message(format));
                 } else if (format instanceof MESSAGE_LIST) {
-                    Conversation.onFormatReceived(sender, new FormatReceivedEventArgs(((MESSAGE_LIST) format).MESSAGES));
+                    if (((MESSAGE_LIST) format).NUMBER_MESSAGES > 0)
+                        Conversation.onFormatReceived(sender, new FormatReceivedEventArgs(((MESSAGE_LIST) format).MESSAGES));
                 }
             }
         }
@@ -252,8 +253,11 @@ public class Conversation { //TODO: implements SortedSet<Message>
         if ((messageListModified) && (this.MessageListModifiedEvent != null))
             this.MessageListModifiedEvent.fire(this, EventArgs.Empty());
 
-        if ((messageListModified) && (this.getParent().chatKind == ChatKind.HIVE))
+        if ((messageListModified) && (this.getParent().chatKind == ChatKind.HIVE) && (Hive.HiveListChanged != null))
             Hive.HiveListChanged.fire(null,EventArgs.Empty());
+
+        if ((messageListModified) && (Chat.ChatListChanged != null))
+            Chat.ChatListChanged.fire(null,EventArgs.Empty());
 
         if ((message.getId() != null) && (!message.getId().isEmpty())) {
             if (StaticParameters.MaxLocalMessages != 0) {

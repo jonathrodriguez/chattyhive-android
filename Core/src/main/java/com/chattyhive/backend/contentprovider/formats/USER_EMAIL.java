@@ -1,14 +1,11 @@
-package com.chattyhive.backend.contentprovider.formats;
+package com.chattyhive.backend.ContentProvider.formats;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
 
-  
 
- /*
+/*
   * Automatically generated code by ChattyHive API Manager Code Generator on 28/09/2014.
   * Be careful to not modify this file since your changes will not be included in future
   * versions of this file.

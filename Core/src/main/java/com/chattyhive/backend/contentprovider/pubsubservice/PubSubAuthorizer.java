@@ -1,4 +1,4 @@
-package com.chattyhive.backend.contentprovider.pubsubservice;
+package com.chattyhive.backend.ContentProvider.pubsubservice;
 
 /**
  * Created by Jonathan Rodriguez on 10/06/2014.

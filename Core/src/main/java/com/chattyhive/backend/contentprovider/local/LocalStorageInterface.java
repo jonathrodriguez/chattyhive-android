@@ -1,9 +1,9 @@
-package com.chattyhive.backend.contentprovider.local;
+package com.chattyhive.backend.ContentProvider.local;
 
-import com.chattyhive.backend.contentprovider.AvailableCommands;
-import com.chattyhive.backend.contentprovider.formats.Format;
-import com.chattyhive.backend.util.events.CommandCallbackEventArgs;
-import com.chattyhive.backend.util.events.EventHandler;
+import com.chattyhive.backend.ContentProvider.SynchronousDataPath.AvailableCommands;
+import com.chattyhive.backend.ContentProvider.formats.Format;
+import com.chattyhive.backend.Util.Events.CommandCallbackEventArgs;
+import com.chattyhive.backend.Util.Events.EventHandler;
 
 import java.util.Collection;
 

@@ -1,6 +1,6 @@
-package com.chattyhive.backend.util.events;
+package com.chattyhive.backend.Util.Events;
 
-import com.chattyhive.backend.contentprovider.pubsubservice.ConnectionStateChange;
+import com.chattyhive.backend.ContentProvider.pubsubservice.ConnectionStateChange;
 
 /**
  * Created by Jonathan on 30/12/13.

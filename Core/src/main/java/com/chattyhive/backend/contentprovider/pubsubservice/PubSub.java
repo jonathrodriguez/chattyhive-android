@@ -1,13 +1,13 @@
-package com.chattyhive.backend.contentprovider.pubsubservice;
+package com.chattyhive.backend.ContentProvider.pubsubservice;
 
 import com.chattyhive.backend.StaticParameters;
-import com.chattyhive.backend.contentprovider.DataProvider;
-import com.chattyhive.backend.util.events.Event;
-import com.chattyhive.backend.util.events.EventArgs;
-import com.chattyhive.backend.util.events.EventHandler;
-import com.chattyhive.backend.util.events.PubSubChannelEventArgs;
-import com.chattyhive.backend.util.events.PubSubConnectionEventArgs;
-import com.chattyhive.backend.util.formatters.TimestampFormatter;
+import com.chattyhive.backend.ContentProvider.DataProvider;
+import com.chattyhive.backend.Util.Events.Event;
+import com.chattyhive.backend.Util.Events.EventArgs;
+import com.chattyhive.backend.Util.Events.EventHandler;
+import com.chattyhive.backend.Util.Events.PubSubChannelEventArgs;
+import com.chattyhive.backend.Util.Events.PubSubConnectionEventArgs;
+import com.chattyhive.backend.Util.Formatters.TimestampFormatter;
 import com.pusher.client.Pusher;
 import com.pusher.client.PusherOptions;
 import com.pusher.client.channel.Channel;

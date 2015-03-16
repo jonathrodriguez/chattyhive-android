@@ -1,7 +1,7 @@
-package com.chattyhive.backend.util.events;
+package com.chattyhive.backend.Util.Events;
 
-import com.chattyhive.backend.contentprovider.AvailableCommands;
-import com.chattyhive.backend.contentprovider.formats.Format;
+import com.chattyhive.backend.ContentProvider.SynchronousDataPath.AvailableCommands;
+import com.chattyhive.backend.ContentProvider.formats.Format;
 
 import java.util.ArrayList;
 import java.util.Collection;

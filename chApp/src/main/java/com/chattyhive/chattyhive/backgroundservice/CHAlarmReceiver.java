@@ -5,10 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.chattyhive.backend.contentprovider.AvailableCommands;
-import com.chattyhive.backend.contentprovider.DataProvider;
-import com.chattyhive.backend.contentprovider.formats.Format;
-import com.chattyhive.backend.contentprovider.server.ServerCommand;
+import com.chattyhive.backend.ContentProvider.SynchronousDataPath.AvailableCommands;
+import com.chattyhive.backend.ContentProvider.DataProvider;
+import com.chattyhive.backend.ContentProvider.formats.Format;
 
 /**
  * Created by Jonathan on 29/07/2014.

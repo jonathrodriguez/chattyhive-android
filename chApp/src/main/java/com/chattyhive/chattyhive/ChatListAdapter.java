@@ -13,14 +13,14 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.chattyhive.backend.businessobjects.Chats.ChatKind;
-import com.chattyhive.backend.businessobjects.Chats.Conversation;
-import com.chattyhive.backend.businessobjects.Chats.Messages.Message;
-import com.chattyhive.backend.businessobjects.Image;
-import com.chattyhive.backend.util.events.EventArgs;
-import com.chattyhive.backend.util.events.EventHandler;
-import com.chattyhive.backend.util.formatters.DateFormatter;
-import com.chattyhive.backend.util.formatters.TimestampFormatter;
+import com.chattyhive.backend.BusinessObjects.Chats.ChatKind;
+import com.chattyhive.backend.BusinessObjects.Chats.Conversation;
+import com.chattyhive.backend.BusinessObjects.Chats.Messages.Message;
+import com.chattyhive.backend.BusinessObjects.Image;
+import com.chattyhive.backend.Util.Events.EventArgs;
+import com.chattyhive.backend.Util.Events.EventHandler;
+import com.chattyhive.backend.Util.Formatters.DateFormatter;
+import com.chattyhive.backend.Util.Formatters.TimestampFormatter;
 import com.chattyhive.chattyhive.framework.Util.StaticMethods;
 
 import java.io.IOException;
@@ -136,6 +136,7 @@ public class ChatListAdapter extends BaseAdapter {
                     if (isMessage) {
                         holder.username = (TextView) convertView.findViewById(R.id.main_panel_chat_username);
                         holder.messageText = (TextView) convertView.findViewById(R.id.main_panel_chat_messageText);
+                        holder.messageImage = (ImageView) convertView.findViewById(R.id.main_panel_chat_image);
                         holder.avatarThumbnail = (ImageView) convertView.findViewById(R.id.main_panel_chat_avatarThumbnail);
                         holder.timeStamp = (TextView) convertView.findViewById(R.id.main_panel_chat_timeStamp);
                         holder.chatItem = convertView.findViewById(R.id.main_panel_chat_item);
@@ -162,6 +163,7 @@ public class ChatListAdapter extends BaseAdapter {
                     }
                     if (isMessage) {
                         holder.messageText = (TextView) convertView.findViewById(R.id.main_panel_chat_single_message_messageText);
+                        holder.messageImage = (ImageView) convertView.findViewById(R.id.main_panel_chat_single_message_image);
                         holder.timeStamp = (TextView) convertView.findViewById(R.id.main_panel_chat_single_message_timeStamp);
                         holder.chatItem = convertView.findViewById(R.id.main_panel_chat_item);
                         holder.tickImage = (ImageView)convertView.findViewById(R.id.main_panel_chat_single_message_confirm_icon);
@@ -197,7 +199,20 @@ public class ChatListAdapter extends BaseAdapter {
                 }
             }
 
+            holder.messageImage.setVisibility(View.GONE);
+            holder.messageText.setVisibility(View.VISIBLE);
             holder.messageText.setText(message.getMessageContent().getContent());
+
+            if ((message.getMessageContent().getContentType() != null) && (message.getMessageContent().getContentType().equalsIgnoreCase("IMAGE")))
+            {
+                Image image = null;
+                try { image = message.getMessageContent().getImage(); } catch (Exception e) {}
+                if (image != null) {
+                    image.OnImageLoaded.add(new EventHandler<EventArgs>(holder, "onMessageImageLoaded", EventArgs.class));
+                    image.loadImage(Image.ImageSize.xlarge, 0);
+                }
+            }
+
             /*if (message.getServerTimeStamp() != null)
                 holder.timeStamp.setText(TimestampFormatter.toLocaleString(message.getServerTimeStamp()));
             else if (message.getTimeStamp() != null)
@@ -260,9 +275,38 @@ public class ChatListAdapter extends BaseAdapter {
         public View chatItem;
         public TextView username;
         public TextView messageText;
+        public ImageView messageImage;
         public TextView timeStamp;
         public ImageView avatarThumbnail;
         public ImageView tickImage;
+
+        public void onMessageImageLoaded(Object sender,EventArgs eventArgs) {
+            if (!(sender instanceof Image)) return;
+
+            final Image image = (Image)sender;
+            final ViewHolder thisViewHolder = this;
+
+            ((Activity)context).runOnUiThread( new Runnable() {
+                @Override
+                public void run() {
+                    InputStream is = image.getImage(Image.ImageSize.xlarge,0);
+                    if ((is != null) && (messageImage != null)) {
+                        messageImage.setImageBitmap(BitmapFactory.decodeStream(is));
+                        messageImage.setVisibility(View.VISIBLE);
+                        messageText.setVisibility(View.GONE);
+                        try {
+                            is.reset();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    if (is != null)
+                        image.OnImageLoaded.remove(new EventHandler<EventArgs>(thisViewHolder,"onMessageImageLoaded",EventArgs.class));
+                    //image.freeMemory();
+                }
+            });
+        }
 
         public void onImageLoaded(Object sender,EventArgs eventArgs) {
             if (!(sender instanceof Image)) return;

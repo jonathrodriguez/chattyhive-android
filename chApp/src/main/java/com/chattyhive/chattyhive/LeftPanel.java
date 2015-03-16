@@ -11,10 +11,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
-import com.chattyhive.backend.businessobjects.Chats.Chat;
-import com.chattyhive.backend.businessobjects.Chats.Hive;
-import com.chattyhive.backend.util.events.EventArgs;
-import com.chattyhive.backend.util.events.EventHandler;
+import com.chattyhive.backend.BusinessObjects.Chats.Chat;
+import com.chattyhive.backend.BusinessObjects.Chats.Hive;
+import com.chattyhive.backend.Util.Events.EventArgs;
+import com.chattyhive.backend.Util.Events.EventHandler;
+import com.chattyhive.chattyhive.framework.CustomViews.Listener.OnRemoveLayoutListener;
 import com.chattyhive.chattyhive.framework.CustomViews.Listener.OnTransitionListener;
 import com.chattyhive.chattyhive.framework.CustomViews.ViewGroup.SlidingStepsLayout;
 import com.chattyhive.chattyhive.framework.Util.StaticMethods;
@@ -100,6 +101,14 @@ public class LeftPanel {
         }
     };
 
+    private OnRemoveLayoutListener removeLayoutListener = new OnRemoveLayoutListener() {
+        @Override
+        public void OnRemove(View view, int stepNumber) {
+            if ((stepNumber < showingEmpty.length) && (stepNumber >= 0))
+            showingEmpty[stepNumber] = false;
+        }
+    };
+
     private void InitializeComponent() {
         // Here we set the components to their respective elements.
         this.leftPanelSlidingSteps = (SlidingStepsLayout)((Activity)this.context).findViewById(R.id.left_panel_sliding_steps);
@@ -114,6 +123,7 @@ public class LeftPanel {
         active_emptyMessage = (TextView)this.leftPanelSlidingSteps.getViewByStep(this.activeStep).findViewById(R.id.left_panel_empty_list_message);
 
         this.leftPanelSlidingSteps.setOnTransitionListener(this.transitionListener);
+        this.leftPanelSlidingSteps.setOnRemoveLayoutListener(this.removeLayoutListener);
 
         SetButtonSelected(chats,true, (TextView)chats.findViewById(R.id.left_panel_action_bar_tab_text_chats), (ImageView)chats.findViewById(R.id.left_panel_action_bar_tab_img_chats),R.drawable.pestanhas_panel_izquierdo_chats);
         SetButtonSelected(hives,false, (TextView)hives.findViewById(R.id.left_panel_action_bar_tab_text_hives), (ImageView)hives.findViewById(R.id.left_panel_action_bar_tab_img_hives),R.drawable.pestanhas_panel_izquierdo_hives_blanco);

@@ -11,13 +11,13 @@ import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
 import com.chattyhive.backend.Controller;
-import com.chattyhive.backend.contentprovider.DataProvider;
-import com.chattyhive.backend.contentprovider.formats.COMMON;
-import com.chattyhive.backend.contentprovider.formats.Format;
-import com.chattyhive.backend.contentprovider.server.UserSession;
-import com.chattyhive.backend.util.events.CommandCallbackEventArgs;
-import com.chattyhive.backend.util.events.ConnectionEventArgs;
-import com.chattyhive.backend.util.events.EventHandler;
+import com.chattyhive.backend.ContentProvider.DataProvider;
+import com.chattyhive.backend.ContentProvider.formats.COMMON;
+import com.chattyhive.backend.ContentProvider.formats.Format;
+import com.chattyhive.backend.ContentProvider.Server.UserSession;
+import com.chattyhive.backend.Util.Events.CommandCallbackEventArgs;
+import com.chattyhive.backend.Util.Events.ConnectionEventArgs;
+import com.chattyhive.backend.Util.Events.EventHandler;
 
 public class LoginActivity extends Activity {
     static final int OP_CODE_REGISTER = 3;

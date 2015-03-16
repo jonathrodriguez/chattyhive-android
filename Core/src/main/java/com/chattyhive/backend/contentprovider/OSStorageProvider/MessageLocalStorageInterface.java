@@ -1,4 +1,4 @@
-package com.chattyhive.backend.contentprovider.OSStorageProvider;
+package com.chattyhive.backend.ContentProvider.OSStorageProvider;
 
 /**
  * Created by Jonathan on 26/05/2014.

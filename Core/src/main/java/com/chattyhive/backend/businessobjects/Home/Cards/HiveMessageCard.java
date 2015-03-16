@@ -1,10 +1,10 @@
-package com.chattyhive.backend.businessobjects.Home.Cards;
+package com.chattyhive.backend.BusinessObjects.Home.Cards;
 
-import com.chattyhive.backend.businessobjects.Chats.ChatKind;
-import com.chattyhive.backend.businessobjects.Chats.Hive;
-import com.chattyhive.backend.businessobjects.Chats.Messages.Message;
-import com.chattyhive.backend.businessobjects.Home.HomeCard;
-import com.chattyhive.backend.businessobjects.Home.HomeCardType;
+import com.chattyhive.backend.BusinessObjects.Chats.ChatKind;
+import com.chattyhive.backend.BusinessObjects.Chats.Hive;
+import com.chattyhive.backend.BusinessObjects.Chats.Messages.Message;
+import com.chattyhive.backend.BusinessObjects.Home.HomeCard;
+import com.chattyhive.backend.BusinessObjects.Home.HomeCardType;
 
 /**
  * Created by Jonathan on 07/10/2014.

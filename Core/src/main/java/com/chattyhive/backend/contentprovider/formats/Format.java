@@ -1,4 +1,4 @@
-package com.chattyhive.backend.contentprovider.formats;
+package com.chattyhive.backend.ContentProvider.formats;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -84,6 +84,8 @@ public abstract class Format {
                     f = new MESSAGE_INTERVAL(data);
                 } else if (entry.getKey().equalsIgnoreCase("MESSAGE_LIST")) {
                     f = new MESSAGE_LIST(data);
+                } else if (entry.getKey().equalsIgnoreCase("HIVE_USERS_FILTER")) {
+                    f = new HIVE_USERS_FILTER(data);
                 } else if (entry.getKey().equalsIgnoreCase("INTERVAL")) {
                     f = new INTERVAL(data);
                 } else if (entry.getKey().equalsIgnoreCase("YES_NO")) {

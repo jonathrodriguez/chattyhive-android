@@ -9,7 +9,8 @@
     android:baselineAligned="false"
     android:weightSum="1"
     android:divider="@null"
-    android:background="@drawable/borde2px">
+    android:background="@drawable/borde2px"
+    android:visibility="gone">
 
         <LinearLayout
             android:id="@+id/menu_punto_expandible2"

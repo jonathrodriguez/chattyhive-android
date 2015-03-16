@@ -1,4 +1,4 @@
-package com.chattyhive.backend.contentprovider.OSStorageProvider;
+package com.chattyhive.backend.ContentProvider.OSStorageProvider;
 
 import java.util.AbstractMap;
 

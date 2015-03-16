@@ -1,19 +1,15 @@
-package com.chattyhive.backend.contentprovider.formats;
+package com.chattyhive.backend.ContentProvider.formats;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
   import java.util.Date;
-import com.chattyhive.backend.util.formatters.TimestampFormatter;
-      import com.chattyhive.backend.contentprovider.formats.MESSAGE_CONTENT;
-    import java.util.Date;
-import com.chattyhive.backend.util.formatters.TimestampFormatter;
-    
+import com.chattyhive.backend.Util.Formatters.TimestampFormatter;
 
- /*
+
+/*
   * Automatically generated code by ChattyHive API Manager Code Generator on 28/09/2014.
   * Be careful to not modify this file since your changes will not be included in future
   * versions of this file.
