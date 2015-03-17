@@ -1,154 +1,132 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <LinearLayout
         android:id="@+id/context_list_header_card"
-        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#ededed"
+        android:orientation="vertical"
         android:paddingTop="12dp"
         android:visibility="visible">
 
         <LinearLayout
+            android:id="@+id/left_panel_context_users_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:layout_marginRight="8.5dp"
-            android:layout_marginLeft="8.5dp"
-            android:background="@drawable/card_orange"
-            android:paddingBottom="14dp">
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="14dp"
-                android:orientation="vertical"
-                android:paddingTop="15dp">
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="bottom">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Public chat"
-                        android:textStyle="bold"
-                        android:textColor="#F85E01"
-                        android:textSize="18.5dp"/>
-                    <ImageView
-                        android:layout_width="12.5dp"
-                        android:layout_height="12.5dp"
-                        android:src="@drawable/pestanha_hives_language_opcion3"
-                        android:alpha="0.75"
-                        android:layout_marginLeft="11dp"
-                        android:layout_marginRight="5dp"
-                        android:layout_gravity="bottom"
-                        android:layout_marginBottom="3dp"/>
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="ES"
-                        android:textColor="#333"
-                        android:textSize="12dp"/>
-                    </LinearLayout>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="hola hola "
-                    android:textColor="#404040"
-                    android:textSize="15dp"
-                    android:layout_marginTop="8dp"/>
-                </LinearLayout>
-            <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:gravity="right|center"
-                android:layout_marginRight="10dp"
-                android:paddingTop="12dp">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="+99"
-                    android:textColor="#404040"
-                    android:textSize="13dp"
-                    android:layout_marginRight="5dp"/>
-                <ImageView
-                    android:layout_width="12dp"
-                    android:layout_height="12dp"
-                    android:src="@drawable/pestanha_hives_new_buzzes"/>
-                </LinearLayout>
+            android:orientation="vertical">
+
+            <include layout="@layout/left_panel_chat_context_user" />
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:layout_marginBottom="10dp">
+
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:background="@drawable/home_card_background"
                 android:layout_marginLeft="8.5dp"
-                android:gravity="center"
-                android:layout_weight="0">
-                <ImageView
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
-                    android:src="@drawable/contextos_recommended_users_selected"
-                    android:layout_marginLeft="15dp"/>
-                <TextView
-                    android:layout_width="1px"
-                    android:layout_height="match_parent"
-                    android:background="#808080"
-                    android:layout_marginRight="13dp"
-                    android:layout_marginLeft="13dp"
-                    android:layout_marginTop="7dp"
-                    android:layout_marginBottom="7dp"/>
-                <ImageView
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
-                    android:src="@drawable/contextos_location"/>
-                <TextView
-                    android:layout_width="1px"
-                    android:layout_height="match_parent"
-                    android:background="#808080"
-                    android:layout_marginRight="13dp"
-                    android:layout_marginLeft="13dp"
-                    android:layout_marginTop="7dp"
-                    android:layout_marginBottom="7dp"/>
-                <ImageView
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
-                    android:src="@drawable/contextos_historial"
-                    android:layout_marginRight="15dp"/>
+                android:layout_weight="0"
+                android:background="@drawable/home_card_background"
+                android:gravity="center">
+
+                <LinearLayout
+                    android:id="@+id/left_panel_trending_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:layout_marginBottom="7dp"
+                        android:layout_marginLeft="15dp"
+                        android:layout_marginRight="13dp"
+                        android:layout_marginTop="7dp"
+                        android:src="@drawable/contextos_recommended_users_selected" />
+
                 </LinearLayout>
+
+                <TextView
+                    android:layout_width="1px"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="7dp"
+                    android:layout_marginTop="7dp"
+                    android:background="#808080" />
+
+                <LinearLayout
+                    android:id="@+id/left_panel_location_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:layout_marginBottom="7dp"
+                        android:layout_marginLeft="13dp"
+                        android:layout_marginRight="13dp"
+                        android:layout_marginTop="7dp"
+                        android:src="@drawable/contextos_location" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="1px"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="7dp"
+                    android:layout_marginTop="7dp"
+                    android:background="#808080" />
+
+                <LinearLayout
+                    android:id="@+id/left_panel_recently_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:layout_marginBottom="7dp"
+                        android:layout_marginLeft="13dp"
+                        android:layout_marginRight="15dp"
+                        android:layout_marginTop="7dp"
+                        android:src="@drawable/contextos_historial" />
+                </LinearLayout>
+            </LinearLayout>
+
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="match_parent"
-                android:gravity="right"
+                android:layout_marginRight="8.5dp"
                 android:layout_weight="0"
-                android:layout_marginRight="8.5dp">
+                android:gravity="right">
+
                 <LinearLayout
+                    android:id="@+id/left_panel_context_more_users"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:background="@drawable/home_card_background"
                     android:gravity="center">
+
                     <ImageView
                         android:layout_width="32.5dp"
                         android:layout_height="32.5dp"
-                        android:src="@drawable/contextos_show_more_users"
+                        android:layout_marginLeft="9dp"
                         android:layout_marginRight="9dp"
-                        android:layout_marginLeft="9dp"/>
+                        android:src="@drawable/contextos_show_more_users" />
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
+                        android:layout_marginRight="17dp"
+                        android:gravity="center"
                         android:text="Show more"
                         android:textColor="#3A3A3A"
-                        android:gravity="center"
-                        android:textSize="20dp"
-                        android:layout_marginRight="17dp"/>
-                    </LinearLayout>
+                        android:textSize="20dp" />
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
+    </LinearLayout>
 </LinearLayout>
