@@ -16,10 +16,8 @@ public class DataTable {
     private  final DataRowBuilder rowBuilder;
     protected  final DataRowCollection rowCollection;
     private DataRow[] EmptyDataRowArray;
+    protected static final DataColumn[] zeroColumns = new DataColumn[0];
     protected static final DataRow[] zeroRows = new DataRow[0];
-
-
-
 
     public DataTable() {
         this.nextRowID = 1L;
@@ -141,9 +139,12 @@ public class DataTable {
     }
 
 
-    public DataRowCollection Rows()
-    {
+    public DataRowCollection Rows() {
         return this.rowCollection;
+    }
+
+    public DataRow Rows(int index) {
+        return this.rowCollection.get(i);
     }
 
 }

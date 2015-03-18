@@ -147,8 +147,8 @@ class RecordManager {
     void RecordCapacity(int value) {
         if (this.recordCapacity != value)
         {
-            for (int i = 0; i < this.table.Columns.Count; i++)
-                this.table.Columns[i].SetCapacity(value);
+            for (int i = 0; i < this.table.Columns().Count; i++)
+                this.table.Columns()[i].SetCapacity(value);
 
             this.recordCapacity = value;
         }

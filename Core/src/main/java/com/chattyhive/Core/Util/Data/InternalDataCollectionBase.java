@@ -8,7 +8,7 @@ import java.util.Iterator;
 /**
  * Created by Jonathan on 16/03/2015.
  */
-public abstract class InternalDataCollectionBase<T> implements Collection, Iterable {
+public abstract class InternalDataCollectionBase<T> implements Collection<T>, Iterable<T> {
     // Fields
 
 
