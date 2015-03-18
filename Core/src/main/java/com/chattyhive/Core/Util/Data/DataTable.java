@@ -10,6 +10,7 @@ public class DataTable {
     private byte _isTypedDataTable;
 
     protected  final DataColumnCollection columnCollection;
+    private int elementColumnCount;
     protected boolean fInitInProgress;
     protected long nextRowID;
     protected  final RecordManager recordManager;
@@ -27,18 +28,113 @@ public class DataTable {
         this.rowBuilder = new DataRowBuilder(this, -1);
     }
 
+    void AddRow(DataRow row) {
+        this.AddRow(row, -1);
+    }
+
+    void AddRow(DataRow row, int proposedID) {
+        this.InsertRow(row, proposedID, -1);
+    }
+
+
     public void Clear() {
         this.Clear(true);
     }
 
     protected void Clear(boolean clearAll) {
             this.recordManager.Clear(clearAll);
-            this.Rows.ArrayClear();
+            this.Rows().clear();
     }
 
 
     protected Class GetRowType() {
         return DataRow.class;
+    }
+
+    int GetSpecialHashCode(String name) {
+        return name.toLowerCase().hashCode();
+    }
+
+    void InsertRow(DataRow row, long proposedID) {
+            if (row.Table != this) {
+                throw new IllegalArgumentException("Row already belongs to another table");
+            }
+            if (row.rowID != -1L) {
+                throw new IllegalArgumentException("Row yet into table");
+            }
+            if ((row.oldRecord == -1) && (row.newRecord == -1)) {
+                throw new IllegalArgumentException("Row is empty");
+            }
+            if (proposedID == -1L) {
+                proposedID = this.nextRowID;
+            }
+            row.rowID = proposedID;
+            if (this.nextRowID <= proposedID) {
+                this.nextRowID = proposedID + 1L;
+            }
+
+            if (row.oldRecord != -1) {
+                this.recordManager.set(row.oldRecord,row);
+            }
+            if (row.newRecord != -1) {
+                this.recordManager.set(row.newRecord,row);
+            }
+
+            this.Rows().ArrayAdd(row);
+    }
+
+    void InsertRow(DataRow row, long proposedID, int pos) {
+
+        boolean flag;
+        if (row == null) {
+            throw new IllegalArgumentException("Row can not be null");
+        }
+        if (row.Table != this) {
+            throw new IllegalArgumentException("Row already belongs to another table");
+        }
+        if (row.rowID != -1L) {
+            throw new IllegalArgumentException("Row yet into table");
+        }
+
+        if (proposedID == -1L) {
+            proposedID = this.nextRowID;
+        }
+        if (flag = this.nextRowID <= proposedID) {
+            this.nextRowID = proposedID + 1L;
+        }
+        try {
+            row.rowID = proposedID;
+            this.rowCollection.ArrayInsert(row,pos);
+        } catch (Exception e) {
+            row.rowID = -1L;
+            if ((flag) && (this.nextRowID == (proposedID + 1L)))
+                this.nextRowID = proposedID;
+        } finally {
+            row.ResetLastChangedColumn();
+        }
+    }
+
+    int NewRecordFromArray(Object... values) {
+        int num5;
+        int count = this.columnCollection.size();
+        if (count < values.length) {
+            throw new IllegalArgumentException("There are more parameters than columns in table");
+        }
+        int record = this.recordManager.NewRecordBase();
+
+        for (int i = 0; i < values.length; i++) {
+            if (values[i] != null) {
+                this.columnCollection.get(i).set(record,values[i]);
+            } else {
+                this.columnCollection.get(i).Init(record);
+            }
+        }
+        for (int j = values.length; j < count; j++) {
+            this.columnCollection.get(j).Init(record);
+        }
+        num5 = record;
+
+        return num5;
     }
 
 
@@ -56,18 +152,18 @@ public class DataTable {
 
     protected int NewRecord(int sourceRecord) {
         int record = this.recordManager.NewRecordBase();
-        int count = this.columnCollection.Count;
+        int count = this.columnCollection.size();
         if (-1 == sourceRecord)
         {
             for (int j = 0; j < count; j++)
             {
-                this.columnCollection[j].Init(record);
+                this.columnCollection.get(j).Init(record);
             }
             return record;
         }
         for (int i = 0; i < count; i++)
         {
-            this.columnCollection[i].Copy(sourceRecord, record);
+            this.columnCollection.get(i).Copy(sourceRecord, record);
         }
         return record;
     }
@@ -119,6 +215,19 @@ public class DataTable {
     public DataColumnCollection Columns() {
         return this.columnCollection;
     }
+    public DataColumn Columns(int index) {
+        return this.columnCollection.get(index);
+    }
+
+    int ElementColumnCount() {
+        return this.elementColumnCount;
+    }
+
+    void ElementColumnCount(int value) {
+        this.elementColumnCount = value;
+    }
+
+
 
     public boolean IsInitialized()
     {
@@ -138,13 +247,17 @@ public class DataTable {
             return false;
     }
 
+    int RecordCapacity() {
+        return this.recordManager.RecordCapacity();
+    }
+
 
     public DataRowCollection Rows() {
         return this.rowCollection;
     }
 
     public DataRow Rows(int index) {
-        return this.rowCollection.get(i);
+        return this.rowCollection.get(index);
     }
 
 }

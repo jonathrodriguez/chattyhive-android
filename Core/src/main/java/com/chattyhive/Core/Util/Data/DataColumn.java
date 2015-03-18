@@ -11,7 +11,7 @@ public class DataColumn {
     private String _columnPrefix;
     String _columnUri;
     int _hashCode;
-    private final int _objectID;
+    //private final int _objectID;
     private static int _objectTypeCount;
     private int _ordinal;
     private String caption;
@@ -22,7 +22,7 @@ public class DataColumn {
     String dttype;
     String encodedColumnName;
     int errors;
-    PropertyCollection extendedProperties;
+    //PropertyCollection extendedProperties;
     private int maxLength;
     DataTable table;
 
@@ -63,9 +63,9 @@ public class DataColumn {
 
     boolean CheckMaxLength()
     {
-        if (((0 <= this.maxLength) && (this.Table != null)) && (0 < this.Table.Rows.Count))
+        if (((0 <= this.maxLength) && (this.Table != null)) && (0 < this.Table.Rows().size()))
         {
-            foreach (DataRow row in this.Table.Rows)
+            for (DataRow row : this.Table.Rows())
             {
                 if (row.HasVersion(DataRowVersion.Current) && (this.maxLength < this.GetStringLength(row.GetCurrentRecordNo())))
                 {
@@ -1404,35 +1404,13 @@ public class DataColumn {
         }
     }
 
-    Object this[int record]
-    {
-        get
-        {
-            return this._storage.Get(record);
-        }
-        set
-        {
-            try
-            {
-                this._storage.Set(record, value);
-            }
-            catch (Exception exception)
-            {
-                ExceptionBuilder.TraceExceptionForCapture(exception);
-                throw ExceptionBuilder.SetFailed(value, this, this.DataType, exception);
-            }
-            if (this.AutoIncrement && !this._storage.IsNull(record))
-            {
-                this.AutoInc.SetCurrentAndIncrement(this._storage.Get(record));
-            }
-            if (this.Computed)
-            {
-                DataRow dataRow = this.GetDataRow(record);
-                if (dataRow != null)
-                {
-                    dataRow.LastChangedColumn = this;
-                }
-            }
+    Object get(int record) {
+        return this._storage.Get(record);
+    }
+    void set(int record, Object value) {
+        this._storage.Set(record, value);
+        if (this.AutoIncrement && !this._storage.IsNull(record)) {
+            this.AutoInc.SetCurrentAndIncrement(this._storage.Get(record));
         }
     }
 

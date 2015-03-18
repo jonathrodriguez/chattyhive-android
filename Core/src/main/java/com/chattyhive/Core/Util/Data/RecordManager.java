@@ -28,9 +28,9 @@ class RecordManager {
             for (int i = 0; i < this.recordCapacity; i++) {
                 this.rows[i] = null;
             }
-            int count = this.table.columnCollection.Count;
+            int count = this.table.columnCollection.size();
             for (int j = 0; j < count; j++) {
-                DataColumn column = this.table.columnCollection[j];
+                DataColumn column = this.table.columnCollection.get(j);
                 for (int k = 0; k < this.recordCapacity; k++) {
                     column.FreeRecord(k);
                 }
@@ -51,9 +51,9 @@ class RecordManager {
     void FreeRecord(int record) {
         if (-1 != record) {
             set(record,null);
-            int count = this.table.columnCollection.Count;
+            int count = this.table.columnCollection.size();
             for (int i = 0; i < count; i++) {
-                this.table.columnCollection[i].FreeRecord(record);
+                this.table.columnCollection.get(i).FreeRecord(record);
             }
             if (this.lastFreeRecord == (record + 1)) {
                 this.lastFreeRecord--;
@@ -90,9 +90,9 @@ class RecordManager {
 
     int NewRecordBase() {
         int lastFreeRecord;
-        if (this.freeRecordList.Count != 0) {
-            lastFreeRecord = this.freeRecordList[this.freeRecordList.Count - 1];
-            this.freeRecordList.RemoveAt(this.freeRecordList.Count - 1);
+        if (this.freeRecordList.size() != 0) {
+            lastFreeRecord = this.freeRecordList.get(this.freeRecordList.size() - 1);
+            this.freeRecordList.remove(this.freeRecordList.size() - 1);
             return lastFreeRecord;
         }
         if (this.lastFreeRecord >= this.recordCapacity) {
@@ -147,8 +147,8 @@ class RecordManager {
     void RecordCapacity(int value) {
         if (this.recordCapacity != value)
         {
-            for (int i = 0; i < this.table.Columns().Count; i++)
-                this.table.Columns()[i].SetCapacity(value);
+            for (int i = 0; i < this.table.Columns().size(); i++)
+                this.table.Columns(i).SetCapacity(value);
 
             this.recordCapacity = value;
         }
