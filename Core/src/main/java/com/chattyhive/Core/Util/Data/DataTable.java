@@ -56,10 +56,10 @@ public class DataTable {
     }
 
     void InsertRow(DataRow row, long proposedID) {
-            if (row.Table != this) {
+            if (row.Table() != this) {
                 throw new IllegalArgumentException("Row already belongs to another table");
             }
-            if (row.rowID != -1L) {
+            if (row.rowID() != -1L) {
                 throw new IllegalArgumentException("Row yet into table");
             }
             if ((row.oldRecord == -1) && (row.newRecord == -1)) {
@@ -68,7 +68,7 @@ public class DataTable {
             if (proposedID == -1L) {
                 proposedID = this.nextRowID;
             }
-            row.rowID = proposedID;
+            row.rowID(proposedID);
             if (this.nextRowID <= proposedID) {
                 this.nextRowID = proposedID + 1L;
             }
@@ -89,10 +89,10 @@ public class DataTable {
         if (row == null) {
             throw new IllegalArgumentException("Row can not be null");
         }
-        if (row.Table != this) {
+        if (row.Table() != this) {
             throw new IllegalArgumentException("Row already belongs to another table");
         }
-        if (row.rowID != -1L) {
+        if (row.rowID() != -1L) {
             throw new IllegalArgumentException("Row yet into table");
         }
 
@@ -103,10 +103,10 @@ public class DataTable {
             this.nextRowID = proposedID + 1L;
         }
         try {
-            row.rowID = proposedID;
+            row.rowID(proposedID);
             this.rowCollection.ArrayInsert(row,pos);
         } catch (Exception e) {
-            row.rowID = -1L;
+            row.rowID(-1L);
             if ((flag) && (this.nextRowID == (proposedID + 1L)))
                 this.nextRowID = proposedID;
         } finally {

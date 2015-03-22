@@ -15,7 +15,7 @@ public final class DataColumnCollection extends InternalDataCollectionBase<DataC
 
     private int defaultNameIndex = 1;
     private DataColumn[] delayedAddRangeColumns;
-    private boolean fInClear;
+
     private final DataTable table;
 
     protected DataColumnCollection(DataTable table) {
@@ -48,7 +48,7 @@ public final class DataColumnCollection extends InternalDataCollectionBase<DataC
 
     boolean AddAt(int index, DataColumn column) {
         boolean result;
-        if ((column != null) && (column.ColumnMapping == MappingType.SimpleContent)) {
+        if ((column != null) && (column.ColumnMapping() == MappingType.SimpleContent)) {
             if (this.table.ElementColumnCount() > 0) {
                 throw new UnsupportedOperationException("Can not add more columns to table");
             }
@@ -65,7 +65,7 @@ public final class DataColumnCollection extends InternalDataCollectionBase<DataC
             } else {
                 result = this.ArrayAdd(column);
             }
-            if (column.ColumnMapping == MappingType.Element) {
+            if (column.ColumnMapping() == MappingType.Element) {
                 this.table.ElementColumnCount(this.table.ElementColumnCount()+1);
             }
         }
@@ -73,9 +73,7 @@ public final class DataColumnCollection extends InternalDataCollectionBase<DataC
     }
 
     public void AddRange(DataColumn[] columns) {
-        if (this.table.fInitInProgress) {
-            this.delayedAddRangeColumns = columns;
-        } else if (columns != null) {
+        if (columns != null) {
             for (DataColumn column : columns) {
                 if (column != null) {
                     this.add(column);
@@ -124,10 +122,10 @@ public final class DataColumnCollection extends InternalDataCollectionBase<DataC
         if (column.table != null) {
             throw new IllegalArgumentException("Column belongs to another table");
         }
-        if (column.ColumnName.length() == 0) {
-            column.ColumnName = this.AssignName();
+        if (column.ColumnName().length() == 0) {
+            column.ColumnName(this.AssignName());
         }
-        this.RegisterColumnName(column.ColumnName, column);
+        this.RegisterColumnName(column.ColumnName(), column);
         try {
             column.SetTable(this.table);
 
@@ -138,7 +136,7 @@ public final class DataColumnCollection extends InternalDataCollectionBase<DataC
                 column.InitializeRecord(i);
             }
         } catch (Exception exception) {
-            this.UnregisterName(column.ColumnName);
+            this.UnregisterName(column.ColumnName());
             //throw exception;
         }
     }
@@ -156,14 +154,14 @@ public final class DataColumnCollection extends InternalDataCollectionBase<DataC
                     break;
                 }
             }
-            if (!flag && (oldArray[i].Table == this.table)) {
+            if (!flag && (oldArray[i].Table() == this.table)) {
                 this.BaseRemove(oldArray[i]);
                 this._list.remove(oldArray[i]);
                 oldArray[i].SetOrdinalInternal(-1);
             }
         }
         for (int j = 0; j < newLength; j++) {
-            if (newArray[j].Table != this.table) {
+            if (newArray[j].Table() != this.table) {
                 this.BaseAdd(newArray[j]);
                 this._list.add(newArray[j]);
             }
@@ -178,7 +176,7 @@ public final class DataColumnCollection extends InternalDataCollectionBase<DataC
                     this.table.Rows(i).ClearError(column);
                 }
             }
-            this.UnregisterName(column.ColumnName);
+            this.UnregisterName(column.ColumnName());
             column.SetTable(null);
         }
     }
@@ -226,9 +224,7 @@ public final class DataColumnCollection extends InternalDataCollectionBase<DataC
         int iSize = this._list.size();
 
         for (DataColumn dc : c) {
-            try {
-                this.add(dc);
-            } catch (Exception e) { }
+            this.add(dc);
         }
 
         return iSize != this._list.size();
@@ -239,9 +235,7 @@ public final class DataColumnCollection extends InternalDataCollectionBase<DataC
         int iSize = this._list.size();
 
         for (Object o : c) {
-            try {
-                this.remove(o);
-            } catch (Exception e) { }
+            this.remove(o);
         }
 
         return iSize != this._list.size();
@@ -252,10 +246,8 @@ public final class DataColumnCollection extends InternalDataCollectionBase<DataC
         int iSize = this._list.size();
 
         for (DataColumn dc : this._list) {
-            try {
-                if (!c.contains(dc))
-                    this.remove(dc);
-            } catch (Exception e) { }
+            if (!c.contains(dc))
+                this.remove(dc);
         }
 
         return iSize != this._list.size();
@@ -291,7 +283,7 @@ public final class DataColumnCollection extends InternalDataCollectionBase<DataC
     public boolean contains(Object column) {
         if (!(column instanceof DataColumn))
             throw new ClassCastException("column must be a DataColumn");
-        return this.contains(((DataColumn) column).ColumnName);
+        return this.contains(((DataColumn) column).ColumnName());
     }
 
     boolean Contains(String name, boolean caseSensitive) {
@@ -331,7 +323,6 @@ public final class DataColumnCollection extends InternalDataCollectionBase<DataC
             for (DataColumn column : this.delayedAddRangeColumns) {
                 if (column != null) {
                     this.add(column);
-                    column.FinishInitInProgress();
                 }
             }
             this.delayedAddRangeColumns = null;
@@ -376,7 +367,7 @@ public final class DataColumnCollection extends InternalDataCollectionBase<DataC
         DataColumn column = null;
         for (int i = 0; i < this.size(); i++) {
             column = (DataColumn) this._list.get(i);
-            if ((((specialHashCode == 0) || (column._hashCode == 0)) || (column._hashCode == specialHashCode)) && (super.NamesEqual(column.ColumnName, name, false) != 0)) {
+            if ((((specialHashCode == 0) || (column._hashCode == 0)) || (column._hashCode == specialHashCode)) && (super.NamesEqual(column.ColumnName(), name, false) != 0)) {
                 if (num2 != -1) {
                     return -2;
                 }
@@ -432,7 +423,7 @@ public final class DataColumnCollection extends InternalDataCollectionBase<DataC
         int iSize = this._list.size();
         this.BaseRemove((DataColumn)column);
         this.ArrayRemove((DataColumn)column);
-        if (((DataColumn)column).ColumnMapping == MappingType.Element) {
+        if (((DataColumn)column).ColumnMapping() == MappingType.Element) {
             this.table.ElementColumnCount(this.table.ElementColumnCount()-1);
         }
         return iSize != this._list.size();

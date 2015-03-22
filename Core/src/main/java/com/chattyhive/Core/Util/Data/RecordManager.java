@@ -40,7 +40,7 @@ class RecordManager {
         } else {
             //this.freeRecordList.Capacity = this.freeRecordList.Count + this.table.Rows.Count;
             for (int m = 0; m < this.recordCapacity; m++) {
-                if ((this.rows[m] != null) && (this.rows[m].rowID != -1L)) {
+                if ((this.rows[m] != null) && (this.rows[m].rowID() != -1L)) {
                     int record = m;
                     this.FreeRecord(record);
                 }

@@ -27,7 +27,7 @@ public final class DataRowCollection extends InternalDataCollectionBase<DataRow>
     @Override
     public boolean contains(Object row) {
         boolean result;
-        result = !(((row == null) || (!(row instanceof DataRow)) || (((DataRow) row).Table != this.table)) || (-1L == ((DataRow) row).rowID)) && this.list.contains(row);
+        result = !(((row == null) || (!(row instanceof DataRow)) || (((DataRow) row).Table() != this.table)) || (-1L == ((DataRow) row).rowID())) && this.list.contains(row);
         return result;
     }
 
@@ -38,9 +38,9 @@ public final class DataRowCollection extends InternalDataCollectionBase<DataRow>
         return iSize != this.list.size();
     }
 
-    DataRow AddWithColumnEvents(Object... values) {
+    DataRow AddWithColumnEvents(Object... values) throws NoSuchFieldException {
         DataRow row = this.table.NewRow(-1);
-        row.ItemArray = values;
+        row.ItemArray(values);
         this.table.AddRow(row, -1);
         return row;
     }
@@ -90,7 +90,7 @@ public final class DataRowCollection extends InternalDataCollectionBase<DataRow>
     }
 
     public int IndexOf(DataRow row) {
-        if ((row != null) && (row.Table == this.table)) {
+        if ((row != null) && (row.Table() == this.table)) {
             return this.list.indexOf(row);
         }
         return -1;
@@ -110,7 +110,7 @@ public final class DataRowCollection extends InternalDataCollectionBase<DataRow>
     @Override
     public boolean remove(Object row) {
         int iSize = this.list.size();
-        if (((row == null) || (!(row instanceof DataRow)) || (((DataRow)row).Table != this.table)) || (-1L == ((DataRow)row).rowID)) {
+        if (((row == null) || (!(row instanceof DataRow)) || (((DataRow)row).Table() != this.table)) || (-1L == ((DataRow)row).rowID())) {
             throw new IllegalArgumentException("Row can not be deleted.");
         }
         ((DataRow)row).Delete();
