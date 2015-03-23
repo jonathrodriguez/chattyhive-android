@@ -25,13 +25,6 @@ public final class DataRowCollection extends InternalDataCollectionBase<DataRow>
     }
 
     @Override
-    public boolean contains(Object row) {
-        boolean result;
-        result = !(((row == null) || (!(row instanceof DataRow)) || (((DataRow) row).Table() != this.table)) || (-1L == ((DataRow) row).rowID())) && this.list.contains(row);
-        return result;
-    }
-
-    @Override
     public boolean add(DataRow row) {
         int iSize = this.list.size();
         this.table.AddRow(row, -1);
@@ -117,58 +110,7 @@ public final class DataRowCollection extends InternalDataCollectionBase<DataRow>
         return iSize != this.list.size();
     }
 
-    @Override
-    public boolean containsAll(Collection<?> c) {
-        for (Object o : c) {
-            try {
-                if (!this.contains(o))
-                    return false;
-            } catch (Exception e) {
-                return false;
-            }
-        }
-        return true;
-    }
 
-    @Override
-    public boolean addAll(Collection<? extends DataRow> c) {
-        int iSize = this.list.size();
-
-        for (DataRow dr : c) {
-            try {
-                this.add(dr);
-            } catch (Exception e) { }
-        }
-
-        return iSize != this.list.size();
-    }
-
-    @Override
-    public boolean removeAll(Collection<?> c) {
-        int iSize = this.list.size();
-
-        for (Object o : c) {
-            try {
-                this.remove(o);
-            } catch (Exception e) { }
-        }
-
-        return iSize != this.list.size();
-    }
-
-    @Override
-    public boolean retainAll(Collection<?> c) {
-        int iSize = this.list.size();
-
-        for (DataRow dr : this.list) {
-            try {
-                if (!c.contains(dr))
-                    this.remove(dr);
-            } catch (Exception e) { }
-        }
-
-        return iSize != this.list.size();
-    }
 
     public void RemoveAt(int index) {
         this.remove(this.get(index));

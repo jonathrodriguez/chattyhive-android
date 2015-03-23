@@ -1,5 +1,7 @@
 package com.chattyhive.Core.Util.Data;
 
+import com.sun.javaws.exceptions.InvalidArgumentException;
+
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -10,101 +12,56 @@ import java.util.TreeMap;
  */
 public final class DataColumnCollection extends InternalDataCollectionBase<DataColumn> {
 
-    private final ArrayList<DataColumn> _list = new ArrayList<DataColumn>();
-    private final TreeMap<String, DataColumn> columnFromName;
-
-    private int defaultNameIndex = 1;
-    private DataColumn[] delayedAddRangeColumns;
-
+    private final TreeMap<Integer, DataColumn> columnFromName;
+    private int defaultNameIndex = 0;
     private final DataTable table;
 
     protected DataColumnCollection(DataTable table) {
         this.table = table;
-        this.columnFromName = new TreeMap<String, DataColumn>();
-    }
-
-    public DataColumn add() {
-        DataColumn column = new DataColumn();
-        this.add(column);
-        return column;
+        this.columnFromName = new TreeMap<Integer, DataColumn>();
     }
 
     @Override
     public boolean add(DataColumn column) {
-        return this.AddAt(-1, column);
+        return this.add(this.size(), column);
     }
+    public boolean add(int index, DataColumn column) {
+        if ((column.Table() != null) && (column.Table() != this.table))
+            throw new UnsupportedOperationException("Column already belongs to another table");
 
+        int ISize = this.size();
+
+        column.Index(index);
+        this.List().add(index,column);
+
+        if ((column.ColumnName() == null) || (column.ColumnName().isEmpty()))
+            column.ColumnName(this.AssignName());
+
+        this.RegisterColumnName(column);
+
+        column.Table(this.table);
+
+        if (index < ISize) {
+            for (int i = index + 1; i < this.size(); i++) {
+                for (DataRow row : this.table.Rows())
+                    row.TableColumnsChanged(i,i-1);
+                this.List().get(i).Index(i);
+            }
+        }
+        return (ISize > this.size());
+    }
     public DataColumn add(String columnName) {
         DataColumn column = new DataColumn(columnName);
         this.add(column);
         return column;
     }
-
-    public DataColumn add(String columnName, Type type) {
+    public DataColumn add(String columnName, Class<?> type) {
         DataColumn column = new DataColumn(columnName, type);
         this.add(column);
         return column;
     }
 
-    boolean AddAt(int index, DataColumn column) {
-        boolean result;
-        if ((column != null) && (column.ColumnMapping() == MappingType.SimpleContent)) {
-            if (this.table.ElementColumnCount() > 0) {
-                throw new UnsupportedOperationException("Can not add more columns to table");
-            }
-            this.BaseAdd(column);
-            if (index != -1) {
-                result = this.ArrayAdd(index, column);
-            } else {
-                result = this.ArrayAdd(column);
-            }
-        } else {
-            this.BaseAdd(column);
-            if (index != -1) {
-                result = this.ArrayAdd(index, column);
-            } else {
-                result = this.ArrayAdd(column);
-            }
-            if (column.ColumnMapping() == MappingType.Element) {
-                this.table.ElementColumnCount(this.table.ElementColumnCount()+1);
-            }
-        }
-        return result;
-    }
-
-    public void AddRange(DataColumn[] columns) {
-        if (columns != null) {
-            for (DataColumn column : columns) {
-                if (column != null) {
-                    this.add(column);
-                }
-            }
-        }
-    }
-
-    private boolean ArrayAdd(DataColumn column) {
-        boolean result = this._list.add(column);
-        if (result)
-            column.SetOrdinalInternal(this._list.size() - 1);
-        return result;
-    }
-
-    private boolean ArrayAdd(int index, DataColumn column) {
-        int iSize = this._list.size();
-        this._list.add(index, column);
-        return iSize != this._list.size();
-    }
-
-    private void ArrayRemove(DataColumn column) {
-        column.SetOrdinalInternal(-1);
-        this._list.remove(column);
-        int count = this._list.size();
-        for (int i = 0; i < count; i++) {
-            this._list.get(i).SetOrdinalInternal(i);
-        }
-    }
-
-    String AssignName() {
+    private String AssignName() {
         String key = this.MakeName(this.defaultNameIndex++);
         while (this.columnFromName.containsKey(key)) {
             key = this.MakeName(this.defaultNameIndex++);
@@ -112,376 +69,145 @@ public final class DataColumnCollection extends InternalDataCollectionBase<DataC
         return key;
     }
 
-    private void BaseAdd(DataColumn column) {
-        if (column == null) {
-            throw new IllegalArgumentException("Column can not be null");
-        }
-        if (column.table == this.table) {
-            throw new IllegalArgumentException("Column is already in table");
-        }
-        if (column.table != null) {
-            throw new IllegalArgumentException("Column belongs to another table");
-        }
-        if (column.ColumnName().length() == 0) {
-            column.ColumnName(this.AssignName());
-        }
-        this.RegisterColumnName(column.ColumnName(), column);
-        try {
-            column.SetTable(this.table);
-
-            if (0 < this.table.RecordCapacity()) {
-                column.SetCapacity(this.table.RecordCapacity());
-            }
-            for (int i = 0; i < this.table.RecordCapacity(); i++) {
-                column.InitializeRecord(i);
-            }
-        } catch (Exception exception) {
-            this.UnregisterName(column.ColumnName());
-            //throw exception;
-        }
-    }
-
-    private void BaseGroupSwitch(DataColumn[] oldArray, int oldLength, DataColumn[] newArray, int newLength) {
-        int num4 = 0;
-        for (int i = 0; i < oldLength; i++) {
-            boolean flag = false;
-            for (int k = num4; k < newLength; k++) {
-                if (oldArray[i] == newArray[k]) {
-                    if (num4 == k) {
-                        num4++;
-                    }
-                    flag = true;
-                    break;
-                }
-            }
-            if (!flag && (oldArray[i].Table() == this.table)) {
-                this.BaseRemove(oldArray[i]);
-                this._list.remove(oldArray[i]);
-                oldArray[i].SetOrdinalInternal(-1);
-            }
-        }
-        for (int j = 0; j < newLength; j++) {
-            if (newArray[j].Table() != this.table) {
-                this.BaseAdd(newArray[j]);
-                this._list.add(newArray[j]);
-            }
-            newArray[j].SetOrdinalInternal(j);
-        }
-    }
-
-    private void BaseRemove(DataColumn column) {
-        if (this.CanRemove(column, true)) {
-            if (column.errors > 0) {
-                for (int i = 0; i < this.table.Rows().size(); i++) {
-                    this.table.Rows(i).ClearError(column);
-                }
-            }
-            this.UnregisterName(column.ColumnName());
-            column.SetTable(null);
-        }
-    }
-
-    boolean CanRegisterName(String name) {
-        return !this.columnFromName.containsKey(name);
-    }
-
-    public boolean CanRemove(DataColumn column) {
-        return this.CanRemove(column, false);
-    }
-
-    boolean CanRemove(DataColumn column, boolean fThrowException) {
-        if (column == null) {
-            if (fThrowException) {
-                throw new IllegalArgumentException("Column can not be null");
-            }
-            return false;
-        }
-        if (column.table != this.table) {
-            if (fThrowException) {
-                throw new IllegalArgumentException("Column does not belong to table");
-            }
-            return false;
-        }
-
-        return true;
-    }
-
-    @Override
-    public boolean containsAll(Collection<?> c) {
-        for (Object o : c) {
-            try {
-                if (!this.contains(o))
-                    return false;
-            } catch (Exception e) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    @Override
-    public boolean addAll(Collection<? extends DataColumn> c) {
-        int iSize = this._list.size();
-
-        for (DataColumn dc : c) {
-            this.add(dc);
-        }
-
-        return iSize != this._list.size();
-    }
-
-    @Override
-    public boolean removeAll(Collection<?> c) {
-        int iSize = this._list.size();
-
-        for (Object o : c) {
-            this.remove(o);
-        }
-
-        return iSize != this._list.size();
-    }
-
-    @Override
-    public boolean retainAll(Collection<?> c) {
-        int iSize = this._list.size();
-
-        for (DataColumn dc : this._list) {
-            if (!c.contains(dc))
-                this.remove(dc);
-        }
-
-        return iSize != this._list.size();
-    }
-
     @Override
     public void clear() {
-        int count = this._list.size();
-        DataColumn[] array = new DataColumn[this._list.size()];
-        array = this._list.toArray(array);
+        int count = this.size();
 
-        if (this.table.fInitInProgress && (this.delayedAddRangeColumns != null)) {
-            this.delayedAddRangeColumns = null;
+        for (DataRow row : this.table.Rows()) {
+            for (int i = 0; i < count; i++) {
+                row.TableColumnsChanged(-1,i);
+            }
         }
-        try {
-            this.fInClear = true;
-            this.BaseGroupSwitch(array, count, null, 0);
-            this.fInClear = false;
-        }
-        catch (Exception exception) { }
-        this._list.clear();
-        this.table.ElementColumnCount(0);
+
+        this.List().clear();
+        this.columnFromName.clear();
     }
 
     public boolean contains(String name) {
         DataColumn column = null;
-        if (this.columnFromName.containsKey(name))
-            column = this.columnFromName.get(name);
-        return ((column != null) || (this.IndexOfCaseInsensitive(name) >= 0));
+        int nameHash = name.toLowerCase().hashCode();
+        return this.columnFromName.containsKey(nameHash);
     }
 
-    @Override
-    public boolean contains(Object column) {
-        if (!(column instanceof DataColumn))
-            throw new ClassCastException("column must be a DataColumn");
-        return this.contains(((DataColumn) column).ColumnName());
+    public int indexOf(DataColumn column) {
+        if (this.List().contains(column))
+            return this.List().indexOf(column);
+        else
+            return -1;
     }
-
-    boolean Contains(String name, boolean caseSensitive) {
-        DataColumn column = null;
-        if (this.columnFromName.containsKey(name))
-            column = this.columnFromName.get(name);
-        if (column != null) {
-            return true;
-        }
-        if (caseSensitive) {
-            return false;
-        }
-        return (this.IndexOfCaseInsensitive(name) >= 0);
-    }
-
-    public void CopyTo(DataColumn[] array, int index) {
-        if (array == null) {
-            throw new IllegalArgumentException("Array can not be null");
-        }
-        if (index < 0) {
-            throw new ArrayIndexOutOfBoundsException(index);
-        }
-        if ((array.length - index) < this._list.size()) {
-            throw new IllegalArgumentException("Array is too small to contain list at specified index");
-        }
-        for (int i = 0; i < this._list.size(); i++) {
-            array[index + i] = (DataColumn) this._list.get(i);
-        }
-    }
-
-    void EnsureAdditionalCapacity(int capacity) {
-        this._list.ensureCapacity(capacity+this._list.size());
-    }
-
-    void FinishInitCollection() {
-        if (this.delayedAddRangeColumns != null) {
-            for (DataColumn column : this.delayedAddRangeColumns) {
-                if (column != null) {
-                    this.add(column);
-                }
-            }
-            this.delayedAddRangeColumns = null;
-        }
-    }
-
-    public int IndexOf(DataColumn column) {
-        int count = this._list.size();
-        for (int i = 0; i < count; i++) {
-            if (column == ((DataColumn) this._list.get(i))) {
-                return i;
-            }
-        }
-        return -1;
-    }
-
-    public int IndexOf(String columnName) {
-        if ((columnName != null) && (0 < columnName.length())) {
+    public int indexOf(String columnName) {
+        if ((columnName != null) && (!columnName.isEmpty())) {
             DataColumn column = null;
-            if (this.columnFromName.containsKey(columnName))
-                column = this.columnFromName.get(columnName);
-            int count = this.size();
-            if (column == null) {
-                int num = this.IndexOfCaseInsensitive(columnName);
-                if (num >= 0) {
-                    return num;
-                }
+            int columnNameHash = columnName.toLowerCase().hashCode();
+            if (this.columnFromName.containsKey(columnNameHash))
+                column = this.columnFromName.get(columnNameHash);
+            else
                 return -1;
-            }
-            for (int i = 0; i < count; i++) {
-                if (column == this._list.get(i)) {
-                    return i;
-                }
-            }
+
+            return this.indexOf(column);
         }
         return -1;
-    }
-
-    int IndexOfCaseInsensitive(String name) {
-        int specialHashCode = this.table.GetSpecialHashCode(name);
-        int num2 = -1;
-        DataColumn column = null;
-        for (int i = 0; i < this.size(); i++) {
-            column = (DataColumn) this._list.get(i);
-            if ((((specialHashCode == 0) || (column._hashCode == 0)) || (column._hashCode == specialHashCode)) && (super.NamesEqual(column.ColumnName(), name, false) != 0)) {
-                if (num2 != -1) {
-                    return -2;
-                }
-                num2 = i;
-            }
-        }
-        return num2;
     }
 
     private String MakeName(int index) {
         return String.format("Column%d",index);
     }
 
-    void MoveTo(DataColumn column, int newPosition) {
+    public void moveTo(DataColumn column, int newPosition) {
         if ((0 > newPosition) || (newPosition > (this.size() - 1))) {
             throw new ArrayIndexOutOfBoundsException(newPosition);
         }
-        this._list.remove(column);
-        this._list.add(newPosition, column);
-        int count = this._list.size();
-        for (int i = 0; i < count; i++) {
-            this._list.get(i).SetOrdinalInternal(i);
-        }
+        this.List().remove(column);
+        this.List().add(newPosition, column);
+        this.updateOrdinals();
     }
 
-    void RegisterColumnName(String name, DataColumn column) {
-        if (name == null) {
-            throw new IllegalArgumentException("Column name can not be null");
+    protected void RegisterColumnName (DataColumn column) {
+        if (column == null) {
+            throw new NullPointerException("Column can not be null");
         }
-        if (this.get(name) != null) {
-            throw new IllegalArgumentException(String.format("Table already has a column named: %s",name));
+        if (this.columnFromName.containsKey(column.HashCode())) {
+            throw new IllegalArgumentException(String.format("Table already has a column named: %s",column.ColumnName()));
         }
-        if ((column != null) && this.columnFromName.values().contains(column)) {
+        if (this.columnFromName.values().contains(column)) {
             throw new IllegalArgumentException("Table already the specified column");
         }
 
-        this.columnFromName.put(name, column);
-        if (column != null) {
-            column._hashCode = this.table.GetSpecialHashCode(name);
-        }
-
-        if ((column == null) && (super.NamesEqual(name, this.MakeName(this.defaultNameIndex), true) != 0)) {
-            do {
-                this.defaultNameIndex++;
-            } while (this.contains(this.MakeName(this.defaultNameIndex)));
-        }
+        this.columnFromName.put(column.HashCode(),column);
     }
 
     @Override
     public boolean remove(Object column) {
         if (!(column instanceof DataColumn))
             throw new ClassCastException("column must be a DataColumn");
-        int iSize = this._list.size();
-        this.BaseRemove((DataColumn)column);
-        this.ArrayRemove((DataColumn)column);
-        if (((DataColumn)column).ColumnMapping() == MappingType.Element) {
-            this.table.ElementColumnCount(this.table.ElementColumnCount()-1);
-        }
-        return iSize != this._list.size();
-    }
 
+        int iSize = this.size();
+
+        this.columnFromName.remove(((DataColumn) column).HashCode());
+        this.List().remove(column);
+
+        for (DataRow row : this.table.Rows()) {
+            row.TableColumnsChanged(-1,((DataColumn) column).Index());
+        }
+
+        return iSize != this.size();
+    }
     public void remove(String name) {
         DataColumn column = this.get(name);
-        if (column == null) {
+        if (column == null)
             throw new IllegalArgumentException(String.format("Table has not column named: %s",name));
-        }
+
         this.remove(column);
     }
-
-    public void RemoveAt(int index) {
+    public void remove(int index) {
         DataColumn column = this.get(index);
-        if (column == null) {
+        if (column == null)
             throw new ArrayIndexOutOfBoundsException(index);
-        }
+
         this.remove(column);
     }
 
-    void UnregisterName(String name) {
-        this.columnFromName.remove(name);
-        if (super.NamesEqual(name, this.MakeName(this.defaultNameIndex - 1), true) != 0) {
-            do {
-                this.defaultNameIndex--;
-            } while ((this.defaultNameIndex > 1) && !this.contains(this.MakeName(this.defaultNameIndex - 1)));
+    protected void UnregisterColumnName(DataColumn column) {
+        if (column == null) {
+            throw new NullPointerException("Column can not be null");
+        }
+        if (!this.columnFromName.containsKey(column.HashCode())) {
+            throw new IllegalArgumentException(String.format("Column %s is not present.",column.ColumnName()));
+        }
+        if (!this.columnFromName.values().contains(column)) {
+            throw new IllegalArgumentException("Table does not contain the specified column");
+        }
+
+        this.columnFromName.remove(column.HashCode());
+    }
+
+    private void updateOrdinals() {
+        for (int i = 0; i < this.size(); i++) {
+            for (DataRow row : this.table.Rows())
+                row.TableColumnsChanged(i,this.get(i).Index());
+            this.get(i).Index(i);
         }
     }
 
     public DataColumn get(int index) {
         DataColumn column;
-        column = this._list.get(index);
+        column = this.List().get(index);
         return column;
     }
 
     public DataColumn get(String name) {
         DataColumn column = null;
-        if (name == null) {
-            throw new IllegalArgumentException("Argument name can not be null");
-        }
+        if (name == null)
+            throw new NullPointerException("Argument name can not be null");
+        else if (name.isEmpty())
+            throw new IllegalArgumentException("Argument name can not be empty");
 
-        if (this.columnFromName.containsKey(name))
-            column = this.columnFromName.get(name);
+        int nameHash = name.toLowerCase().hashCode();
 
-        if (column == null) {
-            int num = this.IndexOfCaseInsensitive(name);
-            if (0 <= num) {
-                column = this._list.get(num);
-            } else if (-2 == num) {
-                throw new IllegalStateException(String.format("Column %s is duplicated.",name));
-            }
-        }
+        if (this.columnFromName.containsKey(nameHash))
+            column = this.columnFromName.get(nameHash);
+
         return column;
     }
 
-    @Override
-    protected ArrayList<DataColumn> List() {
-        return this._list;
-    }
 }

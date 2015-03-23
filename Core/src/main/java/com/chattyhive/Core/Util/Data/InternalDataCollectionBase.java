@@ -1,6 +1,7 @@
 package com.chattyhive.Core.Util.Data;
 
-import java.lang.reflect.Array;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -10,12 +11,7 @@ import java.util.Iterator;
  */
 public abstract class InternalDataCollectionBase<T> implements Collection<T>, Iterable<T> {
     // Fields
-
-
-    // Methods
-    public void CopyTo(Array ar, int index) {
-        System.arraycopy(this.List().toArray(),0,ar,index,this.size());
-    }
+    private ArrayList<T> list;
 
     @Override
     public Iterator iterator() {
@@ -53,12 +49,16 @@ public abstract class InternalDataCollectionBase<T> implements Collection<T>, It
         return false;
     }
 
-    protected ArrayList<T> List() {
-        return null;
-    }
-
     public Object SyncRoot() {
         return this;
+    }
+
+    @Override
+    public boolean contains(Object o) {
+        if (o == null)
+            throw new NullPointerException("o must not be null");
+
+        return this.list.contains(o);
     }
 
     @Override
@@ -79,5 +79,56 @@ public abstract class InternalDataCollectionBase<T> implements Collection<T>, It
     @Override
     public boolean isEmpty() {
         return this.List().isEmpty();
+    }
+
+    @Override
+    public boolean containsAll(Collection<?> c) {
+        for (Object o : c) {
+            try {
+                if (!this.contains(o))
+                    return false;
+            } catch (Exception e) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public boolean addAll(Collection<? extends T> c) {
+        int iSize = this.List().size();
+
+        for (T dc : c) {
+            this.add(dc);
+        }
+
+        return iSize != this.List().size();
+    }
+
+    @Override
+    public boolean removeAll(Collection<?> c) {
+        int iSize = this.List().size();
+
+        for (Object o : c) {
+            this.remove(o);
+        }
+
+        return iSize != this.List().size();
+    }
+
+    @Override
+    public boolean retainAll(Collection<?> c) {
+        int iSize = this.List().size();
+
+        for (T dc : this.List()) {
+            if (!c.contains(dc))
+                this.remove(dc);
+        }
+
+        return iSize != this.List().size();
+    }
+
+    protected ArrayList<T> List() {
+        return this.list;
     }
 }
