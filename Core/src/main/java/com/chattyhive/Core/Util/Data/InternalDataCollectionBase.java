@@ -13,6 +13,10 @@ public abstract class InternalDataCollectionBase<T> implements Collection<T>, It
     // Fields
     private ArrayList<T> list;
 
+    protected InternalDataCollectionBase() {
+        this.list = new ArrayList<T>();
+    }
+
     @Override
     public Iterator iterator() {
         return this.List().iterator();
@@ -79,6 +83,11 @@ public abstract class InternalDataCollectionBase<T> implements Collection<T>, It
     @Override
     public boolean isEmpty() {
         return this.List().isEmpty();
+    }
+
+    @Override
+    public boolean remove(Object o) {
+        return this.list.remove(o);
     }
 
     @Override

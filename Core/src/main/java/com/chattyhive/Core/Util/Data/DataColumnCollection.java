@@ -17,6 +17,7 @@ public final class DataColumnCollection extends InternalDataCollectionBase<DataC
     private final DataTable table;
 
     protected DataColumnCollection(DataTable table) {
+        super();
         this.table = table;
         this.columnFromName = new TreeMap<Integer, DataColumn>();
     }
@@ -28,6 +29,13 @@ public final class DataColumnCollection extends InternalDataCollectionBase<DataC
     public boolean add(int index, DataColumn column) {
         if ((column.Table() != null) && (column.Table() != this.table))
             throw new UnsupportedOperationException("Column already belongs to another table");
+
+        if ((column.Table() != null) && (column.Table() == this.table) && (this.List().contains(column))) {
+            if (this.indexOf(column) != index) {
+                this.moveTo(column,index);
+            }
+            return false;
+        }
 
         int ISize = this.size();
 
@@ -126,14 +134,14 @@ public final class DataColumnCollection extends InternalDataCollectionBase<DataC
         if (column == null) {
             throw new NullPointerException("Column can not be null");
         }
-        if (this.columnFromName.containsKey(column.HashCode())) {
+        if (this.columnFromName.containsKey(column.hashCode())) {
             throw new IllegalArgumentException(String.format("Table already has a column named: %s",column.ColumnName()));
         }
         if (this.columnFromName.values().contains(column)) {
             throw new IllegalArgumentException("Table already the specified column");
         }
 
-        this.columnFromName.put(column.HashCode(),column);
+        this.columnFromName.put(column.hashCode(),column);
     }
 
     @Override
@@ -143,11 +151,15 @@ public final class DataColumnCollection extends InternalDataCollectionBase<DataC
 
         int iSize = this.size();
 
-        this.columnFromName.remove(((DataColumn) column).HashCode());
+        this.columnFromName.remove(((DataColumn) column).hashCode());
         this.List().remove(column);
 
         for (DataRow row : this.table.Rows()) {
             row.TableColumnsChanged(-1,((DataColumn) column).Index());
+        }
+
+        for (DataColumn col : this.List()) {
+            col.Index(this.indexOf(col));
         }
 
         return iSize != this.size();
@@ -171,14 +183,14 @@ public final class DataColumnCollection extends InternalDataCollectionBase<DataC
         if (column == null) {
             throw new NullPointerException("Column can not be null");
         }
-        if (!this.columnFromName.containsKey(column.HashCode())) {
+        if (!this.columnFromName.containsKey(column.hashCode())) {
             throw new IllegalArgumentException(String.format("Column %s is not present.",column.ColumnName()));
         }
         if (!this.columnFromName.values().contains(column)) {
             throw new IllegalArgumentException("Table does not contain the specified column");
         }
 
-        this.columnFromName.remove(column.HashCode());
+        this.columnFromName.remove(column.hashCode());
     }
 
     private void updateOrdinals() {

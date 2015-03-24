@@ -1,33 +1,90 @@
 package com.chattyhive.Core.Util.Data;
 
+import com.chattyhive.Core.ContentProvider.SynchronousDataPath.Command;
+
 /**
  * Created by Jonathan on 18/03/2015.
  */
-public class DataRow {
+public class DataRow implements Comparable<DataRow> {
+    // Fields
     private DataTable table;
     private long rowID;
     private Object[] values;
 
-    private DataRow() {
-           this.values = new Object[0];
-    }
-    private DataRow(DataTable table) {
+    // Constructors
+    public DataRow(DataTable table) {
         this.values = new Object[table.Columns().size()];
         this.table = table;
     }
-    private DataRow(long rowID) {
-        this();
-        this.rowID = rowID;
-    }
-    private DataRow(DataTable table, long rowID) {
+    protected DataRow(DataTable table, long rowID) {
         this(table);
         this.rowID = rowID;
     }
 
+    // Methods
+    @Override
+    public int compareTo(DataRow o) {
+        Object[] oValues = o.ItemArray();
+        if (oValues.length != values.length)
+            throw new UnsupportedOperationException("Rows are not comparable since don't have the same number of columns");
+
+        for (int i = 0; i < oValues.length; i++) {
+            DataColumn thisColumn = this.table.Columns(i);
+            DataColumn oColumn = o.table.Columns(i);
+            if (thisColumn.DataType() != oColumn.DataType())
+                throw new UnsupportedOperationException("Rows are not comparable since column types does not match");
+
+            int res;
+            if (((oValues[i] instanceof Comparable) && (this.values[i] instanceof Comparable)))
+                res = ((Comparable)oValues[i]).compareTo(this.values[i]);
+            else
+                res = ((Integer)oValues[i].hashCode()).compareTo(this.values[i].hashCode());
+
+            if (res != 0)
+                return res;
+        }
+
+        return 0;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return ((o instanceof DataRow) && (this.compareTo((DataRow)o) == 0));
+    }
+
+    protected void TableColumnsChanged(int newIndex, int oldIndex) {
+        if (oldIndex == -1) { //New Column
+            Object[] newValues = new Object[this.values.length + 1];
+            for (int i=0;i<newValues.length;i++) {
+                if (i < newIndex)
+                    newValues[i] = this.values[i];
+                else if (i == newIndex)
+                    newValues[i] = this.table.Columns().get(newIndex).DefaultValue();
+                else
+                    newValues[i] = this.values[i-1];
+            }
+            this.values = newValues;
+        } else if (newIndex == -1) { //Column deleted
+            Object[] newValues = new Object[this.values.length - 1];
+            for (int i=0;i<this.values.length;i++) {
+                if (i < oldIndex)
+                    newValues[i] = this.values[i];
+                else if (i > oldIndex)
+                    newValues[i-1] = this.values[i];
+            }
+            this.values = newValues;
+        } else { //Column moved
+            Object tmpVal = this.values[oldIndex];
+            this.values[oldIndex] = this.values[newIndex];
+            this.values[newIndex] = tmpVal;
+        }
+    }
+
+    // Properties
     public DataTable Table() {
         return this.table;
     }
-    private void Table(DataTable value) {
+    protected void Table(DataTable value) {
         if (this.table != value)
             this.table = value;
     }
@@ -72,35 +129,16 @@ public class DataRow {
         return this.values[index];
     }
     public void set(int index, Object value) {
+        if (!(this.table.Columns().get(index).DataType().isInstance(value)))
+            throw new ClassCastException(String.format("Value type is not compatible. Expected type: %s",this.table.Columns().get(index).DataType().getCanonicalName()));
         this.values[index] = value;
     }
 
-    protected void TableColumnsChanged(int newIndex, int oldIndex) {
-        if (oldIndex == -1) { //New Column
-            Object[] newValues = new Object[this.values.length + 1];
-            for (int i=0;i<newValues.length;i++) {
-                if (i < newIndex)
-                    newValues[i] = this.values[i];
-                else if (i == newIndex)
-                    newValues[i] = this.table.Columns().get(newIndex).DefaultValue();
-                else
-                    newValues[i] = this.values[i-1];
-            }
-            this.values = newValues;
-        } else if (newIndex == -1) { //Column deleted
-            Object[] newValues = new Object[this.values.length - 1];
-            for (int i=0;i<this.values.length;i++) {
-                if (i < oldIndex)
-                    newValues[i] = this.values[i];
-                else if (i > oldIndex)
-                    newValues[i-1] = this.values[i];
-            }
-            this.values = newValues;
-        } else { //Column moved
-            Object tmpVal = this.values[oldIndex];
-            this.values[oldIndex] = this.values[newIndex];
-            this.values[newIndex] = tmpVal;
-        }
+    public Object get(String columnName) {
+        return this.get(this.table.Columns().get(columnName).Index());
+    }
+    public void set(String columnName, Object value) {
+        this.set(this.table.Columns().get(columnName).Index(), value);
     }
 }
 

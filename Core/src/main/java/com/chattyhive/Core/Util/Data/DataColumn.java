@@ -1,10 +1,15 @@
 package com.chattyhive.Core.Util.Data;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 /**
  * Created by Jonathan on 18/03/2015.
  */
 
-public class DataColumn {
+public class DataColumn implements Comparable<DataColumn> {
+
+    // Fields
     private DataTable table;
     private String columnName;
     private int hashCode;
@@ -15,6 +20,7 @@ public class DataColumn {
     private Object defaultValue = null;
     private boolean allowsNull = true;
 
+    // Constructors
     public DataColumn() {
         this("",Object.class);
     }
@@ -39,6 +45,32 @@ public class DataColumn {
         this.defaultValue = defaultValue;
     }
 
+
+    // Methods
+    @Override
+    public int compareTo(DataColumn o) {
+        if (this.Table() != o.Table())
+            throw new UnsupportedOperationException("Columns are not comparable since they belong to different tables");
+        if (this.equals(o))
+            return 0;
+        else {
+            return ((Integer)this.Index()).compareTo(o.Index());
+        }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return ((o instanceof DataColumn) && (this.hashCode() == o.hashCode()) && (this.Table() == ((DataColumn) o).Table()));
+    }
+
+    public boolean isComparable() {
+        Class[] inter = this.dataType.getInterfaces();
+        if ((inter != null) && (inter.length > 0))
+            return Arrays.asList(inter).contains(Comparable.class);
+        return false;
+    }
+    // Properties
+
     public String Caption() {
         return this.caption;
     }
@@ -49,9 +81,12 @@ public class DataColumn {
     public String ColumnName() {
         return this.columnName;
     }
-    protected int HashCode() {
+
+    @Override
+    public int hashCode() {
         return this.hashCode;
     }
+
     protected void ColumnName(String value) {
         if (this.table != null)
             this.table.Columns().UnregisterColumnName(this);
