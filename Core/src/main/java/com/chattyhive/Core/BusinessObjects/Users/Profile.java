@@ -1,7 +1,7 @@
 package com.chattyhive.Core.BusinessObjects.Users;
 
 import com.chattyhive.Core.BusinessObjects.Image;
-import com.chattyhive.Core.ContentProvider.formats.Format;
+import com.chattyhive.Core.ContentProvider.Formats.Format;
 import com.google.gson.JsonElement;
 
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package com.chattyhive.Core.ContentProvider.formats;
+package com.chattyhive.Core.ContentProvider.Formats;
 
 import java.util.ArrayList;
 import java.util.Map;

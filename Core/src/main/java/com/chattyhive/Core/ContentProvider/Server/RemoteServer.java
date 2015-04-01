@@ -3,7 +3,7 @@ package com.chattyhive.Core.ContentProvider.Server;
 import com.chattyhive.Core.ContentProvider.SynchronousDataPath.Command;
 import com.chattyhive.Core.ContentProvider.SynchronousDataPath.CommandDefinition;
 import com.chattyhive.Core.ContentProvider.SynchronousDataPath.IOrigin;
-import com.chattyhive.Core.ContentProvider.formats.Format;
+import com.chattyhive.Core.ContentProvider.Formats.Format;
 import com.chattyhive.Core.StaticParameters;
 import com.chattyhive.Core.Util.CallbackDelegate;
 import com.google.gson.JsonElement;

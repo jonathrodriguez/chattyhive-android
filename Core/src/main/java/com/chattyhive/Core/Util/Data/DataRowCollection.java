@@ -1,8 +1,5 @@
 package com.chattyhive.Core.Util.Data;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
 /**
  * Created by Jonathan on 18/03/2015.
  */

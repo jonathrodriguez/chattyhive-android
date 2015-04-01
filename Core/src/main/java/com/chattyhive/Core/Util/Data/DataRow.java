@@ -1,7 +1,5 @@
 package com.chattyhive.Core.Util.Data;
 
-import com.chattyhive.Core.ContentProvider.SynchronousDataPath.Command;
-
 /**
  * Created by Jonathan on 18/03/2015.
  */

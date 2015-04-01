@@ -1,7 +1,7 @@
 package com.chattyhive.Core.ContentProvider.local;
 
 import com.chattyhive.Core.ContentProvider.SynchronousDataPath.AvailableCommands;
-import com.chattyhive.Core.ContentProvider.formats.Format;
+import com.chattyhive.Core.ContentProvider.Formats.Format;
 import com.chattyhive.Core.Util.Events.CommandCallbackEventArgs;
 import com.chattyhive.Core.Util.Events.EventHandler;
 

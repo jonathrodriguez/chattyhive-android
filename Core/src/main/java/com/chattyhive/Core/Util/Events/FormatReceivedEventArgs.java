@@ -1,6 +1,6 @@
 package com.chattyhive.Core.Util.Events;
 
-import com.chattyhive.Core.ContentProvider.formats.Format;
+import com.chattyhive.Core.ContentProvider.Formats.Format;
 
 import java.util.ArrayList;
 import java.util.Collection;

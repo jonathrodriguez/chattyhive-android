@@ -12,8 +12,8 @@ import android.widget.ViewSwitcher;
 
 import com.chattyhive.Core.Controller;
 import com.chattyhive.Core.ContentProvider.DataProvider;
-import com.chattyhive.Core.ContentProvider.formats.COMMON;
-import com.chattyhive.Core.ContentProvider.formats.Format;
+import com.chattyhive.Core.ContentProvider.Formats.COMMON;
+import com.chattyhive.Core.ContentProvider.Formats.Format;
 import com.chattyhive.Core.ContentProvider.Server.UserSession;
 import com.chattyhive.Core.Util.Events.CommandCallbackEventArgs;
 import com.chattyhive.Core.Util.Events.ConnectionEventArgs;

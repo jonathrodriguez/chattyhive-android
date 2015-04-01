@@ -1,6 +1,6 @@
 package com.chattyhive.Core.ContentProvider.SynchronousDataPath;
 
-import com.chattyhive.Core.ContentProvider.formats.Format;
+import com.chattyhive.Core.ContentProvider.Formats.Format;
 import com.chattyhive.Core.ContentProvider.Server.IServerUser;
 import com.chattyhive.Core.ContentProvider.Server.Server;
 import com.chattyhive.Core.ContentProvider.Server.ServerResponse;

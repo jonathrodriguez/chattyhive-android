@@ -1,8 +1,8 @@
 package com.chattyhive.Core.BusinessObjects.Chats.Messages;
 
 import com.chattyhive.Core.BusinessObjects.Image;
-import com.chattyhive.Core.ContentProvider.formats.Format;
-import com.chattyhive.Core.ContentProvider.formats.MESSAGE_CONTENT;
+import com.chattyhive.Core.ContentProvider.Formats.Format;
+import com.chattyhive.Core.ContentProvider.Formats.MESSAGE_CONTENT;
 import com.google.gson.JsonElement;
 
 /**

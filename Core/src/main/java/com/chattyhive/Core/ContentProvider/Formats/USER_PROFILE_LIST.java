@@ -1,4 +1,4 @@
-package com.chattyhive.Core.ContentProvider.formats;
+package com.chattyhive.Core.ContentProvider.Formats;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;

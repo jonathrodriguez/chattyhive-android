@@ -17,8 +17,8 @@ import android.util.Log;
 
 import com.chattyhive.Core.Controller;
 import com.chattyhive.Core.StaticParameters;
-import com.chattyhive.Core.ContentProvider.formats.Format;
-import com.chattyhive.Core.ContentProvider.formats.MESSAGE;
+import com.chattyhive.Core.ContentProvider.Formats.Format;
+import com.chattyhive.Core.ContentProvider.Formats.MESSAGE;
 import com.chattyhive.Core.ContentProvider.pubsubservice.ConnectionState;
 import com.chattyhive.Core.Util.Events.EventArgs;
 import com.chattyhive.Core.Util.Events.EventHandler;

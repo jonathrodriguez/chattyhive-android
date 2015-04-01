@@ -1,7 +1,5 @@
 package com.chattyhive.Core.Util.Data;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;

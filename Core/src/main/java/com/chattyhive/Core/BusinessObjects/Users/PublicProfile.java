@@ -1,8 +1,8 @@
 package com.chattyhive.Core.BusinessObjects.Users;
 
-import com.chattyhive.Core.ContentProvider.formats.BASIC_PUBLIC_PROFILE;
-import com.chattyhive.Core.ContentProvider.formats.Format;
-import com.chattyhive.Core.ContentProvider.formats.PUBLIC_PROFILE;
+import com.chattyhive.Core.ContentProvider.Formats.BASIC_PUBLIC_PROFILE;
+import com.chattyhive.Core.ContentProvider.Formats.Format;
+import com.chattyhive.Core.ContentProvider.Formats.PUBLIC_PROFILE;
 
 /**
  * Created by Jonathan on 08/07/2014.
