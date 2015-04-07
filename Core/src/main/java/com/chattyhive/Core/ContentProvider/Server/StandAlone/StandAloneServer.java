@@ -1,5 +1,6 @@
 package com.chattyhive.Core.ContentProvider.Server.StandAlone;
 
+import com.chattyhive.Core.ContentProvider.OSStorageProvider.LocalDataBaseInterface;
 import com.chattyhive.Core.ContentProvider.SynchronousDataPath.IOrigin;
 import com.chattyhive.Core.StaticParameters;
 import com.chattyhive.Core.BusinessObjects.Chats.Chat;
@@ -40,6 +41,7 @@ import com.chattyhive.Core.ContentProvider.Formats.USERNAME;
 import com.chattyhive.Core.ContentProvider.Formats.USER_EMAIL;
 import com.chattyhive.Core.ContentProvider.Formats.USER_PROFILE;
 import com.chattyhive.Core.ContentProvider.Formats.USER_PROFILE_LIST;
+import com.chattyhive.Core.Util.Data.DataTable;
 import com.chattyhive.Core.Util.RandomString;
 import com.chattyhive.Core.Util.Events.CommandCallbackEventArgs;
 import com.chattyhive.Core.Util.Events.ConnectionEventArgs;
@@ -74,395 +76,70 @@ import java.util.TreeSet;
  */
 public class StandAloneServer implements IOrigin {
 
-    private static Boolean StandAloneServerOutput = false;
+    private Boolean StandAloneServerOutput = false;
 
-    private static RandomString randomString = new RandomString(10);
+    private LocalDataBaseInterface standAloneServerDB;
 
-    private static String CSRFTokenCookie = "csrftoken";
-    private static String SessionIDCookie = "sessionid";
+    private RandomString randomString = new RandomString(10);
 
-    private static ArrayList<String> CSRFTokens;
-    private static HashMap<String,String> LoginPassword;
-    private static HashMap<String,String> CSRFTokenSessionID;
-    private static HashMap<String,User> SessionIDUser;
-    private static HashMap<String,User> LoginUser;
+    private String CSRFTokenCookie = "csrftoken";
+    private String SessionIDCookie = "sessionid";
 
-    private static HashMap<String, Hive> Hives;
-    private static HashMap<String, ArrayList<String>> HiveUserSubscriptions;
-    private static HashMap<String, ArrayList<String>> UserHiveSubscriptions;
-    private static HashMap<String, Chat> Chats;
-    private static HashMap<String, ArrayList<String>> ChatUserSubscriptions;
-    private static HashMap<String, ArrayList<String>> UserChatSubscriptions;
+    private ArrayList<String> CSRFTokens;
+    private HashMap<String,String> CSRFTokenSessionID;
+    private HashMap<String,String> SessionIDUser;
 
-    private static HashMap<String, ArrayList<String>> UserFriendList;
-    private static String[] Words = new String[]{"Lorem","ipsum","dolor","sit","amet","consectetuer","adipiscing","elit. Aenean","commodo","ligula","eget","dolor. Aenean","massa. Cum","sociis","natoque","penatibus","et","magnis","dis","parturient","montes,","nascetur","ridiculus","mus. Donec","quam","felis,","ultricies","nec,","pellentesque","eu,","pretium","quis,","sem. Nulla","consequat","massa","quis","enim. Donec","pede","justo","fringilla","vel,","aliquet","nec","vulputate","eget,","arcu. In","enim","justo","rhoncus","ut,","imperdiet","a","venenatis","vitae","justo","nullam","dictum","felis","eu","pede","mollis","pretium. Integer","tincidunt. Cras","dapibus","vivamus","elementum","semper","nisi. Aenean","vulputate","eleifend","tellus. Aenean","leo","ligula,","porttitor","eu,","consequat","vitae","eleifend","ac","enim. Aliquam","lorem","ante","dapibus","in,","viverra","quis,","feugiat","a,","tellus. Phasellus","viverra","nulla","ut","metus","varius","laoreet. Quisque","rutrum","aenean","imperdiet","etiam","ultricies","nisi","vel","augue. Curabitur","ullamcorper","ultricies","nisi","nam","eget","dui. Etiam","rhoncus","maecenas","tempus,","tellus","eget","condimentum","rhoncus","sem","quam","semper","libero,","sit","amet","adipiscing","sem","neque","sed","ipsum. Nam","quam","nunc,","blandit","vel","luctus","pulvinar","hendrerit","id","lorem. Maecenas","nec","odio","et","ante","tincidunt","tempus. Donec","vitae","sapien","ut","libero","venenatis","faucibus. Nullam","quis,","ante. Etiam","sit","amet","orci","eget","eros","faucibus","tincidunt","duis","leo","sed","fringilla","mauris","sit","amet","nibh. Donec","sodales","sagittis","magna. Sed","consequat","leo","eget","bibendum","sodales,","augue","velit","cursus","nunc"};
-    private static String[] Images = new String[]{"file_chat_001.jpg","file_chat_002.jpg","file_chat_003.jpg","file_chat_004.jpg","file_chat_005.jpg","file_chat_006.jpg","file_chat_007.jpg","file_chat_008.jpg","file_chat_009.jpg","file_chat_010.jpg","file_chat_011.jpg","file_chat_012.jpg","file_chat_013.jpg","file_chat_014.jpg","file_chat_015.jpg","file_chat_016.jpg","file_chat_017.jpg","file_chat_018.jpg","file_chat_019.jpg","file_chat_020.jpg","file_chat_021.jpg","file_chat_022.jpg","file_chat_023.jpg","file_chat_024.jpg","file_chat_025.jpg","file_chat_026.jpg","file_chat_027.jpg","file_chat_028.jpg","file_chat_029.jpg","file_chat_030.jpg","file_chat_031.jpg","file_chat_032.jpg","file_chat_033.jpg","file_chat_034.jpg","file_chat_035.jpg","file_chat_036.jpg","file_chat_037.jpg","file_chat_038.jpg","file_chat_039.jpg","file_chat_040.jpg"};
-    static {
-        if (StaticParameters.StandAlone) {
-            CSRFTokens = new ArrayList<String>();
-            LoginPassword = new HashMap<String, String>();
-            CSRFTokenSessionID = new HashMap<String, String>();
-            SessionIDUser = new HashMap<String, User>();
-            LoginUser = new HashMap<String, User>();
-            Hives = new HashMap<String, Hive>();
-            HiveUserSubscriptions = new HashMap<String, ArrayList<String>>();
-            UserHiveSubscriptions = new HashMap<String, ArrayList<String>>();
-            Chats = new HashMap<String, Chat>();
-            ChatUserSubscriptions = new HashMap<String, ArrayList<String>>();
-            UserChatSubscriptions = new HashMap<String, ArrayList<String>>();
+    private String[] Words = new String[]{"Lorem","ipsum","dolor","sit","amet","consectetuer","adipiscing","elit. Aenean","commodo","ligula","eget","dolor. Aenean","massa. Cum","sociis","natoque","penatibus","et","magnis","dis","parturient","montes,","nascetur","ridiculus","mus. Donec","quam","felis,","ultricies","nec,","pellentesque","eu,","pretium","quis,","sem. Nulla","consequat","massa","quis","enim. Donec","pede","justo","fringilla","vel,","aliquet","nec","vulputate","eget,","arcu. In","enim","justo","rhoncus","ut,","imperdiet","a","venenatis","vitae","justo","nullam","dictum","felis","eu","pede","mollis","pretium. Integer","tincidunt. Cras","dapibus","vivamus","elementum","semper","nisi. Aenean","vulputate","eleifend","tellus. Aenean","leo","ligula,","porttitor","eu,","consequat","vitae","eleifend","ac","enim. Aliquam","lorem","ante","dapibus","in,","viverra","quis,","feugiat","a,","tellus. Phasellus","viverra","nulla","ut","metus","varius","laoreet. Quisque","rutrum","aenean","imperdiet","etiam","ultricies","nisi","vel","augue. Curabitur","ullamcorper","ultricies","nisi","nam","eget","dui. Etiam","rhoncus","maecenas","tempus,","tellus","eget","condimentum","rhoncus","sem","quam","semper","libero,","sit","amet","adipiscing","sem","neque","sed","ipsum. Nam","quam","nunc,","blandit","vel","luctus","pulvinar","hendrerit","id","lorem. Maecenas","nec","odio","et","ante","tincidunt","tempus. Donec","vitae","sapien","ut","libero","venenatis","faucibus. Nullam","quis,","ante. Etiam","sit","amet","orci","eget","eros","faucibus","tincidunt","duis","leo","sed","fringilla","mauris","sit","amet","nibh. Donec","sodales","sagittis","magna. Sed","consequat","leo","eget","bibendum","sodales,","augue","velit","cursus","nunc"};
+    private String[] Images = new String[]{"file_chat_001.jpg","file_chat_002.jpg","file_chat_003.jpg","file_chat_004.jpg","file_chat_005.jpg","file_chat_006.jpg","file_chat_007.jpg","file_chat_008.jpg","file_chat_009.jpg","file_chat_010.jpg","file_chat_011.jpg","file_chat_012.jpg","file_chat_013.jpg","file_chat_014.jpg","file_chat_015.jpg","file_chat_016.jpg","file_chat_017.jpg","file_chat_018.jpg","file_chat_019.jpg","file_chat_020.jpg","file_chat_021.jpg","file_chat_022.jpg","file_chat_023.jpg","file_chat_024.jpg","file_chat_025.jpg","file_chat_026.jpg","file_chat_027.jpg","file_chat_028.jpg","file_chat_029.jpg","file_chat_030.jpg","file_chat_031.jpg","file_chat_032.jpg","file_chat_033.jpg","file_chat_034.jpg","file_chat_035.jpg","file_chat_036.jpg","file_chat_037.jpg","file_chat_038.jpg","file_chat_039.jpg","file_chat_040.jpg"};
 
-            UserFriendList = new HashMap<String, ArrayList<String>>();
+    public StandAloneServer (LocalDataBaseInterface standAloneServerDB) {
+        this.standAloneServerDB = standAloneServerDB;
 
-            if (StaticParameters.StandAloneDataInitialization) InitializeData();
+        CSRFTokens = new ArrayList<String>();
+        CSRFTokenSessionID = new HashMap<String, String>();
+        SessionIDUser = new HashMap<String, String>();
+
+        if (StaticParameters.StandAloneContinuousRandomMessage) {
+            final Random random = new Random();
+
+            Thread timer = new Thread() {
+                @Override
+                public void run() {
+                    Boolean running = true;
+
+                    while (running) {
+                        try {
+                            sleep(random.nextInt(599500)+500);
+                        } catch (InterruptedException e) {
+                            running = false;
+                            continue;
+                        }
+                        sendRandomMessage(random,false,true);
+                    }
+                }
+            };
+
+            timer.start();
         }
     }
 
-    private static void InitializeData() {
-        /**************/
-        /* Inner vars */
-        /**************/
-        User user;
-        Hive hive;
+    private void sendRandomMessage(Random random, Boolean confirmed, Boolean notify) {
+        String active_users = "";
+        for (String user : SessionIDUser.values())
+            active_users = active_users.concat((active_users.isEmpty())?"":",").concat("'").concat(user).concat("'");
 
-        /************************************************************************/
-        /*                            USERS                                     */
-        /************************************************************************/
-        /*              Login: jonathan         Pass: 12345678                  */
-        /*              Login: cassini91        Pass: huygens                   */
-        /*              Login: trabuco          Pass: 15081968                  */
-        /*              Login: serezy           Pass: Istiklâl Marsi            */
-        /*              Login: homer_ou         Pass: bartsimpson               */
-        /*              Login: weirdalien       Pass: AFD45ADE                  */
-        /*              Login: coolest_thing_21 Pass: 87654321                  */
-        /*              Login: akamatsu         Pass: Shizue_86                 */
-        /************************************************************************/
-        user = createUser("jonathan@chattyhive.com", "Jonathan", "Rodriguez", "jonathan", "#AA22AA", "file_avatar_jonathan.jpg", "file_private_jonathan.jpg", "08/12/1987", "Vigo, Pontevedra, Espa\u00f1a", "MALE", true, false, true, true, "Espa\u00f1ol", "Franc\u00e9s", "Ingl\u00e9s", "Gallego", "Portugu\u00e9s");
-        LoginUser.put(user.getUserPublicProfile().getPublicName(), user);
-        LoginPassword.put(user.getEmail(), "12345678");
+        String public_name = "";
 
-        user = createUser("cassini91@hotmail.com", "Cassandra", "Prieto", "cassini91", "#55dd9f", "file_avatar_cassini91.jpg", "file_private_cassini91.jpg", "31/03/1991", "Vigo, Pontevedra, Espa\u00f1a", "FEMALE", false, false, false, false, "Espa\u00f1ol", "Gallego");
-        LoginUser.put(user.getUserPublicProfile().getPublicName(), user);
-        LoginPassword.put(user.getEmail(), "huygens");
+        if (active_users.isEmpty())
+            public_name = standAloneServerDB.simpleQuerySQL("SELECT public_name FROM user ORDER BY RANDOM() LIMIT 1").toString();
+        else
+            public_name = standAloneServerDB.simpleQuerySQL("SELECT public_name FROM user WHERE public_name not in ("+active_users+") ORDER BY RANDOM() LIMIT 1").toString();
 
-        user = createUser("monchuco@yahoo.es", "Ramon", "Araujo", "trabuco", "#dfada0", "file_avatar_trabuco.jpg", "file_private_trabuco.jpg", "15/08/1968", "Andorra", "MALE", true, true, true, true, "Espa\u00f1ol", "Franc\u00e9s", "Ingl\u00e9s", "Catal\u00e1n");
-        LoginUser.put(user.getUserPublicProfile().getPublicName(), user);
-        LoginPassword.put(user.getEmail(), "15081968");
+        if (public_name.isEmpty())
+            return;
 
-        user = createUser("serpalina@gmail.com", "Serezade", "Agth\u00eb\u00e3\u00e7ykn", "serezy", "#16a46a", "file_avatar_serezy.jpg", "file_private_serezy.jpg", "04/07/1302", "Ankara, Ankara, Turqu\u00eda", "FEMALE", true, true, false, false, "Ingl\u00e9s", "Turco");
-        LoginUser.put(user.getUserPublicProfile().getPublicName(), user);
-        LoginPassword.put(user.getEmail(), "Istikl\u00e2l Marsi");
+        DataTable randomChat = standAloneServerDB.tableQuerySQL("SELECT * FROM chat WHERE (hive_chat=1 AND hive in (SELECT hive FROM hive_subscriptions WHERE (profile='"+public_name+"') AND (join_date <= DATE()) AND ((leave_date is null) OR (leave_date > DATE())))) OR (hive_chat=0 AND channel_unicode in (SELECT chat FROM chat_subscriptions WHERE (profile='"+public_name+"') AND(join_date <= DATE()) AND ((leave_date is null) OR (leave_date > DATE())))) ORDER BY RANDOM() LIMIT 1");
 
-        user = createUser("ramoncete_1985@gmail.com", "Ram\u00f3n Fern\u00e1ndez", "Guiti\u00e9rrez Ib\u00e1\u00f1ez", "homer_ou", "#5D00FF", "file_avatar_homer_ou.jpg", "file_private_homer_ou.jpg", "22/10/1985", "Ourense, Ourense, Espa\u00f1a", "MALE", false, true, false, true, "Espa\u00f1ol", "Gallego");
-        LoginUser.put(user.getUserPublicProfile().getPublicName(), user);
-        LoginPassword.put(user.getEmail(), "bartsimpson");
-
-        user = createUser("laura.gaza5@gmail.com", "Laura", "Gaza Moya", "weirdalien", "#00AF98", "file_avatar_weirdalien.jpg", "file_private_weirdalien.jpg", "04/07/1982", "Valladolid, Valladolid, Espa\u00f1a", "FEMALE", true, true, true, true, "Espa\u00f1ol", "Alem\u00e1n", "Franc\u00e9s");
-        LoginUser.put(user.getUserPublicProfile().getPublicName(), user);
-        LoginPassword.put(user.getEmail(), "AFD45ADE");
-
-        user = createUser("cool_cooper@gmail.com", "Charles L.", "Cooper", "coolest_thing_21", "#586000", "file_avatar_coolest_thing_21.jpg", "file_private_coolest_thing_21.jpg", "04/07/1990", "Big Thicket Creekmore Village, Texas, EEUU", "MALE", true, false, false, true, "Ingl\u00e9s");
-        LoginUser.put(user.getUserPublicProfile().getPublicName(), user);
-        LoginPassword.put(user.getEmail(), "87654321");
-
-        user = createUser("akamatsu@gmail.com", "Clair", "Moreau", "akamatsu", "#820600", "file_avatar_akamatsu.jpg", "file_private_akamatsu.jpg", "04/07/1998", "Paris, \u00cele-de-France, France", "FEMALE", false, true, true, true, "Franc\u00e9s", "Ingl\u00e9s");
-        LoginUser.put(user.getUserPublicProfile().getPublicName(), user);
-        LoginPassword.put(user.getEmail(), "Shizue_86");
-
-        /********************************************************************/
-        /*                HIVES                                             */
-        /********************************************************************/
-        hive = createHive("Minecraft - Unofficial chat","file_hive_minecraft_unofficial_hive.jpg","23.04","This is the best unofficial hive for minecraft's fans, join us and share the lates news, pictures and experiences of your favourite game.",new String[] {"English"},"sandbox","Notch");
-        subscribeHive("jonathan",hive.getNameUrl());
-        subscribeHive("cassini91",hive.getNameUrl());
-        subscribeHive("trabuco",hive.getNameUrl());
-        subscribeHive("serezy",hive.getNameUrl());
-        subscribeHive("homer_ou",hive.getNameUrl());
-        subscribeHive("weirdalien",hive.getNameUrl());
-        subscribeHive("coolest_thing_21",hive.getNameUrl());
-        subscribeHive("akamatsu",hive.getNameUrl());
-        createChat(hive,"01/01/2000","jonathan","cassini91");
-        createChat(hive,"01/05/2001","jonathan","serezy");
-        createChat(hive,"01/01/1998","coolest_thing_21","cassini91");
-        createChat(hive,"07/12/2001","homer_ou","serezy");
-        createChat(hive,"01/01/2000","jonathan","trabuco");
-        createChat(hive,"01/05/2001","coolest_thing_21","serezy");
-
-        hive = createHive("Chattyhive","file_hive_chattyhive.jpg","21.06","Official chattyhive's chat for internal communication.",new String[] {"Spanish", "English"},"development","communication","SocialNetwork","ChatApp","chattyhive");
-        subscribeHive("jonathan",hive.getNameUrl());
-        subscribeHive("cassini91",hive.getNameUrl());
-        subscribeHive("trabuco",hive.getNameUrl());
-        subscribeHive("weirdalien",hive.getNameUrl());
-        subscribeHive("coolest_thing_21",hive.getNameUrl());
-        subscribeHive("akamatsu",hive.getNameUrl());
-        createChat(hive,"15/12/2013","weirdalien","cassini91");
-        createChat(hive,"01/01/2010","jonathan","coolest_thing_21");
-        createChat(hive,"08/11/1955","trabuco","cassini91");
-        createChat(hive,"01/01/2010","jonathan","serezy");
-        createChat(hive,"08/11/1955","cassini91","coolest_thing_21");
-
-        hive = createHive("The sweetest thing ever!","file_hive_the_sweetest_thing_ever.jpg","09.01","Just talk about what you believe its the sweetest thing that could happen to you... and I am not (just) talking about food",new String[] {"English"});
-        subscribeHive("jonathan",hive.getNameUrl());
-        subscribeHive("trabuco",hive.getNameUrl());
-        subscribeHive("serezy",hive.getNameUrl());
-        subscribeHive("homer_ou",hive.getNameUrl());
-        createChat(hive,"15/12/2013","jonathan","trabuco");
-        createChat(hive,"01/01/2010","jonathan","serezy");
-        createChat(hive,"08/11/1955","trabuco","serezy");
-        createChat(hive,"01/01/2010","jonathan","homer_ou");
-        createChat(hive,"08/11/1955","homer_ou","trabuco");
-
-        hive = createHive("\u00a1Lugares donde te gustar\u00eda perderte!","file_hive_lugares_donde_te_gustaria_perderte.jpg","22.05","Hablemos y compartamos fotos sobre aquellos rincones donde no te importar\u00eda perder, y pasar una vida entera o al menos un buen cacho de tiempo. \u00bfQu\u00e9 lugares te inspiran m\u00e1s paz?",new String[] {"Spanish"},"travel","paradise","peace","relax");
-        subscribeHive("cassini91",hive.getNameUrl());
-
-        hive = createHive("Lets play guitar!","file_hive_lets_play_guitar.jpg","06.07","Are you a pro? still learning? doesn't matter, join this hive to learn and share about your favourite musical instrument",new String[] {"English"},"learning","music","GuitarHero");
-        subscribeHive("cassini91",hive.getNameUrl());
-        subscribeHive("trabuco",hive.getNameUrl());
-        createChat(hive,"25/02/2013","cassini91","trabuco");
-
-        hive = createHive("The most beautiful planet?","file_hive_the_most_beautiful_planet.jpg","13.02","You like astronomy so I ask you the following: do you think it would be possible to find a planet as beautiful and complex as our is?",new String[] {"English"},"Earth");
-        subscribeHive("jonathan",hive.getNameUrl());
-        subscribeHive("cassini91",hive.getNameUrl());
-        subscribeHive("trabuco",hive.getNameUrl());
-        subscribeHive("serezy",hive.getNameUrl());
-        subscribeHive("homer_ou",hive.getNameUrl());
-        subscribeHive("weirdalien",hive.getNameUrl());
-        subscribeHive("coolest_thing_21",hive.getNameUrl());
-        subscribeHive("akamatsu",hive.getNameUrl());
-        createChat(hive,"01/01/2000","jonathan","cassini91");
-        createChat(hive,"01/05/2001","jonathan","serezy");
-        createChat(hive,"01/01/1998","coolest_thing_21","cassini91");
-        createChat(hive,"07/12/2001","homer_ou","serezy");
-        createChat(hive,"01/01/2000","jonathan","trabuco");
-        createChat(hive,"01/05/2001","coolest_thing_21","serezy");
-
-        hive = createHive("PC general news and thoughts","file_hive_pc_general_news_and_thoughts.jpg","21.01","This is a general hive for PC lovers. Mac users are not welcome here (nah I am kidding)",new String[] {"English"},"PCreviews","Gaming","GraphicCard","motherboard","PCnews" );
-        subscribeHive("jonathan",hive.getNameUrl());
-        subscribeHive("trabuco",hive.getNameUrl());
-        subscribeHive("serezy",hive.getNameUrl());
-        subscribeHive("homer_ou",hive.getNameUrl());
-        createChat(hive,"15/12/2013","jonathan","trabuco");
-        createChat(hive,"01/01/2010","jonathan","serezy");
-        createChat(hive,"08/11/1955","trabuco","serezy");
-        createChat(hive,"01/01/2010","jonathan","homer_ou");
-        createChat(hive,"08/11/1955","homer_ou","trabuco");
-
-        hive = createHive("Sustos y sorpresas","file_hive_sustos_y_sorpresas.jpg","09.05","Comparte todos esos momentos que han hecho que se te quedasen los ojos c\u00f3mo platos",new String[] {"Spanish"},"anecdotas","PequenhasCosas","BromasDeMalGusto","sustos","SustosTraumaticos");
-        subscribeHive("jonathan",hive.getNameUrl());
-        subscribeHive("cassini91",hive.getNameUrl());
-        subscribeHive("trabuco",hive.getNameUrl());
-        subscribeHive("serezy",hive.getNameUrl());
-        subscribeHive("homer_ou",hive.getNameUrl());
-        subscribeHive("weirdalien",hive.getNameUrl());
-        subscribeHive("coolest_thing_21",hive.getNameUrl());
-        subscribeHive("akamatsu",hive.getNameUrl());
-        createChat(hive,"01/01/2000","jonathan","cassini91");
-        createChat(hive,"01/05/2001","jonathan","serezy");
-        createChat(hive,"01/01/1998","coolest_thing_21","cassini91");
-        createChat(hive,"07/12/2001","homer_ou","serezy");
-        createChat(hive,"01/01/2000","jonathan","trabuco");
-        createChat(hive,"01/05/2001","coolest_thing_21","serezy");
-
-        hive = createHive("Cities are not for me, sorry","file_hive_cities_are_not_for_me.jpg","09.01","For those who can't live in a big city and enjoy life in small towns. Why can't you stand the big cities?",new String[] {"English"},"BigCity","NewYork","infatuation");
-        subscribeHive("jonathan",hive.getNameUrl());
-        subscribeHive("cassini91",hive.getNameUrl());
-        subscribeHive("trabuco",hive.getNameUrl());
-        subscribeHive("weirdalien",hive.getNameUrl());
-        subscribeHive("coolest_thing_21",hive.getNameUrl());
-        subscribeHive("akamatsu",hive.getNameUrl());
-        createChat(hive,"15/12/2013","weirdalien","cassini91");
-        createChat(hive,"01/01/2010","jonathan","coolest_thing_21");
-        createChat(hive,"08/11/1955","trabuco","cassini91");
-        createChat(hive,"01/01/2010","jonathan","serezy");
-        createChat(hive,"08/11/1955","cassini91","coolest_thing_21");
-
-        hive = createHive("The funny hive","file_hive_the_funny_hive.jpg","06.05","Only funny stuff is allowed",new String[] {"English"},"jokes","laughing");
-        subscribeHive("jonathan",hive.getNameUrl());
-        subscribeHive("trabuco",hive.getNameUrl());
-        subscribeHive("serezy",hive.getNameUrl());
-        subscribeHive("homer_ou",hive.getNameUrl());
-        createChat(hive,"15/12/2013","jonathan","trabuco");
-        createChat(hive,"01/01/2010","jonathan","serezy");
-        createChat(hive,"08/11/1975","trabuco","serezy");
-        createChat(hive,"01/01/2010","jonathan","homer_ou");
-        createChat(hive,"08/11/1955","homer_ou","trabuco");
-
-        hive = createHive("Biraz daha kalabilir misin?","file_hive_biraz_daha_kalabilir_misin.jpg","10.04","Seni \u00e7ok \u00f6zledim.",new String[] {"Turkish"},"eksikBirisi","CokFazlaSevgi");
-        subscribeHive("cassini91",hive.getNameUrl());
-        subscribeHive("serezy",hive.getNameUrl());
-        createChat(hive,"25/02/2013","cassini91","serezy");
-
-        hive = createHive("\u00a1As\u00ed es imposible estar a dieta!","file_hive_asi_es_imposible_estar_a_dieta.jpg","07.03","Cuando est\u00e1s a dieta y el mundo se vuelve en tu contra...",new String[] {"Spanish"},"TrucosDieta","vegetariano","cuidarse");
-        subscribeHive("jonathan",hive.getNameUrl());
-        subscribeHive("cassini91",hive.getNameUrl());
-        subscribeHive("trabuco",hive.getNameUrl());
-        subscribeHive("serezy",hive.getNameUrl());
-        subscribeHive("homer_ou",hive.getNameUrl());
-        subscribeHive("weirdalien",hive.getNameUrl());
-        subscribeHive("coolest_thing_21",hive.getNameUrl());
-        subscribeHive("akamatsu",hive.getNameUrl());
-        createChat(hive,"01/01/2014","weirdalien","coolest_thing_21");
-        createChat(hive,"01/05/2001","coolest_thing_21","akamatsu");
-        createChat(hive,"01/01/1998","homer_ou","akamatsu");
-        createChat(hive,"07/12/2001","trabuco","weirdalien");
-        createChat(hive,"01/01/2000","weirdalien","jonathan");
-        createChat(hive,"01/05/2001","jonathan","akamatsu");
-
-        hive = createHive("Amazing places","file_hive_amazing_places.jpg","22.03","Share those places you have visited or you want to go and that are amazing and not very well known",new String[] {"English"},"nature","WeirdPlaces","getLost","relax","PlacesToDream");
-        subscribeHive("cassini91",hive.getNameUrl());
-        subscribeHive("trabuco",hive.getNameUrl());
-        subscribeHive("serezy",hive.getNameUrl());
-        subscribeHive("homer_ou",hive.getNameUrl());
-        subscribeHive("weirdalien",hive.getNameUrl());
-        createChat(hive,"03/07/2014","trabuco","weirdalien");
-        createChat(hive,"08/07/2014","trabuco","serezy");
-
-        hive = createHive("Android fans eye candy","file_hive_android_fans_eye_candy.jpg","21.04","Just pictures of broken iPhones",new String[] {"English","French","Spanish","German"},"iPhone","nerdgasm","brokenMobiles");
-        subscribeHive("weirdalien",hive.getNameUrl());
-        subscribeHive("coolest_thing_21",hive.getNameUrl());
-        subscribeHive("cassini91",hive.getNameUrl());
-        subscribeHive("trabuco",hive.getNameUrl());
-        subscribeHive("serezy",hive.getNameUrl());
-        createChat(hive,"08/12/2014","cassini91","weirdalien");
-
-        hive = createHive("Winter is coming...","file_hive_winter_is_coming.jpg","09.05","Brace yourselves, winter is coming. Share how you feel when the cruel cold is coming to your country.",new String[] {"English"},"cold","NordicCountries","WinterIsComing");
-        subscribeHive("homer_ou",hive.getNameUrl());
-        subscribeHive("weirdalien",hive.getNameUrl());
-        createChat(hive,"22/11/2014","homer_ou","weirdalien");
-
-        hive = createHive("Ojos y miradas","file_hive_ojos_y_miradas.jpg","06.08","Simplemente tus mejores fotos de ojos y miradas. Pueden ser de gente, de animales o de cualquier cosa que imite a un ojo.",new String[] {"Spanish"},"fotos_de_gente","miradas","WinterIsComing");
-        subscribeHive("weirdalien",hive.getNameUrl());
-        subscribeHive("coolest_thing_21",hive.getNameUrl());
-        subscribeHive("akamatsu",hive.getNameUrl());
-
-        hive = createHive("\u00bfEn qui\u00e9n te conviertes, cuando cae la noche?","file_hive_cuando_cae_la_noche.jpg","09.06","\u00bfA qui\u00e9n no le ha pasado el encontrarse a un compa\u00f1er@ de trabajo o clases por la noche y no parecerle la misma persona que por el d\u00eda? Tanto si eres de los que se transforman como de los que sufren las transformaciones de los dem\u00e1s, este es tu hive.",new String[] {"Spanish"},"genteRara","borracheras","LaNocheAlbergaHorrores");
-        subscribeHive("coolest_thing_21",hive.getNameUrl());
-        subscribeHive("cassini91",hive.getNameUrl());
-        subscribeHive("trabuco",hive.getNameUrl());
-        createChat(hive,"12/02/2014","trabuco","cassini91");
-        createChat(hive,"23/07/2014","trabuco","coolest_thing_21");
-        createChat(hive,"30/07/2014","coolest_thing_21","cassini91");
-
-        hive = createHive("Risky jobs","file_hive_risky_jobs.jpg","24.06","Not all jobs are as safe as they should. What risks do you face everyday in your job? how do you cope with them?",new String[] {"English"},"badJobs");
-        subscribeHive("cassini91",hive.getNameUrl());
-        subscribeHive("trabuco",hive.getNameUrl());
-        subscribeHive("weirdalien",hive.getNameUrl());
-        subscribeHive("coolest_thing_21",hive.getNameUrl());
-        subscribeHive("serezy",hive.getNameUrl());
-        createChat(hive,"15/03/2014","serezy","cassini91");
-        createChat(hive,"12/03/2014","coolest_thing_21","cassini91");
-        createChat(hive,"01/02/2014","weirdalien","serezy");
-
-        hive = createHive("Piano noobs","file_hive_piano_noobs.jpg","06.07","Learn first steps with piano joining this hive and sharing with us your tricks and tips",new String[] {"English"},"piano","MusicTheory","MusicLessons");
-        subscribeHive("serezy",hive.getNameUrl());
-        subscribeHive("homer_ou",hive.getNameUrl());
-        subscribeHive("weirdalien",hive.getNameUrl());
-        subscribeHive("coolest_thing_21",hive.getNameUrl());
-        subscribeHive("akamatsu",hive.getNameUrl());
-        createChat(hive,"21/01/2014","coolest_thing_21","homer_ou");
-        createChat(hive,"25/01/2014","serezy","homer_ou");
-        createChat(hive,"25/01/2014","akamatsu","homer_ou");
-
-        hive = createHive("Enfant prodige","file_hive_enfant_prodige.jpg","05.05","Trouver tout ce que vous devez savoir!",new String[] {"French"},"enfants");
-        subscribeHive("trabuco",hive.getNameUrl());
-        subscribeHive("weirdalien",hive.getNameUrl());
-
-
-        hive = createHive("Tus ebooks favoritos","file_hive_ebooks_favoritos.jpg","02.01","Compartir recomendaciones de ebooks, especialmente los de actualidad",new String[] {"Spanish"},"ebooks","lectura","leer");
-        subscribeHive("cassini91",hive.getNameUrl());
-        subscribeHive("trabuco",hive.getNameUrl());
-        subscribeHive("weirdalien",hive.getNameUrl());
-        subscribeHive("coolest_thing_21",hive.getNameUrl());
-        subscribeHive("serezy",hive.getNameUrl());
-        subscribeHive("akamatsu",hive.getNameUrl());
-        subscribeHive("homer_ou",hive.getNameUrl());
-        createChat(hive,"19/09/2014","akamatsu","weirdalien");
-
-
-        hive = createHive("Board games nostalgia","file_hive_board_games_nostalgia.jpg","06.02","Nothing like the old board games... we miss them right? now we all use online games in our PCs and smartphones, but its not the same, no! its not...",new String[] {"English"});
-        subscribeHive("weirdalien",hive.getNameUrl());
-        subscribeHive("coolest_thing_21",hive.getNameUrl());
-        subscribeHive("serezy",hive.getNameUrl());
-        subscribeHive("akamatsu",hive.getNameUrl());
-
-
-        hive = createHive("Cool graffiti","file_hive_cool_graffiti.jpg","01.01","Graffiti are also art, and I am sure some of you found some amazing graffiti on the street now and then.. share them here!",new String[] {"English"},"graffiti","PaintWork","StreetArt","AlternativeArt","painting");
-        subscribeHive("weirdalien",hive.getNameUrl());
-        subscribeHive("coolest_thing_21",hive.getNameUrl());
-        subscribeHive("serezy",hive.getNameUrl());
-        subscribeHive("akamatsu",hive.getNameUrl());
-
-
-        hive = createHive("The moon!","file_hive_the_moon.jpg","13.02","Just the moon",new String[] {"English"},"outThere","moon");
-        subscribeHive("trabuco",hive.getNameUrl());
-        subscribeHive("weirdalien",hive.getNameUrl());
-
-
-
-        /********************************************************************/
-        /*                OTHER PRIVATE CHATS (entre amigos)                */
-        /********************************************************************/
-        createChat(null,"06/02/2014","cassini91","jonathan");
-        createChat(null,"16/08/2004","cassini91","serezy");
-        createChat(null,"16/05/2013","jonathan","serezy");
-        createChat(null,"06/02/2014","coolest_thing_21","jonathan");
-        createChat(null,"16/08/2001","coolest_thing_21","serezy");
-        createChat(null,"06/02/2014","weirdalien","akamatsu");
-        createChat(null,"21/08/2004","weirdalien","serezy");
-        createChat(null,"16/12/2013","homer_ou","akamatsu");
-
-        /********************************************************************/
-        /*                USER FRIEND LIST                                  */
-        /********************************************************************/
-
-        subscribeUser("cassini91","jonathan");
-        subscribeUser("cassini91","serezy");
-        subscribeUser("jonathan","serezy");
-        subscribeUser("jonathan","trabuco");
-        subscribeUser("coolest_thing_21","jonathan");
-        subscribeUser("coolest_thing_21","serezy");
-        subscribeUser("weirdalien","serezy");
-        subscribeUser("weirdalien","akamatsu");
-        subscribeUser("homer_ou","akamatsu");
-
-        randomMessageSender(false);
-    }
-
-    private static void randomMessageSender(Boolean continuous) {
-
-        final Random random = new Random();
-        int initialMessageNumber = random.nextInt(1000)+1000;
-
-        for (int messageNumber = 0; messageNumber < initialMessageNumber; messageNumber++)
-            sendRandomMessage(random,true,false);
-
-        if (!continuous) return;
-
-        /********************************************************************/
-        /*                RANDOM MESSAGE TIMER                              */
-        /********************************************************************/
-
-        Thread timer = new Thread() {
-            @Override
-            public void run() {
-                Boolean running = true;
-
-                while (running) {
-                    try {
-                        sleep(random.nextInt(599500)+500);
-                    } catch (InterruptedException e) {
-                        running = false;
-                        continue;
-                    }
-                    sendRandomMessage(random,false,true);
-                }
-            }
-        };
-
-        timer.start();
-
-    }
-
-    private static void sendRandomMessage(Random random, Boolean confirmed, Boolean notify) {
         Chat chat = Chats.values().toArray(new Chat[Chats.size()])[random.nextInt(Chats.size())];
         User sender = null;
         if (chat.getChatKind() != ChatKind.HIVE)

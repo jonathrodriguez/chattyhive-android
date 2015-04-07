@@ -127,7 +127,7 @@ public class DataRow implements Comparable<DataRow> {
         return this.values[index];
     }
     public void set(int index, Object value) {
-        if (!(this.table.Columns().get(index).DataType().isInstance(value)))
+        if ((value != null) && (!(this.table.Columns().get(index).DataType().isInstance(value))))
             throw new ClassCastException(String.format("Value type is not compatible. Expected type: %s",this.table.Columns().get(index).DataType().getCanonicalName()));
         this.values[index] = value;
     }
