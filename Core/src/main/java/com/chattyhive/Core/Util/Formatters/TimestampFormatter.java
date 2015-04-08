@@ -22,7 +22,8 @@ public final class TimestampFormatter {
                                               "HH:mm:ss 'GMT'Z" ,
                                               "HH:mm:ss zzzz" ,
                                               "HH:mm:ss Z" ,
-                                              "yyyy-MM-dd'T'HH:mm:ss.SSSZ" };
+                                              "yyyy-MM-dd'T'HH:mm:ss.SSSZ",
+                                              "yyyy-MM-dd HH:mm:ss.SSS"};
     private static final String timeZoneID = "Europe/Madrid";
     /**
      * Converts a Date object to it's string representation, referred to UTC, according to the
@@ -74,4 +75,14 @@ public final class TimestampFormatter {
         return (new Date());
     }
 
+    public static final String toDbString(Date timestamp) {
+        SimpleDateFormat simpleDateFormat;
+        if ((_formats != null) && (_formats.length > 7) && (_formats[7] != null) && (!_formats[7].isEmpty())) {
+            simpleDateFormat = new SimpleDateFormat(_formats[7]);
+            simpleDateFormat.setTimeZone(TimeZone.getTimeZone(timeZoneID));
+            return simpleDateFormat.format(timestamp);
+        } else {
+            return timestamp.toString();
+        }
+    }
 }

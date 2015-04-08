@@ -18,7 +18,7 @@ public class StandAloneServerDataBase implements LocalDataBaseInterface {
     private StandAloneServerDataBaseHelper dbHelper;
 
     public StandAloneServerDataBase(Context context) {
-        this.dbHelper = new StandAloneServerDataBaseHelper(context,"StandAloneServerDB",null,3);
+        this.dbHelper = new StandAloneServerDataBaseHelper(context,"StandAloneServer.db",null,1);
     }
 
     @Override

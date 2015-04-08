@@ -114,7 +114,7 @@ public class StandAloneServer implements IOrigin {
                             running = false;
                             continue;
                         }
-                        sendRandomMessage(random,false,true);
+                        sendRandomMessage(random,true);
                     }
                 }
             };
@@ -123,7 +123,7 @@ public class StandAloneServer implements IOrigin {
         }
     }
 
-    private void sendRandomMessage(Random random, Boolean confirmed, Boolean notify) {
+    private void sendRandomMessage(Random random, Boolean notify) {
         String active_users = "";
         for (String user : SessionIDUser.values())
             active_users = active_users.concat((active_users.isEmpty())?"":",").concat("'").concat(user).concat("'");
@@ -140,15 +140,14 @@ public class StandAloneServer implements IOrigin {
 
         DataTable randomChat = standAloneServerDB.tableQuerySQL("SELECT * FROM chat WHERE (hive_chat=1 AND hive in (SELECT hive FROM hive_subscriptions WHERE (profile='"+public_name+"') AND (join_date <= DATE()) AND ((leave_date is null) OR (leave_date > DATE())))) OR (hive_chat=0 AND channel_unicode in (SELECT chat FROM chat_subscriptions WHERE (profile='"+public_name+"') AND(join_date <= DATE()) AND ((leave_date is null) OR (leave_date > DATE())))) ORDER BY RANDOM() LIMIT 1");
 
-        Chat chat = Chats.values().toArray(new Chat[Chats.size()])[random.nextInt(Chats.size())];
-        User sender = null;
-        if (chat.getChatKind() != ChatKind.HIVE)
-            sender = chat.getMembers().get(random.nextInt(chat.getMembers().size()));
-        else {
-            if ((HiveUserSubscriptions.containsKey(chat.getParentHive().getNameUrl())) && (HiveUserSubscriptions.get(chat.getParentHive().getNameUrl()) != null) && (HiveUserSubscriptions.get(chat.getParentHive().getNameUrl()).size() > 0))
-                sender = LoginUser.get(HiveUserSubscriptions.get(chat.getParentHive().getNameUrl()).get(random.nextInt(HiveUserSubscriptions.get(chat.getParentHive().getNameUrl()).size())));
-        }
-        if (sender != null) {
+        String channel_unicode = randomChat.Rows(0).get("channel_unicode").toString();
+        String hive_url = randomChat.Rows(0).get("hive").toString();
+        boolean isHive = randomChat.Rows(0).get("hive_chat").toString().equalsIgnoreCase("1");
+
+        if ((channel_unicode == null) || (channel_unicode.isEmpty()) || ((isHive) && ((hive_url == null) || (hive_url.isEmpty()))))
+            return;
+
+
 
             String content_type = "";
             String messageContent = "";
@@ -165,74 +164,51 @@ public class StandAloneServer implements IOrigin {
                     messageContent = messageContent.concat(((messageContent.isEmpty())?"":" ")).concat(Words[random.nextInt(Words.length)]);
             }
 
-
-
-            long minDate = (new Date()).getTime() - (30L*24*60*60*1000);//chat.getCreationDate().getTime();
-            if ((chat.getConversation().getCount() > 0) && (chat.getConversation().getLastMessage() != null))
-                minDate = chat.getConversation().getLastMessage().getServerTimeStamp().getTime();
-            long maxDate = (new Date()).getTime();
-
-            long date = Math.min(Math.round((Math.min(Math.abs((new Random()).nextGaussian() * 0.17),0.99) * (maxDate - minDate)) + minDate),maxDate);
+            Date timestamp = new Date();
 
 
             MESSAGE message = new MESSAGE();
-            message.CHANNEL_UNICODE = chat.getChannelUnicode();
-            message.CONFIRMED = confirmed;
-            message.TIMESTAMP = new Date(date);
-            message.SERVER_TIMESTAMP = new Date(date);
-            message.USER_ID = sender.getUserID();
+            message.CHANNEL_UNICODE = channel_unicode;
+            message.CONFIRMED = false;
+            message.TIMESTAMP = timestamp;
+            message.SERVER_TIMESTAMP = timestamp;
+            message.USER_ID = public_name;
             message.CONTENT = new MESSAGE_CONTENT();
             message.CONTENT.CONTENT_TYPE = content_type;
             message.CONTENT.CONTENT = messageContent;
-            sendMessage(sender, chat,message,notify);
-        }
+            sendMessage(message,notify);
+
     }
 
-    private static MESSAGE_ACK sendMessage(User sender, Chat destination, MESSAGE message, Boolean notify) {
-        Message msg = new Message();
-        msg.setUser(sender);
-        msg.setConversation(destination.getConversation());
-        msg.setConfirmed(message.CONFIRMED);
-        msg.setId(String.format("%d", destination.getConversation().getCount()));
+    private MESSAGE_ACK sendMessage(MESSAGE message, Boolean notify) {
         if (message.SERVER_TIMESTAMP == null)
-            msg.setServerTimeStamp(new Date());
-        else
-            msg.setServerTimeStamp(message.SERVER_TIMESTAMP);
-        msg.setTimeStamp(message.TIMESTAMP);
-        msg.setMessageContent(new MessageContent(message.CONTENT.CONTENT_TYPE, message.CONTENT.CONTENT));
+            message.SERVER_TIMESTAMP = new Date();
 
-        destination.getConversation().addMessageByID(msg);
+        String insertMessage = "INSERT INTO message (profile,chat,user_date,server_date,content_type,message_content) SELECT '"+message.USER_ID+"' as profile, '"+message.CHANNEL_UNICODE+"' as chat, '"+TimestampFormatter.toDbString(message.TIMESTAMP)+"' as user_date, '"+TimestampFormatter.toDbString(message.SERVER_TIMESTAMP)+"' as server_date, content_type_code as content_type, '"+message.CONTENT.CONTENT+"' as message_content FROM content_type WHERE content_type_name='"+message.CONTENT.CONTENT_TYPE+"';";
+
+        String findMessageID = "SELECT message_id FROM message WHERE profile='"+message.USER_ID+"' AND chat='"+message.CHANNEL_UNICODE+"' AND user_date='"+TimestampFormatter.toDbString(message.TIMESTAMP)+"' AND server_date='"+TimestampFormatter.toDbString(message.SERVER_TIMESTAMP)+"' AND content_type=(SELECT content_type_code FROM content_type WHERE content_type_name='"+message.CONTENT.CONTENT_TYPE+"') AND message_content='"+message.CONTENT.CONTENT+"'";
+
+        MESSAGE_ACK result = new MESSAGE_ACK();
+        result.SERVER_TIMESTAMP = message.SERVER_TIMESTAMP;
+
+        standAloneServerDB.executeSQL(insertMessage);
+
+        String id = standAloneServerDB.simpleQuerySQL(findMessageID).toString();
+
+        if ((id == null) || (id.isEmpty()))
+            result = null;
+        else
+            result.ID = id;
+
+
         if (notify) {
-            ArrayList<User> members;
-            if (destination.getChatKind() != ChatKind.HIVE)
-                members = destination.getMembers();
-            else {
-                members = new ArrayList<User>();
-                if ((ChatUserSubscriptions.containsKey(destination.getChannelUnicode())) && (ChatUserSubscriptions.get(destination.getChannelUnicode()) != null))
-                    for (String uName : ChatUserSubscriptions.get(destination.getChannelUnicode()))
-                        if ((LoginUser.containsKey(uName)) && (LoginUser.get(uName) != null))
-                            members.add(LoginUser.get(uName));
-            }
-            for (User receiver : members) {
-                if (receiver == sender) continue;
-                if (SessionIDUser.containsValue(receiver)) {
-                    DataProvider dataProvider = DataProvider.GetDataProvider();
-                    if (dataProvider != null) {
-                        Server server = dataProvider.getServer();
-                        if ((server != null) && (server.getUserSession() != null)) {
-                            String login = server.getUserSession().getLogin();
-                            if ((login != null) && (!login.isEmpty())) {
-                                if ((login.equalsIgnoreCase(receiver.getEmail())) || (login.equalsIgnoreCase(receiver.getUserID()))) {
-                                    dataProvider.onChannelEvent(null, new PubSubChannelEventArgs(destination.getChannelUnicode(), "msg", msg.toJson(new MESSAGE()).toString()));
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+            //TODO: select users from chat who are active
+            //TODO: send notification to selected users
         }
-        return ((MESSAGE_ACK) msg.toFormat(new MESSAGE_ACK()));
+
+        return result;
     }
+
     private static Chat createChat(Hive hive, String creationDate, String... members) {
         ChatKind chatKind = ChatKind.PUBLIC_SINGLE;
         if ((hive == null) && (members.length > 2))
