@@ -12,7 +12,7 @@ import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.chattyhive.backend.businessobjects.Chats.IContextualizable;
+import com.chattyhive.backend.businessobjects.Chats.Context.IContextualizable;
 import com.chattyhive.backend.businessobjects.Image;
 import com.chattyhive.backend.util.events.EventArgs;
 import com.chattyhive.backend.util.events.EventHandler;
