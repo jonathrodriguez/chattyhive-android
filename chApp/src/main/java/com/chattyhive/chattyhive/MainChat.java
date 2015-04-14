@@ -9,14 +9,21 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.chattyhive.backend.Controller;
 import com.chattyhive.backend.businessobjects.Chats.Chat;
 import com.chattyhive.backend.businessobjects.Chats.Conversation;
+import com.chattyhive.backend.businessobjects.Chats.Hive;
 import com.chattyhive.backend.businessobjects.Chats.Messages.Message;
 import com.chattyhive.backend.businessobjects.Chats.Messages.MessageContent;
 import com.chattyhive.backend.businessobjects.Image;
 import com.chattyhive.backend.businessobjects.Users.User;
+import com.chattyhive.backend.contentprovider.formats.COMMON;
+import com.chattyhive.backend.contentprovider.formats.Format;
+import com.chattyhive.backend.contentprovider.formats.HIVE;
+import com.chattyhive.backend.contentprovider.formats.PROFILE_ID;
+import com.chattyhive.backend.util.events.CommandCallbackEventArgs;
 import com.chattyhive.backend.util.events.EventArgs;
 import com.chattyhive.backend.util.events.EventHandler;
 import com.chattyhive.chattyhive.framework.Util.ViewPair;
@@ -34,6 +41,13 @@ public class MainChat extends Window {
     private transient TextView textInput;
 
     private String channelChatID;
+    private String userID;
+    private Boolean newChat;
+    private String hiveID;
+
+    private transient Hive hive;
+    private transient User user;
+
     private transient Chat channelChat;
     private transient Conversation channelConversation;
 
@@ -49,17 +63,45 @@ public class MainChat extends Window {
     public MainChat (Context context, Chat channelChat) {
         this(context);
 
+        this.newChat = false;
+
         this.channelChatID = channelChat.getChannelUnicode();
         this.channelChat = channelChat;
+
+        this.hiveID = "";
+        this.userID = "";
     }
     public MainChat (Context context, String channelUnicode) {
         this(context);
 
+        this.newChat = false;
+
         this.channelChatID = channelUnicode;
+
+        this.hiveID = "";
+        this.userID = "";
+    }
+    public MainChat (Context context, Hive hive, User user) {
+        this(context);
+
+        this.newChat = true;
+
+        if (this.hive != null) {
+            this.hiveID = hive.getNameUrl();
+            this.hive = hive;
+        } else {
+            this.hiveID = "";
+        }
+
+        this.userID = user.getUserID();
+        this.user = user;
+
+        this.channelChatID = "";
+        this.channelChat = Chat.CreateChat(this.user,this.hive,new EventHandler<CommandCallbackEventArgs>(this,"onChatCreated",CommandCallbackEventArgs.class));
     }
 
     protected void loadActionBarData() {
-        this.actionBar.findViewById(R.id.main_panel_chat_name).setTag(this.channelChat.getChannelUnicode());
+        //this.actionBar.findViewById(R.id.main_panel_chat_name).setTag(this.channelChat.getChannelUnicode());
         this.actionBar.findViewById(R.id.main_panel_chat_menu_icon).setOnClickListener(((Main)context).menuIcon_ClickListener);
         this.actionBar.findViewById(R.id.main_panel_chat_icon).setOnClickListener(((Main)context).appIcon_ClickListener);
 
@@ -89,25 +131,29 @@ public class MainChat extends Window {
                     mainName = hiveNameIdentifier.concat(this.channelChat.getParentHive().getName());
                 break;
             case PUBLIC_SINGLE:
-                for (User member : this.channelChat.getMembers())
-                    if (!member.isMe())
-                        otherUser = member;
+                if (!this.newChat) {
+                    for (User member : this.channelChat.getMembers())
+                        if (!member.isMe())
+                            otherUser = member;
+                } else
+                    otherUser = this.user;
 
-                if ((otherUser != null) && (otherUser.getUserPublicProfile() != null) && (otherUser.getUserPublicProfile().getImageURL() != null) && (!otherUser.getUserPublicProfile().getImageURL().isEmpty())) {
-                    otherUser.getUserPublicProfile().getProfileImage().OnImageLoaded.add(new EventHandler<EventArgs>(this,"onImageLoaded",EventArgs.class));
-                    otherUser.getUserPublicProfile().getProfileImage().loadImage(Image.ImageSize.small,0);
-                } else if ((otherUser != null) && (otherUser.getUserPublicProfile() != null) && (otherUser.getUserPublicProfile().getSex() != null) && (otherUser.getUserPublicProfile().getSex().equalsIgnoreCase("female")))
-                    ((ImageView)actionBar.findViewById(R.id.main_panel_chat_icon)).setImageResource(R.drawable.default_profile_image_female);
+                    if ((otherUser != null) && (otherUser.getUserPublicProfile() != null) && (otherUser.getUserPublicProfile().getImageURL() != null) && (!otherUser.getUserPublicProfile().getImageURL().isEmpty())) {
+                        otherUser.getUserPublicProfile().getProfileImage().OnImageLoaded.add(new EventHandler<EventArgs>(this, "onImageLoaded", EventArgs.class));
+                        otherUser.getUserPublicProfile().getProfileImage().loadImage(Image.ImageSize.small, 0);
+                    } else if ((otherUser != null) && (otherUser.getUserPublicProfile() != null) && (otherUser.getUserPublicProfile().getSex() != null) && (otherUser.getUserPublicProfile().getSex().equalsIgnoreCase("female")))
+                        ((ImageView) actionBar.findViewById(R.id.main_panel_chat_icon)).setImageResource(R.drawable.default_profile_image_female);
 
 
-                if ((this.channelChat.getName() != null) && (!this.channelChat.getName().isEmpty()))
-                    mainName = this.channelChat.getName();
-                else if ((otherUser != null) && (otherUser.getUserPublicProfile() != null) && (otherUser.getUserPublicProfile().getPublicName() != null))
-                    mainName = userPublicNameIdentifier.concat(otherUser.getUserPublicProfile().getPublicName());
+                    if ((!this.newChat) && (this.channelChat.getName() != null) && (!this.channelChat.getName().isEmpty()))
+                        mainName = this.channelChat.getName();
+                    else if ((otherUser != null) && (otherUser.getUserPublicProfile() != null) && (otherUser.getUserPublicProfile().getPublicName() != null))
+                        mainName = userPublicNameIdentifier.concat(otherUser.getUserPublicProfile().getPublicName());
 
-                if ((this.channelChat.getParentHive() != null) && (this.channelChat.getParentHive().getName() != null))
-                    infoText = hiveNameIdentifier.concat(this.channelChat.getParentHive().getName());
-
+                    if ((!this.newChat) && (this.channelChat.getParentHive() != null) && (this.channelChat.getParentHive().getName() != null))
+                        infoText = hiveNameIdentifier.concat(this.channelChat.getParentHive().getName());
+                    else if ((this.newChat) && (this.hive != null) && (this.hive.getName() != null))
+                        infoText = hiveNameIdentifier.concat(this.hive.getName());
 
                 break;
             case PUBLIC_GROUP:
@@ -122,18 +168,20 @@ public class MainChat extends Window {
                     infoText = hiveNameIdentifier.concat(this.channelChat.getParentHive().getName());
                 break;
             case PRIVATE_SINGLE:
-                for (User member : this.channelChat.getMembers())
-                    if (!member.isMe())
-                        otherUser = member;
-
+                if (!this.newChat) {
+                    for (User member : this.channelChat.getMembers())
+                        if (!member.isMe())
+                            otherUser = member;
+                } else
+                    otherUser = this.user;
 
                 if ((otherUser != null) && (otherUser.getUserPrivateProfile() != null) && (otherUser.getUserPrivateProfile().getImageURL() != null) && (!otherUser.getUserPrivateProfile().getImageURL().isEmpty())) {
-                    otherUser.getUserPrivateProfile().getProfileImage().OnImageLoaded.add(new EventHandler<EventArgs>(this,"onImageLoaded",EventArgs.class));
-                    otherUser.getUserPrivateProfile().getProfileImage().loadImage(Image.ImageSize.small,0);
+                    otherUser.getUserPrivateProfile().getProfileImage().OnImageLoaded.add(new EventHandler<EventArgs>(this, "onImageLoaded", EventArgs.class));
+                    otherUser.getUserPrivateProfile().getProfileImage().loadImage(Image.ImageSize.small, 0);
                 } else if ((otherUser != null) && (otherUser.getUserPrivateProfile() != null) && (otherUser.getUserPrivateProfile().getSex() != null) && (otherUser.getUserPrivateProfile().getSex().equalsIgnoreCase("female")))
                     ((ImageView)actionBar.findViewById(R.id.main_panel_chat_icon)).setImageResource(R.drawable.default_profile_image_female);
 
-                if ((this.channelChat.getName() != null) && (!this.channelChat.getName().isEmpty()))
+                if ((!this.newChat) && (this.channelChat.getName() != null) && (!this.channelChat.getName().isEmpty()))
                     mainName = this.channelChat.getName();
                 else if ((otherUser != null) && (otherUser.getUserPrivateProfile() != null) && (otherUser.getUserPrivateProfile().getShowingName() != null))
                     mainName = otherUser.getUserPrivateProfile().getShowingName();
@@ -195,6 +243,37 @@ public class MainChat extends Window {
         });
     }
 
+    public void onChatCreated(Object sender, CommandCallbackEventArgs eventArgs) {
+        this.UIThreadOnChatCreated(sender,eventArgs);
+    }
+
+    private void UIThreadOnChatCreated(final Object sender, final CommandCallbackEventArgs eventArgs) {
+        final MainChat thisMainChat = this;
+        ((Activity)this.context).runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Boolean createdOK = false;
+                if (eventArgs.countReceivedFormats() > 0)
+                    for (Format format : eventArgs.getReceivedFormats())
+                        if ((format instanceof COMMON) && (((COMMON) format).STATUS.equalsIgnoreCase("OK")))
+                            createdOK = true;
+
+                if (createdOK) {
+                    thisMainChat.channelChat = Chat.getChat(((Chat)sender).getChannelUnicode());
+                    thisMainChat.channelChatID = thisMainChat.channelChat.getChannelUnicode();
+                    thisMainChat.channelConversation = thisMainChat.channelChat.getConversation();
+                    thisMainChat.newChat = false;
+                    Toast.makeText(thisMainChat.context,"Chat created!",Toast.LENGTH_LONG).show();
+                    thisMainChat.Show(false);
+                } else {
+                    Toast.makeText(thisMainChat.context,"Some error happened while creating chat!",Toast.LENGTH_LONG).show();
+                    thisMainChat.Close();
+                }
+
+
+            }
+        });
+    }
 
     protected transient View.OnClickListener send_button_click = new View.OnClickListener() {
         @Override
@@ -254,49 +333,73 @@ public class MainChat extends Window {
 
     @Override
     public void Show() {
+        this.Show(true);
+    }
+
+    private void Show(Boolean complete) {
         //Log.w("MainChat", "Show().Start");
         if (!this.hasContext()) return;
 
-        //Log.w("MainChat", "Set channel chat if needed.");
-        if (this.channelChat == null) {
-            this.channelChat = Chat.getChat(this.channelChatID);
-            this.channelConversation = this.channelChat.getConversation();
+        if ((complete) || (this.actionBar == null) || (this.mainChat == null) || (this.textInput == null)) {
+            //Log.w("MainChat", "Show the view and the actionBar.");
+            ViewPair viewPair = ((Main) context).ShowLayout(R.layout.main_panel_chat_layout, R.layout.chat_action_bar);
+            this.actionBar = viewPair.getActionBarView();
+            this.mainChat = viewPair.getMainView();
+
+            //Log.w("MainChat", "Remember the textInput.");
+            this.textInput = ((TextView) mainChat.findViewById(R.id.main_panel_chat_textBox));
         }
 
-        //Log.w("MainChat", "Set conversation if needed.");
-        if (this.channelConversation == null)
-            this.channelConversation = this.channelChat.getConversation();
+        if (!this.newChat) {
+            //Log.w("MainChat", "Set channel chat if needed.");
+            if (this.channelChat == null) {
+                this.channelChat = Chat.getChat(this.channelChatID);
+                this.channelConversation = this.channelChat.getConversation();
+            }
 
-        //Log.w("MainChat", "Notify core that channel conversation window is active.");
-        this.channelConversation.setChatWindowActive(true);
-        //Log.w("MainChat", "Show().End");
+            //Log.w("MainChat", "Set conversation if needed.");
+            if (this.channelConversation == null)
+                this.channelConversation = this.channelChat.getConversation();
+
+            //Log.w("MainChat", "Notify core that channel conversation window is active.");
+            this.channelConversation.setChatWindowActive(true);
+            //Log.w("MainChat", "Show().End");
 
 
-        //Log.w("MainChat", "Set chatListAdapter if needed.");
-        if (this.chatListAdapter == null)
-            this.chatListAdapter = new ChatListAdapter(context, this.channelConversation);
+            //Log.w("MainChat", "Set chatListAdapter if needed.");
+            if (this.chatListAdapter == null)
+                this.chatListAdapter = new ChatListAdapter(context, this.channelConversation);
 
-        //Log.w("MainChat", "Show the view and the actionBar.");
-        ViewPair viewPair = ((Main)context).ShowLayout(R.layout.main_panel_chat_layout,R.layout.chat_action_bar);
-        this.actionBar = viewPair.getActionBarView();
-        this.mainChat = viewPair.getMainView();
+            //Log.w("MainChat", "Establish list adapter.");
+            ((ListView)mainChat.findViewById(R.id.main_panel_chat_message_list)).setAdapter(chatListAdapter);
 
-        //Log.w("MainChat", "Establish list adapter.");
-        ((ListView)mainChat.findViewById(R.id.main_panel_chat_message_list)).setAdapter(chatListAdapter);
+            //Log.w("MainChat", "Subscribe to conversation changes.");
+            this.channelConversation.MessageListModifiedEvent.add(new EventHandler<EventArgs>(this.chatListAdapter,"OnAddItem",EventArgs.class));
 
-        //Log.w("MainChat", "Subscribe to conversation changes.");
-        this.channelConversation.MessageListModifiedEvent.add(new EventHandler<EventArgs>(this.chatListAdapter,"OnAddItem",EventArgs.class));
+            //Log.w("MainChat", "Set click listener for send button.");
+            this.mainChat.findViewById(R.id.main_panel_chat_send_icon).setOnClickListener(this.send_button_click);
 
-        //Log.w("MainChat", "Remember the textInput and set click listener for send button.");
-        this.textInput = ((TextView)mainChat.findViewById(R.id.main_panel_chat_textBox));
-        this.mainChat.findViewById(R.id.main_panel_chat_send_icon).setOnClickListener(this.send_button_click);
+            //TODO: Activate textInput
+        } else {
+            if ((this.hive == null) && (!this.hiveID.isEmpty()))
+                this.hive = Hive.getHive(this.hiveID);
+
+            if ((this.user == null) && (!this.userID.isEmpty())) {
+                PROFILE_ID profile_id = new PROFILE_ID();
+                profile_id.USER_ID = this.userID;
+                profile_id.PROFILE_TYPE = "BASIC_".concat((this.hive != null)?"PUBLIC":"PRIVATE");
+                this.user = ((Main) context).controller.getUser(profile_id);
+            }
+
+            //TODO: Deactivate textInput
+        }
 
         //Log.w("MainChat", "Load action bar data.");
         this.loadActionBarData();
 
         //Log.w("MainChat", "Close lateral panels if open.");
-        if (((Main)context).floatingPanel.isOpen())
-            ((Main)context).floatingPanel.close();
+        if (((Main) context).floatingPanel.isOpen())
+            ((Main) context).floatingPanel.close();
 
         //Log.w("MainChat", "Set bottom bar left icon.");
         if(((TextView)mainChat.findViewById(R.id.main_panel_chat_textBox)).didTouchFocusSelect()){////????????????????????????????????????

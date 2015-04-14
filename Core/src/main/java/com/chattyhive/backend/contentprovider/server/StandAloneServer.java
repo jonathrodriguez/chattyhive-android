@@ -715,6 +715,9 @@ public class StandAloneServer {
                 case ChatInfo:
                     response = ChatInfo(server, formats);
                     break;
+                case CreateChat:
+                    response = CreateChat(server, formats);
+                    break;
                 case ChatList:
                     response = ChatList(server, formats);
                     break;
@@ -1921,6 +1924,91 @@ public class StandAloneServer {
                         Chat chatInfo = Chats.get(chatId.CHANNEL_UNICODE);
                         responseFormats.add(chatInfo.toFormat(new CHAT()));
                         common.STATUS = "OK";
+                    }
+
+                } else {
+                    common.STATUS = "SESSION EXPIRED";
+                }
+            }
+        }
+
+        if ((responseCode != null) && (responseCode == 200) && (responseFormats.size() > 0)) {
+            responseBody = "";
+            for (Format format : responseFormats)
+                responseBody += ((responseBody.isEmpty())?"{":", ")+format.toJSON().toString().substring(1,format.toJSON().toString().length()-1);
+            responseBody += "}";
+        }
+
+        return new AbstractMap.SimpleEntry<Integer,String>((responseCode != null)?responseCode:-1,(responseBody != null)?responseBody:"");
+    }
+
+    private static AbstractMap.SimpleEntry<Integer, String> CreateChat(Server server, Format... formats) {
+        Integer responseCode = null;
+        String responseBody = null;
+
+        PROFILE_ID profile_id = null;
+        HIVE_ID hive_id = null;
+        if (formats != null)
+            for (Format format : formats)
+                if (format instanceof PROFILE_ID)
+                    profile_id = (PROFILE_ID)format;
+                else if (format instanceof HIVE_ID)
+                    hive_id = (HIVE_ID)format;
+
+        COMMON common = new COMMON();
+
+        ArrayList<Format> responseFormats = new ArrayList<Format>();
+        responseFormats.add(common);
+
+        if ((profile_id == null) || (profile_id.PROFILE_TYPE.endsWith("_PUBLIC") && (hive_id == null))) {
+            common.STATUS = "ERROR";
+            common.ERROR = -1;
+        } else {
+            HttpCookie csrfCookie = checkCSRFCookie(server.getAppName());
+
+            if ((csrfCookie == null) || (csrfCookie.hasExpired()) || (!CSRFTokens.contains(csrfCookie.getValue())))
+                responseCode = 403;
+            else {
+                responseCode = 200;
+                User user = checkSessionCookie(csrfCookie,server.getAppName());
+
+                if (user != null) {
+                    //Lets CREATE the chat and return the info
+                    if ((profile_id.USER_ID == null) || (!LoginUser.containsKey(profile_id.USER_ID)) || ((profile_id.PROFILE_TYPE.endsWith("_PRIVATE")) && ((!UserFriendList.containsKey(profile_id.USER_ID)) || (!UserFriendList.get(profile_id.USER_ID).contains(user.getUserID())))) || ((profile_id.PROFILE_TYPE.endsWith("_PUBLIC")) && ((hive_id == null) || (!HiveUserSubscriptions.containsKey(hive_id.NAME_URL)) || (!HiveUserSubscriptions.get(hive_id.NAME_URL).contains(profile_id.USER_ID)) || (!HiveUserSubscriptions.get(hive_id.NAME_URL).contains(user.getUserID())))) ) {
+                        common.STATUS = "ERROR";
+                        common.ERROR = -10;
+                    } else {
+                        Chat chatInfo = null;
+                        User otherUser = LoginUser.get(profile_id.USER_ID);
+
+                        for (String chatID : UserChatSubscriptions.get(user.getUserID())) {
+                            Chat chat = Chats.get(chatID);
+                            if ( ((chat.getChatKind() == ChatKind.PRIVATE_SINGLE) || (((chat.getChatKind() == ChatKind.PUBLIC_SINGLE)) && (hive_id != null) && (chat.getParentHive().getNameUrl().equalsIgnoreCase(hive_id.NAME_URL)))) &&  (chat.getMembers().contains(otherUser))) {
+                                chatInfo = chat;
+                                break;
+                            }
+                        }
+
+                        if (chatInfo == null) {
+                            for (String chatID : UserChatSubscriptions.get(otherUser.getUserID())) {
+                                Chat chat = Chats.get(chatID);
+                                if (((chat.getChatKind() == ChatKind.PRIVATE_SINGLE) || (((chat.getChatKind() == ChatKind.PUBLIC_SINGLE)) && (hive_id != null) && (chat.getParentHive().getNameUrl().equalsIgnoreCase(hive_id.NAME_URL)))) && (chat.getMembers().contains(user))) {
+                                    chatInfo = chat;
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (chatInfo == null)
+                            chatInfo = createChat(((hive_id != null)?Hives.get(hive_id.NAME_URL):null),DateFormatter.toShortHumanReadableString(new Date()),user.getUserID(),otherUser.getUserID());
+
+                        if (chatInfo != null) {
+                            responseFormats.add(chatInfo.toFormat(new CHAT()));
+                            common.STATUS = "OK";
+                        } else {
+                            common.STATUS = "ERROR";
+                            common.ERROR = -20;
+                        }
                     }
 
                 } else {

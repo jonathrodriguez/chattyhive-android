@@ -17,6 +17,7 @@ public enum AvailableCommands {
     UpdateProfile,
     ChatInfo,
     ChatList,
+    CreateChat,
     UserProfile,
     HiveInfo,
     HiveUsers,
