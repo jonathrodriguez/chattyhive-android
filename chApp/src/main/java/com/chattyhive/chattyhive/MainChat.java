@@ -366,8 +366,8 @@ public class MainChat extends Window {
                 this.channelConversation = this.channelChat.getConversation();
 
             //TODO: This is for testing. Remove after tested.
-            ((IContextualizable)this.channelChat).getOnContextLoaded().add(new EventHandler<EventArgs>(this,"OnContextLoaded",EventArgs.class));
-            ((IContextualizable)this.channelChat).loadContext(4,4,4);
+            /*((IContextualizable)this.channelChat).getOnContextLoaded().add(new EventHandler<EventArgs>(this,"OnContextLoaded",EventArgs.class));
+            ((IContextualizable)this.channelChat).loadContext(4,4,4);*/
 
             //Log.w("MainChat", "Notify core that channel conversation window is active.");
             this.channelConversation.setChatWindowActive(true);
@@ -439,7 +439,7 @@ public class MainChat extends Window {
     }
 
     //TODO: This is for testing. Remove after tested.
-    public void OnContextLoaded(Object sender,EventArgs eventArgs) {
+    /*public void OnContextLoaded(Object sender,EventArgs eventArgs) {
         ContextElement parentContext = ((IContextualizable)this.channelChat).getParentContext();
         ContextElement baseContext = ((IContextualizable)this.channelChat).getBaseContext();
         ContextElement communityContext = ((IContextualizable)this.channelChat).getCommunityContext();
@@ -525,5 +525,5 @@ public class MainChat extends Window {
             elementList = "\tEmpty!";
         }
         Log.w("Context",String.format("OTHER CHATS\n%s",elementList));
-    }
+    }*/
 }
