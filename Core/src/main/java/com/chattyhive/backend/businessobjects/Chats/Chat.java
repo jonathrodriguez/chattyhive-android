@@ -1,6 +1,8 @@
 package com.chattyhive.backend.businessobjects.Chats;
 
 import com.chattyhive.backend.Controller;
+import com.chattyhive.backend.businessobjects.Chats.Context.ContextElement;
+import com.chattyhive.backend.businessobjects.Chats.Context.IContextualizable;
 import com.chattyhive.backend.businessobjects.Chats.Messages.Message;
 import com.chattyhive.backend.businessobjects.Users.ProfileLevel;
 import com.chattyhive.backend.businessobjects.Users.ProfileType;
@@ -11,10 +13,14 @@ import com.chattyhive.backend.contentprovider.OSStorageProvider.ChatLocalStorage
 import com.chattyhive.backend.contentprovider.formats.CHAT;
 import com.chattyhive.backend.contentprovider.formats.CHAT_ID;
 import com.chattyhive.backend.contentprovider.formats.CHAT_SYNC;
+import com.chattyhive.backend.contentprovider.formats.COMMON;
+import com.chattyhive.backend.contentprovider.formats.CONTEXT;
 import com.chattyhive.backend.contentprovider.formats.Format;
 import com.chattyhive.backend.contentprovider.formats.HIVE_ID;
 import com.chattyhive.backend.contentprovider.formats.MESSAGE;
+import com.chattyhive.backend.contentprovider.formats.MESSAGE_LIST;
 import com.chattyhive.backend.contentprovider.formats.PROFILE_ID;
+import com.chattyhive.backend.contentprovider.formats.USER_PROFILE_LIST;
 import com.chattyhive.backend.util.events.CommandCallbackEventArgs;
 import com.chattyhive.backend.util.events.Event;
 import com.chattyhive.backend.util.events.EventArgs;
@@ -25,7 +31,9 @@ import com.google.gson.JsonParser;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.TreeMap;
 
 /**
@@ -193,6 +201,7 @@ public class Chat implements IContextualizable {
                  Constructor
      *****************************************/
     public Chat(Format format, Hive hive) {
+        this.OnContextLoaded = new Event<EventArgs>();
         this.OnChatCreated = new Event<CommandCallbackEventArgs>();
         this.members = new TreeMap<String, User>();
         this.conversation = new Conversation(this);
@@ -202,6 +211,7 @@ public class Chat implements IContextualizable {
     }
 
     protected Chat(String channelUnicode) {
+        this.OnContextLoaded = new Event<EventArgs>();
         this.OnChatCreated = new Event<CommandCallbackEventArgs>();
         this.members = new TreeMap<String, User>();
         String localGroup = Chat.localStorage.RecoverGroup(channelUnicode);
@@ -237,6 +247,10 @@ public class Chat implements IContextualizable {
         this.OnChatCreated = new Event<CommandCallbackEventArgs>();
         if ((chatKind != ChatKind.PRIVATE_SINGLE) && (chatKind != ChatKind.PRIVATE_GROUP) && (parentHive == null))
             throw new IllegalArgumentException("If chat is not private, parentHive CAN'T be null.");
+
+        this.OnContextLoaded = new Event<EventArgs>();
+        this.members = new TreeMap<String, User>();
+
         this.chatKind = chatKind;
         this.parentHive = parentHive;
         this.conversation = new Conversation(this);
@@ -389,6 +403,7 @@ public class Chat implements IContextualizable {
 
         return new ArrayList<User>(this.members.values());
     }
+
     public User getMember(String identifier) {
         if ((this.members == null) || (this.members.isEmpty())) throw new NullPointerException("There are no members for this group.");
         else if (identifier == null) throw new NullPointerException("Identifier must not be null.");
@@ -410,6 +425,168 @@ public class Chat implements IContextualizable {
     }
     public void inviteMember(String identifier) {
         //TODO: implement server request (NOT AVAILABLE)
+    }
+
+    /******************************************
+     *      IContextualizable
+     ******************************************/
+    public Event<EventArgs> OnContextLoaded;
+
+    private ArrayList<Message> sharedImages;
+    private ArrayList<Message> topBuzzes;
+
+    @Override
+    public Event<EventArgs> getOnContextLoaded() {
+        return this.OnContextLoaded;
+    }
+
+    public void contextLoadedCallback(Object sender,CommandCallbackEventArgs eventArgs) {
+        //TODO: process received data
+
+        CONTEXT context = null;
+        Boolean requestOK = false;
+
+        ArrayList<Format> received = eventArgs.getReceivedFormats();
+        for (Format format : received) {
+            if ((format instanceof COMMON) && (((COMMON) format).STATUS.equalsIgnoreCase("OK")))
+                requestOK = true;
+            else if (format instanceof CONTEXT)
+                context = (CONTEXT)format;
+        }
+
+
+        if ((requestOK) && (context != null)) {
+            if ((this.getParentHive() != null) && (context.NEW_USERS_LIST != null) && (!context.NEW_USERS_LIST.isEmpty()))
+                this.parentHive.setContextUsers(context.NEW_USERS_LIST);
+
+            if ((context.SHARED_IMAGES_LIST != null) && (!context.SHARED_IMAGES_LIST.isEmpty())) {
+                if (this.sharedImages == null)
+                    this.sharedImages = new ArrayList<Message>();
+
+                boolean sharedImagesListChanged = false;
+                for (MESSAGE message : context.SHARED_IMAGES_LIST) {
+                    try {
+                        Message m = new Message(message);
+                        sharedImagesListChanged = this.sharedImages.add(m) || sharedImagesListChanged;
+                    } catch (Exception e) {
+                    }
+                }
+            }
+
+            if ((this.getParentHive() != null) && (context.TOP_BUZZES_LIST != null) && (!context.TOP_BUZZES_LIST.isEmpty())) {
+                if (this.topBuzzes == null)
+                    this.topBuzzes = new ArrayList<Message>();
+
+                boolean topBuzzesListChanged = false;
+                for (MESSAGE message : context.TOP_BUZZES_LIST) {
+                    try {
+                        Message m = new Message(message);
+                        topBuzzesListChanged = this.topBuzzes.add(m) || topBuzzesListChanged;
+                    } catch (Exception e) {
+                    }
+                }
+            }
+        }
+
+        if (this.OnContextLoaded != null)
+            this.OnContextLoaded.fire(this, EventArgs.Empty());
+    }
+
+    @Override
+    public void loadContext(int numberImages, int numberNewUsers, int numberBuzzes) {
+        CONTEXT context = new CONTEXT();
+        context.CHANNEL_UNICODE = this.channelUnicode;
+        context.IMAGES_COUNT = numberImages;
+        context.NEW_USERS_COUNT = numberNewUsers;
+        context.BUZZES_COUNT = numberBuzzes;
+        Controller.GetRunningController().getDataProvider().InvokeServerCommand(AvailableCommands.ChatContext,new EventHandler<CommandCallbackEventArgs>(this,"contextLoadedCallback",CommandCallbackEventArgs.class),context);
+    }
+
+    @Override
+    public ContextElement getCommunityContext() {
+        //TODO: implement this method to get community info.
+        return null;
+    }
+
+    @Override
+    public ContextElement getBaseContext() {
+        Chat chat = this;
+        Hive hive = null;
+        switch (this.chatKind) {
+            case PUBLIC_SINGLE:
+                for (User user : this.members.values())
+                    if ((!user.isMe()) && (user.getUserPublicProfile() != null))
+                            return new ContextElement(ContextElement.ElementType.PublicUser,user,user.getUserPublicProfile().getProfileImage(),user.getUserPublicProfile().getShowingName(),user.getUserPublicProfile().getStatusMessage());
+                break;
+            case PRIVATE_SINGLE:
+                for (User user : this.members.values())
+                    if ((!user.isMe()) && (user.getUserPrivateProfile() != null))
+                        return new ContextElement(ContextElement.ElementType.PrivateUser,user,user.getUserPrivateProfile().getProfileImage(),user.getUserPrivateProfile().getShowingName(),user.getUserPrivateProfile().getStatusMessage());
+                break;
+            case PUBLIC_GROUP:
+                break;
+            case PRIVATE_GROUP:
+                break;
+            case HIVE:
+                if (this.parentHive != null)
+                    return new ContextElement(this.parentHive,this.parentHive.getHiveImage(),this.parentHive.getName(),this.parentHive.getDescription());
+                break;
+        }
+        return null;
+    }
+
+    @Override
+    public ContextElement getParentContext() {
+        if ((this.chatKind == ChatKind.PUBLIC_SINGLE) || (this.chatKind == ChatKind.PUBLIC_GROUP)) {
+            return new ContextElement(this.parentHive,this.parentHive.getHiveImage(),this.parentHive.getName());
+        } else
+            return null;
+    }
+
+    @Override
+    public List<ContextElement> getPublicChats() {
+        //TODO: implement this method to get other public chats in communities.
+        return null;
+    }
+
+    @Override
+    public List<Message> getSharedImages() {
+        if (this.sharedImages != null)
+            return Collections.unmodifiableList(this.sharedImages);
+        else
+            return null;
+    }
+
+    @Override
+    public List<User> getNewUsers() {
+        if (this.chatKind == ChatKind.HIVE)
+            return this.parentHive.getContextUsers();
+        else
+            return null;
+    }
+
+    @Override
+    public List<User> getUsers() {
+        ArrayList<User> result = new ArrayList<User>();
+        if ((this.members != null) && (!this.members.isEmpty()))
+            for (User user : this.members.values())
+                if (!user.isMe())
+                    result.add(user);
+
+        return Collections.unmodifiableList(result);
+    }
+
+    @Override
+    public List<Message> getTrendingBuzzes() {
+        if ((this.chatKind == ChatKind.HIVE) && (this.topBuzzes != null))
+            return Collections.unmodifiableList(this.topBuzzes);
+        else
+            return null;
+    }
+
+    @Override
+    public List<ContextElement> getOtherChats() {
+        return null;
     }
 
     public Event<CommandCallbackEventArgs> OnChatCreated;
@@ -582,10 +759,5 @@ public class Chat implements IContextualizable {
             if (this.fromFormat(format)) return;
 
         throw  new IllegalArgumentException("Expected CHAT, CHAT_ID or CHAT_SYNC formats.");
-    }
-
-    @Override
-    public ContextObj getOpenedChat() {
-        return null;
     }
 }

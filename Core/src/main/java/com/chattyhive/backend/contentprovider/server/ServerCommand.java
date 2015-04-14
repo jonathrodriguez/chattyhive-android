@@ -2,6 +2,7 @@ package com.chattyhive.backend.contentprovider.server;
 
 import com.chattyhive.backend.contentprovider.AvailableCommands;
 import com.chattyhive.backend.contentprovider.formats.CHAT_ID;
+import com.chattyhive.backend.contentprovider.formats.CONTEXT;
 import com.chattyhive.backend.contentprovider.formats.EXPLORE_FILTER;
 import com.chattyhive.backend.contentprovider.formats.Format;
 import com.chattyhive.backend.contentprovider.formats.HIVE;
@@ -219,6 +220,16 @@ public class ServerCommand {
         returningCookies = null;
         ServerCommand.AddServerCommand(command,method,commandType,url,paramFormats,inputFormats,requiredCookies,returningCookies);
 
+        // ChatContext
+        command = AvailableCommands.ChatContext;
+        method = Method.GET;
+        commandType = CommandType.Pull;
+        url = "android.get_chat_context/???";
+        paramFormats = new ArrayList<Class<?>>() {{add(CONTEXT.class);}};
+        inputFormats = null;
+        requiredCookies = new ArrayList<String>() {{add(CSRFTokenCookie); add(SessionCookie);}};
+        returningCookies = null;
+        ServerCommand.AddServerCommand(command,method,commandType,url,paramFormats,inputFormats,requiredCookies,returningCookies);
         // CreateChat
         command = AvailableCommands.CreateChat;
         method = Method.POST;
