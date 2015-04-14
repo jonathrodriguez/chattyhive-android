@@ -153,6 +153,9 @@ public class Profile extends Window {
 
             user.loadProfile(requestProfile, ProfileLevel.Complete);
         }
+
+        //TODO: Check if in other users profile is needed to add some context info in right panel.
+        ((Main)context).rightPanel.setCommunicationContext(null);
     }
 
     @Override

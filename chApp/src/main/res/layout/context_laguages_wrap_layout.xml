@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<com.chattyhive.chattyhive.WrapLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main_relative_layout"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:context=".MainActivity">
+    <TextView
+        android:id="@+id/context_languages_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:text="@string/explore_hive_card_expanded_hive_chat_langs"
+        android:textColor="#808080"
+        android:textSize="12dp" />
+</com.chattyhive.chattyhive.WrapLayout>

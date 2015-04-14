@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/context_list_header_card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#ededed"
+        android:orientation="vertical"
+        android:paddingTop="12dp"
+        android:visibility="visible">
+
+        <LinearLayout
+            android:id="@+id/left_panel_context_users_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <include layout="@layout/left_panel_chat_context_user" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginBottom="10dp">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="8.5dp"
+                android:layout_weight="0"
+                android:background="@drawable/home_card_background"
+                android:gravity="center">
+
+                <LinearLayout
+                    android:id="@+id/left_panel_trending_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:layout_marginBottom="7dp"
+                        android:layout_marginLeft="15dp"
+                        android:layout_marginRight="13dp"
+                        android:layout_marginTop="7dp"
+                        android:src="@drawable/contextos_recommended_users_selected" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="1px"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="7dp"
+                    android:layout_marginTop="7dp"
+                    android:background="#808080" />
+
+                <LinearLayout
+                    android:id="@+id/left_panel_location_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:layout_marginBottom="7dp"
+                        android:layout_marginLeft="13dp"
+                        android:layout_marginRight="13dp"
+                        android:layout_marginTop="7dp"
+                        android:src="@drawable/contextos_location" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="1px"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="7dp"
+                    android:layout_marginTop="7dp"
+                    android:background="#808080" />
+
+                <LinearLayout
+                    android:id="@+id/left_panel_recently_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:layout_marginBottom="7dp"
+                        android:layout_marginLeft="13dp"
+                        android:layout_marginRight="15dp"
+                        android:layout_marginTop="7dp"
+                        android:src="@drawable/contextos_historial" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="match_parent"
+                android:layout_marginRight="8.5dp"
+                android:layout_weight="0"
+                android:gravity="right">
+
+                <LinearLayout
+                    android:id="@+id/left_panel_context_more_users"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/home_card_background"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="32.5dp"
+                        android:layout_height="32.5dp"
+                        android:layout_marginLeft="9dp"
+                        android:layout_marginRight="9dp"
+                        android:src="@drawable/contextos_show_more_users" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginRight="17dp"
+                        android:gravity="center"
+                        android:text="Show more"
+                        android:textColor="#3A3A3A"
+                        android:textSize="20dp" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

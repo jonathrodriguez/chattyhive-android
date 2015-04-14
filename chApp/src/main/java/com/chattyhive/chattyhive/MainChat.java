@@ -415,6 +415,8 @@ public class MainChat extends Window {
         }else{
             ((ImageView)mainChat.findViewById(R.id.main_panel_chat_smyles_icon)).setBackgroundResource(R.drawable.chats_isotipo_puro_recto_01);
         }
+
+        ((Main)context).rightPanel.setCommunicationContext(this.channelChat);
     }
 
     @Override
