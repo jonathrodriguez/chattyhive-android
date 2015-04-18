@@ -25,7 +25,7 @@ public class StandAloneServerDataBaseHelper  extends SQLiteOpenHelper {
         db.execSQL("INSERT INTO `user` VALUES (6,'laura.gaza5@gmail.com','AFD45ADE','weirdalien');");
         db.execSQL("INSERT INTO `user` VALUES (7,'cool_cooper@gmail.com','87654321','coolest_thing_21');");
         db.execSQL("INSERT INTO `user` VALUES (8,'akamatsu@gmail.com','Shizue_86','akamatsu');");
-        db.execSQL("CREATE TABLE [tag]([tag_code] INTEGER AUTOINCREMENT NOT NULL, [tag_text] TEXT NOT NULL, CONSTRAINT [PK_tag] PRIMARY KEY ([tag_code] ASC));");
+        db.execSQL("CREATE TABLE [tag]([tag_code] INTEGER NOT NULL PRIMARY KET AUTOINCREMENT UNIQUE, [tag_text] TEXT NOT NULL, [tag_slug] TEXT NOT NULL, [tag_parent] INTEGER);");
         db.execSQL("INSERT INTO `tag` VALUES (1,'sandbox');");
         db.execSQL("INSERT INTO `tag` VALUES (2,'Notch');");
         db.execSQL("INSERT INTO `tag` VALUES (3,'development');");

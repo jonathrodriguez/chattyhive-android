@@ -209,16 +209,113 @@ public class StandAloneServer implements IOrigin {
         return result;
     }
 
-    private static Chat createChat(Hive hive, String creationDate, String... members) {
-        ChatKind chatKind = ChatKind.PUBLIC_SINGLE;
-        if ((hive == null) && (members.length > 2))
-            chatKind = ChatKind.PRIVATE_GROUP;
-        else if ((hive == null) && (members.length < 3))
-            chatKind = ChatKind.PRIVATE_SINGLE;
-        else if ((hive != null) && (members.length > 2))
-            chatKind = ChatKind.PUBLIC_GROUP;
-        else if ((hive != null) && (members.length < 3))
-            chatKind = ChatKind.PUBLIC_SINGLE;
+    private boolean createHive(String nameURL, String name, String hiveImage, String category, String description, String creator, Date creationDate, String[] languages, String... tags) {
+        try {
+            //We need to find and declare tags.
+            String[] tag_codes = new String[tags.length];
+            for (int i = 0; i < tags.length; i++) {
+                String tag = tags[i];
+                String query = "SELECT tag_code FROM tag WHERE tag_text='".concat(tag).concat("';");
+                String tag_code = standAloneServerDB.simpleQuerySQL(query).toString();
+
+                if (tag_code == null) {
+                    String parentTagName = tag.replaceAll("_+", "").toLowerCase();
+                    String parentTagCode = standAloneServerDB.simpleQuerySQL("SELECT tag_code FROM tag WHERE tag_slug='".concat(parentTagName).concat("';")).toString();
+                    standAloneServerDB.executeSQL("INSERT INTO tag (tag_text,tag_slug,tag_parent) VALUES ('" + tag + "','" + parentTagName + "'," + ((parentTagCode != null) ? parentTagCode : "NULL") + ")");
+                    tag_code = "SELECT tag_code FROM tag WHERE tag_text='" + tag + "'";
+                }
+                tag_codes[i] = tag_code;
+            }
+
+            //We need to identify visibility locations.
+            //Separate category group and category
+            String category_parent = category.substring(0, category.indexOf('.'));
+            String category_code = category.substring(category.indexOf('.') + 1);
+            //We need to create hive.
+            standAloneServerDB.executeSQL("INSERT INTO hive (name_url,name,description,image_url,creation_date,creator,category_parent,category_code,private,community) VALUES ('" + nameURL + "','" + name + "','" + description + "','" + hiveImage + "','" + TimestampFormatter.toDbString(creationDate) + "','" + creator + "','" + category_parent + "','" + category_code + "',0,0)");
+            for (String tag : tag_codes) {
+                standAloneServerDB.executeSQL("INSERT INTO hive_tag VALUES ('" + nameURL + "','" + tag + "')");
+            }
+            //We need to subscribe user to hive.
+            standAloneServerDB.executeSQL("INSERT INTO hive_subscriptions (hive,profile,join_date) VALUES ('" + nameURL + "','" + creator + "','" + TimestampFormatter.toDbString(creationDate) + "')");
+            //We need to create hive's public chat.
+            standAloneServerDB.executeSQL("INSERT INTO chat (channel_unicode,hive,hive_chat) VALUES ('presence-" + nameURL + "','" + nameURL + "',1)");
+            for (String language : languages) {
+                standAloneServerDB.executeSQL("INSERT INTO hive_language VALUES ('" + nameURL + "','" + language + "')");
+                standAloneServerDB.executeSQL("INSERT INTO chat_language VALUES ('presence-" + nameURL + "','" + language + "')");
+            }
+        } catch (Exception e) {
+            return false;
+        }
+
+        return true;
+    }
+    private void subscribeHive(String userLogin, String hiveNameURL) {
+        //Check user exists
+        if (standAloneServerDB.simpleQuerySQL("SELECT public_name FROM profile WHERE public_name like '"+userLogin+"'") == null)
+            return; //Return error
+        //Check hive exists
+        if (standAloneServerDB.simpleQuerySQL("SELECT name_url FROM hive WHERE name_url like '"+hiveNameURL+"'") == null)
+            return; //Return error
+
+        String subscriptionDate = TimestampFormatter.toDbString(new Date());
+        //Check user not yet subscribed
+        if (Integer.parseInt(standAloneServerDB.simpleQuerySQL("SELECT count(*) FROM hive_subscriptions WHERE hive = '"+hiveNameURL+"' and profile = '"+userLogin+"' and ((leave_date is null) or (leave_date > '"+subscriptionDate+"'))").toString()) > 0)
+            return;
+        //Check user not "expulsed"
+        if (Integer.parseInt(standAloneServerDB.simpleQuerySQL("SELECT count(*) FROM hive_expulsion WHERE hive = '"+hiveNameURL+"' and profile = '"+userLogin+"' and (expulsion_date =< '"+subscriptionDate+"') and ((leave_date is null) or (leave_date > '"+subscriptionDate+"'))").toString()) > 0)
+            return;
+        //We need to subscribe user to hive.
+        standAloneServerDB.executeSQL("INSERT INTO hive_subscriptions (hive,profile,join_date) VALUES ('" + hiveNameURL + "','" + userLogin + "','" + subscriptionDate + "')");
+    }
+
+    private CHAT_ID createChat(String hive, Date creationDate, String... members) {
+        //Prepare result
+        CHAT_ID chatId = new CHAT_ID();
+
+        String crDate = TimestampFormatter.toDbString(creationDate);
+
+        String memberList = "";
+        for (String user : members)
+            memberList = memberList.concat((memberList.isEmpty())?"('":"','").concat(user);
+        memberList = memberList.concat("')");
+
+        //Check if any user pair is blocked
+        if (Integer.parseInt("SELECT count(*) FROM blocks WHERE (blocking_user in "+memberList+") AND (blocked_user in "+memberList+") AND ((finish_date is null) OR (finish_date > '"+crDate+"'))") > 0)
+            return null;
+
+        //Check if chat exists
+        String selectChat = "SELECT tmp0.chat FROM ";
+        String selectHive = ((hive==null)||(hive.isEmpty()))?"(chat.hive is null)":"(chat.hive like '"+hive+"')";
+
+        for (int i = 0; i < members.length; i++) {
+            String member = members[i];
+
+            String thisSelect = String.format("(SELECT * FROM chat_subscriptions inner join chat ON chat_subscriptions.chat = chat.channel_unicode WHERE (chat.hive_chat=0) AND (chat_subscriptions.profile like '%s') AND %s) as tmp%d",member,selectHive,i);
+
+            if (i==0) {
+                selectChat = selectChat.concat(thisSelect);
+            } else {
+                selectChat = selectChat.concat(" inner join ").concat(thisSelect).concat(String.format(" on tmp%d.chat=tmp%d.chat",i-1,i));
+            }
+        }
+
+        Object chUnicode = standAloneServerDB.simpleQuerySQL(selectChat);
+
+        String channel_unicode;
+
+        if (chUnicode != null) {
+            channel_unicode = chUnicode.toString();
+            //Subscribe other users
+
+        }
+        else {
+            channel_unicode = String.format("presence-%d", Integer.parseInt(standAloneServerDB.simpleQuerySQL("SELECT count(*) FROM chat WHERE hive_chat = 0").toString()) + 1);
+            //Create chat
+            //Subscribe users
+        }
+
+
 
         Chat chat = new Chat(chatKind,hive);
         chat.setChannelUnicode(randomString.nextString());
@@ -232,22 +329,6 @@ public class StandAloneServer implements IOrigin {
 
         return chat;
     }
-    private static void subscribeHive(String userLogin, String hiveNameURL) {
-        if (!LoginUser.containsKey(userLogin)) return;
-        if (!Hives.containsKey(hiveNameURL)) return;
-
-        if (!HiveUserSubscriptions.containsKey(hiveNameURL))
-            HiveUserSubscriptions.put(hiveNameURL,new ArrayList<String>());
-        if (!UserHiveSubscriptions.containsKey(userLogin))
-            UserHiveSubscriptions.put(userLogin,new ArrayList<String>());
-
-        HiveUserSubscriptions.get(hiveNameURL).add(userLogin);
-        UserHiveSubscriptions.get(userLogin).add(hiveNameURL);
-
-        Hives.get(hiveNameURL).incSubscribedUsers(1);
-
-        subscribeChat(userLogin,Hives.get(hiveNameURL).getPublicChat().getChannelUnicode());
-    }
     private static void subscribeChat(String userLogin, String chatChannelUnicode) {
         if (!LoginUser.containsKey(userLogin)) return;
         if (!Chats.containsKey(chatChannelUnicode)) return;
@@ -259,29 +340,6 @@ public class StandAloneServer implements IOrigin {
 
         ChatUserSubscriptions.get(chatChannelUnicode).add(userLogin);
         UserChatSubscriptions.get(userLogin).add(chatChannelUnicode);
-    }
-    private static Hive createHive(String name, String hiveImage,String category, String description, String[] languages, String... tags) {
-        return createHive(name,hiveImage,category,description,new Date(Math.round((new Random()).nextDouble() * (new Date()).getTime())),languages,tags);
-    }
-    private static Hive createHive(String name, String hiveImage,String category, String description, Date creationDate, String[] languages, String... tags) {
-        Hive hive = new Hive(name,randomString.nextString());
-        Chat publicChat = new Chat(ChatKind.HIVE,hive);
-
-        hive.setImageURL(hiveImage);
-        hive.setCategory(category);
-        hive.setDescription(description);
-        hive.setPublicChat(publicChat);
-        hive.setChatLanguages(languages);
-        hive.setTags(tags);
-
-        publicChat.setChannelUnicode(hive.getNameUrl());
-        publicChat.setPusherChannel(String.format("presence-%s",hive.getNameUrl()));
-        publicChat.setCreationDate(creationDate);
-
-        Hives.put(hive.getNameUrl(), hive);
-        Chats.put(publicChat.getChannelUnicode(),publicChat);
-
-        return hive;
     }
     private static User createUser(String email, String firstName, String lastName, String publicName, String color, String avatarURL, String profileURL, String birthdate, String location, String sex, Boolean privateShowAge, Boolean publicShowAge, Boolean publicShowSex, Boolean publicShowLocation, String... languages) {
         User user = new User(email);
