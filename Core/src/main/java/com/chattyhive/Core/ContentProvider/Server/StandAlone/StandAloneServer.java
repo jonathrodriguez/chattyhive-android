@@ -41,6 +41,7 @@ import com.chattyhive.Core.ContentProvider.Formats.USERNAME;
 import com.chattyhive.Core.ContentProvider.Formats.USER_EMAIL;
 import com.chattyhive.Core.ContentProvider.Formats.USER_PROFILE;
 import com.chattyhive.Core.ContentProvider.Formats.USER_PROFILE_LIST;
+import com.chattyhive.Core.Util.CallbackDelegate;
 import com.chattyhive.Core.Util.Data.DataTable;
 import com.chattyhive.Core.Util.RandomString;
 import com.chattyhive.Core.Util.Events.CommandCallbackEventArgs;
@@ -300,14 +301,21 @@ public class StandAloneServer implements IOrigin {
             }
         }
 
+        selectChat = selectChat.concat(" WHERE tmp0.chat not in (SELECT chat FROM chat_subscriptions WHERE profile not in "+memberList+")");
+
         Object chUnicode = standAloneServerDB.simpleQuerySQL(selectChat);
 
         String channel_unicode;
 
         if (chUnicode != null) {
             channel_unicode = chUnicode.toString();
-            //Subscribe other users
 
+            //Verify user subscriptions
+            DataTable outUsers = standAloneServerDB.tableQuerySQL("SELECT profile FROM chat_subscriptions WHERE chat='"+channel_unicode+"' AND ((leave_date is not null) AND (leave_date < '"+crDate+"')) AND profile not in (SELECT profile FROM chat_subscriptions WHERE chat='"+channel_unicode+"' AND ((leave_date is null) OR (leave_date > '"+crDate+"')))");
+
+            ArrayList<String> usersNotIn = new ArrayList<String>();
+
+            ArrayList<String> selectedMembers = new ArrayList<String>(Arrays.asList(members));
         }
         else {
             channel_unicode = String.format("presence-%d", Integer.parseInt(standAloneServerDB.simpleQuerySQL("SELECT count(*) FROM chat WHERE hive_chat = 0").toString()) + 1);
@@ -315,21 +323,18 @@ public class StandAloneServer implements IOrigin {
             //Subscribe users
         }
 
+        chatId.CHANNEL_UNICODE = channel_unicode;
 
-
-        Chat chat = new Chat(chatKind,hive);
-        chat.setChannelUnicode(randomString.nextString());
-        chat.setPusherChannel(String.format("presence-%s", chat.getChannelUnicode()));
-        chat.setCreationDate(DateFormatter.fromShortHumanReadableString(creationDate));
-        Chats.put(chat.getChannelUnicode(), chat);
-        for (String member : members) {
-            chat.addMember(LoginUser.get(member));
-            subscribeChat(member, chat.getChannelUnicode());
-        }
-
-        return chat;
+        return chatId;
     }
-    private static void subscribeChat(String userLogin, String chatChannelUnicode) {
+
+    @Override
+    public void ProcessCommand(Command command, CallbackDelegate Callback, Object... callbackParameters) {
+
+    }
+
+    /*
+    private void subscribeChat(String userLogin, String chatChannelUnicode) {
         if (!LoginUser.containsKey(userLogin)) return;
         if (!Chats.containsKey(chatChannelUnicode)) return;
 
@@ -341,7 +346,8 @@ public class StandAloneServer implements IOrigin {
         ChatUserSubscriptions.get(chatChannelUnicode).add(userLogin);
         UserChatSubscriptions.get(userLogin).add(chatChannelUnicode);
     }
-    private static User createUser(String email, String firstName, String lastName, String publicName, String color, String avatarURL, String profileURL, String birthdate, String location, String sex, Boolean privateShowAge, Boolean publicShowAge, Boolean publicShowSex, Boolean publicShowLocation, String... languages) {
+
+    private User createUser(String email, String firstName, String lastName, String publicName, String color, String avatarURL, String profileURL, String birthdate, String location, String sex, Boolean privateShowAge, Boolean publicShowAge, Boolean publicShowSex, Boolean publicShowLocation, String... languages) {
         User user = new User(email);
         user.setUserID(publicName);
         user.getUserPrivateProfile().setFirstName(firstName);
@@ -368,7 +374,7 @@ public class StandAloneServer implements IOrigin {
 
         return user;
     }
-    private static void subscribeUser(String userLogin, String friendLogin) {
+    private void subscribeUser(String userLogin, String friendLogin) {
         if (!UserFriendList.containsKey(userLogin))
             UserFriendList.put(userLogin,new ArrayList<String>());
         if (!UserFriendList.containsKey(friendLogin))
@@ -377,8 +383,8 @@ public class StandAloneServer implements IOrigin {
         UserFriendList.get(userLogin).add(friendLogin);
         UserFriendList.get(friendLogin).add(userLogin);
     }
-
-    public static Boolean ExecuteCommand(Server server, AvailableCommands command, EventHandler<CommandCallbackEventArgs> Callback,Object CallbackAdditionalData, int retryCount, Format... formats) {
+*/
+    /*public static Boolean ExecuteCommand(Server server, AvailableCommands command, EventHandler<CommandCallbackEventArgs> Callback,Object CallbackAdditionalData, int retryCount, Format... formats) {
         if (retryCount >= 3) return false;
 
         Boolean result = false;
@@ -503,7 +509,8 @@ public class StandAloneServer implements IOrigin {
 
         return result;
     }
-
+*/
+    /*
     private static HttpCookie checkCSRFCookie(String appName) {
         HttpCookie csrfCookie = null;
         try {
@@ -543,8 +550,9 @@ public class StandAloneServer implements IOrigin {
 
         return user;
     }
-
-    private static AbstractMap.SimpleEntry<Integer, String> StartSession(Server server, Format... formats) {
+    */
+/*
+    private AbstractMap.SimpleEntry<Integer, String> StartSession(Server server, Format... formats) {
         Integer responseCode = null;
         String responseBody = null;
 
@@ -569,8 +577,8 @@ public class StandAloneServer implements IOrigin {
 
         return new AbstractMap.SimpleEntry<Integer,String>((responseCode != null)?responseCode:-1,(responseBody != null)?responseBody:"");
     }
-
-    private static AbstractMap.SimpleEntry<Integer, String> Login(Server server, Format... formats) {
+*//*
+    private AbstractMap.SimpleEntry<Integer, String> Login(Server server, Format... formats) {
         Integer responseCode = null;
         String responseBody = null;
 
@@ -621,8 +629,8 @@ public class StandAloneServer implements IOrigin {
 
         return new AbstractMap.SimpleEntry<Integer,String>((responseCode != null)?responseCode:500,(responseBody != null)?responseBody:"");
     }
-
-    private static AbstractMap.SimpleEntry<Integer, String> Register(Server server, Format... formats) {
+*//*
+    private AbstractMap.SimpleEntry<Integer, String> Register(Server server, Format... formats) {
         Integer responseCode = null;
         String responseBody = null;
 
@@ -682,8 +690,8 @@ public class StandAloneServer implements IOrigin {
 
         return new AbstractMap.SimpleEntry<Integer, String>((responseCode != null) ? responseCode : -1, (responseBody != null) ? responseBody : "");
     }
-
-    private static AbstractMap.SimpleEntry<Integer, String> EmailCheck(Server server, Format... formats) {
+*//*
+    private AbstractMap.SimpleEntry<Integer, String> EmailCheck(Server server, Format... formats) {
         Integer responseCode = null;
         String responseBody = null;
 
@@ -723,8 +731,8 @@ public class StandAloneServer implements IOrigin {
 
         return new AbstractMap.SimpleEntry<Integer,String>((responseCode != null)?responseCode:-1,(responseBody != null)?responseBody:"");
     }
-
-    private static AbstractMap.SimpleEntry<Integer, String> UsernameCheck(Server server, Format... formats) {
+*//*
+    private AbstractMap.SimpleEntry<Integer, String> UsernameCheck(Server server, Format... formats) {
         Integer responseCode = null;
         String responseBody = null;
 
@@ -763,8 +771,8 @@ public class StandAloneServer implements IOrigin {
 
         return new AbstractMap.SimpleEntry<Integer,String>((responseCode != null)?responseCode:-1,(responseBody != null)?responseBody:"");
     }
-
-    private static AbstractMap.SimpleEntry<Integer, String> Explore(Server server, Format... formats) {
+*//*
+    private AbstractMap.SimpleEntry<Integer, String> Explore(Server server, Format... formats) {
         Integer responseCode = null;
         String responseBody = null;
 
@@ -796,12 +804,12 @@ public class StandAloneServer implements IOrigin {
 
                 ArrayList<String> allHives = new ArrayList<String>(Hives.keySet());
 
-                /*ArrayList<String> userHives =  null;
-                if (UserHiveSubscriptions.containsKey(user.getUserID()))
-                    userHives = UserHiveSubscriptions.get(user.getUserID());
-
-                if ((userHives != null) && (!filter.TYPE.equalsIgnoreCase("CREATION_DATE")))
-                    allHives.removeAll(userHives);*/
+//                ArrayList<String> userHives =  null;
+//                if (UserHiveSubscriptions.containsKey(user.getUserID()))
+//                    userHives = UserHiveSubscriptions.get(user.getUserID());
+//
+//                if ((userHives != null) && (!filter.TYPE.equalsIgnoreCase("CREATION_DATE")))
+//                    allHives.removeAll(userHives);
 
                 Comparator<Hive> comparator = null;
 
@@ -991,8 +999,8 @@ public class StandAloneServer implements IOrigin {
 
         return new AbstractMap.SimpleEntry<Integer,String>((responseCode != null)?responseCode:-1,(responseBody != null)?responseBody:"");
     }
-
-    private static AbstractMap.SimpleEntry<Integer, String> Join(Server server, Format... formats) {
+*//*
+    private AbstractMap.SimpleEntry<Integer, String> Join(Server server, Format... formats) {
         Integer responseCode = null;
         String responseBody = null;
 
@@ -1045,8 +1053,8 @@ public class StandAloneServer implements IOrigin {
 
         return new AbstractMap.SimpleEntry<Integer,String>((responseCode != null)?responseCode:-1,(responseBody != null)?responseBody:"");
     }
-
-    private static AbstractMap.SimpleEntry<Integer, String> SendMessage(Server server, Format... formats) {
+*//*
+    private AbstractMap.SimpleEntry<Integer, String> SendMessage(Server server, Format... formats) {
         Integer responseCode = null;
         String responseBody = null;
 
@@ -1099,8 +1107,8 @@ public class StandAloneServer implements IOrigin {
 
         return new AbstractMap.SimpleEntry<Integer, String>((responseCode != null) ? responseCode : -1, (responseBody != null) ? responseBody : "");
     }
-
-    private static AbstractMap.SimpleEntry<Integer, String> GetMessages(Server server, Format... formats) {
+*//*
+    private AbstractMap.SimpleEntry<Integer, String> GetMessages(Server server, Format... formats) {
         Integer responseCode = null;
         String responseBody = null;
 
@@ -1168,9 +1176,9 @@ public class StandAloneServer implements IOrigin {
                             for (Message msg : resultList)
                                 list.MESSAGES.add((MESSAGE) msg.toFormat(new MESSAGE()));
 
-                            /*if ((firstMessage > -1) || (filter.START_MESSAGE_ID.equalsIgnoreCase("FIRST"))) {
-                                list.NUMBER_MESSAGES = lastMessage - firstMessage - messageCount;
-                            }*/
+//                            if ((firstMessage > -1) || (filter.START_MESSAGE_ID.equalsIgnoreCase("FIRST"))) {
+//                                list.NUMBER_MESSAGES = lastMessage - firstMessage - messageCount;
+//                            }
                             list.NUMBER_MESSAGES = list.MESSAGES.size();
                         } else {
                             list.MESSAGES = null;
@@ -1196,26 +1204,26 @@ public class StandAloneServer implements IOrigin {
 
         return new AbstractMap.SimpleEntry<Integer,String>((responseCode != null)?responseCode:-1,(responseBody != null)?responseBody:"");
     }
-
-    private static AbstractMap.SimpleEntry<Integer, String> LocalProfile(Server server, Format... formats) {
+*//*
+    private AbstractMap.SimpleEntry<Integer, String> LocalProfile(Server server, Format... formats) {
         Integer responseCode = null;
         String responseBody = null;
 
-/*        EXPLORE_FILTER message = null;
-        if (formats != null)
-            for (Format format : formats)
-                if (format instanceof EXPLORE_FILTER)
-                    message = (EXPLORE_FILTER)format;*/
+//        EXPLORE_FILTER message = null;
+//        if (formats != null)
+//            for (Format format : formats)
+//                if (format instanceof EXPLORE_FILTER)
+//                    message = (EXPLORE_FILTER)format;
 
         COMMON common = new COMMON();
 
         ArrayList<Format> responseFormats = new ArrayList<Format>();
         responseFormats.add(common);
 
-        /*if (message == null) {
-            common.STATUS = "ERROR";
-            common.ERROR = -1;
-        } else {*/
+//        if (message == null) {
+//            common.STATUS = "ERROR";
+//            common.ERROR = -1;
+//        } else {
         HttpCookie csrfCookie = checkCSRFCookie(server.getAppName());
 
         if ((csrfCookie == null) || (csrfCookie.hasExpired()) || (!CSRFTokens.contains(csrfCookie.getValue())))
@@ -1263,8 +1271,8 @@ public class StandAloneServer implements IOrigin {
 
         return new AbstractMap.SimpleEntry<Integer,String>((responseCode != null)?responseCode:-1,(responseBody != null)?responseBody:"");
     }
-
-    private static AbstractMap.SimpleEntry<Integer, String> UpdateProfile(Server server, Format... formats) {
+*//*
+    private AbstractMap.SimpleEntry<Integer, String> UpdateProfile(Server server, Format... formats) {
         Integer responseCode = null;
         String responseBody = null;
 
@@ -1580,8 +1588,8 @@ public class StandAloneServer implements IOrigin {
 
         return new AbstractMap.SimpleEntry<Integer,String>((responseCode != null)?responseCode:-1,(responseBody != null)?responseBody:"");
     }
-
-    private static AbstractMap.SimpleEntry<Integer, String> ChatInfo(Server server, Format... formats) {
+*//*
+    private AbstractMap.SimpleEntry<Integer, String> ChatInfo(Server server, Format... formats) {
         Integer responseCode = null;
         String responseBody = null;
 
@@ -1634,26 +1642,26 @@ public class StandAloneServer implements IOrigin {
 
         return new AbstractMap.SimpleEntry<Integer,String>((responseCode != null)?responseCode:-1,(responseBody != null)?responseBody:"");
     }
-
-    private static AbstractMap.SimpleEntry<Integer, String> ChatList(Server server, Format... formats) {
+*//*
+    private AbstractMap.SimpleEntry<Integer, String> ChatList(Server server, Format... formats) {
         Integer responseCode = null;
         String responseBody = null;
 
-/*        EXPLORE_FILTER message = null;
-        if (formats != null)
-            for (Format format : formats)
-                if (format instanceof EXPLORE_FILTER)
-                    message = (EXPLORE_FILTER)format;*/
+//        EXPLORE_FILTER message = null;
+//        if (formats != null)
+//            for (Format format : formats)
+//                if (format instanceof EXPLORE_FILTER)
+//                    message = (EXPLORE_FILTER)format;
 
         COMMON common = new COMMON();
 
         ArrayList<Format> responseFormats = new ArrayList<Format>();
         responseFormats.add(common);
 
-        /*if (message == null) {
-            common.STATUS = "ERROR";
-            common.ERROR = -1;
-        } else {*/
+//        if (message == null) {
+//            common.STATUS = "ERROR";
+//            common.ERROR = -1;
+//        } else {
         HttpCookie csrfCookie = checkCSRFCookie(server.getAppName());
 
         if ((csrfCookie == null) || (csrfCookie.hasExpired()) || (!CSRFTokens.contains(csrfCookie.getValue())))
@@ -1693,8 +1701,8 @@ public class StandAloneServer implements IOrigin {
 
         return new AbstractMap.SimpleEntry<Integer,String>((responseCode != null)?responseCode:-1,(responseBody != null)?responseBody:"");
     }
-
-    private static AbstractMap.SimpleEntry<Integer, String> UserProfile(Server server, Format... formats) {
+*//*
+    private AbstractMap.SimpleEntry<Integer, String> UserProfile(Server server, Format... formats) {
         Integer responseCode = null;
         String responseBody = null;
 
@@ -1776,8 +1784,8 @@ public class StandAloneServer implements IOrigin {
 
         return new AbstractMap.SimpleEntry<Integer,String>((responseCode != null)?responseCode:-1,(responseBody != null)?responseBody:"");
     }
-
-    private static AbstractMap.SimpleEntry<Integer, String> HiveInfo(Server server, Format... formats) {
+*//*
+    private AbstractMap.SimpleEntry<Integer, String> HiveInfo(Server server, Format... formats) {
         Integer responseCode = null;
         String responseBody = null;
 
@@ -1830,8 +1838,8 @@ public class StandAloneServer implements IOrigin {
 
         return new AbstractMap.SimpleEntry<Integer,String>((responseCode != null)?responseCode:-1,(responseBody != null)?responseBody:"");
     }
-
-    private static AbstractMap.SimpleEntry<Integer, String> HiveUsers(Server server, Format... formats) {
+*//*
+    private AbstractMap.SimpleEntry<Integer, String> HiveUsers(Server server, Format... formats) {
         Integer responseCode = null;
         String responseBody = null;
 
@@ -2038,8 +2046,8 @@ public class StandAloneServer implements IOrigin {
 
         return new AbstractMap.SimpleEntry<Integer,String>((responseCode != null)?responseCode:-1,(responseBody != null)?responseBody:"");
     }
-
-    private static AbstractMap.SimpleEntry<Integer, String> CreateHive(Server server, Format... formats) {
+*//*
+    private AbstractMap.SimpleEntry<Integer, String> CreateHive(Server server, Format... formats) {
         Integer responseCode = null;
         String responseBody = null;
 
@@ -2113,26 +2121,26 @@ public class StandAloneServer implements IOrigin {
 
         return new AbstractMap.SimpleEntry<Integer,String>((responseCode != null)?responseCode:-1,(responseBody != null)?responseBody:"");
     }
-
+*/
     /*private static AbstractMap.SimpleEntry<Integer, String> Command(Server server, Format... formats) {
         Integer responseCode = null;
         String responseBody = null;
 
-        EXPLORE_FILTER message = null;
-        if (formats != null)
-            for (Format format : formats)
-                if (format instanceof EXPLORE_FILTER)
-                    message = (EXPLORE_FILTER)format;
+//        EXPLORE_FILTER message = null;
+//        if (formats != null)
+//            for (Format format : formats)
+//                if (format instanceof EXPLORE_FILTER)
+//                    message = (EXPLORE_FILTER)format;
 
         COMMON common = new COMMON();
 
         ArrayList<Format> responseFormats = new ArrayList<Format>();
         responseFormats.add(common);
 
-        if (message == null) {
-            common.STATUS = "ERROR";
-            common.ERROR = -1;
-        } else {
+//        if (message == null) {
+//            common.STATUS = "ERROR";
+//            common.ERROR = -1;
+//        } else {
             HttpCookie csrfCookie = checkCSRFCookie(server.getAppName());
 
             if ((csrfCookie == null) || (csrfCookie.hasExpired()) || (!CSRFTokens.contains(csrfCookie.getValue())))
@@ -2148,7 +2156,7 @@ public class StandAloneServer implements IOrigin {
                     common.STATUS = "SESSION EXPIRED";
                 }
             }
-        }
+//        }
 
         if ((responseCode != null) && (responseCode == 200) && (responseFormats.size() > 0)) {
             responseBody = "";
