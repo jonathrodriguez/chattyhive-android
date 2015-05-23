@@ -1,4 +1,4 @@
-package com.chattyhive.Core.ContentProvider.OSStorageProvider;
+package com.chattyhive.Core.ContentProvider.OSStorageProvider.OLD;
 
 /**
  * Created by Jonathan on 23/06/2014.

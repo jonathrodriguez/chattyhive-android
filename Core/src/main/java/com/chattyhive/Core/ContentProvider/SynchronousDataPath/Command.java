@@ -2,7 +2,6 @@ package com.chattyhive.Core.ContentProvider.SynchronousDataPath;
 
 import com.chattyhive.Core.ContentProvider.Formats.Format;
 import com.chattyhive.Core.ContentProvider.Server.IServerUser;
-import com.chattyhive.Core.ContentProvider.Server.Server;
 import com.chattyhive.Core.ContentProvider.Server.ServerResponse;
 import com.chattyhive.Core.Util.CallbackDelegate;
 
@@ -220,7 +219,7 @@ public class Command {
                     rg.parameterName = this.initialValue.substring(indexOfOpenName+1,indexOfCloseName);
                 }
 
-                if (indexOfOpenValue == (indexOfCloseValue+1)) {
+                if (indexOfCloseValue == (indexOfOpenValue+1)) {
                     throw new RuntimeException("URL parameter declaration without value association.");
                 } else {
                     rg.value = this.initialValue.substring(indexOfOpenValue+1,indexOfCloseValue);
@@ -347,27 +346,6 @@ public class Command {
         bodyData += "}";
 
         return (!bodyData.equalsIgnoreCase("}"))?bodyData:"";
-    }
-
-    public Boolean checkCookies() {
-        if (this.commandDefinition.getRequiredCookies() == null) return true;
-
-        for (String cookie : this.commandDefinition.getRequiredCookies())
-            if (this.serverUser.getAuthToken(cookie) == null)
-                return false;
-
-        return true;
-    }
-    public ArrayList<String> getUnsatisfyingCookies() {
-        ArrayList<String> result = new ArrayList<String>();
-
-        if (this.commandDefinition.getRequiredCookies() == null) return null;
-
-        for (String cookie : this.commandDefinition.getRequiredCookies())
-            if (this.serverUser.getAuthToken(cookie) == null)
-                result.add(cookie);
-
-        return (result.size() > 0)?result:null;
     }
 
     private Boolean checkFormats() {

@@ -20,4 +20,7 @@ public interface IServerUser {
     public Boolean removeUser();
 
     public void setPassword(String newPassword);
+
+    @Override
+    public int hashCode();
 }

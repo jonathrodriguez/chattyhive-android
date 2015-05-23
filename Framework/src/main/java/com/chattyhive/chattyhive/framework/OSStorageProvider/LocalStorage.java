@@ -16,7 +16,7 @@ import com.chattyhive.Core.ContentProvider.Formats.PRIVATE_PROFILE;
 import com.chattyhive.Core.ContentProvider.Formats.PROFILE_ID;
 import com.chattyhive.Core.ContentProvider.Formats.PUBLIC_PROFILE;
 import com.chattyhive.Core.ContentProvider.Formats.USER_PROFILE;
-import com.chattyhive.Core.ContentProvider.local.LocalStorageInterface;
+import com.chattyhive.Core.ContentProvider.OSStorageProvider.OLD.LocalStorageInterface;
 import com.chattyhive.Core.Util.Events.CommandCallbackEventArgs;
 import com.chattyhive.Core.Util.Events.EventHandler;
 import com.chattyhive.Core.Util.Formatters.TimestampFormatter;

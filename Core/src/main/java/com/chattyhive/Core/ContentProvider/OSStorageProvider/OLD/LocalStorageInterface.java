@@ -1,4 +1,4 @@
-package com.chattyhive.Core.ContentProvider.local;
+package com.chattyhive.Core.ContentProvider.OSStorageProvider.OLD;
 
 import com.chattyhive.Core.ContentProvider.SynchronousDataPath.AvailableCommands;
 import com.chattyhive.Core.ContentProvider.Formats.Format;

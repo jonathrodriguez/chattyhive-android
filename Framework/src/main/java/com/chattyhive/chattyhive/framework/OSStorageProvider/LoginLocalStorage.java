@@ -3,7 +3,7 @@ package com.chattyhive.chattyhive.framework.OSStorageProvider;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.chattyhive.Core.ContentProvider.OSStorageProvider.LoginLocalStorageInterface;
+import com.chattyhive.Core.ContentProvider.OSStorageProvider.OLD.LoginLocalStorageInterface;
 import com.chattyhive.chattyhive.framework.Util.ApplicationContextProvider;
 
 import java.util.AbstractMap;

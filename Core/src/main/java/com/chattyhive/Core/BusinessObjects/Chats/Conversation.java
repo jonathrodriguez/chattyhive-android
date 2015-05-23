@@ -5,7 +5,7 @@ import com.chattyhive.Core.StaticParameters;
 import com.chattyhive.Core.BusinessObjects.Chats.Messages.Message;
 import com.chattyhive.Core.ContentProvider.SynchronousDataPath.AvailableCommands;
 import com.chattyhive.Core.ContentProvider.DataProvider;
-import com.chattyhive.Core.ContentProvider.OSStorageProvider.MessageLocalStorageInterface;
+import com.chattyhive.Core.ContentProvider.OSStorageProvider.OLD.MessageLocalStorageInterface;
 import com.chattyhive.Core.ContentProvider.Formats.CHAT_ID;
 import com.chattyhive.Core.ContentProvider.Formats.Format;
 import com.chattyhive.Core.ContentProvider.Formats.MESSAGE;

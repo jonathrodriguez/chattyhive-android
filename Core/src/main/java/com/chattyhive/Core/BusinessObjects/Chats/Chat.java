@@ -7,7 +7,7 @@ import com.chattyhive.Core.BusinessObjects.Users.ProfileType;
 import com.chattyhive.Core.BusinessObjects.Users.User;
 import com.chattyhive.Core.ContentProvider.SynchronousDataPath.AvailableCommands;
 import com.chattyhive.Core.ContentProvider.DataProvider;
-import com.chattyhive.Core.ContentProvider.OSStorageProvider.ChatLocalStorageInterface;
+import com.chattyhive.Core.ContentProvider.OSStorageProvider.OLD.ChatLocalStorageInterface;
 import com.chattyhive.Core.ContentProvider.Formats.CHAT;
 import com.chattyhive.Core.ContentProvider.Formats.CHAT_ID;
 import com.chattyhive.Core.ContentProvider.Formats.CHAT_SYNC;

@@ -1,11 +1,14 @@
 package com.chattyhive.Core.ContentProvider.Server;
 
+import com.chattyhive.Core.ContentProvider.OSStorageProvider.LocalStorageInterface;
 import com.chattyhive.Core.ContentProvider.SynchronousDataPath.Command;
 import com.chattyhive.Core.ContentProvider.SynchronousDataPath.CommandDefinition;
 import com.chattyhive.Core.ContentProvider.SynchronousDataPath.IOrigin;
 import com.chattyhive.Core.ContentProvider.Formats.Format;
 import com.chattyhive.Core.StaticParameters;
 import com.chattyhive.Core.Util.CallbackDelegate;
+import com.chattyhive.Core.Util.Events.Event;
+import com.chattyhive.Core.Util.Events.EventArgs;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
@@ -29,19 +32,16 @@ public class RemoteServer implements IOrigin {
     private final String serverProtocol;
     private final String serverLocation;
 
+    private LocalStorageInterface settingsStorage;
+
     private String CSRFToken; //TODO: this member can be removed when using token based authentication.
 
-    public RemoteServer(String serverProtocol, String serverLocation) {
-        this.serverProtocol = serverProtocol;
-        this.serverLocation = serverLocation;
-        this.CSRFToken = "";
-    }
-
     //TODO: this constructor will no longer be needed when using token based authentication.
-    public RemoteServer(String serverProtocol, String serverLocation, String CSRFToken) {
+    public RemoteServer(String serverProtocol, String serverLocation, LocalStorageInterface settingsStorage) {
         this.serverProtocol = serverProtocol;
         this.serverLocation = serverLocation;
-        this.CSRFToken = CSRFToken;
+        this.settingsStorage = settingsStorage;
+        this.CSRFToken = this.settingsStorage.getData(LocalStorageInterface.StorageType.GlobalSettings,"CSRFToken");
     }
 
     @Override
@@ -88,7 +88,7 @@ public class RemoteServer implements IOrigin {
                 inputReader = new BufferedReader(new InputStreamReader(httpURLConnection.getErrorStream()));
 
             String inputLine;
-            StringBuffer resultString = new StringBuffer();
+            StringBuilder resultString = new StringBuilder();
 
             while ((inputLine = inputReader.readLine()) != null) {
                 resultString.append(inputLine);
@@ -129,10 +129,10 @@ public class RemoteServer implements IOrigin {
                     for (HttpCookie cookie : HttpCookie.parse(setCookieHeader))
                         if (cookie.getName().equalsIgnoreCase(CommandDefinition.CSRFTokenCookie)) {
                             this.CSRFToken = cookie.getValue();
-                            //TODO: Notify value changed
+                            this.settingsStorage.setData(LocalStorageInterface.StorageType.GlobalSettings,"CSRFToken",this.CSRFToken);
                         } else if (cookie.getName().equalsIgnoreCase(CommandDefinition.SessionCookie)) {
                             command.getServerUser().updateAuthToken(CommandDefinition.SessionCookie,cookie.getValue());
-                            //TODO: Notify value changed?
+                            //TODO: Notify value changed? Not really needed.
                         }
 
 

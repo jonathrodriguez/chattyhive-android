@@ -132,6 +132,10 @@ public class CommandExecutor implements Runnable {
             case Session:
                 //TODO: DO SOMETHING?
                 //TODO: Process callbacks
+                while (command.countCallbackDelegates() > 0) {
+                    CallbackDelegate callbackDelegate = command.popCallbackDelegate(10000000);
+                    callbackDelegate.Run(); //TODO: ¿?
+                }
                 break;
             case Query:
                 if (this.dataOrigins.containsKey(DataOriginTypes.Cache)) // Update cache

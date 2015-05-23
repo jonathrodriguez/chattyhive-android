@@ -8,8 +8,8 @@ import android.accounts.OperationCanceledException;
 import android.content.Context;
 
 import com.chattyhive.Core.ContentProvider.Server.IServerUser;
-import com.chattyhive.Core.ContentProvider.Server.ServerConfiguration;
 import com.chattyhive.Core.ContentProvider.Server.SessionStatus;
+import com.chattyhive.Core.ContentProvider.SynchronousDataPath.CommandDefinition;
 
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -43,7 +43,7 @@ public class ServerUser implements IServerUser {
 
     @Override
     public String getAuthToken(String name) {
-        if (name.equalsIgnoreCase(ServerConfiguration.sessionCookie))
+        if (name.equalsIgnoreCase(CommandDefinition.SessionCookie))
             return accountManager.peekAuthToken(this.account, "FULL_ACCESS");
 
         return null;
@@ -51,16 +51,22 @@ public class ServerUser implements IServerUser {
 
     @Override
     public String getAuthTokens() {
-        String sessionCookie = this.getAuthToken(ServerConfiguration.sessionCookie);
+        String sessionCookie = this.getAuthToken(CommandDefinition.SessionCookie);
             if (sessionCookie != null)
-                return ServerConfiguration.sessionCookie.concat("=").concat(sessionCookie);
+                return CommandDefinition.SessionCookie.concat("=").concat(sessionCookie);
 
         return null;
     }
 
     @Override
+    public void updateAuthToken(String name, String value) {
+        if (name.equalsIgnoreCase(CommandDefinition.SessionCookie))
+            accountManager.setAuthToken(this.account,"FULL_ACCESS",value);
+    }
+
+    @Override
     public SessionStatus getStatus() {
-        if (this.getAuthToken(ServerConfiguration.sessionCookie) != null)
+        if (this.getAuthToken(CommandDefinition.SessionCookie) != null)
             return SessionStatus.CONNECTED;
 
         return SessionStatus.EXPIRED;
@@ -73,7 +79,7 @@ public class ServerUser implements IServerUser {
 
     @Override
     public void invalidateAuthTokens() {
-        this.invalidateAuthToken(ServerConfiguration.sessionCookie);
+        this.invalidateAuthToken(CommandDefinition.SessionCookie);
     }
 
     @Override
@@ -114,5 +120,10 @@ public class ServerUser implements IServerUser {
     @Override
     public void setPassword(String newPassword) {
         this.accountManager.setPassword(this.account,newPassword);
+    }
+
+    @Override
+    public int hashCode() {
+        return this.getLogin().hashCode();
     }
 }

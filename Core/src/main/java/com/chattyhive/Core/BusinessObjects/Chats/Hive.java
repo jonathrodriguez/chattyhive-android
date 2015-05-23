@@ -5,7 +5,7 @@ import com.chattyhive.Core.BusinessObjects.Image;
 import com.chattyhive.Core.BusinessObjects.Users.User;
 import com.chattyhive.Core.ContentProvider.SynchronousDataPath.AvailableCommands;
 import com.chattyhive.Core.ContentProvider.DataProvider;
-import com.chattyhive.Core.ContentProvider.OSStorageProvider.HiveLocalStorageInterface;
+import com.chattyhive.Core.ContentProvider.OSStorageProvider.OLD.HiveLocalStorageInterface;
 import com.chattyhive.Core.ContentProvider.Formats.CHAT;
 import com.chattyhive.Core.ContentProvider.Formats.COMMON;
 import com.chattyhive.Core.ContentProvider.Formats.Format;
