@@ -56,9 +56,19 @@ public class LeftPanelHiveUserListAdapter extends PaginationList {
 
     public void onAddItem(Object sender,EventArgs eventArgs) {
         int actualItemCount = hive.getSubscribedUsers().size();
-        if (actualItemCount == lastItemCount) {
+        if ((actualItemCount == lastItemCount) || (actualItemCount < 11)) {
             allPagesLoaded = true;
-            lastPage = (int)Math.ceil(lastItemCount/this.getItemCountPerPage());
+            lastPage = (int)Math.ceil(actualItemCount/this.getItemCountPerPage());
+            if (this.getPage() > lastPage) {
+                this.contextActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        //TODO: here hide the "loading" animation
+                        LeftPanelHiveUserListAdapter.this.loadNextPage(0);
+                    }
+                });
+                return;
+            }
         } else {
             lastItemCount = actualItemCount;
         }

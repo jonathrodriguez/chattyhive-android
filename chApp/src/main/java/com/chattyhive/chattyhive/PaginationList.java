@@ -24,6 +24,7 @@ public abstract class PaginationList extends BaseAdapter {
 
     public PaginationList(ViewGroup listView) {
         this.listView = listView;
+        this.listView.setTag(this);
         this.latDrawPage = -1;
 
         this.convertViewStack = (ArrayDeque<View>[])new ArrayDeque[this.getViewTypeCount()];
@@ -67,6 +68,8 @@ public abstract class PaginationList extends BaseAdapter {
 
     private void notifyPageChangedInternal() {
 
+        if (this.listView.getTag() != this)
+            return;
             //if (this.latDrawPage != this.page)
                 this.latDrawPage = this.page;
             //else

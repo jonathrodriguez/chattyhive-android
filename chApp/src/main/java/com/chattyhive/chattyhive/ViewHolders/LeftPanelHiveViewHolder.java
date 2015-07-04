@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
@@ -294,6 +295,7 @@ public class LeftPanelHiveViewHolder extends ViewHolder<Hive> {
     public void collapseCard() {
         if (this.leftPanelHiveUserListAdapter != null) {
             this.leftPanelHiveUserListAdapter.dispose();
+            Log.d("HiveViewHolder-Collapse","LeftPanelHiveUserListAdapter disposed.");
         }
         if (this.itemStatus != HiveItemStatus.Collapsed) {
             this.itemStatus = HiveItemStatus.Collapsed;
