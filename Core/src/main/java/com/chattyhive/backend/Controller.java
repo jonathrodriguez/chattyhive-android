@@ -433,7 +433,7 @@ public class Controller {
         this.knownUsers = new TreeMap<String, User>();
         this.LocalUserReceived = new Event<EventArgs>();
     }
-    private User getUser(String userID,Format format) {
+    public User getUser(String userID,Format format) {
         if (this.knownUsers == null) throw new IllegalStateException("Users must be initialized.");
         else if (userID == null) throw new NullPointerException("UserID must not be null.");
         else if (userID.isEmpty()) throw new IllegalArgumentException("UserID must not be empty.");

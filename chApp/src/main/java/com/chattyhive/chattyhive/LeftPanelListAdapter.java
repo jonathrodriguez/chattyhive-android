@@ -64,14 +64,8 @@ public class LeftPanelListAdapter extends BaseAdapter {
     private int visibleList;
     private View.OnClickListener clickListener;
     public Event<EventArgs> ListSizeChanged;
-    public ArrayList<Hive> hiveList;
     public ArrayList<Chat> chatList;
     public ArrayList<User> friendList;
-    private int expandedCard = -1;
-    private int expandedList = -1;
-    private int usersPage = 0;
-    private int usersFilter = 1;
-    private boolean refresh = true;
 
     public void SetVisibleList(int LeftPanel_ListKind) {
         this.visibleList = LeftPanel_ListKind;
@@ -90,18 +84,9 @@ public class LeftPanelListAdapter extends BaseAdapter {
     public void OnAddItem(Object sender, EventArgs args) {  //TODO: This is only a patch. Hive and Chat collections must be updated on UIThread.
         ((Activity) this.context).runOnUiThread(new Runnable() {
             public void run() {
-                hiveList = null;
                 chatList = null;
                 friendList = null;
-                if (visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Hives)) {
-                    while (hiveList == null)
-                        try {
-                            CaptureHives();
-                        } catch (Exception e) {
-                            // e.printStackTrace();
-                            hiveList = null;
-                        }
-                } else if (visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Chats)) {
+                 if (visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Chats)) {
                     while (chatList == null)
                         try {
                             CaptureChats();
@@ -180,61 +165,7 @@ public class LeftPanelListAdapter extends BaseAdapter {
         chatList = new ArrayList<Chat>(list);
     }
 
-    private void CaptureHives() {
-        TreeSet<Hive> list = new TreeSet<Hive>(new Comparator<Hive>() {
-            @Override
-            public int compare(Hive lhs, Hive rhs) { // lhs < rhs => return < 0 | lhs = rhs => return = 0 | lhs > rhs => return > 0
-                int res = 0;
-                if ((lhs == null) && (rhs != null))
-                    res = 1;
-                else if ((lhs != null) && (rhs == null))
-                    res = -1;
-                else if (lhs == null) //&& (rhs == null)) <- Which is always true
-                    res = 0;
-                else {
-                    Date lhsDate = null;
-                    Date rhsDate = null;
 
-                    //TODO: Change comparison method. Instead of creation date use lastLocalUserActivityDate. Find a way to determine this value.
-
-                    /*if ((lhs.getPublicChat().getConversation() != null) && (lhs.getPublicChat().getConversation().getCount() > 0) && (lhs.getPublicChat().getConversation().getLastMessage() != null))
-                        lhsDate = lhs.getPublicChat().getConversation().getLastMessage().getOrdinationTimeStamp();
-                    else if (lhs.getCreationDate() != null)*/
-                    lhsDate = lhs.getCreationDate();
-
-                   /* if ((rhs.getPublicChat().getConversation() != null) && (rhs.getPublicChat().getConversation().getCount() > 0) && (rhs.getPublicChat().getConversation().getLastMessage() != null))
-                        rhsDate = rhs.getPublicChat().getConversation().getLastMessage().getOrdinationTimeStamp();
-                    else if (rhs.getCreationDate() != null)*/
-                    rhsDate = rhs.getCreationDate();
-
-                    if ((lhsDate == null) && (rhsDate != null))
-                        res = 1;
-                    else if ((lhsDate != null) && (rhsDate == null))
-                        res = -1;
-                    else if (lhsDate != null) //&& (rhsDate != null)) <- Which is always true
-                        res = rhsDate.compareTo(lhsDate);
-                    else {
-                        lhsDate = lhs.getCreationDate();
-                        rhsDate = rhs.getCreationDate();
-
-                        if ((lhsDate == null) && (rhsDate != null))
-                            res = 1;
-                        else if ((lhsDate != null) && (rhsDate == null))
-                            res = -1;
-                        else if ((lhsDate != null) && (rhsDate != null))
-                            res = rhsDate.compareTo(lhsDate);
-                        else {
-                            res = 0;
-                        }
-                    }
-                }
-
-                return res;
-            }
-        });
-        list.addAll(Hive.getHives());
-        hiveList = new ArrayList<Hive>(list);
-    }
 
     private void CaptureFriends() {
         TreeSet<User> list = new TreeSet<User>(new Comparator<User>() {
@@ -300,16 +231,10 @@ public class LeftPanelListAdapter extends BaseAdapter {
         this.listView = ((ListView) ((Activity) this.context).findViewById(R.id.left_panel_element_list));
         //this.listView.setAdapter(this);
 
-        if (visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Hives)) {
-            chatList = null;
-            friendList = null;
-            CaptureHives();
-        } else if (visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Chats)) {
-            hiveList = null;
+        if (visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Chats)) {
             friendList = null;
             CaptureChats();
         } else if (visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Mates)) {
-            hiveList = null;
             chatList = null;
             CaptureFriends();
         }
@@ -330,9 +255,7 @@ public class LeftPanelListAdapter extends BaseAdapter {
     @Override
     public int getCount() {
         int result = 0;
-        if (this.visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Hives)) {
-            result = hiveList.size();
-        } else if (this.visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Chats)) {
+       if (this.visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Chats)) {
             result = chatList.size();
         } else if (this.visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Mates)) {
             result = friendList.size();
@@ -342,9 +265,7 @@ public class LeftPanelListAdapter extends BaseAdapter {
 
     @Override
     public Object getItem(int position) {
-        if (this.visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Hives)) {
-            return hiveList.get(position);
-        } else if (this.visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Chats)) {
+        if (this.visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Chats)) {
             return chatList.get(position);
         } else if (this.visibleList == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Mates)) {
             return friendList.get(position);
@@ -369,149 +290,7 @@ public class LeftPanelListAdapter extends BaseAdapter {
         }
         if (convertView == null) {
             TypedValue alpha = new TypedValue();
-            if (type == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Hives)) {
-                holder = new HiveViewHolder();
-                convertView = this.inflater.inflate(R.layout.left_panel_hives_list_item, parent, false);
-                ((HiveViewHolder) holder).hiveItem = (LinearLayout) convertView.findViewById((R.id.left_panel_hives_list_item_top_view));
-                ((HiveViewHolder) holder).hiveName = (TextView) convertView.findViewById(R.id.left_panel_hives_list_item_hive_name);
-                ((HiveViewHolder) holder).hiveImage = (ImageView) convertView.findViewById(R.id.left_panel_hives_list_item_img);
-                ((HiveViewHolder) holder).hiveCategoryImage = (ImageView) convertView.findViewById(R.id.left_panel_hives_list_item_hive_categroy_img);
-                ((HiveViewHolder) holder).hiveCategoryName = (TextView) convertView.findViewById(R.id.left_panel_hives_list_item_hive_category);
-                ((HiveViewHolder) holder).hiveDescription = (TextView) convertView.findViewById(R.id.left_panel_hives_list_item_hive_description);
-                ((HiveViewHolder) holder).hiveSubscribedUsers = (TextView) convertView.findViewById(R.id.left_panel_hives_list_item_hive_subscribed_users);
-                ((HiveViewHolder) holder).hiveTags = (WrapLayout) convertView.findViewById(R.id.context_wrap_layout_tags);
-                ((HiveViewHolder) holder).hiveImageSmall = (ImageView) convertView.findViewById(R.id.left_panel_title_img);
-                ((HiveViewHolder) holder).headerTextView = (TextView) convertView.findViewById(R.id.left_panel_title_text_view);
-                ((HiveViewHolder) holder).contextTextView = (TextView) convertView.findViewById(R.id.context_list_item_expanded_hive_name);
-                ((HiveViewHolder) holder).contextCategoryImage = (ImageView) convertView.findViewById(R.id.context_list_item_expanded_category_image);
-                ((HiveViewHolder) holder).contextCategoryName = (TextView) convertView.findViewById(R.id.context_list_item_expanded_category_text);
-                ((HiveViewHolder) holder).contextSubscribedUsers = (TextView) convertView.findViewById(R.id.context_list_item_expanded_users_number);
-                ((HiveViewHolder) holder).contextLanguages = (WrapLayout) convertView.findViewById(R.id.context_list_item_expanded_hive_chat_languages);
-                ((HiveViewHolder) holder).contextDescription = (TextView) convertView.findViewById(R.id.context_list_item_expanded_hive_description);
-                ((HiveViewHolder) holder).contextStatsCreationDate = (TextView) convertView.findViewById(R.id.context_stats_creation_date);
-                ((HiveViewHolder) holder).contextStatsLastActivityDate = (TextView) convertView.findViewById(R.id.context_stats_last_activity_date);
-                ((HiveViewHolder) holder).contextHiveImage = (ImageView) convertView.findViewById(R.id.context_list_item_expanded_hive_image);
-                ((HiveViewHolder) holder).contextUsersListView = (LinearLayout) convertView.findViewById(R.id.left_panel_chat_users);
-                ((HiveViewHolder) holder).contextChatButton = (LinearLayout) convertView.findViewById(R.id.context_chat_button2);
-                //((HiveViewHolder) holder).hiveItem.setOnClickListener(clickListener);
-                ((HiveViewHolder) holder).contextUsersContainer = (LinearLayout) convertView.findViewById(R.id.left_panel_context_users_container);
-                ((HiveViewHolder) holder).user1 = (LinearLayout) convertView.findViewById(R.id.left_panel_chat_context_user01);
-                ((HiveViewHolder) holder).user2 = (LinearLayout) convertView.findViewById(R.id.left_panel_chat_context_user02);
-                ((HiveViewHolder) holder).user3 = (LinearLayout) convertView.findViewById(R.id.left_panel_chat_context_user03);
-                ((HiveViewHolder) holder).user4 = (LinearLayout) convertView.findViewById(R.id.left_panel_chat_context_user04);
-                ((HiveViewHolder) holder).contextChat = (LinearLayout) convertView.findViewById(R.id.left_panel_chat);
-                ((HiveViewHolder) holder).trendingButton = (LinearLayout) convertView.findViewById(R.id.left_panel_trending_button);
-                ((HiveViewHolder) holder).locationButton = (LinearLayout) convertView.findViewById(R.id.left_panel_location_button);
-                ((HiveViewHolder) holder).recentlyButton = (LinearLayout) convertView.findViewById(R.id.left_panel_recently_button);
-                ((HiveViewHolder) holder).moreButton = (LinearLayout) convertView.findViewById(R.id.left_panel_context_more_users);
-
-                ((HiveViewHolder) holder).moreButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        usersPage++;
-                        notifyDataSetChanged();
-                    }
-                });
-
-                ((HiveViewHolder) holder).trendingButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (usersFilter != 1) {
-                            usersFilter = 1;
-                            usersPage = 0;
-                            notifyDataSetChanged();
-                        }
-                    }
-                });
-
-                ((HiveViewHolder) holder).locationButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (usersFilter != 2) {
-                            usersFilter = 2;
-                            usersPage = 0;
-                            notifyDataSetChanged();
-                        }
-                    }
-                });
-
-                ((HiveViewHolder) holder).recentlyButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (usersFilter != 3) {
-                            usersFilter = 3;
-                            usersPage = 0;
-                            notifyDataSetChanged();
-                        }
-                    }
-                });
-                //((HiveViewHolder) holder).contextUserCard = (LinearLayout) convertView.findViewById(R.id.left_panel_chat_context_user);
-                ((HiveViewHolder) holder).contextNoUsers = (LinearLayout) convertView.findViewById(R.id.left_panel_chat_context_no_user);
-
-                ((HiveViewHolder) holder).leftPanelHeader = (LinearLayout) convertView.findViewById(R.id.left_panel_header);
-                ((HiveViewHolder) holder).leftPanelCard = (LinearLayout) convertView.findViewById(R.id.left_panel_card);
-
-
-                ((HiveViewHolder) holder).hiveImage.setOnClickListener(new View.OnClickListener() {
-                    public void onClick(View v) {
-                        if (expandedCard == position) {//SI SE SELECCIONA EL HIVE YA EXPANDIDO SE PONE A -1
-                            expandedCard = -1;
-                        } else {
-                            expandedCard = position;
-                            expandedList = -1;
-                        }
-
-                        notifyDataSetChanged();
-                    }
-                });
-
-                ((HiveViewHolder) holder).hiveImageSmall.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (expandedCard == position) {//SI SE SELECCIONA EL HIVE YA EXPANDIDO SE PONE A -1
-                            expandedCard = -1;
-                        } else {
-                            expandedCard = position;
-                            expandedList = -1;
-                        }
-                        notifyDataSetChanged();
-                    }
-                });
-
-                ((HiveViewHolder) holder).hiveItem.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (expandedList == position) {//SI SE SELECCIONA EL HIVE YA EXPANDIDO SE PONE A -1
-                            expandedList = -1;
-                        } else {
-                            expandedList = position;
-                            expandedCard = -1;
-                        }
-
-                        notifyDataSetChanged();
-                    }
-                });
-
-                ((HiveViewHolder) holder).leftPanelHeader.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (expandedList == position) {//SI SE SELECCIONA EL HIVE YA EXPANDIDO SE PONE A -1
-                            expandedList = -1;
-                        } else {
-                            expandedList = position;
-                            expandedCard = -1;
-                        }
-
-                        notifyDataSetChanged();
-                    }
-                });
-
-                //Set the alpha values
-                convertView.getContext().getResources().getValue(R.color.left_panel_hive_list_item_hive_subscribed_users_img_alpha, alpha, true);
-                StaticMethods.SetAlpha((ImageView) convertView.findViewById(R.id.left_panel_hives_list_item_hive_subscribed_users_img), alpha.getFloat());
-                convertView.getContext().getResources().getValue(R.color.left_panel_hive_list_item_hive_category_img_alpha, alpha, true);
-                StaticMethods.SetAlpha(((HiveViewHolder) holder).hiveCategoryImage, alpha.getFloat());
-            } else if (type == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Chats)) {
+            if (type == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Chats)) {
                 holder = new ChatViewHolder();
                 convertView = this.inflater.inflate(R.layout.left_panel_chat_list_item, parent, false);
                 ((ChatViewHolder) holder).chatItem = (RelativeLayout) convertView.findViewById((R.id.left_panel_chat_list_item_top_view));
@@ -541,157 +320,11 @@ public class LeftPanelListAdapter extends BaseAdapter {
         Object item = this.getItem(position);
 
         if (item == null) {
-            Log.w("LeftPanelListAdapter - getView", "item is NULL");
+            Log.w("LeftPanelListAdapter", "In getView: item is NULL");
             return null;
         }
 
-        if (type == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Hives)) {
-            if ((((Hive) item).getName() != null) && (!((Hive) item).getName().isEmpty()))
-                ((HiveViewHolder) holder).hiveName.setText(context.getResources().getString(R.string.hivename_identifier_character).concat(((Hive) item).getName()));
-            else
-                ((HiveViewHolder) holder).hiveName.setText(context.getResources().getString(R.string.hivename_identifier_character).concat("<empty_hive_name>"));
-            ((HiveViewHolder) holder).hiveDescription.setText(((Hive) item).getDescription());
-            if ((((Hive) item).getCategory() != null) && (!((Hive) item).getCategory().isEmpty())) {
-                Category.setCategory(((Hive) item).getCategory(), ((HiveViewHolder) holder).hiveCategoryImage, ((HiveViewHolder) holder).hiveCategoryName);
-                Category.setCategory(((Hive) item).getCategory(), ((HiveViewHolder) holder).contextCategoryImage, ((HiveViewHolder) holder).contextCategoryName);
-            } else {
-                ((HiveViewHolder) holder).hiveCategoryImage.setImageResource(R.drawable.registro_important_note_orange);
-                ((HiveViewHolder) holder).hiveCategoryName.setText("Unknown category");
-            }
-            ((HiveViewHolder) holder).hiveSubscribedUsers.setText(String.valueOf(((Hive) item).getSubscribedUsersCount()));
-            ((HiveViewHolder) holder).contextSubscribedUsers.setText(context.getResources().getString(R.string.explore_hive_card_expanded_n_mates, Integer.valueOf(((Hive) item).getSubscribedUsersCount())));
-            ((HiveViewHolder) holder).hiveItem.setTag(R.id.BO_Hive, item);
-            if (((Hive) item).getHiveImage() == null) {
-                ((HiveViewHolder) holder).hiveImage.setImageResource(R.drawable.default_hive_image);
-                ((HiveViewHolder) holder).hiveImageSmall.setImageResource(R.drawable.default_hive_image);
-                ((HiveViewHolder) holder).contextHiveImage.setImageResource(R.drawable.default_hive_image);
-            } else {
-                ((Hive) item).getHiveImage().OnImageLoaded.add(new EventHandler<EventArgs>(holder, "loadHiveImage", EventArgs.class));
-                ((Hive) item).getHiveImage().loadImage(Image.ImageSize.medium, 0);
-                ((Hive) item).getHiveImage().OnImageLoaded.add(new EventHandler<EventArgs>(holder, "loadHiveImageSmall", EventArgs.class));
-                ((Hive) item).getHiveImage().loadImage(Image.ImageSize.small, 0);
-            }
-
-            String[] tagsArray = ((Hive) item).getTags();
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-            params.setMargins(3, 3, 3, 3);
-            if (tagsArray != null || tagsArray.length > 0) {
-                convertView.findViewById(R.id.context_list_item_expanded_tags_layout).setVisibility(View.VISIBLE);
-                ((HiveViewHolder) holder).hiveTags.removeAllViews();
-                ((HiveViewHolder) holder).hiveTags.invalidate();
-                for (int i = 0; i < tagsArray.length; i++) {
-                    LinearLayout textContainer = new LinearLayout(context);
-                    textContainer.setLayoutParams(params);
-                    TextView tv = new TextView(context);
-                    tv.setLayoutParams(params);
-                    tv.setBackgroundResource(R.drawable.explore_tags_border);
-                    tv.setText(tagsArray[i]);
-                    tv.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
-                    tv.setTextColor(Color.BLACK);
-                    textContainer.addView(tv);
-                    ((HiveViewHolder) holder).hiveTags.addView(textContainer);
-                }
-                ((HiveViewHolder) holder).hiveTags.requestLayout();
-            }
-            if (tagsArray.length == 0) {
-                convertView.findViewById(R.id.context_list_item_expanded_tags_layout).setVisibility(View.GONE);
-            }
-
-            ((HiveViewHolder) holder).headerTextView.setText(context.getResources().getString(R.string.hivename_identifier_character).concat(((Hive) item).getName()));
-            ((HiveViewHolder) holder).contextTextView.setText(context.getResources().getString(R.string.hivename_identifier_character).concat(((Hive) item).getName()));
-
-            String[] languages_list = ((Hive) item).getChatLanguages();
-            if (languages_list.length > 0) {
-                LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                ((HiveViewHolder) holder).contextLanguages.removeAllViews();
-                ((HiveViewHolder) holder).contextLanguages.invalidate();
-                TextView tv = new TextView(context);
-                tv.setLayoutParams(params2);
-                tv.setText(context.getResources().getString(R.string.explore_hive_card_expanded_hive_chat_langs));
-                tv.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12);
-                tv.setTextColor(Color.parseColor("#808080"));
-                ((HiveViewHolder) holder).contextLanguages.addView(tv);
-                for (int i = 0; i < languages_list.length - 1; i++) {
-                    tv = new TextView(context);
-                    tv.setLayoutParams(params2);
-                    tv.setText(languages_list[i].concat(", "));
-                    tv.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12);
-                    tv.setTextColor(Color.BLACK);
-                    ((HiveViewHolder) holder).contextLanguages.addView(tv);
-                }
-                tv = new TextView(context);
-                tv.setLayoutParams(params2);
-                tv.setText(languages_list[languages_list.length - 1]);
-                tv.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12);
-                tv.setTextColor(Color.BLACK);
-                ((HiveViewHolder) holder).contextLanguages.addView(tv);
-                ((HiveViewHolder) holder).contextLanguages.requestLayout();
-            }
-
-            ((HiveViewHolder) holder).contextDescription.setText("\"".concat(((Hive) item).getDescription()).concat("\""));
-
-            if (((Hive) item).getCreationDate() != null) {
-                DateFormatter dateFormatter = new DateFormatter();
-                ((HiveViewHolder) holder).contextStatsCreationDate.setText(context.getResources().getString(R.string.context_stats_creation_date, dateFormatter.toShortHumanReadableString(((Hive) item).getCreationDate())));
-            } else
-                ((HiveViewHolder) holder).contextStatsCreationDate.setText(context.getResources().getString(R.string.context_stats_creation_date, ""));
-
-            if (((Hive) item).getPublicChat() != null && ((Hive) item).getPublicChat().getConversation() != null && ((Hive) item).getPublicChat().getConversation().getLastMessage() != null && ((Hive) item).getPublicChat().getConversation().getLastMessage().getOrdinationTimeStamp() != null) {
-                Date ladate = ((Hive) item).getPublicChat().getConversation().getLastMessage().getOrdinationTimeStamp();
-                ((HiveViewHolder) holder).contextStatsLastActivityDate.setText(context.getResources().getString(R.string.context_stats_last_activity_date, updateTimeStamp(ladate)));
-            } else
-                ((HiveViewHolder) holder).contextStatsLastActivityDate.setText(context.getResources().getString(R.string.context_stats_last_activity_date, ""));
-
-            if (expandedCard == position) {
-                ((HiveViewHolder) holder).hiveItem.setVisibility(View.GONE);
-                ((HiveViewHolder) holder).leftPanelHeader.setVisibility(View.VISIBLE);//visible header
-                ((HiveViewHolder) holder).leftPanelCard.setVisibility(View.VISIBLE);//visible tarjeta del hive
-                ((HiveViewHolder) holder).contextUsersListView.setVisibility(View.GONE);
-            } else if (expandedList == position) {
-                ((HiveViewHolder) holder).hiveItem.setVisibility(View.GONE);
-                ((HiveViewHolder) holder).leftPanelHeader.setVisibility(View.VISIBLE);//visible header
-                ((HiveViewHolder) holder).leftPanelCard.setVisibility(View.GONE);
-                ((HiveViewHolder) holder).contextUsersListView.setVisibility(View.VISIBLE);//solo visible la lista de usuarios del chat
-
-                ((Hive) item).OnSubscribedUsersListUpdated.add(new EventHandler<EventArgs>(holder, "loadSubscribedUsersList", EventArgs.class));
-
-                //if (usersPage == 0) {
-                    if (usersFilter == 1) {
-                        ((Hive) item).requestUsers(0, 11, Hive.HiveUsersType.OUTSTANDING);
-                    } else if (usersFilter == 2) {
-                        ((Hive) item).requestUsers(0, 11, Hive.HiveUsersType.LOCATION);
-                    } else if (usersFilter == 3) {
-                        ((Hive) item).requestUsers(0, 11, Hive.HiveUsersType.RECENTLY_ONLINE);
-                    }
-                //}
-                //fire(((Hive) item), EventArgs.Empty());
-/*                if (((Hive) item).getSubscribedUsers()!=null && ((Hive) item).getSubscribedUsers().size()>0) {
-                    ((HiveViewHolder) holder).subscribedUsers = ((Hive) item).getSubscribedUsers();
-                    LinearLayout userView = ((HiveViewHolder) holder).contextUserCard;
-                    for (int i = 0; i < ((HiveViewHolder) holder).subscribedUsers.size(); i++) {
-                        System.out.println("no null: " + i);
-                        ((TextView)userView.findViewById(R.id.left_panel_chat_context_user_public_name)).setText(context.getResources().getString(R.string.public_username_identifier_character).concat(((HiveViewHolder) holder).subscribedUsers.get(i).getUserPublicProfile().getShowingName()));
-                        ((TextView)userView.findViewById(R.id.left_panel_chat_context_user_state)).setText(context.getResources().getString(R.string.public_username_identifier_character).concat(((HiveViewHolder) holder).subscribedUsers.get(i).getUserPublicProfile().getStatusMessage()));
-                        ((HiveViewHolder) holder).contextUsersContainer.addView(userView);
-                    }
-                }
-                else if (((Hive) item).getSubscribedUsers()==null || ((Hive) item).getSubscribedUsers().size()==0) {
-                        System.out.println("null");
-                    if (((HiveViewHolder) holder).contextNoUsers==null)
-                        System.out.println("layout null");
-                    ((HiveViewHolder) holder).contextUsersContainer.inflate(context,R.id.left_panel_chat_context_no_user,null);
-                }*/
-
-            } else {
-                ((HiveViewHolder) holder).hiveItem.setVisibility(View.VISIBLE);//solo visible item
-                ((HiveViewHolder) holder).leftPanelHeader.setVisibility(View.GONE);
-                ((HiveViewHolder) holder).leftPanelCard.setVisibility(View.GONE);
-                ((HiveViewHolder) holder).contextUsersListView.setVisibility(View.GONE);
-            }
-
-        } else if (type == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Chats)) {
+        if (type == context.getResources().getInteger(R.integer.LeftPanel_ListKind_Chats)) {
             String GroupName = "";
             SpannableString LastMessage = new SpannableString("");
             Message lastMessage = null;
@@ -1013,199 +646,6 @@ public class LeftPanelListAdapter extends BaseAdapter {
     private abstract class ViewHolder {
     }
 
-    private class HiveViewHolder extends ViewHolder {
-        public LinearLayout hiveItem;
-        public TextView hiveName;
-        public ImageView hiveImage;
-        public TextView hiveDescription;
-        public TextView hiveCategoryName;
-        public ImageView hiveCategoryImage;
-        public TextView hiveSubscribedUsers;
-        public WrapLayout hiveTags;
-        public ImageView hiveImageSmall;
-        public ImageView contextHiveImage;
-        public TextView headerTextView;
-        public TextView contextTextView;
-        public ImageView contextCategoryImage;
-        public TextView contextCategoryName;
-        public TextView contextSubscribedUsers;
-        public WrapLayout contextLanguages;
-        public TextView contextDescription;
-        public TextView contextStatsCreationDate;
-        public TextView contextStatsLastActivityDate;
-        public LinearLayout leftPanelHeader;
-        public LinearLayout leftPanelCard;
-        public LinearLayout contextUsersListView;
-        public LinearLayout contextChatButton;
-        public List<User> subscribedUsers;
-        public LinearLayout contextUsersContainer;
-        public LinearLayout contextUserCard;
-        public LinearLayout contextNoUsers;
-        //public int usersPage = 0;
-        //public int usersFilter = 1;
-        public LinearLayout user1;
-        public LinearLayout user2;
-        public LinearLayout user3;
-        public LinearLayout user4;
-        public LinearLayout contextChat;
-        public LinearLayout trendingButton;
-        public LinearLayout locationButton;
-        public LinearLayout recentlyButton;
-        public LinearLayout moreButton;
-
-        public void loadHiveImage(Object sender, EventArgs eventArgs) {
-            if (!(sender instanceof Image)) return;
-
-            final Image image = (Image) sender;
-            final HiveViewHolder thisViewHolder = this;
-
-            ((Activity) context).runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    InputStream is = image.getImage(Image.ImageSize.medium, 0);
-                    if (is != null) {
-                        hiveImage.setImageBitmap(BitmapFactory.decodeStream(is));
-                        try {
-                            is.reset();
-                            contextHiveImage.setImageBitmap(BitmapFactory.decodeStream(is));
-                            is.reset();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    InputStream is2 = image.getImage(Image.ImageSize.small, 0);
-                    if (is2 != null) {
-                        hiveImageSmall.setImageBitmap(BitmapFactory.decodeStream(is2));
-                        try {
-                            is2.reset();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    image.OnImageLoaded.remove(new EventHandler<EventArgs>(thisViewHolder, "loadHiveImage", EventArgs.class));
-                    //image.freeMemory();
-                }
-            });
-        }
-
-        public void loadHiveImageSmall(Object sender, EventArgs eventArgs) {
-            if (!(sender instanceof Image)) return;
-
-            final Image image = (Image) sender;
-            final HiveViewHolder thisViewHolder = this;
-
-            ((Activity) context).runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    InputStream is = image.getImage(Image.ImageSize.small, 0);
-                    if (is != null) {
-                        hiveImageSmall.setImageBitmap(BitmapFactory.decodeStream(is));
-                        try {
-                            is.reset();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    image.OnImageLoaded.remove(new EventHandler<EventArgs>(thisViewHolder, "loadHiveImageSmall", EventArgs.class));
-                    //image.freeMemory();
-                }
-            });
-        }
-
-        public void loadSubscribedUsersList(Object sender, EventArgs eventArgs) {
-
-            final HiveViewHolder thisViewHolder = this;
-            final Hive hive = (Hive) sender;
-
-            ((Activity) context).runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    if (hive.getSubscribedUsers() != null && hive.getSubscribedUsers().size() > 0) {
-                        thisViewHolder.subscribedUsers = hive.getSubscribedUsers();
-                        System.out.println("Subscribed users array size: " + thisViewHolder.subscribedUsers.size());
-                        contextNoUsers.setVisibility(View.GONE);
-
-                        if (usersPage > 0) {
-                            contextChat.setVisibility(View.GONE);
-
-                            if (thisViewHolder.subscribedUsers.get(usersPage * 4 - 1) != null) {
-                                if (thisViewHolder.subscribedUsers.get(usersPage * 4 - 1).getUserPublicProfile() != null)
-                                    ((TextView) user1.findViewById(R.id.left_panel_chat_context_user_public_name01)).setText(context.getResources().getString(R.string.public_username_identifier_character).concat(thisViewHolder.subscribedUsers.get(usersPage * 4 - 1).getUserPublicProfile().getShowingName()));
-                                if (thisViewHolder.subscribedUsers.get(usersPage * 4 - 1).getUserPublicProfile().getStatusMessage() != null)
-                                    ((TextView) user1.findViewById(R.id.left_panel_chat_context_user_state01)).setText(thisViewHolder.subscribedUsers.get(usersPage * 4 - 1).getUserPublicProfile().getStatusMessage());
-                                user1.setVisibility(View.VISIBLE);
-                            } else {
-                                user2.setVisibility(View.INVISIBLE);
-                            }
-                            if (thisViewHolder.subscribedUsers.get(usersPage * 4) != null) {
-                                if (thisViewHolder.subscribedUsers.get(usersPage * 4).getUserPublicProfile() != null)
-                                    ((TextView) user2.findViewById(R.id.left_panel_chat_context_user_public_name02)).setText(context.getResources().getString(R.string.public_username_identifier_character).concat(thisViewHolder.subscribedUsers.get(usersPage * 4).getUserPublicProfile().getShowingName()));
-                                if (thisViewHolder.subscribedUsers.get(usersPage * 4).getUserPublicProfile().getStatusMessage() != null)
-                                    ((TextView) user2.findViewById(R.id.left_panel_chat_context_user_state02)).setText(thisViewHolder.subscribedUsers.get(usersPage * 4).getUserPublicProfile().getStatusMessage());
-                                user2.setVisibility(View.VISIBLE);
-                            } else {
-                                user2.setVisibility(View.INVISIBLE);
-                            }
-
-                            if (thisViewHolder.subscribedUsers.get((usersPage * 4) + 1) != null) {
-                                if (thisViewHolder.subscribedUsers.get((usersPage * 4) + 1).getUserPublicProfile() != null)
-                                    ((TextView) user3.findViewById(R.id.left_panel_chat_context_user_public_name03)).setText(context.getResources().getString(R.string.public_username_identifier_character).concat(thisViewHolder.subscribedUsers.get((usersPage * 4) + 1).getUserPublicProfile().getShowingName()));
-                                if (thisViewHolder.subscribedUsers.get((usersPage * 4) + 1).getUserPublicProfile().getStatusMessage() != null)
-                                    ((TextView) user3.findViewById(R.id.left_panel_chat_context_user_state03)).setText(thisViewHolder.subscribedUsers.get((usersPage * 4) + 1).getUserPublicProfile().getStatusMessage());
-                                user3.setVisibility(View.VISIBLE);
-                            } else {
-                                user3.setVisibility(View.GONE);
-                            }
-                            if (thisViewHolder.subscribedUsers.get((usersPage * 4) + 2) != null) {
-                                if (thisViewHolder.subscribedUsers.get((usersPage * 4) + 2).getUserPublicProfile() != null)
-                                    ((TextView) user4.findViewById(R.id.left_panel_chat_context_user_public_name04)).setText(context.getResources().getString(R.string.public_username_identifier_character).concat(thisViewHolder.subscribedUsers.get((usersPage * 4) + 2).getUserPublicProfile().getShowingName()));
-                                if (thisViewHolder.subscribedUsers.get((usersPage * 4) + 2).getUserPublicProfile().getStatusMessage() != null)
-                                    ((TextView) user4.findViewById(R.id.left_panel_chat_context_user_state04)).setText(thisViewHolder.subscribedUsers.get((usersPage * 4) + 2).getUserPublicProfile().getStatusMessage());
-                                user4.setVisibility(View.VISIBLE);
-                            } else {
-                                user4.setVisibility(View.GONE);
-                            }
-                        } else if (usersPage == 0) {
-                            contextChat.setVisibility(View.VISIBLE);
-                            user1.setVisibility(View.GONE);
-                            if (thisViewHolder.subscribedUsers.get(usersPage * 4) != null) {
-                                if (thisViewHolder.subscribedUsers.get(usersPage * 4).getUserPublicProfile() != null)
-                                    ((TextView) user2.findViewById(R.id.left_panel_chat_context_user_public_name02)).setText(context.getResources().getString(R.string.public_username_identifier_character).concat(thisViewHolder.subscribedUsers.get(usersPage * 4).getUserPublicProfile().getShowingName()));
-                                if (thisViewHolder.subscribedUsers.get(usersPage * 4).getUserPublicProfile().getStatusMessage() != null)
-                                    ((TextView) user2.findViewById(R.id.left_panel_chat_context_user_state02)).setText(thisViewHolder.subscribedUsers.get(usersPage * 4).getUserPublicProfile().getStatusMessage());
-                                user2.setVisibility(View.VISIBLE);
-                            } else {
-                                user2.setVisibility(View.INVISIBLE);
-                            }
-
-                            if (thisViewHolder.subscribedUsers.get((usersPage * 4) + 1) != null) {
-                                if (thisViewHolder.subscribedUsers.get((usersPage * 4) + 1).getUserPublicProfile() != null)
-                                    ((TextView) user3.findViewById(R.id.left_panel_chat_context_user_public_name03)).setText(context.getResources().getString(R.string.public_username_identifier_character).concat(thisViewHolder.subscribedUsers.get((usersPage * 4) + 1).getUserPublicProfile().getShowingName()));
-                                if (thisViewHolder.subscribedUsers.get((usersPage * 4) + 1).getUserPublicProfile().getStatusMessage() != null)
-                                    ((TextView) user3.findViewById(R.id.left_panel_chat_context_user_state03)).setText(thisViewHolder.subscribedUsers.get((usersPage * 4) + 1).getUserPublicProfile().getStatusMessage());
-                                user3.setVisibility(View.VISIBLE);
-                            } else {
-                                user3.setVisibility(View.GONE);
-                            }
-                            if (thisViewHolder.subscribedUsers.get((usersPage * 4) + 2) != null) {
-                                if (thisViewHolder.subscribedUsers.get((usersPage * 4) + 2).getUserPublicProfile() != null)
-                                    ((TextView) user4.findViewById(R.id.left_panel_chat_context_user_public_name04)).setText(context.getResources().getString(R.string.public_username_identifier_character).concat(thisViewHolder.subscribedUsers.get((usersPage * 4) + 2).getUserPublicProfile().getShowingName()));
-                                if (thisViewHolder.subscribedUsers.get((usersPage * 4) + 2).getUserPublicProfile().getStatusMessage() != null)
-                                    ((TextView) user4.findViewById(R.id.left_panel_chat_context_user_state04)).setText(thisViewHolder.subscribedUsers.get((usersPage * 4) + 2).getUserPublicProfile().getStatusMessage());
-                                user4.setVisibility(View.VISIBLE);
-                            } else {
-                                user4.setVisibility(View.GONE);
-                            }
-                        }
-                    } else if (hive.getSubscribedUsers() == null || hive.getSubscribedUsers().size() == 0) {
-                        contextNoUsers.setVisibility(View.GONE);
-                    }
-                    //((Hive)sender).OnSubscribedUsersListUpdated.remove(new EventHandler<EventArgs>(thisViewHolder, "loadSubscribedUsersList", EventArgs.class));
-                }
-            });
-        }
-    }
-
     private class ChatViewHolder extends ViewHolder {
         public RelativeLayout chatItem;
         public TextView chatName;
@@ -1426,46 +866,5 @@ public class LeftPanelListAdapter extends BaseAdapter {
         }
     }
 
-    private String updateTimeStamp(Date timeStamp) {
 
-        String LastMessageTimestamp = "";
-        Date fiveMinutesAgo = new Date((new Date()).getTime() - 5 * 60 * 1000);
-        Date today = DateFormatter.toDate(DateFormatter.toString(new Date()));
-        Calendar yesterday = Calendar.getInstance();
-        yesterday.setTime(today);
-        yesterday.roll(Calendar.DAY_OF_MONTH, false);
-        if (timeStamp.after(fiveMinutesAgo))
-            LastMessageTimestamp = context.getString(R.string.left_panel_context_imprecise_time_now);
-        else if (timeStamp.after(today))
-            LastMessageTimestamp = context.getString(R.string.left_panel_context_imprecise_time_yesterday).concat(" ").concat(TimestampFormatter.toLocaleString(timeStamp));
-        else if (timeStamp.after(yesterday.getTime()))
-            LastMessageTimestamp = context.getString(R.string.left_panel_context_imprecise_time_yesterday).concat(" ").concat(TimestampFormatter.toLocaleString(timeStamp));
-        else
-            LastMessageTimestamp = DateFormatter.toShortHumanReadableString(timeStamp);
-
-        return LastMessageTimestamp;
-    }
-
-    private Integer[] getRandomUsers(int amount, int length) {
-        if (amount == 0)
-            return null;
-        else if (amount <= length) {
-            Integer[] randomArray = (Integer[]) (makeRandom(amount, amount)).toArray();
-            return randomArray;
-        } else {
-            Integer[] randomArray = (Integer[]) (makeRandom(amount, length)).toArray();
-            return randomArray;
-        }
-    }
-
-    private Set makeRandom(final int NUMBER_RANGE, final int SET_SIZE_REQUIRED) {
-        Set set = new HashSet<Integer>(SET_SIZE_REQUIRED);
-        while (set.size() < SET_SIZE_REQUIRED) {
-            Random random = new Random();
-            while (set.add(random.nextInt(NUMBER_RANGE)) != true)
-                ;
-        }
-        assert set.size() == SET_SIZE_REQUIRED;
-        return set;
-    }
 }

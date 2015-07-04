@@ -99,12 +99,33 @@ public class Chat implements IContextualizable {
         Chat result = null;
         if ((user == null) || ((hive == null) && (user.getUserPrivateProfile() == null)) || ((hive != null) && (user.getUserPublicProfile() == null))) return result;
         Format[] formats = null;
+
+        ArrayList<Chat> knownChats = new ArrayList<Chat>(Chat.UnloadedChats.values());
+        knownChats.addAll(Chat.Chats.values());
+
         if (hive == null) {
             PROFILE_ID profile_id = new PROFILE_ID();
             profile_id.USER_ID = user.getUserID();
             profile_id.PROFILE_TYPE = "BASIC_PRIVATE";
 
             formats = new Format[]{profile_id};
+
+            for (Chat c : knownChats) {
+                if (c.getChatKind() == ChatKind.PRIVATE_SINGLE) {
+                   try {
+                       if (c.getMember(user.getUserID()) != null) {
+                           List<User> users = new ArrayList<User>(c.getMembers());
+                           users.remove(user);
+                           users.remove(controller.getMe());
+                           if ((users.isEmpty()) || ((users.size() == 1) && (users.get(0).getUserID().equalsIgnoreCase(controller.getMe().getUserID())))) {
+                               result = c;
+                               break;
+                           }
+                       }
+                   } catch (Exception e) { continue; }
+                }
+            }
+
         } else {
             PROFILE_ID profile_id = new PROFILE_ID();
             profile_id.USER_ID = user.getUserID();
@@ -113,9 +134,25 @@ public class Chat implements IContextualizable {
             HIVE_ID hive_id = (HIVE_ID)hive.toFormat(new HIVE_ID());
 
             formats = new Format[]{profile_id, hive_id};
+
+            for (Chat c : knownChats) {
+                if (c.getChatKind() == ChatKind.PUBLIC_SINGLE) {
+                    try {
+                        if ((c.getParentHive().getNameUrl().equalsIgnoreCase(hive.getNameUrl())) && (c.getMember(user.getUserID()) != null)) {
+                            List<User> users = new ArrayList<User>(c.getMembers());
+                            users.remove(user);
+                            users.remove(controller.getMe());
+                            if ((users.isEmpty()) || ((users.size() == 1) && (users.get(0).getUserID().equalsIgnoreCase(controller.getMe().getUserID())))) {
+                                result = c;
+                                break;
+                            }
+                        }
+                    } catch (Exception e) { continue; }
+                }
+            }
         }
 
-        if (formats != null) {
+        if ((result == null) && (formats != null)) {
             result = new Chat(hive,user);
             result.OnChatCreated.add(Callback);
 
@@ -397,11 +434,11 @@ public class Chat implements IContextualizable {
      *****************************************/
     protected TreeMap<String,User> members;
 
-    public ArrayList<User> getMembers() {
+    public List<User> getMembers() {
         if ((this.members == null) || (this.members.isEmpty())) //throw new NullPointerException("There are no members for this group.");
             return new ArrayList<User>();
 
-        return new ArrayList<User>(this.members.values());
+        return Collections.unmodifiableList(new ArrayList<User>(this.members.values()));
     }
 
     public User getMember(String identifier) {

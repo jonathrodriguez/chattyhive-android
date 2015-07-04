@@ -4,21 +4,23 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:id="@+id/left_panel_chat_context_user"
-    android:padding="8.5dp"
-    android:background="#ededed">
+    android:background="#ededed"
+    android:paddingLeft="6dp"
+    android:paddingRight="6dp"
+    android:paddingTop="4dp">
     <LinearLayout
         android:id="@+id/left_panel_chat"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="72dp"
         android:background="@drawable/card_orange"
-        android:paddingBottom="14dp">
+        android:layout_marginTop="8.5dp">
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="14dp"
             android:orientation="vertical"
-            android:paddingTop="15dp">
+            android:paddingTop="10.5dp">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -54,10 +56,11 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="6.5dp"
                 android:text="hola hola "
                 android:textColor="#404040"
-                android:textSize="15dp" />
+                android:textSize="15dp"
+                android:id="@+id/left_panel_chat_last_message" />
         </LinearLayout>
 
         <LinearLayout
@@ -84,11 +87,14 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="72dp"
         android:background="@drawable/home_card_background"
-        android:padding="10dp"
         android:id="@+id/left_panel_chat_context_user01"
-        android:visibility="gone">
+        android:visibility="gone"
+        android:gravity="center_vertical"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:layout_marginTop="8.5dp">
         <ImageView
             android:id="@+id/left_panel_chat_context_user_img01"
             android:layout_width="52dp"
@@ -123,11 +129,13 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="72dp"
         android:background="@drawable/home_card_background"
-        android:layout_marginTop="8dp"
-        android:padding="10dp"
-        android:id="@+id/left_panel_chat_context_user02">
+        android:layout_marginTop="8.5dp"
+        android:id="@+id/left_panel_chat_context_user02"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:gravity="center_vertical">
         <ImageView
             android:id="@+id/left_panel_chat_context_user_img02"
             android:layout_width="52dp"
@@ -162,11 +170,13 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="72dp"
         android:background="@drawable/home_card_background"
-        android:layout_marginTop="8dp"
-        android:padding="10dp"
-        android:id="@+id/left_panel_chat_context_user03">
+        android:layout_marginTop="8.5dp"
+        android:id="@+id/left_panel_chat_context_user03"
+        android:gravity="center_vertical"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp">
         <ImageView
             android:id="@+id/left_panel_chat_context_user_img03"
             android:layout_width="52dp"
@@ -201,11 +211,13 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="72dp"
         android:background="@drawable/home_card_background"
-        android:layout_marginTop="10dp"
-        android:padding="10dp"
-        android:id="@+id/left_panel_chat_context_user04">
+        android:layout_marginTop="8.5dp"
+        android:id="@+id/left_panel_chat_context_user04"
+        android:paddingRight="10dp"
+        android:paddingLeft="10dp"
+        android:gravity="center_vertical">
         <ImageView
             android:id="@+id/left_panel_chat_context_user_img04"
             android:layout_width="52dp"
@@ -239,9 +251,10 @@
     </LinearLayout>
     <LinearLayout
         android:id="@+id/left_panel_chat_context_no_user"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="gone">
+        android:visibility="gone"
+        android:gravity="center_vertical|center_horizontal">
     <include layout="@layout/left_panel_chat_context_no_user"/>
     </LinearLayout>
 </LinearLayout>

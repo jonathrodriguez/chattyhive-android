@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--      HIVE STRINGS      -->
+    <!-- ______________________ -->
+    <string name="left_panel_chat_context_show_more_users">Show more</string>
+</resources>

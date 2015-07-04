@@ -1,17 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/context_list_header_card"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="wrap_content"
+    android:background="#ededed"
+    android:orientation="vertical"
+    android:paddingTop="12dp"
+    android:visibility="visible">
 
-    <LinearLayout
-        android:id="@+id/context_list_header_card"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#ededed"
-        android:orientation="vertical"
-        android:paddingTop="12dp"
-        android:visibility="visible">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -21,23 +17,19 @@
             android:layout_marginRight="8.5dp"
             android:layout_marginTop="3.5dp"
             android:background="@drawable/home_card_background"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingBottom="2dp"
+            android:paddingLeft="11dp"
+            android:paddingRight="11dp"
+            android:paddingTop="12dp">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingBottom="2dp"
-                android:paddingLeft="11dp"
-                android:paddingRight="11dp"
-                android:paddingTop="12dp">
 
                 <TextView
                     android:id="@+id/context_list_item_expanded_hive_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:maxLines="2"
-                    android:textColor="#111111"
+                    android:textColor="#000"
                     android:textSize="18dp"
                     android:textStyle="bold" />
 
@@ -77,7 +69,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="16dp"
                                 android:layout_gravity="center"
-                                android:textColor="#111111"
+                                android:textColor="#333"
                                 android:textSize="12dp" />
                         </LinearLayout>
 
@@ -99,7 +91,7 @@
                                 android:layout_height="16dp"
                                 android:layout_gravity="center"
                                 android:text="@string/explore_hive_card_expanded_n_mates"
-                                android:textColor="#111111"
+                                android:textColor="#333"
                                 android:textSize="12dp" />
 
                             <TextView
@@ -124,7 +116,7 @@
 
                             <include
                                 android:id="@+id/context_list_item_expanded_hive_chat_languages"
-                                layout="@layout/context_laguages_wrap_layout"
+                                layout="@layout/context_languages_wrap_layout"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="left|top"/>
@@ -137,11 +129,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:lineSpacingExtra="4.25sp"
-                    android:maxLines="3"
                     android:paddingLeft="0dp"
                     android:paddingRight="25dp"
                     android:paddingTop="13dp"
-                    android:textColor="#808080"
+                    android:textColor="#333"
                     android:textSize="13.25sp" />
 
                 <LinearLayout
@@ -378,7 +369,8 @@
                             android:background="@drawable/context_leave_button"
                             android:gravity="center"
                             android:paddingLeft="7dp"
-                            android:paddingRight="7dp">
+                            android:paddingRight="7dp"
+                            android:id="@+id/conext_exit_button">
 
                             <TextView
                                 android:layout_width="wrap_content"
@@ -396,8 +388,6 @@
                         </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
-            </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
 
 </LinearLayout>

@@ -56,7 +56,7 @@ public class Main extends Activity {
     HashMap <Integer, Window> viewStack;
     int lastOpenHierarchyLevel;
 
-    void OpenWindow(Window window) {
+    public void OpenWindow(Window window) {
         //Log.w("Main", "OpenWindow(Window).Start");
         OpenWindow(window,window.getHierarchyLevel());
         //Log.w("Main", "OpenWindow(Window).End");

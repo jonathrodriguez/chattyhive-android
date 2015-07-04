@@ -26,4 +26,8 @@
     <string name="left_panel_chats_empty_list">You have no chats at this time.</string>
     <string name="left_panel_hives_empty_list">You haven\'t subscribed to any Hive yet.</string>
     <string name="left_panel_friends_empty_list">You haven\'t any friends yet. Try meeting somebody.</string>
+
+    <!--      HIVE STRINGS      -->
+    <!-- ______________________ -->
+    <string name="left_panel_chat_context_show_more_users">More</string>
 </resources>

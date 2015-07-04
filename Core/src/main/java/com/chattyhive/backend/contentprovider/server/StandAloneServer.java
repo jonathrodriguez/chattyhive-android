@@ -526,7 +526,7 @@ public class StandAloneServer {
 
         destination.getConversation().addMessageByID(msg);
         if (notify) {
-            ArrayList<User> members;
+            List<User> members;
             if (destination.getChatKind() != ChatKind.HIVE)
                 members = destination.getMembers();
             else {
@@ -1987,7 +1987,7 @@ public class StandAloneServer {
 
                         for (String chatID : UserChatSubscriptions.get(user.getUserID())) {
                             Chat chat = Chats.get(chatID);
-                            if ( ((chat.getChatKind() == ChatKind.PRIVATE_SINGLE) || (((chat.getChatKind() == ChatKind.PUBLIC_SINGLE)) && (hive_id != null) && (chat.getParentHive().getNameUrl().equalsIgnoreCase(hive_id.NAME_URL)))) &&  (chat.getMembers().contains(otherUser))) {
+                            if ( (((chat.getChatKind() == ChatKind.PRIVATE_SINGLE) && ((profile_id.PROFILE_TYPE.endsWith("_PRIVATE")) || (hive_id == null))) || (((chat.getChatKind() == ChatKind.PUBLIC_SINGLE)) && (hive_id != null) && (chat.getParentHive().getNameUrl().equalsIgnoreCase(hive_id.NAME_URL)))) &&  (chat.getMembers().contains(otherUser))) {
                                 chatInfo = chat;
                                 break;
                             }
@@ -1996,7 +1996,7 @@ public class StandAloneServer {
                         if (chatInfo == null) {
                             for (String chatID : UserChatSubscriptions.get(otherUser.getUserID())) {
                                 Chat chat = Chats.get(chatID);
-                                if (((chat.getChatKind() == ChatKind.PRIVATE_SINGLE) || (((chat.getChatKind() == ChatKind.PUBLIC_SINGLE)) && (hive_id != null) && (chat.getParentHive().getNameUrl().equalsIgnoreCase(hive_id.NAME_URL)))) && (chat.getMembers().contains(user))) {
+                                if ((((chat.getChatKind() == ChatKind.PRIVATE_SINGLE) && ((profile_id.PROFILE_TYPE.endsWith("_PRIVATE")) || (hive_id == null))) || (((chat.getChatKind() == ChatKind.PUBLIC_SINGLE)) && (hive_id != null) && (chat.getParentHive().getNameUrl().equalsIgnoreCase(hive_id.NAME_URL)))) && (chat.getMembers().contains(user))) {
                                     chatInfo = chat;
                                     break;
                                 }

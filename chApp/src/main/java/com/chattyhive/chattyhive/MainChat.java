@@ -90,7 +90,9 @@ public class MainChat extends Window {
 
         this.newChat = true;
 
-        if (this.hive != null) {
+        Date now = new Date();
+
+        if (hive != null) {
             this.hiveID = hive.getNameUrl();
             this.hive = hive;
         } else {
@@ -102,6 +104,11 @@ public class MainChat extends Window {
 
         this.channelChatID = "";
         this.channelChat = Chat.CreateChat(this.user,this.hive,new EventHandler<CommandCallbackEventArgs>(this,"onChatCreated",CommandCallbackEventArgs.class));
+
+        this.newChat = ((this.channelChat == null) || (this.channelChat.getCreationDate() == null) || (this.channelChat.getCreationDate().after(now)));
+
+        if (!this.newChat)
+            this.Show(false);
     }
 
     protected void loadActionBarData() {

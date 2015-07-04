@@ -307,8 +307,14 @@ public class Hive {
                 boolean listChanged = false;
                 for (USER_PROFILE user_profile : user_profile_list.LIST) {
                     try {
-                        User u = new User(user_profile, Controller.GetRunningController());
-                        listChanged = this.subscribedUsers.add(u) || listChanged;
+                        String userID = ((user_profile.USER_BASIC_PRIVATE_PROFILE != null) && (user_profile.USER_BASIC_PRIVATE_PROFILE.USER_ID != null)&& (!user_profile.USER_BASIC_PRIVATE_PROFILE.USER_ID.isEmpty()))?user_profile.USER_BASIC_PRIVATE_PROFILE.USER_ID:
+                                ((user_profile.USER_PRIVATE_PROFILE != null) && (user_profile.USER_PRIVATE_PROFILE.USER_ID != null)&& (!user_profile.USER_PRIVATE_PROFILE.USER_ID.isEmpty()))?user_profile.USER_PRIVATE_PROFILE.USER_ID:
+                                        ((user_profile.USER_BASIC_PUBLIC_PROFILE != null) && (user_profile.USER_BASIC_PUBLIC_PROFILE.USER_ID != null)&& (!user_profile.USER_BASIC_PUBLIC_PROFILE.USER_ID.isEmpty()))?user_profile.USER_BASIC_PUBLIC_PROFILE.USER_ID:
+                                                ((user_profile.USER_PUBLIC_PROFILE != null) && (user_profile.USER_PUBLIC_PROFILE.USER_ID != null)&& (!user_profile.USER_PUBLIC_PROFILE.USER_ID.isEmpty()))?user_profile.USER_PUBLIC_PROFILE.USER_ID:null;
+                        if (userID != null) {
+                            User u = Controller.GetRunningController().getUser(userID,user_profile);
+                            listChanged = ((!this.subscribedUsers.contains(u)) && this.subscribedUsers.add(u)) || listChanged;
+                        }
                     } catch (Exception e) { }
                 }
             }

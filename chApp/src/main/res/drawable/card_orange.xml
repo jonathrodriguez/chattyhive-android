@@ -7,7 +7,7 @@
             <solid android:color="#ffd26f" />
         </shape>
     </item>
-    <item android:bottom="3px">
+    <item android:bottom="@dimen/home_card_bottom_border">
         <shape android:shape="rectangle">
             <corners android:radius="@dimen/home_card_corner_radius"/>
             <solid android:color="#fffbf1" />
