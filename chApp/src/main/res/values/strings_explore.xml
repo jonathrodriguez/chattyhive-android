@@ -14,4 +14,7 @@
     <string name="explore_hive_card_expanded_public_chat">"Public Chat"</string>
 
     <string name="explore_list_footer_loading_hives">Loading more hives &#8230;</string>
+
+    <string name="context_stats_creation_date" formatted="false">Creado el %s</string>
+    <string name="context_stats_last_activity_date" formatted="false">Última actividad: %s</string>
 </resources>

@@ -51,7 +51,7 @@ public class Conversation { //TODO: implements SortedSet<Message>
                 if (format instanceof MESSAGE) {
                     Chat.getChat(((MESSAGE) format).CHANNEL_UNICODE).getConversation().addMessage(new Message(format));
                 } else if (format instanceof MESSAGE_LIST) {
-                    if (((MESSAGE_LIST) format).MESSAGES.size() > 0) {
+                    if ((((MESSAGE_LIST) format).MESSAGES != null) && (((MESSAGE_LIST) format).MESSAGES.size() > 0)) {
                         int lastReceived = ((MESSAGE_LIST) format).MESSAGES.size()-1;
                         for (int i = 0; i <= lastReceived; i++) {
                             MESSAGE message = ((MESSAGE_LIST) format).MESSAGES.get(i);
@@ -197,13 +197,14 @@ public class Conversation { //TODO: implements SortedSet<Message>
     }
 
     public Message getLastMessage() {
-        if ((this.messages == null) || (this.messages.isEmpty())) throw new NullPointerException("There are no messages for this chat.");
+        if ((this.messages == null) || (this.messages.isEmpty())) return null;// throw new NullPointerException("There are no messages for this chat.");
 
         for (Message item : this.messages.descendingSet()) {
             if (!item.getMessageContent().getContentType().endsWith("_SEPARATOR")) return item;
         }
 
-        throw new NullPointerException("There are no messages for this chat.");
+        return null;
+        //throw new NullPointerException("There are no messages for this chat.");
     }
 
     public Message getMessageByIndex(int index) {
