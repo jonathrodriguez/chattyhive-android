@@ -37,7 +37,7 @@ import java.util.TreeMap;
  * This class represents a hive. A hive is one of the most basic business objects.
  */
 
-public class Hive implements IContextualizable {
+public class Hive {
 
     /**************************
        Static hive management
@@ -270,7 +270,8 @@ public class Hive implements IContextualizable {
     public enum HiveUsersType {
         OUTSTANDING,
         LOCATION,
-        RECENTLY_ONLINE
+        RECENTLY_ONLINE,
+        NEW
     }
     private HiveUsersType lastRequestedUserList;
     public Event<EventArgs> OnSubscribedUsersListUpdated;
@@ -306,8 +307,14 @@ public class Hive implements IContextualizable {
                 boolean listChanged = false;
                 for (USER_PROFILE user_profile : user_profile_list.LIST) {
                     try {
-                        User u = new User(user_profile, Controller.GetRunningController());
-                        listChanged = this.subscribedUsers.add(u) || listChanged;
+                        String userID = ((user_profile.USER_BASIC_PRIVATE_PROFILE != null) && (user_profile.USER_BASIC_PRIVATE_PROFILE.USER_ID != null)&& (!user_profile.USER_BASIC_PRIVATE_PROFILE.USER_ID.isEmpty()))?user_profile.USER_BASIC_PRIVATE_PROFILE.USER_ID:
+                                ((user_profile.USER_PRIVATE_PROFILE != null) && (user_profile.USER_PRIVATE_PROFILE.USER_ID != null)&& (!user_profile.USER_PRIVATE_PROFILE.USER_ID.isEmpty()))?user_profile.USER_PRIVATE_PROFILE.USER_ID:
+                                        ((user_profile.USER_BASIC_PUBLIC_PROFILE != null) && (user_profile.USER_BASIC_PUBLIC_PROFILE.USER_ID != null)&& (!user_profile.USER_BASIC_PUBLIC_PROFILE.USER_ID.isEmpty()))?user_profile.USER_BASIC_PUBLIC_PROFILE.USER_ID:
+                                                ((user_profile.USER_PUBLIC_PROFILE != null) && (user_profile.USER_PUBLIC_PROFILE.USER_ID != null)&& (!user_profile.USER_PUBLIC_PROFILE.USER_ID.isEmpty()))?user_profile.USER_PUBLIC_PROFILE.USER_ID:null;
+                        if (userID != null) {
+                            User u = Controller.GetRunningController().getUser(userID,user_profile);
+                            listChanged = ((!this.subscribedUsers.contains(u)) && this.subscribedUsers.add(u)) || listChanged;
+                        }
                     } catch (Exception e) { }
                 }
             }
@@ -318,6 +325,41 @@ public class Hive implements IContextualizable {
 
         if (OnSubscribedUsersListUpdated != null)
             this.OnSubscribedUsersListUpdated.fire(this, EventArgs.Empty());
+    }
+
+    private ArrayList<User> contextUsers;
+    protected boolean setContextUsers(List<USER_PROFILE> newUsersList) {
+        boolean result = false;
+        ArrayList<User> newUsers = new ArrayList<User>();
+
+        if (this.contextUsers == null)
+            this.contextUsers = new ArrayList<User>();
+
+        if (newUsersList != null) {
+            boolean listChanged = false;
+            for (USER_PROFILE user_profile : newUsersList) {
+                try {
+                    User u = new User(user_profile, Controller.GetRunningController());
+                    listChanged = newUsers.add(u) || listChanged;
+                    result = (!this.contextUsers.contains(u)) || result;
+                } catch (Exception e) { }
+            }
+            if (listChanged && result) {
+                this.contextUsers.clear();
+                this.contextUsers.addAll(newUsers);
+            } else {
+                result = false;
+            }
+        }
+
+
+        return result;
+    }
+    protected List<User> getContextUsers() {
+        if (this.contextUsers != null)
+            return Collections.unmodifiableList(this.contextUsers);
+        else
+            return null;
     }
 
     /*****************************************
@@ -492,10 +534,5 @@ public class Hive implements IContextualizable {
             if (this.fromFormat(format)) return;
 
         throw  new IllegalArgumentException("Expected HIVE or HIVE_ID formats.");
-    }
-
-    @Override
-    public ContextObj getOpenedChat() {
-        return null;
     }
 }

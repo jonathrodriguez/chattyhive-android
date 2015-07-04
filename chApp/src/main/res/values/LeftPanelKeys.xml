@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <item type="integer" name="LeftPanel_ListKind_Count">4</item>
+    <item type="integer" name="LeftPanel_ListKind_Count">3</item>
 
     <item type="integer" name="LeftPanel_ListKind_None">0</item>
     <item type="integer" name="LeftPanel_ListKind_Chats">1</item>
-    <item type="integer" name="LeftPanel_ListKind_Hives">2</item>
-    <item type="integer" name="LeftPanel_ListKind_Mates">3</item>
+    <item type="integer" name="LeftPanel_ListKind_Mates">2</item>
 
     <item type="id" name="LeftPanel_ListViewHolder"/>
 </resources>

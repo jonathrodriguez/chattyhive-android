@@ -17,6 +17,7 @@ import com.chattyhive.backend.contentprovider.formats.CHAT_ID;
 import com.chattyhive.backend.contentprovider.formats.CHAT_LIST;
 import com.chattyhive.backend.contentprovider.formats.CHAT_SYNC;
 import com.chattyhive.backend.contentprovider.formats.COMMON;
+import com.chattyhive.backend.contentprovider.formats.CONTEXT;
 import com.chattyhive.backend.contentprovider.formats.CSRF_TOKEN;
 import com.chattyhive.backend.contentprovider.formats.EXPLORE_FILTER;
 import com.chattyhive.backend.contentprovider.formats.FRIEND_LIST;
@@ -525,7 +526,7 @@ public class StandAloneServer {
 
         destination.getConversation().addMessageByID(msg);
         if (notify) {
-            ArrayList<User> members;
+            List<User> members;
             if (destination.getChatKind() != ChatKind.HIVE)
                 members = destination.getMembers();
             else {
@@ -714,6 +715,12 @@ public class StandAloneServer {
                     break;
                 case ChatInfo:
                     response = ChatInfo(server, formats);
+                    break;
+                case ChatContext:
+                    response = ChatContext(server, formats);
+                    break;
+                case CreateChat:
+                    response = CreateChat(server, formats);
                     break;
                 case ChatList:
                     response = ChatList(server, formats);
@@ -1939,6 +1946,186 @@ public class StandAloneServer {
         return new AbstractMap.SimpleEntry<Integer,String>((responseCode != null)?responseCode:-1,(responseBody != null)?responseBody:"");
     }
 
+    private static AbstractMap.SimpleEntry<Integer, String> CreateChat(Server server, Format... formats) {
+        Integer responseCode = null;
+        String responseBody = null;
+
+        PROFILE_ID profile_id = null;
+        HIVE_ID hive_id = null;
+        if (formats != null)
+            for (Format format : formats)
+                if (format instanceof PROFILE_ID)
+                    profile_id = (PROFILE_ID)format;
+                else if (format instanceof HIVE_ID)
+                    hive_id = (HIVE_ID)format;
+
+        COMMON common = new COMMON();
+
+        ArrayList<Format> responseFormats = new ArrayList<Format>();
+        responseFormats.add(common);
+
+        if ((profile_id == null) || (profile_id.PROFILE_TYPE.endsWith("_PUBLIC") && (hive_id == null))) {
+            common.STATUS = "ERROR";
+            common.ERROR = -1;
+        } else {
+            HttpCookie csrfCookie = checkCSRFCookie(server.getAppName());
+
+            if ((csrfCookie == null) || (csrfCookie.hasExpired()) || (!CSRFTokens.contains(csrfCookie.getValue())))
+                responseCode = 403;
+            else {
+                responseCode = 200;
+                User user = checkSessionCookie(csrfCookie,server.getAppName());
+
+                if (user != null) {
+                    //Lets CREATE the chat and return the info
+                    if ((profile_id.USER_ID == null) || (!LoginUser.containsKey(profile_id.USER_ID)) || ((profile_id.PROFILE_TYPE.endsWith("_PRIVATE")) && ((!UserFriendList.containsKey(profile_id.USER_ID)) || (!UserFriendList.get(profile_id.USER_ID).contains(user.getUserID())))) || ((profile_id.PROFILE_TYPE.endsWith("_PUBLIC")) && ((hive_id == null) || (!HiveUserSubscriptions.containsKey(hive_id.NAME_URL)) || (!HiveUserSubscriptions.get(hive_id.NAME_URL).contains(profile_id.USER_ID)) || (!HiveUserSubscriptions.get(hive_id.NAME_URL).contains(user.getUserID())))) ) {
+                        common.STATUS = "ERROR";
+                        common.ERROR = -10;
+                    } else {
+                        Chat chatInfo = null;
+                        User otherUser = LoginUser.get(profile_id.USER_ID);
+
+                        for (String chatID : UserChatSubscriptions.get(user.getUserID())) {
+                            Chat chat = Chats.get(chatID);
+                            if ( (((chat.getChatKind() == ChatKind.PRIVATE_SINGLE) && ((profile_id.PROFILE_TYPE.endsWith("_PRIVATE")) || (hive_id == null))) || (((chat.getChatKind() == ChatKind.PUBLIC_SINGLE)) && (hive_id != null) && (chat.getParentHive().getNameUrl().equalsIgnoreCase(hive_id.NAME_URL)))) &&  (chat.getMembers().contains(otherUser))) {
+                                chatInfo = chat;
+                                break;
+                            }
+                        }
+
+                        if (chatInfo == null) {
+                            for (String chatID : UserChatSubscriptions.get(otherUser.getUserID())) {
+                                Chat chat = Chats.get(chatID);
+                                if ((((chat.getChatKind() == ChatKind.PRIVATE_SINGLE) && ((profile_id.PROFILE_TYPE.endsWith("_PRIVATE")) || (hive_id == null))) || (((chat.getChatKind() == ChatKind.PUBLIC_SINGLE)) && (hive_id != null) && (chat.getParentHive().getNameUrl().equalsIgnoreCase(hive_id.NAME_URL)))) && (chat.getMembers().contains(user))) {
+                                    chatInfo = chat;
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (chatInfo == null)
+                            chatInfo = createChat(((hive_id != null)?Hives.get(hive_id.NAME_URL):null),DateFormatter.toShortHumanReadableString(new Date()),user.getUserID(),otherUser.getUserID());
+
+                        if (chatInfo != null) {
+                            responseFormats.add(chatInfo.toFormat(new CHAT()));
+                            common.STATUS = "OK";
+                        } else {
+                            common.STATUS = "ERROR";
+                            common.ERROR = -20;
+                        }
+                    }
+
+                } else {
+                    common.STATUS = "SESSION EXPIRED";
+                }
+            }
+        }
+
+        if ((responseCode != null) && (responseCode == 200) && (responseFormats.size() > 0)) {
+            responseBody = "";
+            for (Format format : responseFormats)
+                responseBody += ((responseBody.isEmpty())?"{":", ")+format.toJSON().toString().substring(1,format.toJSON().toString().length()-1);
+            responseBody += "}";
+        }
+
+        return new AbstractMap.SimpleEntry<Integer,String>((responseCode != null)?responseCode:-1,(responseBody != null)?responseBody:"");
+    }
+
+    private static AbstractMap.SimpleEntry<Integer, String> ChatContext(Server server, Format... formats) {
+        Integer responseCode = null;
+        String responseBody = null;
+
+        CONTEXT contextRequest = null;
+        if (formats != null)
+            for (Format format : formats)
+                if (format instanceof CONTEXT)
+                    contextRequest = (CONTEXT)format;
+
+        COMMON common = new COMMON();
+
+        ArrayList<Format> responseFormats = new ArrayList<Format>();
+        responseFormats.add(common);
+
+        if (contextRequest == null) {
+            common.STATUS = "ERROR";
+            common.ERROR = -1;
+        } else {
+            HttpCookie csrfCookie = checkCSRFCookie(server.getAppName());
+
+            if ((csrfCookie == null) || (csrfCookie.hasExpired()) || (!CSRFTokens.contains(csrfCookie.getValue())))
+                responseCode = 403;
+            else {
+                responseCode = 200;
+                User user = checkSessionCookie(csrfCookie,server.getAppName());
+
+                if (user != null) {
+                    //Lets GET the info
+                    if ((contextRequest.CHANNEL_UNICODE == null) || (!Chats.containsKey(contextRequest.CHANNEL_UNICODE)) || (!UserChatSubscriptions.containsKey(user.getUserID())) || (!UserChatSubscriptions.get(user.getUserID()).contains(contextRequest.CHANNEL_UNICODE))) {
+                        common.STATUS = "ERROR";
+                        common.ERROR = -10;
+                    } else {
+                        Chat chat = Chats.get(contextRequest.CHANNEL_UNICODE);
+                        Hive hive = null;
+                        Conversation conversation = chat.getConversation();
+                        if (chat.getChatKind() == ChatKind.HIVE)
+                            hive = chat.getParentHive();
+
+                        CONTEXT context = new CONTEXT();
+                        responseFormats.add(context);
+
+
+                        if (hive != null) {
+                            ArrayList<String> subscribedUsersID = HiveUserSubscriptions.get(hive.getNameUrl());
+                            if ((contextRequest.NEW_USERS_COUNT > 0) && (subscribedUsersID != null) && (!subscribedUsersID.isEmpty())) {
+                                int count = 0;
+                                for (int i = (subscribedUsersID.size()-1); (i >= 0) && (count < contextRequest.NEW_USERS_COUNT); i--) {
+                                    if ((!user.getUserID().equalsIgnoreCase(subscribedUsersID.get(i))) && (LoginUser.get(subscribedUsersID.get(i)).getUserPublicProfile() != null)) {
+                                        USER_PROFILE user_profile = new USER_PROFILE();
+                                        user_profile.USER_BASIC_PUBLIC_PROFILE = ((BASIC_PUBLIC_PROFILE) LoginUser.get(subscribedUsersID.get(i)).getUserPublicProfile().toFormat(new BASIC_PUBLIC_PROFILE()));
+                                        if (context.NEW_USERS_LIST == null)
+                                            context.NEW_USERS_LIST = new ArrayList<USER_PROFILE>();
+                                        context.NEW_USERS_LIST.add(user_profile);
+                                        count++;
+                                    }
+                                }
+                            }
+
+                            //TODO: implement buzzes recovering
+                        }
+
+                        if (conversation != null) {
+                            ArrayList<Message> messages = new ArrayList<Message>(conversation.getMessages());
+                            int count = 0;
+                            for (int i = (messages.size()-1); (i >= 0) && (count < contextRequest.IMAGES_COUNT); i--) {
+                                Message m = messages.get(i);
+                                if (m.getMessageContent().getContentType().equalsIgnoreCase("IMAGE")) {
+                                    if (context.SHARED_IMAGES_LIST == null)
+                                        context.SHARED_IMAGES_LIST = new ArrayList<MESSAGE>();
+                                    if (context.SHARED_IMAGES_LIST.add((MESSAGE)m.toFormat(new MESSAGE())))
+                                        count++;
+                                }
+                            }
+                        }
+
+                        common.STATUS = "OK";
+                    }
+
+                } else {
+                    common.STATUS = "SESSION EXPIRED";
+                }
+            }
+        }
+
+        if ((responseCode != null) && (responseCode == 200) && (responseFormats.size() > 0)) {
+            responseBody = "";
+            for (Format format : responseFormats)
+                responseBody += ((responseBody.isEmpty())?"{":", ")+format.toJSON().toString().substring(1,format.toJSON().toString().length()-1);
+            responseBody += "}";
+        }
+
+        return new AbstractMap.SimpleEntry<Integer,String>((responseCode != null)?responseCode:-1,(responseBody != null)?responseBody:"");
+    }
+
     private static AbstractMap.SimpleEntry<Integer, String> ChatList(Server server, Format... formats) {
         Integer responseCode = null;
         String responseBody = null;
@@ -2448,7 +2635,7 @@ public class StandAloneServer {
             if (user != null) {
                 //Lets return friends
                 FRIEND_LIST result = new FRIEND_LIST();
-                result.LIST = new ArrayList<>();
+                result.LIST = new ArrayList<PROFILE_ID>();
                 responseFormats.add(result);
 
                 for (String friendID : UserFriendList.get(user.getUserID())) {

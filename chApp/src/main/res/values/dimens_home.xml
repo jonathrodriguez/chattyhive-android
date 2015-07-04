@@ -21,7 +21,7 @@
     <dimen name="home_card_margin_right">8.5dp</dimen>
     <dimen name="home_list_padding_bottom">13dp</dimen>
     <dimen name="home_card_corner_radius">4dp</dimen>
-    <dimen name="home_card_bottom_border">4px</dimen>
+    <dimen name="home_card_bottom_border">2dp</dimen>
 
     <dimen name="home_card_message_hive_card_padding_left">9.5dp</dimen>
     <dimen name="home_card_message_hive_card_padding_top">6dp</dimen>
