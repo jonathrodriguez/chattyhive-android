@@ -1,5 +1,6 @@
 package com.chattyhive.Core.BusinessObjects.Chats;
 
+import com.chattyhive.Core.BusinessObjects.Hives.Hive;
 import com.chattyhive.Core.Controller;
 import com.chattyhive.Core.BusinessObjects.Chats.Messages.Message;
 import com.chattyhive.Core.BusinessObjects.Users.ProfileLevel;

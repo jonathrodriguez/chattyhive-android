@@ -19,8 +19,35 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class ServerUser implements IServerUser {
 
+    private static final String accountType = "com.chattyhive.chattyhive";
+    private static final String accountWriteAccess = "FULL_ACCESS";
+
     private Account account;
     private AccountManager accountManager;
+
+    public ServerUser (String login, String password, Context context) throws AuthenticatorException {
+        this.accountManager = AccountManager.get(context);
+
+        Account[] accounts = this.accountManager.getAccountsByType(ServerUser.accountType);
+        for (Account acc : accounts) {
+            if (acc.name.equalsIgnoreCase(login)) {
+                if (this.accountManager.getPassword(acc).equals(password)) {
+                    this.account = acc;
+                } else {
+                    throw new AuthenticatorException("401");
+                }
+            }
+        }
+
+        if (this.account == null) {
+            this.account = new Account(login, ServerUser.accountType);
+            if (!this.accountManager.addAccountExplicitly(this.account, password, null))
+                throw new AuthenticatorException("500");
+            if (!login.contains("@")) { //Login is the user name
+                this.accountManager.setUserData(this.account,IServerUser.userIDKey,login);
+            }
+        }
+    }
 
     public ServerUser (Account account, Context context) {
         this(account, AccountManager.get(context));
@@ -44,7 +71,7 @@ public class ServerUser implements IServerUser {
     @Override
     public String getAuthToken(String name) {
         if (name.equalsIgnoreCase(CommandDefinition.SessionCookie))
-            return accountManager.peekAuthToken(this.account, "FULL_ACCESS");
+            return accountManager.peekAuthToken(this.account, ServerUser.accountWriteAccess);
 
         return null;
     }
@@ -61,7 +88,7 @@ public class ServerUser implements IServerUser {
     @Override
     public void updateAuthToken(String name, String value) {
         if (name.equalsIgnoreCase(CommandDefinition.SessionCookie))
-            accountManager.setAuthToken(this.account,"FULL_ACCESS",value);
+            accountManager.setAuthToken(this.account,ServerUser.accountWriteAccess,value);
     }
 
     @Override
@@ -120,6 +147,16 @@ public class ServerUser implements IServerUser {
     @Override
     public void setPassword(String newPassword) {
         this.accountManager.setPassword(this.account,newPassword);
+    }
+
+    @Override
+    public String getUserData(String key) {
+        return this.accountManager.getUserData(this.account,key);
+    }
+
+    @Override
+    public void setUserData(String key, String value) {
+        this.accountManager.setUserData(this.account,key,value);
     }
 
     @Override

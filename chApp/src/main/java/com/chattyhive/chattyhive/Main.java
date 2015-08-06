@@ -18,9 +18,10 @@ import com.chattyhive.Core.Controller;
 import com.chattyhive.Core.StaticParameters;
 
 import com.chattyhive.Core.BusinessObjects.Chats.Chat;
-import com.chattyhive.Core.BusinessObjects.Chats.Hive;
+import com.chattyhive.Core.BusinessObjects.Hives.Hive;
 import com.chattyhive.Core.ContentProvider.SynchronousDataPath.AvailableCommands;
 import com.chattyhive.Core.ContentProvider.DataProvider;
+import com.chattyhive.chattyhive.Authentication.LoginActivity;
 import com.chattyhive.chattyhive.framework.OSStorageProvider.ChatLocalStorage;
 import com.chattyhive.chattyhive.framework.OSStorageProvider.CookieStore;
 import com.chattyhive.chattyhive.framework.OSStorageProvider.HiveLocalStorage;

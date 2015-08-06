@@ -13,7 +13,7 @@ import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
 import com.chattyhive.Core.Controller;
-import com.chattyhive.Core.BusinessObjects.Chats.Hive;
+import com.chattyhive.Core.BusinessObjects.Hives.Hive;
 import com.chattyhive.Core.Util.Events.EventArgs;
 import com.chattyhive.Core.Util.Events.EventHandler;
 import com.chattyhive.chattyhive.framework.CustomViews.Listener.OnTransitionListener;

@@ -1,6 +1,7 @@
 package com.chattyhive.Core.ContentProvider.Server;
 
 import com.chattyhive.Core.ContentProvider.OSStorageProvider.LocalStorageInterface;
+import com.chattyhive.Core.ContentProvider.SynchronousDataPath.AvailableCommands;
 import com.chattyhive.Core.ContentProvider.SynchronousDataPath.Command;
 import com.chattyhive.Core.ContentProvider.SynchronousDataPath.CommandDefinition;
 import com.chattyhive.Core.ContentProvider.SynchronousDataPath.IOrigin;
@@ -9,6 +10,7 @@ import com.chattyhive.Core.StaticParameters;
 import com.chattyhive.Core.Util.CallbackDelegate;
 import com.chattyhive.Core.Util.Events.Event;
 import com.chattyhive.Core.Util.Events.EventArgs;
+import com.chattyhive.backend.contentprovider.server.ServerUser;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
@@ -32,7 +34,7 @@ public class RemoteServer implements IOrigin {
     private final String serverProtocol;
     private final String serverLocation;
 
-    private LocalStorageInterface settingsStorage;
+    private LocalStorageInterface settingsStorage; //TODO: this member can be removed when using token based authentication.
 
     private String CSRFToken; //TODO: this member can be removed when using token based authentication.
 
@@ -120,6 +122,17 @@ public class RemoteServer implements IOrigin {
                 }
                 if (!resultFormats.isEmpty())
                     command.setResultFormats(resultFormats);
+
+                //Special case. Login. Recover the public_name if unknown
+                if (command.getCommandDefinition().getCommand() == AvailableCommands.Login) {
+                    String public_name = null;
+
+                    //TODO: read the public_name
+
+                    if (public_name != null) {
+                        command.getServerUser().setUserData(IServerUser.userIDKey,public_name);
+                    }
+                }
             }
 
             Callback.Run(command,callbackParameters);
@@ -132,9 +145,7 @@ public class RemoteServer implements IOrigin {
                             this.settingsStorage.setData(LocalStorageInterface.StorageType.GlobalSettings,"CSRFToken",this.CSRFToken);
                         } else if (cookie.getName().equalsIgnoreCase(CommandDefinition.SessionCookie)) {
                             command.getServerUser().updateAuthToken(CommandDefinition.SessionCookie,cookie.getValue());
-                            //TODO: Notify value changed? Not really needed.
                         }
-
 
         } catch (SocketTimeoutException e) {
             e.printStackTrace();

@@ -1,5 +1,8 @@
-package com.chattyhive.chattyhive;
+package com.chattyhive.chattyhive.Authentication;
 
+import com.chattyhive.Core.Util.CallbackDelegate;
+
+import android.accounts.AuthenticatorException;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
@@ -23,6 +26,7 @@ import com.chattyhive.Core.Util.Events.CommandCallbackEventArgs;
 import com.chattyhive.Core.Util.Events.EventArgs;
 import com.chattyhive.Core.Util.Events.EventHandler;
 import com.chattyhive.Core.Util.Formatters.DateFormatter;
+import com.chattyhive.chattyhive.R;
 import com.chattyhive.chattyhive.framework.CustomViews.Listener.OnInflateLayoutListener;
 import com.chattyhive.chattyhive.framework.CustomViews.Listener.OnTransitionListener;
 import com.chattyhive.chattyhive.framework.CustomViews.ViewGroup.SlidingStepsLayout;
@@ -37,7 +41,7 @@ import java.util.Date;
 import java.util.Locale;
 
 
-public class Register extends Activity {
+public class RegisterActivity extends Activity {
 
     private SlidingStepsLayout layout;
     private User newUser;
@@ -46,7 +50,7 @@ public class Register extends Activity {
 
     private Boolean usernameValidated = false;
 
-    private Register thisActivity;
+    private RegisterActivity thisActivity;
 
     private Controller controller;
 
@@ -96,7 +100,7 @@ public class Register extends Activity {
         String email = intent.getStringExtra("email");
         String proposedUsername = intent.getStringExtra("username");
 
-        this.newUser = new User(email, this.controller);
+        this.newUser = new User(this.controller,email);
         this.newUser.getUserPublicProfile().setPublicName(proposedUsername);
         this.newUser.getUserPrivateProfile().setSex("female"); //Load default value.
     }
@@ -109,12 +113,17 @@ public class Register extends Activity {
                 TextView repeatPasswordView = (TextView)findViewById(R.id.register_third_step_repeat_password);
 
                 if (!emailView.getText().toString().equalsIgnoreCase(newUser.getEmail())) {
-                    controller.CheckEmail(emailView.getText().toString(), new EventHandler<CommandCallbackEventArgs>(this, "onEmailCheckedCallback", CommandCallbackEventArgs.class));
+                    controller.CheckEmail(emailView.getText().toString(), new CallbackDelegate(RegisterActivity.this,"onEmailCheckedCallback",CommandCallbackEventArgs.class));
                 }
 
                 if (passwordIsValid(passwordView)) {
                     if (passwordView.getText().toString().equals(repeatPasswordView.getText().toString())) {
-                        newUser.Register(passwordView.getText().toString(),new EventHandler<CommandCallbackEventArgs>(thisActivity,"onRegisterCallback",CommandCallbackEventArgs.class));
+                        try {
+                            ServerUser serverUser = new ServerUser(newUser.getUserPublicProfile().getPublicName(),passwordView.getText().toString(),RegisterActivity.this);
+                        } catch (AuthenticatorException e) {
+                            e.printStackTrace();
+                        }
+                        newUser.Register(passwordView.getText().toString(),new CallbackDelegate(RegisterActivity.this,"onRegisterCallback",CommandCallbackEventArgs.class));
                     } else {
                         repeatPasswordView.setError("Passwords must match.");
                         repeatPasswordView.requestFocus();

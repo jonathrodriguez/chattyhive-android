@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="match_parent"
-    tools:context="com.chattyhive.chattyhive.LoginActivity$PlaceholderFragment"
+    tools:context="com.chattyhive.chattyhive.Authentication.LoginActivity$PlaceholderFragment"
     android:background="@color/login_background_color"
     android:fillViewport="true">
 <LinearLayout

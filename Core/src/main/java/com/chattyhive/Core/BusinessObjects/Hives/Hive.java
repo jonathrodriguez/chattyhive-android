@@ -1,5 +1,8 @@
-package com.chattyhive.Core.BusinessObjects.Chats;
+package com.chattyhive.Core.BusinessObjects.Hives;
 
+import com.chattyhive.Core.BusinessObjects.Chats.Chat;
+import com.chattyhive.Core.BusinessObjects.Chats.ChatKind;
+import com.chattyhive.Core.BusinessObjects.Chats.IContextualizable;
 import com.chattyhive.Core.Controller;
 import com.chattyhive.Core.BusinessObjects.Image;
 import com.chattyhive.Core.BusinessObjects.Users.User;

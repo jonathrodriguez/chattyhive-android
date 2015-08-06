@@ -134,7 +134,7 @@ public class CommandExecutor implements Runnable {
                 //TODO: Process callbacks
                 while (command.countCallbackDelegates() > 0) {
                     CallbackDelegate callbackDelegate = command.popCallbackDelegate(10000000);
-                    callbackDelegate.Run(); //TODO: ¿?
+                    callbackDelegate.Run(command); //TODO: ¿?
                 }
                 break;
             case Query:

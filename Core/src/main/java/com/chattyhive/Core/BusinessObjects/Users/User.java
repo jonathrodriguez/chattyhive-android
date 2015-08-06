@@ -1,7 +1,15 @@
 package com.chattyhive.Core.BusinessObjects.Users;
 
+import com.chattyhive.Core.BusinessObjects.Chats.ChatList;
+import com.chattyhive.Core.BusinessObjects.Hives.HiveList;
+import com.chattyhive.Core.BusinessObjects.Home.Home;
+import com.chattyhive.Core.BusinessObjects.Users.Requests.RequestList;
+import com.chattyhive.Core.ContentProvider.Server.IServerUser;
+import com.chattyhive.Core.ContentProvider.SynchronousDataPath.Command;
+import com.chattyhive.Core.ContentProvider.SynchronousDataPath.CommandDefinition;
+import com.chattyhive.Core.ContentProvider.SynchronousDataPath.CommandQueue;
 import com.chattyhive.Core.Controller;
-import com.chattyhive.Core.BusinessObjects.Chats.Hive;
+import com.chattyhive.Core.BusinessObjects.Hives.Hive;
 import com.chattyhive.Core.ContentProvider.SynchronousDataPath.AvailableCommands;
 import com.chattyhive.Core.ContentProvider.Formats.BASIC_PRIVATE_PROFILE;
 import com.chattyhive.Core.ContentProvider.Formats.BASIC_PUBLIC_PROFILE;
@@ -13,6 +21,7 @@ import com.chattyhive.Core.ContentProvider.Formats.PRIVATE_PROFILE;
 import com.chattyhive.Core.ContentProvider.Formats.PROFILE_ID;
 import com.chattyhive.Core.ContentProvider.Formats.PUBLIC_PROFILE;
 import com.chattyhive.Core.ContentProvider.Formats.USER_PROFILE;
+import com.chattyhive.Core.Util.CallbackDelegate;
 import com.chattyhive.Core.Util.Events.CommandCallbackEventArgs;
 import com.chattyhive.Core.Util.Events.Event;
 import com.chattyhive.Core.Util.Events.EventArgs;
@@ -20,15 +29,17 @@ import com.chattyhive.Core.Util.Events.EventHandler;
 import com.google.gson.JsonElement;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Jonathan on 11/12/13.
  * Represents a user.
  */
 public class User {
-    public Event<EventArgs> UserLoaded;
-
     private Controller controller;
+    private IServerUser serverUser;
+
+    // Members
     private Boolean loading;
 
     private Boolean isMe = false;
@@ -38,13 +49,89 @@ public class User {
     private PublicProfile userPublicProfile; //Public profile for any user.
     private PrivateProfile userPrivateProfile; //Private profile for any user.
 
-    public Boolean hasController() {
-        return (this.controller != null);
-    }
-    public void setController(Controller controller) {
-        this.controller = controller;
+    private Home home;
+    private HiveList subscribedHives;
+    private ChatList chatList;
+    private UserList friendList;
+    private UserList hivemateList;
+    private RequestList requestList;
+
+    // Events
+    public Event<EventArgs> UserLoaded;
+
+    // Constructors
+    private User() {
+        this.userPrivateProfile = new PrivateProfile();
+        this.userPublicProfile = new PublicProfile();
+
+        this.requestList = new RequestList();
+        this.hivemateList = new UserList();
+        this.friendList = new UserList();
+        this.chatList = new ChatList();
+        this.subscribedHives = new HiveList();
+
+        this.UserLoaded = new Event<EventArgs>();
     }
 
+    public User(Controller controller, String email) {
+        this();
+        this.controller = controller;
+        this.email = email;
+    }
+
+    public User(Controller controller, IServerUser serverUser) {
+        this();
+
+        this.serverUser = serverUser;
+        this.controller = controller;
+
+        this.isMe = true;
+        this.loading = true;
+
+        try {
+            this.userID = this.serverUser.getUserData(IServerUser.userIDKey);
+        } catch (Exception e) {
+            this.serverUser.invalidateAuthToken(CommandDefinition.SessionCookie);
+            this.serverUser.getAuthToken(CommandDefinition.SessionCookie);
+        }
+
+        PROFILE_ID requestProfile = new PROFILE_ID();
+        requestProfile.PROFILE_TYPE = "";
+        requestProfile.USER_ID = this.userID;
+
+        Command command = new Command(this.serverUser,AvailableCommands.UserProfile,requestProfile);
+        command.addCallbackDelegate(new CallbackDelegate(this,"loadCallback",Command.class));
+
+        this.controller.getDataProvider().runCommand(command, CommandQueue.Priority.RealTime);
+    }
+
+    public User(Controller controller, IServerUser serverUser, Format format) {
+        this();
+
+        this.serverUser = serverUser;
+        this.controller = controller;
+
+        this.isMe = false; //Unnecesary.
+        this.loading = true;
+
+        if (!this.fromFormat(format))
+            throw new IllegalArgumentException("LOCAL_USER_PROFILE or USER_PROFILE expected.");
+    }
+
+    public User(Controller controller, IServerUser serverUser, PROFILE_ID requestProfile, CommandQueue.Priority priority) {
+        this();
+        this.serverUser = serverUser;
+        this.controller = controller;
+
+        this.isMe = false; //Unnecesary.
+        this.loading = true;
+
+        Command command = new Command(this.serverUser,AvailableCommands.UserProfile,requestProfile);
+        command.addCallbackDelegate(new CallbackDelegate(this,"loadCallback",Command.class));
+        this.controller.getDataProvider().runCommand(command,priority);
+    }
+
+    // Simple Getters/Setters
     public Boolean isLoading() {
         return this.loading;
     }
@@ -56,15 +143,28 @@ public class User {
     public String getEmail() {
         return this.email;
     }
-    public void setEmail(String value) {
-        this.email = value;
-    }
 
     public String getUserID() {
         return this.userID;
     }
-    public void setUserID(String value) {
+    private void setUserID(String value) {
         this.userID = value;
+    }
+
+    public Home getHome() {
+        return this.home;
+    }
+
+    public HiveList getSubscribedHives() { //FIXME: return unmodifiable list.
+        return this.subscribedHives;
+    }
+
+    public ChatList getChatList() { //FIXME: return unmodifiable list.
+        return this.chatList;
+    }
+
+    public UserList getFriendList() { //FIXME: return unmodifiable list.
+        return this.friendList;
     }
 
     public PublicProfile getUserPublicProfile() {
@@ -74,52 +174,18 @@ public class User {
         return this.userPrivateProfile;
     }
 
-    /********************************************************************************************/
-
-    public User(String email) {
-        this(email,(Controller)null);
+    // Complex Getters/Setters
+    public void updateEmail(String value) { //TODO: Implement server request
+        this.email = value;
     }
 
-    public User(String email, Controller controller) {
-        this.email = email;
-        this.isMe = true;
-        this.userPrivateProfile = new PrivateProfile();
-        this.userPublicProfile = new PublicProfile();
-        this.controller = controller;
-        this.UserLoaded = new Event<EventArgs>();
-    }
+    // Methods
 
-    public User (Format format) {
-        this(format,(Controller)null);
-    }
 
-    public User(Format format, Controller controller) {
-        if (!this.fromFormat(format))
-            throw new IllegalArgumentException("LOCAL_USER_PROFILE or USER_PROFILE expected.");
-
-        this.controller = controller;
-        this.UserLoaded = new Event<EventArgs>();
-    }
-
-    public User(String userID, PROFILE_ID requestProfile) {
-        this(userID,requestProfile,(Controller)null);
-    }
-
-    public User(String userID, PROFILE_ID requestProfile, Controller controller) {
-        this.controller = controller;
-        this.userID = userID;
-
-        if (this.controller == null) return;
-
-        this.controller.getDataProvider().RunCommand(AvailableCommands.UserProfile, new EventHandler<CommandCallbackEventArgs>(this, "loadCallback", CommandCallbackEventArgs.class), requestProfile);
-        this.loading = true;
-
-        this.UserLoaded = new Event<EventArgs>();
-    }
-
-    public void loadCallback (Object sender, CommandCallbackEventArgs args) {
-        if (args.countReceivedFormats() == 0) return;
-        ArrayList<Format> receivedFormats = args.getReceivedFormats();
+    // Callbacks
+    public void loadCallback (Command command) {
+        if (command.getResultFormats().size() == 0) return;
+        List<Format> receivedFormats = command.getResultFormats();
         for (Format format : receivedFormats) {
             if ((format instanceof LOCAL_USER_PROFILE) || (format instanceof USER_PROFILE))
                 this.fromFormat(format);
@@ -129,7 +195,7 @@ public class User {
     /*************************************/
     /*     COMMUNICATION METHODS         */
     /*************************************/
-    public void Register(String password,EventHandler<CommandCallbackEventArgs> Callback) {
+    public void Register(String password,CallbackDelegate Callback) {
         LOGIN login = new LOGIN();
         login.USER = this.email;
         login.PASS = password;
@@ -140,13 +206,17 @@ public class User {
         this.userPrivateProfile.userID = this.userID;
         LOCAL_USER_PROFILE lup = (LOCAL_USER_PROFILE)this.toFormat(new LOCAL_USER_PROFILE());
         lup.PASS = password;
-        this.controller.getDataProvider().RunCommand(AvailableCommands.Register,Callback,lup,login);
+        Command registerCommand = new Command(null,AvailableCommands.Register,login,lup);
+        registerCommand.addCallbackDelegate(Callback);
+        this.controller.getDataProvider().runCommand(registerCommand, CommandQueue.Priority.RealTime);
     }
-    public void EditProfile(EventHandler<CommandCallbackEventArgs> Callback,User newUser) {
+    public void EditProfile(CallbackDelegate Callback,User newUser) {
         // TODO: compare newUser with this and send only fields which differ.
         this.getUserPrivateProfile().setStatusMessage(newUser.getUserPrivateProfile().getStatusMessage());
         this.getUserPublicProfile().setStatusMessage(newUser.getUserPublicProfile().getStatusMessage());
-        this.controller.getDataProvider().RunCommand(AvailableCommands.UpdateProfile,Callback,newUser.toFormat(new LOCAL_USER_PROFILE()));
+        Command updateProfile = new Command(this.serverUser,AvailableCommands.UpdateProfile,newUser.toFormat(new LOCAL_USER_PROFILE()));
+        updateProfile.addCallbackDelegate(Callback);
+        this.controller.getDataProvider().runCommand(updateProfile, CommandQueue.Priority.High);
     }
 
     public void loadProfile(ProfileType profileType, ProfileLevel profileLevel) {
@@ -204,7 +274,9 @@ public class User {
         }
 
         this.loading = true;
-        this.controller.getDataProvider().RunCommand(AvailableCommands.UserProfile,new EventHandler<CommandCallbackEventArgs>(this,"loadCallback",CommandCallbackEventArgs.class),profile_id);
+        Command requestUserProfile = new Command(this.serverUser,AvailableCommands.UpdateProfile,profile_id);
+        requestUserProfile.addCallbackDelegate(new CallbackDelegate(this,"loadCallback",null));
+        this.controller.getDataProvider().runCommand(requestUserProfile, ((profileLevel == ProfileLevel.Extended)?CommandQueue.Priority.High: CommandQueue.Priority.RealTime));
     }
 
     public void unloadProfile(ProfileLevel profileLevel) {
@@ -290,8 +362,6 @@ public class User {
             else if (this.userPrivateProfile != null)
                 this.userID = this.userPrivateProfile.userID;
 
-            this.loading = false;
-
             result=true;
         } else if (format instanceof LOCAL_USER_PROFILE) {
             this.isMe = true;
@@ -319,7 +389,7 @@ public class User {
 
             if (((LOCAL_USER_PROFILE) format).HIVES_SUBSCRIBED != null)
                 for (HIVE_ID hive : ((LOCAL_USER_PROFILE) format).HIVES_SUBSCRIBED) {
-                    Hive.getHive(hive.NAME_URL);
+                    this.subscribedHives.add(Hive.getHive(hive.NAME_URL));
                 }
 
             if (this.userPublicProfile != null)
@@ -327,10 +397,12 @@ public class User {
             else if (this.userPrivateProfile != null)
                 this.userID = this.userPrivateProfile.userID;
 
-            this.loading = false;
+            this.home = new Home(this.subscribedHives,this,this.serverUser); //TODO: Do this when profile recovered
 
             result=true;
         }
+
+        this.loading = !result;
 
         if ((result) && (this.UserLoaded != null))
             this.UserLoaded.fire(this,EventArgs.Empty());
@@ -338,14 +410,4 @@ public class User {
         return result;
     }
 
-    public JsonElement toJson(Format format) {
-        return this.toFormat(format).toJSON();
-    }
-    public void fromJson(JsonElement jsonElement) {
-        Format[] formats = Format.getFormat(jsonElement);
-        for (Format format : formats)
-            if (this.fromFormat(format)) return;
-
-        throw  new IllegalArgumentException("Expected LOCAL_USER_PROFILE, or USER_PROFILE formats.");
-    }
 }

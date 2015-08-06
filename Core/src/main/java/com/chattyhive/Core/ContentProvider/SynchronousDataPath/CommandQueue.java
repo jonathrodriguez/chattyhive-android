@@ -1,7 +1,5 @@
 package com.chattyhive.Core.ContentProvider.SynchronousDataPath;
 
-import com.sun.istack.internal.NotNull;
-
 import java.util.AbstractMap;
 import java.util.Date;
 import java.util.HashMap;
@@ -91,7 +89,7 @@ public class CommandQueue {
             return command;
         }
 
-        public Request(@NotNull Priority priority, @NotNull Command command) {
+        public Request(Priority priority, Command command) {
             this.priority = priority;
             this.command = command;
             this.timeStamp = new Date();
@@ -110,7 +108,7 @@ public class CommandQueue {
          *                              from being compared to this object.
          */
         @Override
-        public int compareTo(@NotNull Request o) {
+        public int compareTo(Request o) {
             int result = this.priority.compareTo(o.priority);
             if (result == 0)
                 result = this.timeStamp.compareTo(o.timeStamp);

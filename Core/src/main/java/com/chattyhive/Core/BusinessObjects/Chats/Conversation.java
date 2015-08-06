@@ -1,5 +1,7 @@
 package com.chattyhive.Core.BusinessObjects.Chats;
 
+import com.chattyhive.Core.BusinessObjects.Hives.Hive;
+import com.chattyhive.Core.BusinessObjects.Users.User;
 import com.chattyhive.Core.Controller;
 import com.chattyhive.Core.StaticParameters;
 import com.chattyhive.Core.BusinessObjects.Chats.Messages.Message;
@@ -199,6 +201,16 @@ public class Conversation { //TODO: implements SortedSet<Message>
         }
 
         throw new NullPointerException("There are no messages for this chat.");
+    }
+
+    public Message getLastSentMessage(User user) {
+        if ((this.messages == null) || (this.messages.isEmpty())) throw new NullPointerException("There are no messages for this chat.");
+
+        for (Message item : this.messages.descendingSet()) {
+            if ((!item.getMessageContent().getContentType().endsWith("_SEPARATOR")) && (item.getUser().getUserID().equals(user.getUserID()))) return item;
+        }
+
+        return null;
     }
 
     public Message getMessageByIndex(int index) {

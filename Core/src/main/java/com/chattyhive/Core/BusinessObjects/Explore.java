@@ -2,7 +2,7 @@ package com.chattyhive.Core.BusinessObjects;
 
 import com.chattyhive.Core.Controller;
 import com.chattyhive.Core.StaticParameters;
-import com.chattyhive.Core.BusinessObjects.Chats.Hive;
+import com.chattyhive.Core.BusinessObjects.Hives.Hive;
 import com.chattyhive.Core.ContentProvider.DataProvider;
 import com.chattyhive.Core.ContentProvider.Formats.EXPLORE_FILTER;
 import com.chattyhive.Core.ContentProvider.Formats.Format;

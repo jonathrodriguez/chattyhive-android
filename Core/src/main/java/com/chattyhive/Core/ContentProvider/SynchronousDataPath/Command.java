@@ -128,7 +128,8 @@ public class Command {
 
         Command command = (Command) o;
 
-        if (!commandDefinition.equals(command.commandDefinition)) return false;
+        if (!commandDefinition.equals(command.commandDefinition))
+            return false;
         if (inputFormats != null ? !inputFormats.equals(command.inputFormats) : command.inputFormats != null)
             return false;
         if (paramFormats != null ? !paramFormats.equals(command.paramFormats) : command.paramFormats != null)

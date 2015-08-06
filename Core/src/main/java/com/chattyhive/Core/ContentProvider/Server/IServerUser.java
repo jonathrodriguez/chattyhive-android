@@ -4,6 +4,8 @@ package com.chattyhive.Core.ContentProvider.Server;
  * Created by Jonathan on 11/02/2015.
  */
 public interface IServerUser {
+    public static final String userIDKey = "public_name";
+
     public String getLogin();
     public String getPassword();
 
@@ -21,6 +23,8 @@ public interface IServerUser {
 
     public void setPassword(String newPassword);
 
+    public String getUserData(String key);
+    public void setUserData(String key,String value);
     @Override
     public int hashCode();
 }

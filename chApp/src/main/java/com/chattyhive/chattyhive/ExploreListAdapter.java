@@ -17,7 +17,7 @@ import android.widget.TextView;
 
 import com.chattyhive.Core.Controller;
 import com.chattyhive.Core.BusinessObjects.*;
-import com.chattyhive.Core.BusinessObjects.Chats.Hive;
+import com.chattyhive.Core.BusinessObjects.Hives.Hive;
 import com.chattyhive.Core.BusinessObjects.Explore;
 import com.chattyhive.Core.Util.Events.EventArgs;
 import com.chattyhive.Core.Util.Events.EventHandler;
