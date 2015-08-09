@@ -59,8 +59,6 @@ public class HiveList implements Collection<Hive> {
         return hives.iterator();
     }
 
-
-
     /**
      * Returns <tt>true</tt> if this collection contains no elements.
      *
@@ -89,7 +87,7 @@ public class HiveList implements Collection<Hive> {
      *                              (<a href="Collection.html#optional-restrictions">optional</a>)
      */
 
-    public boolean containsKey(Object key) {
+    public boolean containsKey(String key) {
         return this.hives.containsKey(key);
     }
 
@@ -112,7 +110,7 @@ public class HiveList implements Collection<Hive> {
      *                              (<a href="Collection.html#optional-restrictions">optional</a>)
      */
 
-    public boolean containsValue(Object value) {
+    public boolean containsValue(Hive value) {
         return this.hives.containsValue(value);
     }
 
@@ -142,7 +140,7 @@ public class HiveList implements Collection<Hive> {
      *                              (<a href="Collection.html#optional-restrictions">optional</a>)
      */
 
-    public Hive get(Object key) {
+    public Hive get(String key) {
         return this.hives.get(key);
     }
 
@@ -151,7 +149,7 @@ public class HiveList implements Collection<Hive> {
      * (optional operation).  If the map previously contained a mapping for
      * the key, the old value is replaced by the specified value.  (A map
      * <tt>m</tt> is said to contain a mapping for a key <tt>k</tt> if and only
-     * if {@link #containsKey(Object) m.containsKey(k)} would return
+     * if {@link #containsKey(String) m.containsKey(k)} would return
      * <tt>true</tt>.)
      *
      * @param key   key with which the specified value is to be associated
@@ -471,6 +469,7 @@ public class HiveList implements Collection<Hive> {
      * specified collection (optional operation).  In other words, removes from
      * this collection all of its elements that are not contained in the
      * specified collection.
+     *
      *
      * @param c collection containing elements to be retained in this collection
      * @return <tt>true</tt> if this collection changed as a result of the call

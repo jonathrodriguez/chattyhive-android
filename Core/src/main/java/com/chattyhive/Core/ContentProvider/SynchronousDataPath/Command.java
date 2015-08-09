@@ -85,8 +85,8 @@ public class Command {
     private ArrayList<Format> resultFormats;
     private int resultCode;
 
-    public Command(IServerUser serverUser, AvailableCommands commandDefinition, Format... formats) {
-        this.serverUser = serverUser;
+    public Command(AvailableCommands commandDefinition, Format... formats) {
+        this.serverUser = null;
         this.commandDefinition = CommandDefinition.GetCommand(commandDefinition);
 
         this.callbackDelegates = new ArrayList<CallbackDelegate>();
@@ -111,6 +111,9 @@ public class Command {
     }
     public IServerUser getServerUser() {
         return this.serverUser;
+    }
+    public void setServerUser(IServerUser serverUser) {
+        this.serverUser = serverUser;
     }
     public String getUrl() {
         String url = this.commandDefinition.getUrl();

@@ -10,7 +10,7 @@ import com.chattyhive.Core.StaticParameters;
 import com.chattyhive.Core.Util.CallbackDelegate;
 import com.chattyhive.Core.Util.Events.Event;
 import com.chattyhive.Core.Util.Events.EventArgs;
-import com.chattyhive.backend.contentprovider.server.ServerUser;
+import com.chattyhive.Core.ContentProvider.Server.IServerUser;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 

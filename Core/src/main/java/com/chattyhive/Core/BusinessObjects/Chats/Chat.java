@@ -91,10 +91,10 @@ public class Chat implements IContextualizable {
         Boolean result = false;
         switch (this.getChatKind()) {
             case HIVE:
-                result = ((this.parentHive != null) && (Hive.HiveIsLoaded(this.parentHive)) && (this.getConversation() != null));
+                result = ((this.parentHive != null) && (this.parentHive.isLoaded()) && (this.getConversation() != null));
                 break;
             case PUBLIC_SINGLE:
-                result = ((this.getConversation() != null) && (this.parentHive != null) && (Hive.HiveIsLoaded(this.parentHive)) && (this.members != null));
+                result = ((this.getConversation() != null) && (this.parentHive != null) && (this.parentHive.isLoaded()) && (this.members != null));
                 if (result) {
                     Boolean anotherUser = false;
                     for (User user : this.members.values())

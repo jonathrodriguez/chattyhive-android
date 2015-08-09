@@ -4,9 +4,7 @@ import com.chattyhive.Core.BusinessObjects.Chats.ChatList;
 import com.chattyhive.Core.BusinessObjects.Hives.HiveList;
 import com.chattyhive.Core.BusinessObjects.Home.Home;
 import com.chattyhive.Core.BusinessObjects.Users.Requests.RequestList;
-import com.chattyhive.Core.ContentProvider.Server.IServerUser;
 import com.chattyhive.Core.ContentProvider.SynchronousDataPath.Command;
-import com.chattyhive.Core.ContentProvider.SynchronousDataPath.CommandDefinition;
 import com.chattyhive.Core.ContentProvider.SynchronousDataPath.CommandQueue;
 import com.chattyhive.Core.Controller;
 import com.chattyhive.Core.BusinessObjects.Hives.Hive;
@@ -22,13 +20,9 @@ import com.chattyhive.Core.ContentProvider.Formats.PROFILE_ID;
 import com.chattyhive.Core.ContentProvider.Formats.PUBLIC_PROFILE;
 import com.chattyhive.Core.ContentProvider.Formats.USER_PROFILE;
 import com.chattyhive.Core.Util.CallbackDelegate;
-import com.chattyhive.Core.Util.Events.CommandCallbackEventArgs;
 import com.chattyhive.Core.Util.Events.Event;
 import com.chattyhive.Core.Util.Events.EventArgs;
-import com.chattyhive.Core.Util.Events.EventHandler;
-import com.google.gson.JsonElement;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -37,7 +31,6 @@ import java.util.List;
  */
 public class User {
     private Controller controller;
-    private IServerUser serverUser;
 
     // Members
     private Boolean loading;
@@ -79,36 +72,29 @@ public class User {
         this.email = email;
     }
 
-    public User(Controller controller, IServerUser serverUser) {
+    public User(Controller controller, String accountID, boolean loading) {
         this();
 
-        this.serverUser = serverUser;
         this.controller = controller;
 
         this.isMe = true;
         this.loading = true;
 
-        try {
-            this.userID = this.serverUser.getUserData(IServerUser.userIDKey);
-        } catch (Exception e) {
-            this.serverUser.invalidateAuthToken(CommandDefinition.SessionCookie);
-            this.serverUser.getAuthToken(CommandDefinition.SessionCookie);
-        }
+        this.userID = accountID;
 
         PROFILE_ID requestProfile = new PROFILE_ID();
         requestProfile.PROFILE_TYPE = "";
         requestProfile.USER_ID = this.userID;
 
-        Command command = new Command(this.serverUser,AvailableCommands.UserProfile,requestProfile);
+        Command command = new Command(AvailableCommands.UserProfile,requestProfile);
         command.addCallbackDelegate(new CallbackDelegate(this,"loadCallback",Command.class));
 
-        this.controller.getDataProvider().runCommand(command, CommandQueue.Priority.RealTime);
+        this.controller.getDataProvider().runCommand(accountID, command, CommandQueue.Priority.RealTime);
     }
 
-    public User(Controller controller, IServerUser serverUser, Format format) {
+    public User(Controller controller, Format format) {
         this();
 
-        this.serverUser = serverUser;
         this.controller = controller;
 
         this.isMe = false; //Unnecesary.
@@ -118,17 +104,16 @@ public class User {
             throw new IllegalArgumentException("LOCAL_USER_PROFILE or USER_PROFILE expected.");
     }
 
-    public User(Controller controller, IServerUser serverUser, PROFILE_ID requestProfile, CommandQueue.Priority priority) {
+    public User(Controller controller, PROFILE_ID requestProfile, CommandQueue.Priority priority, String accountID) {
         this();
-        this.serverUser = serverUser;
         this.controller = controller;
 
         this.isMe = false; //Unnecesary.
         this.loading = true;
 
-        Command command = new Command(this.serverUser,AvailableCommands.UserProfile,requestProfile);
+        Command command = new Command(AvailableCommands.UserProfile,requestProfile);
         command.addCallbackDelegate(new CallbackDelegate(this,"loadCallback",Command.class));
-        this.controller.getDataProvider().runCommand(command,priority);
+        this.controller.getDataProvider().runCommand(accountID,command,priority);
     }
 
     // Simple Getters/Setters
@@ -206,20 +191,20 @@ public class User {
         this.userPrivateProfile.userID = this.userID;
         LOCAL_USER_PROFILE lup = (LOCAL_USER_PROFILE)this.toFormat(new LOCAL_USER_PROFILE());
         lup.PASS = password;
-        Command registerCommand = new Command(null,AvailableCommands.Register,login,lup);
+        Command registerCommand = new Command(AvailableCommands.Register,login,lup);
         registerCommand.addCallbackDelegate(Callback);
         this.controller.getDataProvider().runCommand(registerCommand, CommandQueue.Priority.RealTime);
     }
-    public void EditProfile(CallbackDelegate Callback,User newUser) {
+    public void EditProfile(CallbackDelegate Callback,User newUserData,String accountID) {
         // TODO: compare newUser with this and send only fields which differ.
-        this.getUserPrivateProfile().setStatusMessage(newUser.getUserPrivateProfile().getStatusMessage());
-        this.getUserPublicProfile().setStatusMessage(newUser.getUserPublicProfile().getStatusMessage());
-        Command updateProfile = new Command(this.serverUser,AvailableCommands.UpdateProfile,newUser.toFormat(new LOCAL_USER_PROFILE()));
+        this.getUserPrivateProfile().setStatusMessage(newUserData.getUserPrivateProfile().getStatusMessage());
+        this.getUserPublicProfile().setStatusMessage(newUserData.getUserPublicProfile().getStatusMessage());
+        Command updateProfile = new Command(AvailableCommands.UpdateProfile,newUserData.toFormat(new LOCAL_USER_PROFILE()));
         updateProfile.addCallbackDelegate(Callback);
-        this.controller.getDataProvider().runCommand(updateProfile, CommandQueue.Priority.High);
+        this.controller.getDataProvider().runCommand(accountID, updateProfile, CommandQueue.Priority.High);
     }
 
-    public void loadProfile(ProfileType profileType, ProfileLevel profileLevel) {
+    public void loadProfile(ProfileType profileType, ProfileLevel profileLevel, String accountID) {
         if (profileLevel == ProfileLevel.None) return;
 
         PROFILE_ID profile_id = new PROFILE_ID();
@@ -255,10 +240,10 @@ public class User {
                 return;
         }
 
-        this.loadProfile(profile_id);
+        this.loadProfile(profile_id,accountID);
     }
 
-    public void loadProfile(PROFILE_ID profile_id) {
+    public void loadProfile(PROFILE_ID profile_id, String accountID) {
 
         ProfileLevel profileLevel = (profile_id.PROFILE_TYPE.startsWith("BASIC_"))?ProfileLevel.Basic:((profile_id.PROFILE_TYPE.startsWith("EXTENDED_"))?ProfileLevel.Extended:((profile_id.PROFILE_TYPE.startsWith("COMPLETE_"))?ProfileLevel.Complete:ProfileLevel.None));
 
@@ -274,16 +259,13 @@ public class User {
         }
 
         this.loading = true;
-        Command requestUserProfile = new Command(this.serverUser,AvailableCommands.UpdateProfile,profile_id);
-        requestUserProfile.addCallbackDelegate(new CallbackDelegate(this,"loadCallback",null));
-        this.controller.getDataProvider().runCommand(requestUserProfile, ((profileLevel == ProfileLevel.Extended)?CommandQueue.Priority.High: CommandQueue.Priority.RealTime));
+        Command requestUserProfile = new Command(AvailableCommands.UpdateProfile,profile_id);
+        requestUserProfile.addCallbackDelegate(new CallbackDelegate(this,"loadCallback"));
+        this.controller.getDataProvider().runCommand(accountID, requestUserProfile, ((profileLevel == ProfileLevel.Extended)?CommandQueue.Priority.High: CommandQueue.Priority.RealTime));
     }
 
     public void unloadProfile(ProfileLevel profileLevel) {
         if (profileLevel == ProfileLevel.Complete) return;
-
-        if (profileLevel == ProfileLevel.None)
-            //this.controller.removeUser(this);
 
             if (this.userPublicProfile != null)
                 this.userPublicProfile.unloadProfile(profileLevel);
@@ -397,7 +379,7 @@ public class User {
             else if (this.userPrivateProfile != null)
                 this.userID = this.userPrivateProfile.userID;
 
-            this.home = new Home(this.subscribedHives,this,this.serverUser); //TODO: Do this when profile recovered
+            this.home = new Home(this);
 
             result=true;
         }

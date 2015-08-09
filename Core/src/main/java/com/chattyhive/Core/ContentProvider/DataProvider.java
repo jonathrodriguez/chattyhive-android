@@ -4,6 +4,7 @@ import com.chattyhive.Core.ContentProvider.OSStorageProvider.LocalStorageInterfa
 import com.chattyhive.Core.ContentProvider.SynchronousDataPath.Command;
 import com.chattyhive.Core.ContentProvider.SynchronousDataPath.CommandQueue;
 import com.chattyhive.Core.ContentProvider.SynchronousDataPath.SynchronousProvider;
+import com.chattyhive.Core.Controller;
 
 /**
  * Created by Jonathan on 11/12/13.
@@ -14,10 +15,17 @@ public class DataProvider {
 
     SynchronousProvider synchronousDataPath;
     LocalStorageInterface settingsStorage;
+    Controller controller;
 
-    public DataProvider(LocalStorageInterface settingsStorage) {
+    public DataProvider(Controller controller, LocalStorageInterface settingsStorage) {
+        this.controller = controller;
         this.settingsStorage = settingsStorage;
         this.synchronousDataPath = new SynchronousProvider(this.settingsStorage);
+    }
+
+    public void runCommand(String accountID, Command command,CommandQueue.Priority priority) {
+        command.setServerUser(this.controller.getServerUser(accountID));
+        this.synchronousDataPath.runCommand(command,priority);
     }
 
     public void runCommand(Command command,CommandQueue.Priority priority) {

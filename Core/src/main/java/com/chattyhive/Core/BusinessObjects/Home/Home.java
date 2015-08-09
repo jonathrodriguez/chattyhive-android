@@ -5,12 +5,9 @@ import com.chattyhive.Core.BusinessObjects.Chats.Messages.Message;
 import com.chattyhive.Core.BusinessObjects.Hives.HiveList;
 import com.chattyhive.Core.BusinessObjects.Home.Cards.HiveMessageCard;
 import com.chattyhive.Core.BusinessObjects.Users.User;
-import com.chattyhive.Core.ContentProvider.Server.IServerUser;
 import com.chattyhive.Core.Util.Events.Event;
 import com.chattyhive.Core.Util.Events.EventArgs;
 import com.chattyhive.Core.Util.Events.EventHandler;
-
-import com.sun.javafx.collections.transformation.SortedList;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -21,27 +18,29 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
-import java.util.TreeSet;
 
 /**
  * Created by Jonathan on 30/05/2015.
  */
 public class Home implements Collection<HomeCard> {
 
+    /*********************/
+    // HARDCODED variables
+    private static int estimatedJoinDays = 7; //Number of days in the past for unknown join dates.
+    private static int lastActivityPriorityDays = 7; //Number of days since last activity from the user to prioritize cards.
+    private static int numberOfPrioritizedCards = 4; //Number of prioritized cards. Those will show up in home.
+    /********************/
+
     private List<HomeCard> homeCards = null;
     private HiveList hiveList = null;
     private User owner;
-    private IServerUser serverUser;
 
     public Event<EventArgs> HomeReceived;
 
-    public Home(HiveList hiveList, User owner, IServerUser serverUser) {
-        this.hiveList = hiveList;
+    public Home(User owner) {
+        this.hiveList = owner.getSubscribedHives();
         this.owner = owner;
-        this.serverUser = serverUser;
         this.HomeReceived = new Event<EventArgs>();
 
         this.hiveList.HiveListChanged.add(new EventHandler<EventArgs>(this, "onHiveListChanged", EventArgs.class));
@@ -73,9 +72,9 @@ public class Home implements Collection<HomeCard> {
                 HiveMessageCard homeCard;
                 TreeMap<Date,HiveMessageCard> lastActivity = new TreeMap<Date, HiveMessageCard>();
                 GregorianCalendar joinDate = new GregorianCalendar();
-                joinDate.add(Calendar.DATE,-7); //HARDCODED: "Estimated" join date to hive.
+                joinDate.add(Calendar.DATE,-1*estimatedJoinDays); //HARDCODED: "Estimated" join date to hive.
                 GregorianCalendar lastPriority = new GregorianCalendar();
-                lastPriority.add(Calendar.DATE,-7); // HARDCODED: Days to prioritize last activity.
+                lastPriority.add(Calendar.DATE,-1*lastActivityPriorityDays); // HARDCODED: Days to prioritize last activity.
                 for (Hive hive : hiveList) {
                     if ((hive != null) && (hive.getPublicChat() != null) && (hive.getPublicChat().getConversation() != null) && (hive.getPublicChat().getConversation().getCount() > 0)) {
                         message = hive.getPublicChat().getConversation().getLastMessage();
@@ -94,7 +93,7 @@ public class Home implements Collection<HomeCard> {
                     }
                 }
 
-                int end = ((lastActivity.size() > 4)?lastActivity.size()-1:3); // HARDCODED: Number of hives to prioritize.
+                int end = ((lastActivity.size() < numberOfPrioritizedCards)?lastActivity.size():numberOfPrioritizedCards) -1; // HARDCODED: Number of hives to prioritize.
 
                 HiveMessageCard[] hiveMessageCards = lastActivity.values().toArray(new HiveMessageCard[lastActivity.size()]);
                 for (int i = end; i >= 0; i--)

@@ -1,5 +1,9 @@
 package com.chattyhive.Core.BusinessObjects;
 
+import com.chattyhive.Core.ContentProvider.Formats.INTERVAL;
+import com.chattyhive.Core.ContentProvider.SynchronousDataPath.AvailableCommands;
+import com.chattyhive.Core.ContentProvider.SynchronousDataPath.Command;
+import com.chattyhive.Core.ContentProvider.SynchronousDataPath.CommandQueue;
 import com.chattyhive.Core.Controller;
 import com.chattyhive.Core.StaticParameters;
 import com.chattyhive.Core.BusinessObjects.Hives.Hive;
@@ -8,6 +12,7 @@ import com.chattyhive.Core.ContentProvider.Formats.EXPLORE_FILTER;
 import com.chattyhive.Core.ContentProvider.Formats.Format;
 import com.chattyhive.Core.ContentProvider.Formats.HIVE;
 import com.chattyhive.Core.ContentProvider.Formats.HIVE_LIST;
+import com.chattyhive.Core.Util.CallbackDelegate;
 import com.chattyhive.Core.Util.Events.CommandCallbackEventArgs;
 import com.chattyhive.Core.Util.Events.Event;
 import com.chattyhive.Core.Util.Events.EventArgs;
@@ -69,16 +74,26 @@ public class Explore {
         this.onMoreResults = new Event<EventArgs>();
     }
 
-    public void More() {
+    public void More(String accountID) {
         if ((!hasMore) || (loadingMore)) return;
 
         this.loadingMore = true;
         int howMany = ((this.nextStartIndex == 0)? StaticParameters.ExploreStart : StaticParameters.ExploreCount);
 
-        this.dataProvider.ExploreHives(nextStartIndex,howMany,sortType,this.categoryCode,new EventHandler<CommandCallbackEventArgs>(this,"onExploreHivesCallback",CommandCallbackEventArgs.class));
+        EXPLORE_FILTER filter = new EXPLORE_FILTER();
+        filter.RESULT_INTERVAL = new INTERVAL();
+        filter.RESULT_INTERVAL.COUNT = howMany;
+        filter.RESULT_INTERVAL.START_INDEX = String.valueOf(this.nextStartIndex);
+        filter.CATEGORY = this.categoryCode;
+        filter.TYPE = sortType.name();
+
+        Command command = new Command(AvailableCommands.Explore,filter);
+        command.addCallbackDelegate(new CallbackDelegate(this,"onExploreHivesCallback",CommandCallbackEventArgs.class));
+
+        this.dataProvider.runCommand(accountID,command, CommandQueue.Priority.RealTime);
     }
 
-    public void onExploreHivesCallback (Object sender, CommandCallbackEventArgs eventArgs) {
+    public void onExploreHivesCallback (CommandCallbackEventArgs eventArgs) {
         ArrayList<Format> receivedFormats = eventArgs.getReceivedFormats();
         ArrayList<Format> sentFormats = eventArgs.getSentFormats();
 

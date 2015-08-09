@@ -39,19 +39,42 @@ public class Controller {
     }
 
     private DataProvider dataProvider;
+
+    private HashMap<String,IServerUser> serverUsers;
     private HashMap<IServerUser,User> userRoots;
 
 
     private Controller(LocalStorageInterface settingsStorage) {
-        this.dataProvider = new DataProvider(settingsStorage);
+        this.dataProvider = new DataProvider(this,settingsStorage);
+        this.serverUsers = new HashMap<String,IServerUser>();
         this.userRoots = new HashMap<IServerUser, User>();
     }
 
     public User getUserRoot(IServerUser serverUser) {
         if (!this.userRoots.containsKey(serverUser)) {
-            this.userRoots.put(serverUser,new User(this,serverUser));
+            this.userRoots.put(serverUser,new User(this,serverUser.getUserData(IServerUser.userIDKey),true));
         }
         return this.userRoots.get(serverUser);
+    }
+    public User getUserRoot(String publicName) {
+        if (!this.serverUsers.containsKey(publicName)) {
+            return null;
+        }
+        return this.getUserRoot(this.serverUsers.get(publicName));
+    }
+    public void activateAccount(IServerUser serverUser) {
+        String publicName = serverUser.getUserData(IServerUser.userIDKey);
+        this.serverUsers.put(publicName,serverUser);
+        this.userRoots.put(serverUser,new User(this,publicName,true));
+    }
+    public String getAccountID(IServerUser serverUser) {
+        return serverUser.getUserData(IServerUser.userIDKey);
+    }
+    public IServerUser getServerUser(String accountID) {
+        if (!this.serverUsers.containsKey(accountID)) {
+            return null;
+        }
+        return this.serverUsers.get(accountID);
     }
 
     public DataProvider getDataProvider() {
@@ -74,7 +97,7 @@ public class Controller {
         USER_EMAIL user_email = new USER_EMAIL();
         user_email.EMAIL_USER_PART = userPart;
         user_email.EMAIL_SERVER_PART = serverPart;
-        Command emailCheck = new Command(null,AvailableCommands.EmailCheck,user_email);
+        Command emailCheck = new Command(AvailableCommands.EmailCheck,user_email);
         emailCheck.addCallbackDelegate(Callback);
         this.dataProvider.runCommand(emailCheck, CommandQueue.Priority.RealTime);
     }
@@ -82,7 +105,7 @@ public class Controller {
     public void CheckUsername(String username, CallbackDelegate Callback) {
         USERNAME user_username = new USERNAME();
         user_username.PUBLIC_NAME = username;
-        Command usernameCheck = new Command(null,AvailableCommands.UsernameCheck,user_username);
+        Command usernameCheck = new Command(AvailableCommands.UsernameCheck,user_username);
         usernameCheck.addCallbackDelegate(Callback);
         this.dataProvider.runCommand(usernameCheck, CommandQueue.Priority.RealTime);
     }
