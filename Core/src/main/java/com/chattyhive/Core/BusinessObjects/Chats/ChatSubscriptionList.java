@@ -1,116 +1,14 @@
-package com.chattyhive.Core.BusinessObjects.Home;
+package com.chattyhive.Core.BusinessObjects.Chats;
 
-import com.chattyhive.Core.BusinessObjects.Hives.Hive;
-import com.chattyhive.Core.BusinessObjects.Chats.Messages.Message;
-import com.chattyhive.Core.BusinessObjects.Hives.HiveList;
-import com.chattyhive.Core.BusinessObjects.Home.Cards.HiveMessageCard;
-import com.chattyhive.Core.BusinessObjects.Users.User;
-import com.chattyhive.Core.Util.Events.Event;
-import com.chattyhive.Core.Util.Events.EventArgs;
-import com.chattyhive.Core.Util.Events.EventHandler;
-
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.Iterator;
-import java.util.List;
-import java.util.TreeMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
- * Created by Jonathan on 30/05/2015.
+ * Created by jonathrodriguez on 11/08/2015.
  */
-public class Home implements Collection<HomeCard> {
-
-    /*********************/
-    // HARDCODED variables
-    private static int estimatedJoinDays = 7; //Number of days in the past for unknown join dates.
-    private static int lastActivityPriorityDays = 7; //Number of days since last activity from the user to prioritize cards.
-    private static int numberOfPrioritizedCards = 4; //Number of prioritized cards. Those will show up in home.
-    /********************/
-
-    private List<HomeCard> homeCards = null;
-    private HiveList hiveList = null;
-    private User owner;
-
-    public Event<EventArgs> HomeReceived;
-
-    public Home(User owner) {
-        this.hiveList = owner.getHiveList();
-        this.owner = owner;
-        this.HomeReceived = new Event<EventArgs>();
-
-        this.hiveList.HiveListChanged.add(new EventHandler<EventArgs>(this, "onHiveListChanged", EventArgs.class));
-    }
-
-
-    public ArrayList<HomeCard> getHomeCards() {
-        ArrayList<HomeCard> result = new ArrayList<HomeCard>();
-
-        if (homeCards != null)
-            result.addAll(this.homeCards);
-
-        return result;
-    }
-
-    public void RequestHome() {
-        //TODO: Request home to the server when implemented.
-
-        new Thread() {
-            @Override
-            public void run() {
-                if (homeCards != null)
-                    homeCards.clear();
-                else
-                    homeCards = new ArrayList<HomeCard>();
-
-                Message message;
-                Message sentMessage;
-                HiveMessageCard homeCard;
-                TreeMap<Date,HiveMessageCard> lastActivity = new TreeMap<Date, HiveMessageCard>();
-                GregorianCalendar joinDate = new GregorianCalendar();
-                joinDate.add(Calendar.DATE,-1*estimatedJoinDays); //HARDCODED: "Estimated" join date to hive.
-                GregorianCalendar lastPriority = new GregorianCalendar();
-                lastPriority.add(Calendar.DATE,-1*lastActivityPriorityDays); // HARDCODED: Days to prioritize last activity.
-                for (Hive hive : hiveList) {
-                    if ((hive != null) && (hive.getPublicChat() != null) && (hive.getPublicChat().getConversation() != null) && (hive.getPublicChat().getConversation().getCount() > 0)) {
-                        message = hive.getPublicChat().getConversation().getLastMessage();
-                        if (message.getUser().getUserID().equals(owner.getUserID()))
-                            sentMessage = message;
-                        else
-                            sentMessage = hive.getPublicChat().getConversation().getLastSentMessage(owner);
-
-                        Date lastHiveActivity = ((sentMessage != null)?sentMessage.getOrdinationTimeStamp():joinDate.getTime());
-
-                        homeCard = new HiveMessageCard(message);
-                        homeCards.add(homeCard);
-
-                        if (lastHiveActivity.after(lastPriority.getTime()))
-                            lastActivity.put(lastHiveActivity,homeCard);
-                    }
-                }
-
-                int end = ((lastActivity.size() < numberOfPrioritizedCards)?lastActivity.size():numberOfPrioritizedCards) -1; // HARDCODED: Number of hives to prioritize.
-
-                HiveMessageCard[] hiveMessageCards = lastActivity.values().toArray(new HiveMessageCard[lastActivity.size()]);
-                for (int i = end; i >= 0; i--)
-                    hiveMessageCards[i].setPriorized(true);
-
-                Collections.sort(homeCards,new HomeCardComparator());
-
-                HomeReceived.fire(this, EventArgs.Empty());
-            }
-        }.start();
-    }
-
-    public void onHiveListChanged (Object sender, EventArgs eventArgs) {
-        if ((sender == null) || ((sender instanceof Hive) && (((Hive) sender).getPublicChat() != null) && (((Hive) sender).getPublicChat().getConversation() != null) && (((Hive) sender).getPublicChat().getConversation().getCount() > 0))) {
-            this.RequestHome();
-        }
-    }
+public class ChatSubscriptionList implements Collection<ChatSubscription> { //TODO: implement this
 
     /**
      * Returns the number of elements in this collection.  If this collection
@@ -121,7 +19,7 @@ public class Home implements Collection<HomeCard> {
      */
     @Override
     public int size() {
-        return this.homeCards.size();
+        return 0;
     }
 
     /**
@@ -131,7 +29,107 @@ public class Home implements Collection<HomeCard> {
      */
     @Override
     public boolean isEmpty() {
-        return this.homeCards.isEmpty();
+        return false;
+    }
+
+    /**
+     * Returns <tt>true</tt> if this map contains a mapping for the specified
+     * key.  More formally, returns <tt>true</tt> if and only if
+     * this map contains a mapping for a key <tt>k</tt> such that
+     * <tt>(key==null ? k==null : key.equals(k))</tt>.  (There can be
+     * at most one such mapping.)
+     *
+     * @param key key whose presence in this map is to be tested
+     * @return <tt>true</tt> if this map contains a mapping for the specified
+     * key
+     * @throws ClassCastException   if the key is of an inappropriate type for
+     *                              this map
+     *                              (<a href="Collection.html#optional-restrictions">optional</a>)
+     * @throws NullPointerException if the specified key is null and this map
+     *                              does not permit null keys
+     *                              (<a href="Collection.html#optional-restrictions">optional</a>)
+     */
+    public boolean containsKey(Object key) {
+        return false;
+    }
+
+    /**
+     * Returns <tt>true</tt> if this map maps one or more keys to the
+     * specified value.  More formally, returns <tt>true</tt> if and only if
+     * this map contains at least one mapping to a value <tt>v</tt> such that
+     * <tt>(value==null ? v==null : value.equals(v))</tt>.  This operation
+     * will probably require time linear in the map size for most
+     * implementations of the <tt>Map</tt> interface.
+     *
+     * @param value value whose presence in this map is to be tested
+     * @return <tt>true</tt> if this map maps one or more keys to the
+     * specified value
+     * @throws ClassCastException   if the value is of an inappropriate type for
+     *                              this map
+     *                              (<a href="Collection.html#optional-restrictions">optional</a>)
+     * @throws NullPointerException if the specified value is null and this
+     *                              map does not permit null values
+     *                              (<a href="Collection.html#optional-restrictions">optional</a>)
+     */
+    public boolean containsValue(Object value) {
+        return false;
+    }
+
+    /**
+     * Returns the value to which the specified key is mapped,
+     * or {@code null} if this map contains no mapping for the key.
+     * <p/>
+     * <p>More formally, if this map contains a mapping from a key
+     * {@code k} to a value {@code v} such that {@code (key==null ? k==null :
+     * key.equals(k))}, then this method returns {@code v}; otherwise
+     * it returns {@code null}.  (There can be at most one such mapping.)
+     * <p/>
+     * <p>If this map permits null values, then a return value of
+     * {@code null} does not <i>necessarily</i> indicate that the map
+     * contains no mapping for the key; it's also possible that the map
+     * explicitly maps the key to {@code null}.  The {@link #containsKey
+     * containsKey} operation may be used to distinguish these two cases.
+     *
+     * @param key the key whose associated value is to be returned
+     * @return the value to which the specified key is mapped, or
+     * {@code null} if this map contains no mapping for the key
+     * @throws ClassCastException   if the key is of an inappropriate type for
+     *                              this map
+     *                              (<a href="Collection.html#optional-restrictions">optional</a>)
+     * @throws NullPointerException if the specified key is null and this map
+     *                              does not permit null keys
+     *                              (<a href="Collection.html#optional-restrictions">optional</a>)
+     */
+    public ChatSubscription get(Object key) {
+        return null;
+    }
+
+    /**
+     * Associates the specified value with the specified key in this map
+     * (optional operation).  If the map previously contained a mapping for
+     * the key, the old value is replaced by the specified value.  (A map
+     * <tt>m</tt> is said to contain a mapping for a key <tt>k</tt> if and only
+     * if {@link #containsKey(Object) m.containsKey(k)} would return
+     * <tt>true</tt>.)
+     *
+     * @param key   key with which the specified value is to be associated
+     * @param value value to be associated with the specified key
+     * @return the previous value associated with <tt>key</tt>, or
+     * <tt>null</tt> if there was no mapping for <tt>key</tt>.
+     * (A <tt>null</tt> return can also indicate that the map
+     * previously associated <tt>null</tt> with <tt>key</tt>,
+     * if the implementation supports <tt>null</tt> values.)
+     * @throws UnsupportedOperationException if the <tt>put</tt> operation
+     *                                       is not supported by this map
+     * @throws ClassCastException            if the class of the specified key or value
+     *                                       prevents it from being stored in this map
+     * @throws NullPointerException          if the specified key or value is null
+     *                                       and this map does not permit null keys or values
+     * @throws IllegalArgumentException      if some property of the specified key
+     *                                       or value prevents it from being stored in this map
+     */
+    public ChatSubscription put(String key, ChatSubscription value) {
+        return null;
     }
 
     /**
@@ -164,13 +162,8 @@ public class Home implements Collection<HomeCard> {
      * @return an <tt>Iterator</tt> over the elements in this collection
      */
     @Override
-    public Iterator<HomeCard> iterator() {
-        ArrayList<HomeCard> result = new ArrayList<HomeCard>();
-
-        if (homeCards != null)
-            result.addAll(this.homeCards);
-
-        return result.iterator();
+    public Iterator<ChatSubscription> iterator() {
+        return null;
     }
 
     /**
@@ -191,7 +184,7 @@ public class Home implements Collection<HomeCard> {
      */
     @Override
     public Object[] toArray() {
-        return this.homeCards.toArray();
+        return new Object[0];
     }
 
     /**
@@ -238,7 +231,7 @@ public class Home implements Collection<HomeCard> {
      */
     @Override
     public <T> T[] toArray(T[] a) {
-        return this.homeCards.toArray(a);
+        return null;
     }
 
     /**
@@ -260,7 +253,7 @@ public class Home implements Collection<HomeCard> {
      * the invariant that a collection always contains the specified element
      * after this call returns.
      *
-     * @param homeCard element whose presence in this collection is to be ensured
+     * @param chat element whose presence in this collection is to be ensured
      * @return <tt>true</tt> if this collection changed as a result of the
      * call
      * @throws UnsupportedOperationException if the <tt>add</tt> operation
@@ -275,7 +268,7 @@ public class Home implements Collection<HomeCard> {
      *                                       time due to insertion restrictions
      */
     @Override
-    public boolean add(HomeCard homeCard) {
+    public boolean add(ChatSubscription chat) {
         return false;
     }
 
@@ -304,6 +297,28 @@ public class Home implements Collection<HomeCard> {
         return false;
     }
 
+    /**
+     * Copies all of the mappings from the specified map to this map
+     * (optional operation).  The effect of this call is equivalent to that
+     * of calling {@link #put(String, ChatSubscription) put(k, v)} on this map once
+     * for each mapping from key <tt>k</tt> to value <tt>v</tt> in the
+     * specified map.  The behavior of this operation is undefined if the
+     * specified map is modified while the operation is in progress.
+     *
+     * @param m mappings to be stored in this map
+     * @throws UnsupportedOperationException if the <tt>putAll</tt> operation
+     *                                       is not supported by this map
+     * @throws ClassCastException            if the class of a key or value in the
+     *                                       specified map prevents it from being stored in this map
+     * @throws NullPointerException          if the specified map is null, or if
+     *                                       this map does not permit null keys or values, and the
+     *                                       specified map contains null keys or values
+     * @throws IllegalArgumentException      if some property of a key or value in
+     *                                       the specified map prevents it from being stored in this map
+     */
+    public void putAll(Map<? extends String, ? extends ChatSubscription> m) {
+
+    }
 
     /**
      * Returns <tt>true</tt> if this collection contains all of the elements
@@ -353,7 +368,7 @@ public class Home implements Collection<HomeCard> {
      * @see #add(Object)
      */
     @Override
-    public boolean addAll(Collection<? extends HomeCard> c) {
+    public boolean addAll(Collection<? extends ChatSubscription> c) {
         return false;
     }
 
@@ -421,35 +436,64 @@ public class Home implements Collection<HomeCard> {
      */
     @Override
     public void clear() {
-        this.homeCards.clear();
+
     }
 
-    public class HomeCardComparator implements Comparator<HomeCard> {
-        @Override
-        public int compare(HomeCard o1, HomeCard o2) {
-            if ((o1 == null) && (o2 != null))
-                return 1;
-            else if ((o1 != null) && (o2 == null))
-                return -1;
-            else if (o1 == null) //&& (o2 == null)) <- Which is always true
-                return 0;
-            else if ((o1 instanceof HiveMessageCard) && (!(o2 instanceof HiveMessageCard)))
-                return 1;
-            else if ((!(o1 instanceof HiveMessageCard)) && (o2 instanceof HiveMessageCard))
-                return -1;
-            else if (!(o1 instanceof HiveMessageCard)) //&& (!(o2 instanceof HiveMessageCard))) <- Which is always true
-                return 0;
-            else {
-                HiveMessageCard h1 = (HiveMessageCard)o1;
-                HiveMessageCard h2 = (HiveMessageCard)o2;
+    /**
+     * Returns a {@link Set} view of the keys contained in this map.
+     * The set is backed by the map, so changes to the map are
+     * reflected in the set, and vice-versa.  If the map is modified
+     * while an iteration over the set is in progress (except through
+     * the iterator's own <tt>remove</tt> operation), the results of
+     * the iteration are undefined.  The set supports element removal,
+     * which removes the corresponding mapping from the map, via the
+     * <tt>Iterator.remove</tt>, <tt>Set.remove</tt>,
+     * <tt>removeAll</tt>, <tt>retainAll</tt>, and <tt>clear</tt>
+     * operations.  It does not support the <tt>add</tt> or <tt>addAll</tt>
+     * operations.
+     *
+     * @return a set view of the keys contained in this map
+     */
+    public Set<String> keySet() {
+        return null;
+    }
 
-                if ((!h1.getPriorized()) && (h2.getPriorized()))
-                    return 1;
-                else if ((h1.getPriorized()) && (!h2.getPriorized()))
-                    return -1;
-                else
-                    return h2.getMessage().getOrdinationTimeStamp().compareTo(h1.getMessage().getOrdinationTimeStamp());
-            }
-        }
+    /**
+     * Returns a {@link Collection} view of the values contained in this map.
+     * The collection is backed by the map, so changes to the map are
+     * reflected in the collection, and vice-versa.  If the map is
+     * modified while an iteration over the collection is in progress
+     * (except through the iterator's own <tt>remove</tt> operation),
+     * the results of the iteration are undefined.  The collection
+     * supports element removal, which removes the corresponding
+     * mapping from the map, via the <tt>Iterator.remove</tt>,
+     * <tt>Collection.remove</tt>, <tt>removeAll</tt>,
+     * <tt>retainAll</tt> and <tt>clear</tt> operations.  It does not
+     * support the <tt>add</tt> or <tt>addAll</tt> operations.
+     *
+     * @return a collection view of the values contained in this map
+     */
+    public Collection<ChatSubscription> values() {
+        return null;
+    }
+
+    /**
+     * Returns a {@link Set} view of the mappings contained in this map.
+     * The set is backed by the map, so changes to the map are
+     * reflected in the set, and vice-versa.  If the map is modified
+     * while an iteration over the set is in progress (except through
+     * the iterator's own <tt>remove</tt> operation, or through the
+     * <tt>setValue</tt> operation on a map entry returned by the
+     * iterator) the results of the iteration are undefined.  The set
+     * supports element removal, which removes the corresponding
+     * mapping from the map, via the <tt>Iterator.remove</tt>,
+     * <tt>Set.remove</tt>, <tt>removeAll</tt>, <tt>retainAll</tt> and
+     * <tt>clear</tt> operations.  It does not support the
+     * <tt>add</tt> or <tt>addAll</tt> operations.
+     *
+     * @return a set view of the mappings contained in this map
+     */
+    public Set<Map.Entry<String, ChatSubscription>> entrySet() {
+        return null;
     }
 }

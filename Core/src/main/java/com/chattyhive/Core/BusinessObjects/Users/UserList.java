@@ -1,14 +1,31 @@
 package com.chattyhive.Core.BusinessObjects.Users;
 
+import com.chattyhive.Core.BusinessObjects.Hives.Hive;
+import com.chattyhive.Core.Util.Events.Event;
+import com.chattyhive.Core.Util.Events.EventArgs;
+
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 /**
  * Created by Jonathan on 31/05/2015.
  */
 public class UserList implements Collection<User> {
+
+    private TreeMap<String,User> users;
+
+    public Event<EventArgs> UserListChanged;
+
+    public UserList() {
+        this.UserListChanged = new Event<EventArgs>();
+        this.users = new TreeMap<String, User>();
+    }
+
     /**
      * Returns the number of elements in this collection.  If this collection
      * contains more than <tt>Integer.MAX_VALUE</tt> elements, returns
@@ -18,7 +35,7 @@ public class UserList implements Collection<User> {
      */
     @Override
     public int size() {
-        return 0;
+        return this.users.size();
     }
 
     /**
@@ -26,9 +43,24 @@ public class UserList implements Collection<User> {
      *
      * @return <tt>true</tt> if this collection contains no elements
      */
+
+    /**
+     * Returns an iterator over the elements in this collection.  There are no
+     * guarantees concerning the order in which the elements are returned
+     * (unless this collection is an instance of some class that provides a
+     * guarantee).
+     *
+     * @return an <tt>Iterator</tt> over the elements in this collection
+     */
+    @Override
+    public Iterator<User> iterator() {
+        Collection<User> users = new ArrayList<User>(this.users.values());
+        return users.iterator();
+    }
+
     @Override
     public boolean isEmpty() {
-        return false;
+        return this.users.isEmpty();
     }
 
     /**
@@ -50,7 +82,7 @@ public class UserList implements Collection<User> {
      */
 
     public boolean containsKey(Object key) {
-        return false;
+        return this.users.containsKey(key);
     }
 
     /**
@@ -72,8 +104,8 @@ public class UserList implements Collection<User> {
      *                              (<a href="Collection.html#optional-restrictions">optional</a>)
      */
 
-    public boolean containsValue(Object value) {
-        return false;
+    public boolean containsValue(User value) {
+        return this.users.containsValue(value);
     }
 
     /**
@@ -102,8 +134,8 @@ public class UserList implements Collection<User> {
      *                              (<a href="Collection.html#optional-restrictions">optional</a>)
      */
 
-    public User get(Object key) {
-        return null;
+    public User get(String key) {
+        return this.users.get(key);
     }
 
     /**
@@ -132,7 +164,7 @@ public class UserList implements Collection<User> {
      */
 
     public User put(String key, User value) {
-        return null;
+        return this.users.put(key,value);
     }
 
     /**
@@ -153,21 +185,10 @@ public class UserList implements Collection<User> {
      */
     @Override
     public boolean contains(Object o) {
-        return false;
+        return this.users.values().contains(o);
     }
 
-    /**
-     * Returns an iterator over the elements in this collection.  There are no
-     * guarantees concerning the order in which the elements are returned
-     * (unless this collection is an instance of some class that provides a
-     * guarantee).
-     *
-     * @return an <tt>Iterator</tt> over the elements in this collection
-     */
-    @Override
-    public Iterator<User> iterator() {
-        return null;
-    }
+
 
     /**
      * Returns an array containing all of the elements in this collection.
@@ -187,7 +208,7 @@ public class UserList implements Collection<User> {
      */
     @Override
     public Object[] toArray() {
-        return new Object[0];
+        return this.users.values().toArray();
     }
 
     /**
@@ -234,7 +255,7 @@ public class UserList implements Collection<User> {
      */
     @Override
     public <T> T[] toArray(T[] a) {
-        return null;
+        return this.users.values().toArray(a);
     }
 
     /**
@@ -272,7 +293,18 @@ public class UserList implements Collection<User> {
      */
     @Override
     public boolean add(User user) {
-        return false;
+        if (user == null)
+            throw new NullPointerException();
+
+        if ((user.getUserID() == null) || (user.getUserID().isEmpty()))
+            throw new IllegalArgumentException();
+
+        boolean result = this.users.containsKey(user.getUserID());
+
+        if (!result)
+            this.users.put(user.getUserID(), user);
+
+        return !result;
     }
 
     /**
@@ -297,7 +329,17 @@ public class UserList implements Collection<User> {
      */
     @Override
     public boolean remove(Object o) {
-        return false;
+        if (o == null)
+            throw new NullPointerException();
+
+        User user = (User)o;
+
+        boolean result = this.users.containsKey(user.getUserID());
+
+        if (result)
+            this.users.remove(user.getUserID());
+
+        return result;
     }
 
     /**
@@ -308,7 +350,7 @@ public class UserList implements Collection<User> {
      * specified map.  The behavior of this operation is undefined if the
      * specified map is modified while the operation is in progress.
      *
-     * @param m mappings to be stored in this map
+     * @param map mappings to be stored in this map
      * @throws UnsupportedOperationException if the <tt>putAll</tt> operation
      *                                       is not supported by this map
      * @throws ClassCastException            if the class of a key or value in the
@@ -320,8 +362,8 @@ public class UserList implements Collection<User> {
      *                                       the specified map prevents it from being stored in this map
      */
 
-    public void putAll(Map<? extends String, ? extends User> m) {
-
+    public void putAll(Map<? extends String, ? extends User> map) {
+        this.users.putAll(map);
     }
 
     /**
@@ -344,7 +386,11 @@ public class UserList implements Collection<User> {
      */
     @Override
     public boolean containsAll(Collection<?> c) {
-        return false;
+        for (Object o : c)
+            if (!this.contains(o))
+                return false;
+
+        return true;
     }
 
     /**
@@ -373,7 +419,12 @@ public class UserList implements Collection<User> {
      */
     @Override
     public boolean addAll(Collection<? extends User> c) {
-        return false;
+        boolean result = false;
+
+        for (User user : c)
+            result |= this.add(user);
+
+        return result;
     }
 
     /**
@@ -401,7 +452,12 @@ public class UserList implements Collection<User> {
      */
     @Override
     public boolean removeAll(Collection<?> c) {
-        return false;
+        boolean result = false;
+
+        for (Object o : c)
+            result |= this.remove(o);
+
+        return result;
     }
 
     /**
@@ -428,7 +484,15 @@ public class UserList implements Collection<User> {
      */
     @Override
     public boolean retainAll(Collection<?> c) {
-        return false;
+        Collection<User> values = new ArrayList<User>(this.users.values());
+        ArrayList<User> toRemove = new ArrayList<User>();
+
+        for (User user : values)
+            if (!c.contains(user))
+                toRemove.add(user);
+
+
+        return this.removeAll(toRemove);
     }
 
     /**
@@ -440,7 +504,7 @@ public class UserList implements Collection<User> {
      */
     @Override
     public void clear() {
-
+        this.users.clear();
     }
 
     /**
@@ -460,7 +524,7 @@ public class UserList implements Collection<User> {
      */
 
     public Set<String> keySet() {
-        return null;
+        return new TreeSet<String>(this.users.keySet());
     }
 
     /**
@@ -480,7 +544,7 @@ public class UserList implements Collection<User> {
      */
 
     public Collection<User> values() {
-        return null;
+        return new ArrayList<User>(this.users.values());
     }
 
     /**
@@ -501,6 +565,6 @@ public class UserList implements Collection<User> {
      */
 
     public Set<Map.Entry<String, User>> entrySet() {
-        return null;
+        return new TreeSet<Map.Entry<String, User>>(this.users.entrySet());
     }
 }

@@ -1,8 +1,10 @@
 package com.chattyhive.Core.BusinessObjects.Users;
 
+import com.chattyhive.Core.BusinessObjects.Chats.Chat;
 import com.chattyhive.Core.BusinessObjects.Chats.ChatList;
 import com.chattyhive.Core.BusinessObjects.Hives.HiveList;
 import com.chattyhive.Core.BusinessObjects.Home.Home;
+import com.chattyhive.Core.BusinessObjects.Subscriptions.SubscribableList;
 import com.chattyhive.Core.BusinessObjects.Users.Requests.RequestList;
 import com.chattyhive.Core.ContentProvider.SynchronousDataPath.Command;
 import com.chattyhive.Core.ContentProvider.SynchronousDataPath.CommandQueue;
@@ -43,8 +45,8 @@ public class User {
     private PrivateProfile userPrivateProfile; //Private profile for any user.
 
     private Home home;
-    private HiveList subscribedHives;
-    private ChatList chatList;
+    private SubscribableList<Hive> hiveList;
+    private SubscribableList<Chat> chatList;
     private UserList friendList;
     private UserList hivemateList;
     private RequestList requestList;
@@ -60,8 +62,8 @@ public class User {
         this.requestList = new RequestList();
         this.hivemateList = new UserList();
         this.friendList = new UserList();
-        this.chatList = new ChatList();
-        this.subscribedHives = new HiveList();
+        this.chatList = new SubscribableList<Chat>();
+        this.hiveList = new SubscribableList<Hive>();
 
         this.UserLoaded = new Event<EventArgs>();
     }
@@ -140,11 +142,11 @@ public class User {
         return this.home;
     }
 
-    public HiveList getSubscribedHives() { //FIXME: return unmodifiable list.
-        return this.subscribedHives;
+    public SubscribableList<Hive> getHiveList() {
+        return this.hiveList;
     }
 
-    public ChatList getChatList() { //FIXME: return unmodifiable list.
+    public SubscribableList<Chat> getChatList() {
         return this.chatList;
     }
 
@@ -369,10 +371,11 @@ public class User {
             else if ((((LOCAL_USER_PROFILE) format).USER_PRIVATE_PROFILE != null) && (this.userPrivateProfile != null))
                 this.userPrivateProfile.fromFormat(((LOCAL_USER_PROFILE) format).USER_PRIVATE_PROFILE);
 
-            if (((LOCAL_USER_PROFILE) format).HIVES_SUBSCRIBED != null)
+           /* if (((LOCAL_USER_PROFILE) format).HIVES_SUBSCRIBED != null)
                 for (HIVE_ID hive : ((LOCAL_USER_PROFILE) format).HIVES_SUBSCRIBED) {
-                    this.subscribedHives.add(Hive.getHive(hive.NAME_URL));
-                }
+                    if (!this.hiveList.containsKey(hive.NAME_URL));
+                        this.hiveList.add(new Hive(hive, this.userID));
+                }*/ //TODO: Fill a subscription here
 
             if (this.userPublicProfile != null)
                 this.userID = this.userPublicProfile.userID;

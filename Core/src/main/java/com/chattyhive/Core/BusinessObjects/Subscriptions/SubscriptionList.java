@@ -1,28 +1,33 @@
-package com.chattyhive.Core.BusinessObjects.Chats;
+package com.chattyhive.Core.BusinessObjects.Subscriptions;
 
 import com.chattyhive.Core.Util.Events.Event;
 import com.chattyhive.Core.Util.Events.EventArgs;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.TreeSet;
 
 /**
- * Created by Jonathan on 31/05/2015.
+ * Created by jonathrodriguez on 11/08/2015.
  */
-public class ChatList implements Collection<Chat> {
+public class SubscriptionList<E extends ISubscribable> implements Collection<Subscription<E>> {
 
-    private TreeMap<String,Chat> chats;
+    private TreeMap<String, SubscribableList<E>> subscriptionsBySubscriber;
+    private TreeMap<String, SubscriberList<E>> subscriptionsBySubscribable;
+    private HashMap<SubscriptionKey<E>,Subscription<E>> subscriptions;
 
-    public Event<EventArgs> ChatListChanged;
+    public Event<EventArgs> SubscriptionListChanged;
 
-    public ChatList() {
-        this.ChatListChanged = new Event<EventArgs>();
-        this.chats = new TreeMap<String, Chat>();
+    public SubscriptionList() {
+        this.SubscriptionListChanged = new Event<EventArgs>();
+        this.subscriptionsBySubscriber = new TreeMap<String, SubscribableList<E>>();
+        this.subscriptionsBySubscribable = new TreeMap<String, SubscriberList<E>>();
+        this.subscriptions = new HashMap<SubscriptionKey<E>,Subscription<E>>();
     }
 
     /**
@@ -34,12 +39,13 @@ public class ChatList implements Collection<Chat> {
      */
     @Override
     public int size() {
-        return this.chats.size();
+        return this.subscriptions.size();
     }
 
-    public Chat get(int index) {
-        if ((index >= 0) && (index < this.chats.size()))
-            return this.chats.values().toArray(new Chat[this.chats.size()])[index];
+    @SuppressWarnings("unchecked")
+    public Subscription<E> get(int index) {
+        if ((index >= 0) && (index < this.subscriptions.size()))
+            return this.subscriptions.values().toArray((Subscription<E>[]) new Object[this.subscriptions.size()])[index];
         else
             return null;
     }
@@ -53,9 +59,9 @@ public class ChatList implements Collection<Chat> {
      * @return an <tt>Iterator</tt> over the elements in this collection
      */
     @Override
-    public Iterator<Chat> iterator() {
-        Collection<Chat> chats = new ArrayList<Chat>(this.chats.values());
-        return chats.iterator();
+    public Iterator<Subscription<E>> iterator() {
+        Collection<Subscription<E>> subscriptions = new ArrayList<Subscription<E>>(this.subscriptions.values());
+        return subscriptions.iterator();
     }
 
     /**
@@ -65,7 +71,7 @@ public class ChatList implements Collection<Chat> {
      */
     @Override
     public boolean isEmpty() {
-        return this.chats.isEmpty();
+        return this.subscriptions.isEmpty();
     }
 
     /**
@@ -85,8 +91,8 @@ public class ChatList implements Collection<Chat> {
      *                              does not permit null keys
      *                              (<a href="Collection.html#optional-restrictions">optional</a>)
      */
-    public boolean containsKey(String key) {
-        return this.chats.containsKey(key);
+    public boolean containsKey(SubscriptionKey<E> key) {
+        return this.subscriptions.containsKey(key);
     }
 
     /**
@@ -107,8 +113,8 @@ public class ChatList implements Collection<Chat> {
      *                              map does not permit null values
      *                              (<a href="Collection.html#optional-restrictions">optional</a>)
      */
-    public boolean containsValue(Chat value) {
-        return this.chats.containsValue(value);
+    public boolean containsValue(Subscription<E> value) {
+        return this.subscriptions.containsValue(value);
     }
 
     /**
@@ -136,8 +142,8 @@ public class ChatList implements Collection<Chat> {
      *                              does not permit null keys
      *                              (<a href="Collection.html#optional-restrictions">optional</a>)
      */
-    public Chat get(String key) {
-        return this.chats.get(key);
+    public Subscription<E> get(SubscriptionKey<E> key) {
+        return this.subscriptions.get(key);
     }
 
     /**
@@ -145,7 +151,7 @@ public class ChatList implements Collection<Chat> {
      * (optional operation).  If the map previously contained a mapping for
      * the key, the old value is replaced by the specified value.  (A map
      * <tt>m</tt> is said to contain a mapping for a key <tt>k</tt> if and only
-     * if {@link #containsKey(String) m.containsKey(k)} would return
+     * if {@link #containsKey(SubscriptionKey<E>) m.containsKey(k)} would return
      * <tt>true</tt>.)
      *
      * @param key   key with which the specified value is to be associated
@@ -164,8 +170,22 @@ public class ChatList implements Collection<Chat> {
      * @throws IllegalArgumentException      if some property of the specified key
      *                                       or value prevents it from being stored in this map
      */
-    public Chat put(String key, Chat value) {
-        return this.chats.put(key,value);
+    public Subscription<E> put(SubscriptionKey<E> key, Subscription<E> value) {
+        if (!key.equals(new SubscriptionKey<E>(value.getSubscribable(),value.getUser())))
+            throw new IllegalArgumentException("Key does not correspond to specified value");
+        Subscription<E> result1 = this.subscriptions.put(key,value);
+
+        if (!this.subscriptionsBySubscribable.containsKey(key.getSubscribable().getID()))
+            this.subscriptionsBySubscribable.put(key.getSubscribable().getID(),new SubscriberList<E>());
+        Subscription<E> result2 = this.subscriptionsBySubscribable.get(key.getSubscribable().getID()).put(key.getSubscriber().getUserID(), value);
+
+        if (!this.subscriptionsBySubscriber.containsKey(key.getSubscriber().getUserID()))
+            this.subscriptionsBySubscriber.put(key.getSubscriber().getUserID(),new SubscribableList<E>());
+        Subscription<E> result3 = this.subscriptionsBySubscriber.get(key.getSubscriber().getUserID()).put(key.getSubscribable().getID(), value);
+
+        //TODO: Validate that results match
+
+        return result1;
     }
 
     /**
@@ -186,7 +206,7 @@ public class ChatList implements Collection<Chat> {
      */
     @Override
     public boolean contains(Object o) {
-        return this.chats.values().contains(o);
+        return this.subscriptions.values().contains(o);
     }
 
 
@@ -209,7 +229,7 @@ public class ChatList implements Collection<Chat> {
      */
     @Override
     public Object[] toArray() {
-        return this.chats.values().toArray();
+        return this.subscriptions.values().toArray();
     }
 
     /**
@@ -256,7 +276,7 @@ public class ChatList implements Collection<Chat> {
      */
     @Override
     public <T> T[] toArray(T[] a) {
-        return this.chats.values().toArray(a);
+        return this.subscriptions.values().toArray(a);
     }
 
     /**
@@ -278,7 +298,7 @@ public class ChatList implements Collection<Chat> {
      * the invariant that a collection always contains the specified element
      * after this call returns.
      *
-     * @param chat element whose presence in this collection is to be ensured
+     * @param subscription element whose presence in this collection is to be ensured
      * @return <tt>true</tt> if this collection changed as a result of the
      * call
      * @throws UnsupportedOperationException if the <tt>add</tt> operation
@@ -293,17 +313,19 @@ public class ChatList implements Collection<Chat> {
      *                                       time due to insertion restrictions
      */
     @Override
-    public boolean add(Chat chat) {
-        if (chat == null)
+    public boolean add(Subscription<E> subscription) {
+        if (subscriptions == null)
             throw new NullPointerException();
 
-        if ((chat.getID() == null) || (chat.getID().isEmpty()))
+        if ((subscription.getSubscribable() == null) || (subscription.getSubscribable().getID() == null) || (subscription.getSubscribable().getID().isEmpty()) ||
+            (subscription.getUser() == null) || (subscription.getUser().getUserID() == null) || (subscription.getUser().getUserID().isEmpty()))
             throw new IllegalArgumentException();
 
-        boolean result = this.chats.containsKey(chat.getID());
+        boolean result = this.subscriptions.containsKey(new SubscriptionKey<E>(subscription.getSubscribable(),subscription.getUser()));
 
-        if (!result)
-            this.chats.put(chat.getID(), chat);
+        if (!result) {
+            this.put(new SubscriptionKey<E>(subscription.getSubscribable(), subscription.getUser()), subscription);
+        }
 
         return !result;
     }
@@ -333,12 +355,24 @@ public class ChatList implements Collection<Chat> {
         if (o == null)
             throw new NullPointerException();
 
-        Chat chat = (Chat)o;
+        Subscription<E> subscription = (Subscription<E>)o;
+        SubscriptionKey<E> subscriptionKey = new SubscriptionKey<E>(subscription.getSubscribable(),subscription.getUser());
 
-        boolean result = this.chats.containsKey(chat.getID());
+        boolean result = this.subscriptions.containsKey(subscriptionKey);
 
-        if (result)
-            this.chats.remove(chat.getID());
+        if (result) {
+            this.subscriptions.remove(subscriptionKey);
+            if (this.subscriptionsBySubscribable.containsKey(subscriptionKey.getSubscribable().getID())) {
+                this.subscriptionsBySubscribable.get(subscriptionKey.getSubscribable().getID()).remove(subscription);
+                if (this.subscriptionsBySubscribable.get(subscriptionKey.getSubscribable().getID()).isEmpty())
+                    this.subscriptionsBySubscribable.remove(subscriptionKey.getSubscribable().getID());
+            }
+            if (this.subscriptionsBySubscriber.containsKey(subscriptionKey.getSubscriber().getUserID())) {
+                this.subscriptionsBySubscriber.get(subscriptionKey.getSubscriber().getUserID()).remove(subscription);
+                if (this.subscriptionsBySubscriber.get(subscriptionKey.getSubscriber().getUserID()).isEmpty())
+                    this.subscriptionsBySubscriber.remove(subscriptionKey.getSubscriber().getUserID());
+            }
+        }
 
         return result;
     }
@@ -346,7 +380,7 @@ public class ChatList implements Collection<Chat> {
     /**
      * Copies all of the mappings from the specified map to this map
      * (optional operation).  The effect of this call is equivalent to that
-     * of calling {@link #put(String, Chat) put(k, v)} on this map once
+     * of calling {@link #put(SubscriptionKey, Subscription<E>) put(k, v)} on this map once
      * for each mapping from key <tt>k</tt> to value <tt>v</tt> in the
      * specified map.  The behavior of this operation is undefined if the
      * specified map is modified while the operation is in progress.
@@ -362,8 +396,9 @@ public class ChatList implements Collection<Chat> {
      * @throws IllegalArgumentException      if some property of a key or value in
      *                                       the specified map prevents it from being stored in this map
      */
-    public void putAll(Map<? extends String, ? extends Chat> map) {
-        this.chats.putAll(map);
+    public void putAll(Map<? extends SubscriptionKey<E>, ? extends Subscription<E>> map) {
+        for (Map.Entry<? extends SubscriptionKey<E>,? extends Subscription<E>> entry : map.entrySet())
+            this.put(entry.getKey(),entry.getValue());
     }
 
     /**
@@ -418,11 +453,11 @@ public class ChatList implements Collection<Chat> {
      * @see #add(Object)
      */
     @Override
-    public boolean addAll(Collection<? extends Chat> c) {
+    public boolean addAll(Collection<? extends Subscription<E>> c) {
         boolean result = false;
 
-        for (Chat chat : c)
-            result |= this.add(chat);
+        for (Subscription<E> subscription : c)
+            result |= this.add(subscription);
 
         return result;
     }
@@ -484,12 +519,12 @@ public class ChatList implements Collection<Chat> {
      */
     @Override
     public boolean retainAll(Collection<?> c) {
-        Collection<Chat> values = new ArrayList<Chat>(this.chats.values());
-        ArrayList<Chat> toRemove = new ArrayList<Chat>();
+        Collection<Subscription<E>> values = new ArrayList<Subscription<E>>(this.subscriptions.values());
+        ArrayList<Subscription<E>> toRemove = new ArrayList<Subscription<E>>();
 
-        for (Chat chat : values)
-            if (!c.contains(chat))
-                toRemove.add(chat);
+        for (Subscription<E> subscription : values)
+            if (!c.contains(subscription))
+                toRemove.add(subscription);
 
 
         return this.removeAll(toRemove);
@@ -504,7 +539,7 @@ public class ChatList implements Collection<Chat> {
      */
     @Override
     public void clear() {
-        this.chats.clear();
+        this.subscriptions.clear();
     }
 
     /**
@@ -522,8 +557,8 @@ public class ChatList implements Collection<Chat> {
      *
      * @return a set view of the keys contained in this map
      */
-    public Set<String> keySet() {
-        return new TreeSet<String>(this.chats.keySet());
+    public Set<SubscriptionKey<E>> keySet() {
+        return new HashSet<SubscriptionKey<E>>(this.subscriptions.keySet());
     }
 
     /**
@@ -541,8 +576,8 @@ public class ChatList implements Collection<Chat> {
      *
      * @return a collection view of the values contained in this map
      */
-    public Collection<Chat> values() {
-        return new ArrayList<Chat>(this.chats.values());
+    public Collection<Subscription<E>> values() {
+        return new ArrayList<Subscription<E>>(this.subscriptions.values());
     }
 
     /**
@@ -561,7 +596,7 @@ public class ChatList implements Collection<Chat> {
      *
      * @return a set view of the mappings contained in this map
      */
-    public Set<Map.Entry<String, Chat>> entrySet() {
-        return new TreeSet<Map.Entry<String,Chat>>(this.chats.entrySet());
+    public Set<Map.Entry<SubscriptionKey<E>, Subscription<E>>> entrySet() {
+        return new HashSet<Map.Entry<SubscriptionKey<E>, Subscription<E>>>(this.subscriptions.entrySet());
     }
 }

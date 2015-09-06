@@ -300,13 +300,13 @@ public class HiveList implements Collection<Hive> {
         if (hive == null)
             throw new NullPointerException();
 
-        if ((hive.getNameUrl() == null) || (hive.getNameUrl().isEmpty()))
+        if ((hive.getID() == null) || (hive.getID().isEmpty()))
             throw new IllegalArgumentException();
 
-        boolean result = this.hives.containsKey(hive.getNameUrl());
+        boolean result = this.hives.containsKey(hive.getID());
 
         if (!result)
-            this.hives.put(hive.getNameUrl(), hive);
+            this.hives.put(hive.getID(), hive);
 
         return !result;
     }
@@ -338,10 +338,10 @@ public class HiveList implements Collection<Hive> {
 
         Hive hive = (Hive)o;
 
-        boolean result = this.hives.containsKey(hive.getNameUrl());
+        boolean result = this.hives.containsKey(hive.getID());
 
         if (result)
-            this.hives.remove(hive.getNameUrl());
+            this.hives.remove(hive.getID());
 
         return result;
     }
@@ -354,7 +354,7 @@ public class HiveList implements Collection<Hive> {
      * specified map.  The behavior of this operation is undefined if the
      * specified map is modified while the operation is in progress.
      *
-     * @param m mappings to be stored in this map
+     * @param map mappings to be stored in this map
      * @throws UnsupportedOperationException if the <tt>putAll</tt> operation
      *                                       is not supported by this map
      * @throws ClassCastException            if the class of a key or value in the
@@ -366,8 +366,8 @@ public class HiveList implements Collection<Hive> {
      *                                       the specified map prevents it from being stored in this map
      */
 
-    public void putAll(Map<? extends String, ? extends Hive> m) {
-        this.hives.putAll(m);
+    public void putAll(Map<? extends String, ? extends Hive> map) {
+        this.hives.putAll(map);
     }
 
     /**
@@ -428,7 +428,7 @@ public class HiveList implements Collection<Hive> {
         for (Hive hive : c)
             result |= this.add(hive);
 
-        return false;
+        return result;
     }
 
     /**
@@ -461,7 +461,7 @@ public class HiveList implements Collection<Hive> {
         for (Object o : c)
             result |= this.remove(o);
 
-        return false;
+        return result;
     }
 
     /**
