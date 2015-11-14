@@ -25,7 +25,7 @@ public class PRIVATE_PROFILE extends Format {
     public Date BIRTHDATE;
     public ArrayList<String> LANGUAGE;
     public Boolean PRIVATE_SHOW_AGE;
-
+    public Boolean PRIVATE_SHOW_LOCATION;
     
 
     public PRIVATE_PROFILE() {
@@ -77,9 +77,12 @@ public class PRIVATE_PROFILE extends Format {
         if (this.PRIVATE_SHOW_AGE != null)
             jsonObject.addProperty("PRIVATE_SHOW_AGE",this.PRIVATE_SHOW_AGE);
       else
-            jsonObject.add("PRIVATE_SHOW_AGE", JsonNull.INSTANCE);            
+            jsonObject.add("PRIVATE_SHOW_AGE", JsonNull.INSTANCE);
+        if (this.PRIVATE_SHOW_LOCATION != null)
+            jsonObject.addProperty("PRIVATE_SHOW_LOCATION",this.PRIVATE_SHOW_LOCATION);
+        else
+            jsonObject.add("PRIVATE_SHOW_LOCATION", JsonNull.INSTANCE);
 
-      
 
         if (jsonObject.entrySet().isEmpty())
             return JsonNull.INSTANCE;
@@ -130,8 +133,10 @@ public class PRIVATE_PROFILE extends Format {
         property = object.get("PRIVATE_SHOW_AGE");
         if ((property != null) && (property.isJsonPrimitive()) && (((JsonPrimitive)property).isBoolean()))
             this.PRIVATE_SHOW_AGE = property.getAsBoolean();
-            
 
+        property = object.get("PRIVATE_SHOW_LOCATION");
+        if ((property != null) && (property.isJsonPrimitive()) && (((JsonPrimitive)property).isBoolean()))
+            this.PRIVATE_SHOW_LOCATION = property.getAsBoolean();
             
       
     }

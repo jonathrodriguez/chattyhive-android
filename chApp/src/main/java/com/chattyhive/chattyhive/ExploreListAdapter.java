@@ -260,9 +260,9 @@ public class ExploreListAdapter extends BaseAdapter implements AbsListView.OnScr
         holder.collapsed_usersText.setText(String.valueOf(hive.getSubscribedUsersCount()));
 
         holder.expanded_hive_name.setText(hive.getName());
-        if (hive.getDescription() != null)
-            holder.expanded_hive_description.setText(hive.getDescription());
-        else if (hive.getDescription() == null || hive.getDescription() == "")
+        if ((hive.getDescription() != null) && (!hive.getDescription().isEmpty()))
+            holder.expanded_hive_description.setText("\"".concat(hive.getDescription()).concat("\""));
+        else
             holder.expanded_hive_description.setVisibility(View.GONE);
         Category.setCategory(hive.getCategory(),holder.expanded_categoryImage,holder.expanded_categoryText);
         holder.expanded_usersText.setText(context.getString(R.string.explore_hive_card_expanded_n_mates,hive.getSubscribedUsersCount()));
@@ -286,7 +286,7 @@ public class ExploreListAdapter extends BaseAdapter implements AbsListView.OnScr
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         params.setMargins(3, 3, 3, 3);
-        if (tagsArray != null || tagsArray.length > 0) {
+        if (tagsArray != null && tagsArray.length > 0) {
             convertView.findViewById(R.id.explore_list_item_expanded_tags_layout).setVisibility(View.VISIBLE);
             holder.expanded_hive_tagsLayout.removeAllViews();
             holder.expanded_hive_tagsLayout.invalidate();
@@ -303,8 +303,7 @@ public class ExploreListAdapter extends BaseAdapter implements AbsListView.OnScr
                 holder.expanded_hive_tagsLayout.addView(textContainer);
             }
             holder.expanded_hive_tagsLayout.requestLayout();
-        }
-        if (tagsArray.length == 0){
+        }else {
             convertView.findViewById(R.id.explore_list_item_expanded_tags_layout).setVisibility(View.GONE);
         }
 

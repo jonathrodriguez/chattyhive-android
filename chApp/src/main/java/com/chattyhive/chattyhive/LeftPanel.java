@@ -5,6 +5,7 @@ import android.content.Context;
 //import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
+import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -29,7 +30,7 @@ public class LeftPanel {
     int activeStep;
 
     SlidingStepsLayout leftPanelSlidingSteps;
-    LeftPanelListAdapter[] leftPanelListAdapter;
+    BaseAdapter[] leftPanelAdapters;
     TextView active_emptyMessage;
 
     LinearLayout chats;
@@ -49,10 +50,10 @@ public class LeftPanel {
         @Override
         public boolean OnBeginTransition(int actualStep, int nextStep) {
 
-            ((ListView)leftPanelSlidingSteps.getViewByStep(nextStep).findViewById(R.id.left_panel_element_list)).setAdapter(leftPanelListAdapter[nextStep]);
+            ((ListView)leftPanelSlidingSteps.getViewByStep(nextStep).findViewById(R.id.left_panel_element_list)).setAdapter(leftPanelAdapters[nextStep]);
             ((TextView)leftPanelSlidingSteps.getViewByStep(nextStep).findViewById(R.id.left_panel_empty_list_message)).setText(getEmptyMessage(nextStep));
 
-            int count = leftPanelListAdapter[nextStep].getCount();
+            int count = leftPanelAdapters[nextStep].getCount();
             if ((showingEmpty[nextStep]) && (count > 0)) {
                 showingEmpty[nextStep] = false;
                 ((ViewSwitcher)leftPanelSlidingSteps.getViewByStep(nextStep).findViewById(R.id.left_panel_empty_list_view_switcher)).showPrevious();
@@ -126,7 +127,7 @@ public class LeftPanel {
         this.leftPanelSlidingSteps.setOnRemoveLayoutListener(this.removeLayoutListener);
 
         SetButtonSelected(chats,true, (TextView)chats.findViewById(R.id.left_panel_action_bar_tab_text_chats), (ImageView)chats.findViewById(R.id.left_panel_action_bar_tab_img_chats),R.drawable.pestanhas_panel_izquierdo_chats);
-        SetButtonSelected(hives,false, (TextView)hives.findViewById(R.id.left_panel_action_bar_tab_text_hives), (ImageView)hives.findViewById(R.id.left_panel_action_bar_tab_img_hives),R.drawable.pestanhas_panel_izquierdo_hives_blanco);
+        SetButtonSelected(hives, false, (TextView) hives.findViewById(R.id.left_panel_action_bar_tab_text_hives), (ImageView) hives.findViewById(R.id.left_panel_action_bar_tab_img_hives), R.drawable.pestanhas_panel_izquierdo_hives_blanco);
         SetButtonSelected(friends, false, (TextView) friends.findViewById(R.id.left_panel_action_bar_tab_text_friends), (ImageView) friends.findViewById(R.id.left_panel_action_bar_tab_img_friends), R.drawable.pestanhas_panel_izquierdo_users_blanco);
 
         chats.setOnClickListener(left_panel_tab_button_click);
@@ -139,29 +140,40 @@ public class LeftPanel {
         this.context.getResources().getValue(R.color.left_panel_action_bar_search_button_alpha, alpha, true);
         StaticMethods.SetAlpha(((Activity) this.context).findViewById(R.id.left_panel_search_button), alpha.getFloat());
 
-        this.leftPanelListAdapter = new LeftPanelListAdapter[3];
-        this.leftPanelListAdapter[0] = new LeftPanelListAdapter(this.context);
-        this.leftPanelListAdapter[1] = new LeftPanelListAdapter(this.context);
-        this.leftPanelListAdapter[2] = new LeftPanelListAdapter(this.context);
+        this.leftPanelAdapters = new BaseAdapter[3];
+        this.leftPanelAdapters[0] = new LeftPanelListAdapter(this.context);
+        this.leftPanelAdapters[1] = new LeftPanelHivesListAdapter(this.context);
+        this.leftPanelAdapters[2] = new LeftPanelListAdapter(this.context);
 
-        this.leftPanelListAdapter[0].SetVisibleList(context.getResources().getInteger(R.integer.LeftPanel_ListKind_Chats));
-        this.leftPanelListAdapter[1].SetVisibleList(context.getResources().getInteger(R.integer.LeftPanel_ListKind_Hives));
-        this.leftPanelListAdapter[2].SetVisibleList(context.getResources().getInteger(R.integer.LeftPanel_ListKind_Mates));
+        ((LeftPanelListAdapter)this.leftPanelAdapters[0]).SetVisibleList(context.getResources().getInteger(R.integer.LeftPanel_ListKind_Chats));
+        //this.leftPanelAdapters[1].SetVisibleList(context.getResources().getInteger(R.integer.LeftPanel_ListKind_Hives));
+        ((LeftPanelListAdapter)this.leftPanelAdapters[2]).SetVisibleList(context.getResources().getInteger(R.integer.LeftPanel_ListKind_Mates));
 
-        ((ListView)this.leftPanelSlidingSteps.getViewByStep(this.activeStep).findViewById(R.id.left_panel_element_list)).setAdapter(this.leftPanelListAdapter[this.activeStep]);
+        ((ListView)this.leftPanelSlidingSteps.getViewByStep(this.activeStep).findViewById(R.id.left_panel_element_list)).setAdapter(this.leftPanelAdapters[this.activeStep]);
 
-        Hive.HiveListChanged.add(new EventHandler<EventArgs>(leftPanelListAdapter[1], "OnAddItem", EventArgs.class));
-        Chat.ChatListChanged.add(new EventHandler<EventArgs>(leftPanelListAdapter[0], "OnAddItem", EventArgs.class));
+        Hive.HiveListChanged.add(new EventHandler<EventArgs>(leftPanelAdapters[1], "OnAddItem", EventArgs.class));
+        Chat.ChatListChanged.add(new EventHandler<EventArgs>(leftPanelAdapters[0], "OnAddItem", EventArgs.class));
+        if (((Main)context).controller.getMe() != null) {
+            ((Main)context).controller.getMe().FriendListChanged.add(new EventHandler<EventArgs>(leftPanelAdapters[2],"OnAddItem",EventArgs.class));
+        } else {
+            ((Main)context).controller.LocalUserReceived.add(new EventHandler<EventArgs>(this,"OnLocalUserReceived",EventArgs.class));
+        }
 
-        this.leftPanelListAdapter[0].ListSizeChanged.add(new EventHandler<EventArgs>(this, "OnListSizeChanged", EventArgs.class));
-        this.leftPanelListAdapter[1].ListSizeChanged.add(new EventHandler<EventArgs>(this, "OnListSizeChanged", EventArgs.class));
-        this.leftPanelListAdapter[2].ListSizeChanged.add(new EventHandler<EventArgs>(this, "OnListSizeChanged", EventArgs.class));
 
-        this.leftPanelListAdapter[0].SetOnClickListener(chatClick);
-        this.leftPanelListAdapter[1].SetOnClickListener(hiveClick);
+        ((LeftPanelListAdapter)this.leftPanelAdapters[0]).ListSizeChanged.add(new EventHandler<EventArgs>(this, "OnListSizeChanged", EventArgs.class));
+        ((LeftPanelHivesListAdapter)this.leftPanelAdapters[1]).ListSizeChanged.add(new EventHandler<EventArgs>(this, "OnListSizeChanged", EventArgs.class));
+        ((LeftPanelListAdapter)this.leftPanelAdapters[2]).ListSizeChanged.add(new EventHandler<EventArgs>(this, "OnListSizeChanged", EventArgs.class));
+
+        ((LeftPanelListAdapter)this.leftPanelAdapters[0]).SetOnClickListener(chatClick);
+        //this.leftPanelAdapters[1].SetOnClickListener(hiveClick);
 
         active_emptyMessage.setText(getEmptyMessage(this.activeStep));
   }
+
+    public void OnLocalUserReceived(Object sender, EventArgs eventArgs) {
+        ((Main)context).controller.getMe().FriendListChanged.add(new EventHandler<EventArgs>(leftPanelAdapters[2],"OnAddItem",EventArgs.class));
+        ((Main)context).controller.LocalUserReceived.remove(new EventHandler<EventArgs>(this,"OnLocalUserReceived",EventArgs.class));
+    }
 
     protected int getEmptyMessage(int list) {
         if (list == 0)
@@ -174,7 +186,7 @@ public class LeftPanel {
             return 0;
     }
     public void OnListSizeChanged(Object sender, EventArgs eventArgs) {
-        int count = leftPanelListAdapter[this.activeStep].getCount();
+        int count = leftPanelAdapters[this.activeStep].getCount();
         if ((showingEmpty[this.activeStep]) && (count > 0)) {
             showingEmpty[this.activeStep] = false;
             active_view_switcher.showPrevious();
@@ -198,6 +210,10 @@ public class LeftPanel {
 
     protected void OpenHives() {
         hives.performClick();
+    }
+
+    protected void OpenFriends() {
+        friends.performClick();
     }
 
     protected View.OnClickListener left_panel_tab_button_click = new View.OnClickListener() {
@@ -241,17 +257,6 @@ public class LeftPanel {
         @Override
         public void onClick(View v) {
             Chat chatChat = ((Chat)v.getTag(R.id.BO_Chat));
-
-            if (chatChat != null) {
-                ((Main)context).OpenWindow(new MainChat(context, chatChat));
-            }
-        }
-    };
-
-    protected View.OnClickListener hiveClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            Chat chatChat = ((Hive)v.getTag(R.id.BO_Hive)).getPublicChat();
 
             if (chatChat != null) {
                 ((Main)context).OpenWindow(new MainChat(context, chatChat));

@@ -29,6 +29,9 @@ import java.util.List;
  * Represents a user.
  */
 public class User {
+    public Event<EventArgs> UserLoaded;
+    public Event<EventArgs> FriendListChanged;
+
     private Controller controller;
 
     // Members
@@ -50,6 +53,12 @@ public class User {
     // Events
     public Event<EventArgs> UserLoaded;
 
+    private ArrayList<User> friends;
+
+    public Boolean hasController() {
+        return (this.controller != null);
+    }
+    
     // Constructors
     private User() {
         this.userPrivateProfile = new PrivateProfile();
@@ -61,6 +70,7 @@ public class User {
         this.hiveSubscriptionsList = new SubscribableList<Hive>();
 
         this.UserLoaded = new Event<EventArgs>();
+
     }
 
     public User(Controller controller, String email) {
@@ -137,10 +147,31 @@ public class User {
         return this.home;
     }
 
+    public ArrayList<User> getFriends() {
+        return this.friends;
+    }
+    public void setFriends(ArrayList<User> friends) {
+        this.friends = friends;
+    }
+    /********************************************************************************************/
+
+    public User(String email) {
+        this(email, (Controller) null);
+    }
     public SubscribableList<Hive> getHiveSubscriptionsList() {
         return this.hiveSubscriptionsList;
     }
 
+    public User(String email, Controller controller) {
+        this.email = email;
+        this.isMe = true;
+        this.userPrivateProfile = new PrivateProfile();
+        this.userPublicProfile = new PublicProfile();
+        this.friends = new ArrayList<User>();
+        this.controller = controller;
+        this.UserLoaded = new Event<EventArgs>();
+        this.FriendListChanged = new Event<EventArgs>();
+    }
     public SubscribableList<Chat> getChatSubscriptionsList() {
         return this.chatSubscriptionsList;
     }
@@ -149,6 +180,15 @@ public class User {
         return this.friendList;
     }
 
+    public User(Format format, Controller controller) {
+        if (!this.fromFormat(format))
+            throw new IllegalArgumentException("LOCAL_USER_PROFILE or USER_PROFILE expected.");
+
+        this.friends = new ArrayList<User>();
+        this.controller = controller;
+        this.UserLoaded = new Event<EventArgs>();
+        this.FriendListChanged = new Event<EventArgs>();
+    }
     public PublicProfile getUserPublicProfile() {
         return this.userPublicProfile;
     }
@@ -161,9 +201,21 @@ public class User {
         this.email = value;
     }
 
-    // Methods
+    public User(String userID, PROFILE_ID requestProfile, Controller controller) {
+        this.controller = controller;
+        this.userID = userID;
 
+        this.friends = new ArrayList<User>();
 
+        if (this.controller == null) return;
+
+        this.controller.getDataProvider().RunCommand(AvailableCommands.UserProfile, new EventHandler<CommandCallbackEventArgs>(this, "loadCallback", CommandCallbackEventArgs.class), requestProfile);
+        this.loading = true;
+
+        this.UserLoaded = new Event<EventArgs>();
+        this.FriendListChanged = new Event<EventArgs>();
+    }
+    
     // Callbacks
     public void loadCallback (Command command) {
         if (command.getResultFormats().size() == 0) return;

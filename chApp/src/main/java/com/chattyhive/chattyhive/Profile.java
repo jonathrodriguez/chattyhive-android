@@ -153,6 +153,9 @@ public class Profile extends Window {
 
             user.loadProfile(requestProfile, ProfileLevel.Complete);
         }
+
+        //TODO: Check if in other users profile is needed to add some context info in right panel.
+        ((Main)context).rightPanel.setCommunicationContext(null);
     }
 
     @Override
@@ -306,12 +309,14 @@ public class Profile extends Window {
     }
 
     private void adjustView() {
-        if ((this.actionBarSubstring != null) && (!this.actionBarSubstring.isEmpty())) {
-            ((TextView)actionBar.findViewById(R.id.profile_subtitle_text)).setText(this.actionBarSubstring);
-            actionBar.findViewById(R.id.profile_subtitle_text).setVisibility(View.VISIBLE);
+        if (this.profileViewType != ProfileView.Edit) {
+            View profileSubtitleText = actionBar.findViewById(R.id.profile_subtitle_text);
+            if ((this.actionBarSubstring != null) && (!this.actionBarSubstring.isEmpty())) {
+                ((TextView)profileSubtitleText).setText(this.actionBarSubstring);
+                profileSubtitleText.setVisibility(View.VISIBLE);
+            } else
+                profileSubtitleText.setVisibility(View.GONE);
         }
-        else
-            actionBar.findViewById(R.id.profile_subtitle_text).setVisibility(View.GONE);
 
         switch (profileViewType) {
             case Private:
@@ -559,9 +564,9 @@ public class Profile extends Window {
                         profileView.findViewById(R.id.profile_information_location_value).setClickable(true);
                         profileView.findViewById(R.id.profile_information_location_value).setOnClickListener(location);
                         profileView.findViewById(R.id.my_profile_information_location_show).setVisibility(View.VISIBLE);
-                        //TODO: apply color filter when server accepts changing this visibility.
-                        //((ImageView)profileView.findViewById(R.id.my_profile_information_location_show)).setColorFilter(this.context.getResources().getColor(R.color.edit_profile_edit_images_tint_color));
-                        ((ImageView)profileView.findViewById(R.id.my_profile_information_location_show)).clearColorFilter();
+
+                        ((ImageView)profileView.findViewById(R.id.my_profile_information_location_show)).setColorFilter(this.context.getResources().getColor(R.color.edit_profile_edit_images_tint_color));
+                        //((ImageView)profileView.findViewById(R.id.my_profile_information_location_show)).clearColorFilter();
                         profileView.findViewById(R.id.my_profile_information_location_show).setClickable(true);
                         profileView.findViewById(R.id.my_profile_information_location_show).setOnClickListener(edit_visibility_click_listener);
 
@@ -744,7 +749,7 @@ public class Profile extends Window {
                         if (selectedLanguages.size() != 0) {
                             String languagesString = selectedLanguages.get(0);
                             for (int i = 1; i < selectedLanguages.size(); i++) {
-                                languagesString = languagesString +"; "+ selectedLanguages.get(i);
+                                languagesString = languagesString +", "+ selectedLanguages.get(i);
                             }
                             modifiedUser.getUserPublicProfile().setLanguages(selectedLanguages);
                             modifiedUser.getUserPrivateProfile().setLanguages(selectedLanguages);
@@ -922,7 +927,7 @@ public class Profile extends Window {
                     String Language = "";
                     ArrayList<String> Languages = user.getUserPrivateProfile().getLanguages();
                     for (String lang : Languages)
-                        Language += ((Language.isEmpty()) ? "" : "; ") + lang;
+                        Language += ((Language.isEmpty()) ? "" : ", ") + lang;
                     ((TextView) profileView.findViewById(R.id.profile_information_languages_value)).setText(Language);
                 }
 
@@ -971,7 +976,7 @@ public class Profile extends Window {
                     String Language = "";
                     ArrayList<String> Languages = user.getUserPublicProfile().getLanguages();
                     for (String lang : Languages)
-                        Language += ((Language.isEmpty()) ? "" : "; ") + lang;
+                        Language += ((Language.isEmpty()) ? "" : ", ") + lang;
                     ((TextView) profileView.findViewById(R.id.profile_information_languages_value)).setText(Language);
                 }
 
@@ -1035,13 +1040,17 @@ public class Profile extends Window {
                     String Language = "";
                     ArrayList<String> Languages = user.getUserPrivateProfile().getLanguages();
                     for (String lang : Languages)
-                        Language += ((Language.isEmpty()) ? "" : "; ") + lang;
+                        Language += ((Language.isEmpty()) ? "" : ", ") + lang;
                     ((TextView) profileView.findViewById(R.id.profile_information_languages_value)).setText(Language);
                 }
 
-                showInProfile = ShowInProfile.Both;
-                if (!user.getUserPublicProfile().getShowLocation())
+                showInProfile = ShowInProfile.None;
+                if (user.getUserPrivateProfile().getShowLocation())
                     showInProfile = ShowInProfile.Private;
+                if (user.getUserPublicProfile().getShowLocation()) {
+                    if (showInProfile == ShowInProfile.Private) showInProfile = ShowInProfile.Both;
+                    else showInProfile = ShowInProfile.Public;
+                }
                 ((ImageView) profileView.findViewById(R.id.my_profile_information_location_show)).setImageResource(getImageResourceToShowInProfile(showInProfile));
 
                 showInProfile = ShowInProfile.None;
@@ -1121,7 +1130,7 @@ public class Profile extends Window {
                     String Language = "";
                     ArrayList<String> Languages = modifiedUser.getUserPrivateProfile().getLanguages();
                     for (String lang : Languages)
-                        Language += ((Language.isEmpty()) ? "" : "; ") + lang;
+                        Language += ((Language.isEmpty()) ? "" : ", ") + lang;
                     ((TextView) profileView.findViewById(R.id.profile_information_languages_value)).setText(Language);
                 }
 
@@ -1221,7 +1230,7 @@ public class Profile extends Window {
                         statusMessage = user.getUserPrivateProfile().getStatusMessage();
                 } else {
                     if ((modifiedUser.getUserPrivateProfile().getStatusMessage() == null) || (modifiedUser.getUserPrivateProfile().getStatusMessage().isEmpty()))
-                        statusMessage = this.context.getResources().getString(R.string.profile_default_private_status_message);
+                        statusMessage = this.context.getResources().getString(R.string.profile_edit_default_private_status_message);
                     else
                         statusMessage = modifiedUser.getUserPrivateProfile().getStatusMessage();
                 }
@@ -1237,7 +1246,7 @@ public class Profile extends Window {
                         statusMessage = user.getUserPublicProfile().getStatusMessage();
                 } else {
                     if ((modifiedUser.getUserPublicProfile().getStatusMessage() == null) || (modifiedUser.getUserPublicProfile().getStatusMessage().isEmpty()))
-                        statusMessage = this.context.getResources().getString(R.string.profile_default_public_status_message);
+                        statusMessage = this.context.getResources().getString(R.string.profile_edit_default_public_status_message);
                     else
                         statusMessage = modifiedUser.getUserPublicProfile().getStatusMessage();
                 }
@@ -1347,7 +1356,8 @@ public class Profile extends Window {
             switch (profileType) {
                 case Private:
                     if (v.getId() == R.id.my_profile_information_location_show) {
-                        Log.w("Edit private profile","TODO: Add private location show to private profile");
+                        modifiedUser.getUserPrivateProfile().setShowLocation(!modifiedUser.getUserPrivateProfile().getShowLocation());
+                        setData();
                     } else if (v.getId() == R.id.my_profile_information_age_show) {
                         modifiedUser.getUserPrivateProfile().setShowAge(!modifiedUser.getUserPrivateProfile().getShowAge());
                         setData();

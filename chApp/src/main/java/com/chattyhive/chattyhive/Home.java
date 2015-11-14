@@ -67,6 +67,8 @@ public class Home extends Window {
 
         if (((Main)this.context).floatingPanel.isOpen())
             ((Main)this.context).floatingPanel.close();
+
+//        ((Main)context).rightPanel.setCommunicationContext(null);
     }
 
     @Override

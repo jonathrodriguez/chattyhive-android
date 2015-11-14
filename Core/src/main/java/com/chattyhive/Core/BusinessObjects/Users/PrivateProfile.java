@@ -11,6 +11,7 @@ public class PrivateProfile extends Profile {
     String firstName;
     String lastName;
     Boolean showAge;
+    Boolean showLocation;
 
     public String getFirstName() {
         return this.firstName;
@@ -33,6 +34,12 @@ public class PrivateProfile extends Profile {
         this.showAge = value;
     }
 
+    public Boolean getShowLocation() {
+        return (this.showLocation!=null)?this.showLocation:false;
+    }
+    public void setShowLocation(Boolean value) {
+        this.showLocation = value;
+    }
 
     public PrivateProfile(Format format) {
         this();
@@ -87,6 +94,7 @@ public class PrivateProfile extends Profile {
             ((PRIVATE_PROFILE) format).LOCATION = this.location;
             ((PRIVATE_PROFILE) format).LANGUAGE = this.language;
             ((PRIVATE_PROFILE) format).PRIVATE_SHOW_AGE = this.showAge;
+            ((PRIVATE_PROFILE) format).PRIVATE_SHOW_LOCATION = this.showLocation;
             ((PRIVATE_PROFILE) format).SEX = this.sex;
             return format;
         } else if (format instanceof BASIC_PRIVATE_PROFILE) {
@@ -109,6 +117,7 @@ public class PrivateProfile extends Profile {
             this.language = ((PRIVATE_PROFILE) format).LANGUAGE;
             this.location = ((PRIVATE_PROFILE) format).LOCATION;
             this.showAge = ((PRIVATE_PROFILE) format).PRIVATE_SHOW_AGE;
+            this.showLocation = ((PRIVATE_PROFILE) format).PRIVATE_SHOW_LOCATION;
             this.sex = ((PRIVATE_PROFILE) format).SEX;
             if (this.loadedProfileLevel.ordinal() < ProfileLevel.Extended.ordinal())
                 this.loadedProfileLevel = ProfileLevel.Extended;

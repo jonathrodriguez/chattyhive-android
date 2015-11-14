@@ -110,6 +110,7 @@ public class HomeListAdapter extends BaseAdapter {
                     //TODO: Set ImageViews.
                     ((ViewHolder_HiveMessage)holder).setHiveImage((ImageView)convertView.findViewById(R.id.home_card_message_hive_image_hive));
                     ((ViewHolder_HiveMessage)holder).setUserImage((ImageView)convertView.findViewById(R.id.home_card_message_hive_image_user));
+                    ((ViewHolder_HiveMessage)holder).setMessageImage((ImageView) convertView.findViewById(R.id.home_card_message_hive_image));
                     break;
                 default:
                     return null;
@@ -155,6 +156,7 @@ public class HomeListAdapter extends BaseAdapter {
         private ImageView UserImage;
         private TextView TimeStamp;
         private TextView Message;
+        private ImageView MessageImage;
 
 
 
@@ -182,6 +184,10 @@ public class HomeListAdapter extends BaseAdapter {
         public void setUserImage(ImageView userImage) {
             this.UserImage = userImage;
             this.updateUserImage((HiveMessageCard)this.card);
+        }
+        public void setMessageImage(ImageView messageImage) {
+            this.MessageImage = messageImage;
+            this.updateMessageImage((HiveMessageCard) this.card);
         }
 
         public ViewHolder_HiveMessage(HiveMessageCard card) {
@@ -222,6 +228,7 @@ public class HomeListAdapter extends BaseAdapter {
             this.updateMessage(hc);
             this.updateHiveImage(hc);
             this.updateUserImage(hc);
+            this.updateMessageImage(hc);
         }
 
         private void updateHiveName(HiveMessageCard hc) {
@@ -267,8 +274,17 @@ public class HomeListAdapter extends BaseAdapter {
 
         private void updateMessage(HiveMessageCard hc) {
             if (hc == null) return;
-            if (this.Message != null)
-                this.Message.setText((hc.getMessage().getMessageContent().getContentType().equalsIgnoreCase("TEXT"))?hc.getMessage().getMessageContent().getContent():hc.getMessage().getMessageContent().getContentType());
+            if (this.Message != null) {
+                if (hc.getMessage().getMessageContent().getContentType().equalsIgnoreCase("TEXT"))
+                    this.Message.setText(hc.getMessage().getMessageContent().getContent());
+                else
+                    this.Message.setText(hc.getMessage().getMessageContent().getContentType());
+
+                if (hc.getMessage().getMessageContent().getContentType().equalsIgnoreCase("IMAGE"))
+                    this.Message.setVisibility(View.GONE);
+                else
+                    this.Message.setVisibility(View.VISIBLE);
+            }
         }
 
         private void updateHiveImage(HiveMessageCard hc) {
@@ -308,7 +324,7 @@ public class HomeListAdapter extends BaseAdapter {
 
         private void updateUserImage(HiveMessageCard hc) {
             if (hc == null) return;
-            if ((this.HiveImage != null) && (hc.getMessage().getUser().getUserPublicProfile().getProfileImage() != null)) {
+            if ((this.UserImage != null) && (hc.getMessage().getUser().getUserPublicProfile().getProfileImage() != null)) {
                 hc.getMessage().getUser().getUserPublicProfile().getProfileImage().OnImageLoaded.add(new EventHandler<EventArgs>(this,"onUserImageLoaded",EventArgs.class));
                 hc.getMessage().getUser().getUserPublicProfile().getProfileImage().loadImage(Image.ImageSize.small,0);
             }
@@ -334,6 +350,45 @@ public class HomeListAdapter extends BaseAdapter {
                     }
 
                     image.OnImageLoaded.remove(new EventHandler<EventArgs>(thisViewHolder,"onUserImageLoaded",EventArgs.class));
+                    //image.freeMemory();
+                }
+            });
+        }
+
+        private void updateMessageImage(HiveMessageCard hc) {
+            if (hc == null) return;
+            try {
+                if ((this.MessageImage != null) && (hc.getMessage().getMessageContent().getImage() != null)) {
+                    this.MessageImage.setVisibility(View.VISIBLE);
+                    hc.getMessage().getMessageContent().getImage().OnImageLoaded.add(new EventHandler<EventArgs>(this,"onMessageImageLoaded",EventArgs.class));
+                    hc.getMessage().getMessageContent().getImage().loadImage(Image.ImageSize.xlarge,0);
+                }
+            } catch (NoSuchFieldException e) {
+                if (this.MessageImage != null)
+                    this.MessageImage.setVisibility(View.GONE);
+            }
+        }
+
+        public void onMessageImageLoaded(Object sender, EventArgs eventArgs) {
+            if (!(sender instanceof Image)) return;
+
+            final Image image = (Image) sender;
+            final ViewHolder_HiveMessage thisViewHolder = this;
+
+            ((Activity) context).runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    InputStream is = image.getImage(Image.ImageSize.xlarge, 0);
+                    if (is != null) {
+                        MessageImage.setImageBitmap(BitmapFactory.decodeStream(is));
+                        try {
+                            is.reset();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    image.OnImageLoaded.remove(new EventHandler<EventArgs>(thisViewHolder, "onMessageImageLoaded", EventArgs.class));
                     //image.freeMemory();
                 }
             });
