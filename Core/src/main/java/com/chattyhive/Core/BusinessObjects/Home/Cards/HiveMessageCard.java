@@ -1,6 +1,6 @@
 package com.chattyhive.Core.BusinessObjects.Home.Cards;
 
-import com.chattyhive.Core.BusinessObjects.Chats.ChatKind;
+import com.chattyhive.Core.BusinessObjects.Chats.ChatType;
 import com.chattyhive.Core.BusinessObjects.Hives.Hive;
 import com.chattyhive.Core.BusinessObjects.Chats.Messages.Message;
 import com.chattyhive.Core.BusinessObjects.Home.HomeCard;
@@ -25,7 +25,7 @@ public class HiveMessageCard extends HomeCard {
     private boolean priorized;
 
     public void setMessage(Message message) {
-        if (message.getConversation().getParent().getChatKind() != ChatKind.HIVE) throw new IllegalArgumentException("Message must be from public chat of a hive.");
+        if (message.getConversation().getParent().getChatType() != ChatType.PUBLIC) throw new IllegalArgumentException("Message must be from public chat of a hive.");
         this.message = message;
         this.hive = message.getConversation().getParent().getParentHive();
         this.priorized = false;

@@ -13,7 +13,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.chattyhive.Core.BusinessObjects.Chats.ChatKind;
+import com.chattyhive.Core.BusinessObjects.Chats.ChatType;
 import com.chattyhive.Core.BusinessObjects.Chats.Conversation;
 import com.chattyhive.Core.BusinessObjects.Chats.Messages.Message;
 import com.chattyhive.Core.BusinessObjects.Image;
@@ -37,7 +37,7 @@ public class ChatListAdapter extends BaseAdapter {
     private ListView listView;
     private LayoutInflater inflater;
 
-    private ChatKind chatKind;
+    private ChatType chatType;
     private Conversation channelConversation;
 
     private ArrayList<Message> messages;
@@ -49,7 +49,7 @@ public class ChatListAdapter extends BaseAdapter {
         this.inflater = ((Activity)this.context).getLayoutInflater();
 
         this.listView = ((ListView)((Activity)this.context).findViewById(R.id.left_panel_element_list));
-        this.chatKind = this.channelConversation.getParent().getChatKind();
+        this.chatType = this.channelConversation.getParent().getChatType();
 
         this.messages = new ArrayList<Message>(this.channelConversation.getMessages());
         this.notifyDataSetChanged();
@@ -112,10 +112,10 @@ public class ChatListAdapter extends BaseAdapter {
 
         if (convertView==null) {
             holder = new ViewHolder();
-            switch (chatKind) {
-                case HIVE:
-                case PUBLIC_GROUP:
-                case PRIVATE_GROUP:
+            switch (chatType) {
+                case PUBLIC:
+                case PRIVATE_GROUP_HIVEMATE:
+                case PRIVATE_GROUP_FRIEND:
                     if (type == context.getResources().getInteger(R.integer.MainPanelChat_ListKind_Me)) {
                         convertView = this.inflater.inflate(R.layout.main_panel_chat_hive_message_me, parent, false);
                         isMessage = true;
@@ -142,8 +142,8 @@ public class ChatListAdapter extends BaseAdapter {
                         holder.chatItem = convertView.findViewById(R.id.main_panel_chat_item);
                     }
                     break;
-                case PUBLIC_SINGLE:
-                case PRIVATE_SINGLE:
+                case PRIVATE_HIVEMATE:
+                case PRIVATE_FRIEND:
                     if (type == context.getResources().getInteger(R.integer.MainPanelChat_ListKind_Me)) {
                         convertView = this.inflater.inflate(R.layout.main_panel_chat_single_message_me, parent, false);
                         isMessage = true;
@@ -191,7 +191,7 @@ public class ChatListAdapter extends BaseAdapter {
 
         if (isMessage) {
             if ((message.getUser() != null) && (holder.username != null)) {
-                if ((this.chatKind == ChatKind.PRIVATE_SINGLE) || (this.chatKind == ChatKind.PRIVATE_GROUP)) {
+                if ((this.chatType == ChatType.PRIVATE_FRIEND) || (this.chatType == ChatType.PRIVATE_GROUP_FRIEND)) {
                     holder.username.setText(message.getUser().getUserPrivateProfile().getShowingName());
                 } else {
                     holder.username.setText(context.getResources().getString(R.string.public_username_identifier_character).concat(message.getUser().getUserPublicProfile().getShowingName()));
@@ -224,7 +224,7 @@ public class ChatListAdapter extends BaseAdapter {
                 holder.timeStamp.setText(TimestampFormatter.toLocaleString(new Date()));
 
             if (message.getUser().isMe()) {
-                if (((this.chatKind == ChatKind.PRIVATE_SINGLE) || (this.chatKind == ChatKind.PUBLIC_SINGLE)) && (message.getConfirmed())) {
+                if (((this.chatType == ChatType.PRIVATE_FRIEND) || (this.chatType == ChatType.PRIVATE_HIVEMATE)) && (message.getConfirmed())) {
                     StaticMethods.SetAlpha(holder.chatItem,1f);
                     if (holder.tickImage != null)
                         holder.tickImage.setVisibility(View.VISIBLE);
@@ -246,11 +246,11 @@ public class ChatListAdapter extends BaseAdapter {
             //Load image
             if (holder.avatarThumbnail != null) {
                 Image image = null;
-                if ((chatKind == ChatKind.HIVE) || (chatKind == ChatKind.PUBLIC_GROUP)) {
+                if ((chatType == ChatType.PUBLIC) || (chatType == ChatType.PRIVATE_GROUP_HIVEMATE)) {
                     if ((message != null) && (message.getUser() != null) && (message.getUser().getUserPublicProfile() != null))
                         image = message.getUser().getUserPublicProfile().getProfileImage();
                 }
-                else if (chatKind == ChatKind.PRIVATE_GROUP) {
+                else if (chatType == ChatType.PRIVATE_GROUP_FRIEND) {
                     if ((message != null) && (message.getUser() != null) && (message.getUser().getUserPrivateProfile() != null))
                         image = message.getUser().getUserPrivateProfile().getProfileImage();
                 }

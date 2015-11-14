@@ -1,8 +1,6 @@
 package com.chattyhive.Core.BusinessObjects.Users;
 
 import com.chattyhive.Core.BusinessObjects.Chats.Chat;
-import com.chattyhive.Core.BusinessObjects.Chats.ChatList;
-import com.chattyhive.Core.BusinessObjects.Hives.HiveList;
 import com.chattyhive.Core.BusinessObjects.Home.Home;
 import com.chattyhive.Core.BusinessObjects.Subscriptions.SubscribableList;
 import com.chattyhive.Core.BusinessObjects.Users.Requests.RequestList;
@@ -14,7 +12,6 @@ import com.chattyhive.Core.ContentProvider.SynchronousDataPath.AvailableCommands
 import com.chattyhive.Core.ContentProvider.Formats.BASIC_PRIVATE_PROFILE;
 import com.chattyhive.Core.ContentProvider.Formats.BASIC_PUBLIC_PROFILE;
 import com.chattyhive.Core.ContentProvider.Formats.Format;
-import com.chattyhive.Core.ContentProvider.Formats.HIVE_ID;
 import com.chattyhive.Core.ContentProvider.Formats.LOCAL_USER_PROFILE;
 import com.chattyhive.Core.ContentProvider.Formats.LOGIN;
 import com.chattyhive.Core.ContentProvider.Formats.PRIVATE_PROFILE;
@@ -45,10 +42,9 @@ public class User {
     private PrivateProfile userPrivateProfile; //Private profile for any user.
 
     private Home home;
-    private SubscribableList<Hive> hiveList;
-    private SubscribableList<Chat> chatList;
+    private SubscribableList<Hive> hiveSubscriptionsList;
+    private SubscribableList<Chat> chatSubscriptionsList;
     private UserList friendList;
-    private UserList hivemateList;
     private RequestList requestList;
 
     // Events
@@ -60,10 +56,9 @@ public class User {
         this.userPublicProfile = new PublicProfile();
 
         this.requestList = new RequestList();
-        this.hivemateList = new UserList();
         this.friendList = new UserList();
-        this.chatList = new SubscribableList<Chat>();
-        this.hiveList = new SubscribableList<Hive>();
+        this.chatSubscriptionsList = new SubscribableList<Chat>();
+        this.hiveSubscriptionsList = new SubscribableList<Hive>();
 
         this.UserLoaded = new Event<EventArgs>();
     }
@@ -142,12 +137,12 @@ public class User {
         return this.home;
     }
 
-    public SubscribableList<Hive> getHiveList() {
-        return this.hiveList;
+    public SubscribableList<Hive> getHiveSubscriptionsList() {
+        return this.hiveSubscriptionsList;
     }
 
-    public SubscribableList<Chat> getChatList() {
-        return this.chatList;
+    public SubscribableList<Chat> getChatSubscriptionsList() {
+        return this.chatSubscriptionsList;
     }
 
     public UserList getFriendList() { //FIXME: return unmodifiable list.
@@ -373,8 +368,8 @@ public class User {
 
            /* if (((LOCAL_USER_PROFILE) format).HIVES_SUBSCRIBED != null)
                 for (HIVE_ID hive : ((LOCAL_USER_PROFILE) format).HIVES_SUBSCRIBED) {
-                    if (!this.hiveList.containsKey(hive.NAME_URL));
-                        this.hiveList.add(new Hive(hive, this.userID));
+                    if (!this.hiveSubscriptionsList.containsKey(hive.NAME_URL));
+                        this.hiveSubscriptionsList.add(new Hive(hive, this.userID));
                 }*/ //TODO: Fill a subscription here
 
             if (this.userPublicProfile != null)

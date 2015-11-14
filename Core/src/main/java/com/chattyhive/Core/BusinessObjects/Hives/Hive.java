@@ -1,7 +1,6 @@
 package com.chattyhive.Core.BusinessObjects.Hives;
 
 import com.chattyhive.Core.BusinessObjects.Chats.Chat;
-import com.chattyhive.Core.BusinessObjects.Chats.ChatKind;
 import com.chattyhive.Core.BusinessObjects.Chats.IContextualizable;
 import com.chattyhive.Core.BusinessObjects.Subscriptions.ISubscribable;
 import com.chattyhive.Core.BusinessObjects.Subscriptions.SubscriberList;
@@ -11,7 +10,6 @@ import com.chattyhive.Core.Controller;
 import com.chattyhive.Core.BusinessObjects.Image;
 import com.chattyhive.Core.BusinessObjects.Users.User;
 import com.chattyhive.Core.ContentProvider.SynchronousDataPath.AvailableCommands;
-import com.chattyhive.Core.ContentProvider.DataProvider;
 
 import com.chattyhive.Core.ContentProvider.Formats.CHAT;
 import com.chattyhive.Core.ContentProvider.Formats.COMMON;
@@ -28,13 +26,10 @@ import com.chattyhive.Core.Util.Events.Event;
 import com.chattyhive.Core.Util.Events.EventArgs;
 
 import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
-import java.util.List;
 
 
 /**
@@ -61,6 +56,7 @@ public class Hive implements IContextualizable,ISubscribable {
     protected Image hiveImage;
 
     private CallbackDelegate createHiveCallback;
+    private CallbackDelegate loadHiveCallback;
 
     // Events
 
@@ -101,33 +97,31 @@ public class Hive implements IContextualizable,ISubscribable {
         }
 
         if (data.PUBLIC_CHAT != null) {
-            this.publicChat = Chat.getChat(data.PUBLIC_CHAT.CHANNEL_UNICODE, false);
+            this.publicChat =this.controller.getChat(data.PUBLIC_CHAT.CHANNEL_UNICODE);
             if (this.publicChat == null) {
                 this.publicChat = new Chat(data.PUBLIC_CHAT,this);
             }
         }
     }
-    public Hive(HIVE_ID hiveId, String accountID) {
-        this(hiveId.NAME_URL,true,accountID);
+    public Hive(HIVE_ID hiveId, CallbackDelegate callbackDelegate, String accountID) {
+        this(hiveId.NAME_URL,true,callbackDelegate,accountID);
     }
-    private Hive(String nameUrl,Boolean internal, String accountID) {
+    private Hive(String nameUrl,Boolean internal, CallbackDelegate callbackDelegate, String accountID) {
         this();
         if (!internal) {
             this.name = nameUrl;
             this.creationDate = new Date();
         } else {
             this.nameUrl = nameUrl;
-            Command command = new Command(AvailableCommands.HiveInfo,this.toFormat(new HIVE_ID()));
-            command.addCallbackDelegate(new CallbackDelegate(this,"onLoadHiveCallback",CommandCallbackEventArgs.class));
-            this.controller.getDataProvider().runCommand(accountID,command, CommandQueue.Priority.RealTime);
+            this.loadHive(callbackDelegate,accountID);
         }
     }
     public Hive(String name, String nameUrl) {
-        this(name,false,null);
+        this(name,false,null,null);
         this.nameUrl = nameUrl;
     }
     public Hive(String name) {
-        this(name,false,null);
+        this(name,false,null,null);
     }
 
     // Simple Getters/Setters
@@ -198,6 +192,23 @@ public class Hive implements IContextualizable,ISubscribable {
     // Callbacks
     public void onLoadHiveCallback(CommandCallbackEventArgs eventArgs) {
         //TODO: load from received formats
+        HIVE data = null;
+        Boolean receivedOK = false;
+
+        ArrayList<Format> received = eventArgs.getReceivedFormats();
+        for (Format format : received) {
+            if ((format instanceof COMMON) && (((COMMON) format).STATUS.equalsIgnoreCase("OK")))
+                receivedOK = true;
+            else if (format instanceof HIVE)
+                data = (HIVE)format;
+        }
+
+        if (receivedOK && (data != null)) {
+            this.fromFormat(data);
+
+            if (this.loadHiveCallback != null)
+                this.loadHiveCallback.Run(this,eventArgs);
+        }
     }
     public void OnHiveCreated(CommandCallbackEventArgs eventArgs) {
         HIVE_ID hive_id = null;
@@ -233,6 +244,13 @@ public class Hive implements IContextualizable,ISubscribable {
         command.addCallbackDelegate(new CallbackDelegate(this, "OnHiveCreated", CommandCallbackEventArgs.class));
         this.controller.getDataProvider().runCommand(accountID,command, CommandQueue.Priority.RealTime);
     }
+
+    public void loadHive(CallbackDelegate callback, String accountID) {
+        this.loadHiveCallback = callback;
+        Command command = new Command(AvailableCommands.HiveInfo,this.toFormat(new HIVE_ID()));
+        command.addCallbackDelegate(new CallbackDelegate(this,"onLoadHiveCallback",CommandCallbackEventArgs.class));
+        this.controller.getDataProvider().runCommand(accountID,command, CommandQueue.Priority.RealTime);
+    }
     /*************************************/
 
     /*************************************/
@@ -253,7 +271,7 @@ public class Hive implements IContextualizable,ISubscribable {
     public Event<EventArgs> OnSubscribedUsersListUpdated;
     public void requestUsers(int start, int count, HiveUsersType listType, String accountID) {
         if ((this.lastRequestedUserList == null) || (this.lastRequestedUserList.compareTo(listType) != 0)) {
-            this.subscribedUsers = new ArrayList<User>();
+            this.subscribedUsers = new SubscriberList<>();
             this.lastRequestedUserList = listType;
         }
         HIVE_USERS_FILTER hive_users_filter = new HIVE_USERS_FILTER();
@@ -286,7 +304,7 @@ public class Hive implements IContextualizable,ISubscribable {
                 for (USER_PROFILE user_profile : user_profile_list.LIST) {
                     try {
                         User u = new User(this.controller,user_profile);
-                        listChanged = this.subscribedUsers.add(u) || listChanged;
+//                        listChanged = this.subscribedUsers.add(u) || listChanged;
                     } catch (Exception e) { }
                 }
             }
@@ -296,9 +314,9 @@ public class Hive implements IContextualizable,ISubscribable {
         }
     }
 
-    public List<User> getSubscribedUsers() {
+    public SubscriberList<Hive> getSubscribedUsers() {
         if (this.subscribedUsers != null)
-            return Collections.unmodifiableList(this.subscribedUsers);
+            return this.subscribedUsers;
         else
             return null;
     }
@@ -382,14 +400,17 @@ public class Hive implements IContextualizable,ISubscribable {
             }
 
             if (((HIVE) format).PUBLIC_CHAT != null) {
-                this.publicChat = Chat.getChat(((HIVE) format).PUBLIC_CHAT);
+                this.publicChat = this.controller.getChat(((HIVE) format).PUBLIC_CHAT.CHANNEL_UNICODE);
                 if (this.publicChat == null) {
                     this.publicChat = new Chat(((HIVE) format).PUBLIC_CHAT,this);
                 }
             } else {
-                this.publicChat = Chat.getChat(String.format("presence-%s", this.nameUrl));
-                this.publicChat.parentHive = this;
-                this.publicChat.chatKind = ChatKind.HIVE;
+                this.publicChat = this.controller.getChat(String.format("presence-%s", this.nameUrl));
+
+                if (this.publicChat != null) {
+//                    this.publicChat.setParentHive(this);
+//                    this.publicChat.chatKind = ChatKind.PUBLIC;
+                }
             }
             return true;
         } else if (format instanceof HIVE_ID) {

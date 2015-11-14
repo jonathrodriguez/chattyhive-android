@@ -252,7 +252,7 @@ public class Conversation { //TODO: implements SortedSet<Message>
 
         if (message.getId() == null)
             message.IdReceived.add(new EventHandler<EventArgs>(this, "onMessageChanged", EventArgs.class));
-        if ((this.parent.chatKind == ChatKind.PUBLIC_SINGLE) || (this.parent.chatKind == ChatKind.PRIVATE_SINGLE))
+        if ((this.parent.chatType == ChatType.PRIVATE_HIVEMATE) || (this.parent.chatType == ChatType.PRIVATE_FRIEND))
             message.ConfirmationReceived.add(new EventHandler<EventArgs>(this, "onMessageChanged", EventArgs.class));
 
         Boolean messageListModified = this.messages.add(message);
@@ -265,7 +265,7 @@ public class Conversation { //TODO: implements SortedSet<Message>
         if ((messageListModified) && (this.MessageListModifiedEvent != null))
             this.MessageListModifiedEvent.fire(this, EventArgs.Empty());
 
-        if ((messageListModified) && (this.getParent().chatKind == ChatKind.HIVE) && (Hive.HiveListChanged != null))
+        if ((messageListModified) && (this.getParent().chatType == ChatType.PUBLIC) && (Hive.HiveListChanged != null))
             Hive.HiveListChanged.fire(null,EventArgs.Empty());
 
         if ((messageListModified) && (Chat.ChatListChanged != null))

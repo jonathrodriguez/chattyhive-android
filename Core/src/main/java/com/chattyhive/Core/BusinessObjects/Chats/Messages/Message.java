@@ -2,7 +2,7 @@ package com.chattyhive.Core.BusinessObjects.Chats.Messages;
 
 import com.chattyhive.Core.Controller;
 import com.chattyhive.Core.BusinessObjects.Chats.Chat;
-import com.chattyhive.Core.BusinessObjects.Chats.ChatKind;
+import com.chattyhive.Core.BusinessObjects.Chats.ChatType;
 import com.chattyhive.Core.BusinessObjects.Chats.Conversation;
 import com.chattyhive.Core.BusinessObjects.Users.User;
 import com.chattyhive.Core.ContentProvider.SynchronousDataPath.AvailableCommands;
@@ -277,7 +277,7 @@ public class Message implements Comparable {
 
             PROFILE_ID profile_id = new PROFILE_ID();
             profile_id.USER_ID = ((MESSAGE) format).USER_ID;
-            profile_id.PROFILE_TYPE = ((this.conversation.getParent().getChatKind() == ChatKind.PRIVATE_GROUP) || (this.conversation.getParent().getChatKind() == ChatKind.PRIVATE_SINGLE))?"BASIC_PRIVATE":"BASIC_PUBLIC";
+            profile_id.PROFILE_TYPE = ((this.conversation.getParent().getChatType() == ChatType.PRIVATE_GROUP_FRIEND) || (this.conversation.getParent().getChatType() == ChatType.PRIVATE_FRIEND))?"BASIC_PRIVATE":"BASIC_PUBLIC";
             this.user = controller.getUser(profile_id);
 
 

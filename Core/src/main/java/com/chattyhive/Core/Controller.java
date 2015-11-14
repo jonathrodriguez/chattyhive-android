@@ -1,7 +1,12 @@
 package com.chattyhive.Core;
 
 
+import com.chattyhive.Core.BusinessObjects.Chats.Chat;
+import com.chattyhive.Core.BusinessObjects.Chats.ChatList;
+import com.chattyhive.Core.BusinessObjects.Hives.Hive;
+import com.chattyhive.Core.BusinessObjects.Hives.HiveList;
 import com.chattyhive.Core.BusinessObjects.Users.User;
+import com.chattyhive.Core.BusinessObjects.Users.UserList;
 import com.chattyhive.Core.ContentProvider.OSStorageProvider.LocalStorageInterface;
 import com.chattyhive.Core.ContentProvider.Server.IServerUser;
 import com.chattyhive.Core.ContentProvider.SynchronousDataPath.AvailableCommands;
@@ -48,6 +53,10 @@ public class Controller {
         this.dataProvider = new DataProvider(this,settingsStorage);
         this.serverUsers = new HashMap<String,IServerUser>();
         this.userRoots = new HashMap<IServerUser, User>();
+
+        this.loadedUsers = new UserList();
+        this.loadedChats = new ChatList();
+        this.loadedHives = new HiveList();
     }
 
     public User getUserRoot(IServerUser serverUser) {
@@ -81,10 +90,38 @@ public class Controller {
         return this.dataProvider;
     }
 
+    /*******************************************************************************************/
+    /*******************************************************************************************/
+    /*                            LISTS                                                        */
+    /*******************************************************************************************/
+    /*******************************************************************************************/
+    private UserList loadedUsers;
+    private ChatList loadedChats;
+    private HiveList loadedHives;
+
+    public User getUser(String publicName){
+        return this.loadedUsers.get(publicName);
+    }
+    public Chat getChat(String chatID){
+        return this.loadedChats.get(chatID);
+    }
+    public Hive getHive(String hiveID){
+        return this.loadedHives.get(hiveID);
+    }
+
+    public void userLoaded(User user){
+        this.loadedUsers.add(user);
+    }
+    public void chatLoaded(Chat chat){
+        this.loadedChats.add(chat);
+    }
+    public void hiveLoaded(Hive hive){
+        this.loadedHives.add(hive);
+    }
 
     /*******************************************************************************************/
     /*******************************************************************************************/
-    /*                            USERS                                                        */
+    /*                            CHECK                                                        */
     /*******************************************************************************************/
     /*******************************************************************************************/
     public void CheckEmail(String email, CallbackDelegate Callback) {
@@ -101,7 +138,6 @@ public class Controller {
         emailCheck.addCallbackDelegate(Callback);
         this.dataProvider.runCommand(emailCheck, CommandQueue.Priority.RealTime);
     }
-
     public void CheckUsername(String username, CallbackDelegate Callback) {
         USERNAME user_username = new USERNAME();
         user_username.PUBLIC_NAME = username;

@@ -367,12 +367,12 @@ public class LeftPanelListAdapter extends BaseAdapter {
             } catch (Exception e) {
                 //Log.w("ChatItem","Unable to recover last message: "+e.getMessage());
             }
-            if (((Chat)item).getChatKind() == null) return null;
+            if (((Chat)item).getChatType() == null) return null;
 
             ((ChatViewHolder)holder).chatHiveImage.setImageResource(R.drawable.default_hive_image);
 
-            switch (((Chat)item).getChatKind()) {
-                case PUBLIC_SINGLE:
+            switch (((Chat)item).getChatType()) {
+                case PRIVATE_HIVEMATE:
                     ((ChatViewHolder)holder).chatHiveImage.setVisibility(View.VISIBLE);
                     ((ChatViewHolder)holder).chatTypeImage.setImageResource(R.drawable.pestanha_chats_arroba);
                     ((ChatViewHolder)holder).chatImage.setImageResource(R.drawable.chats_users_online);
@@ -415,7 +415,7 @@ public class LeftPanelListAdapter extends BaseAdapter {
                     ((ChatViewHolder)holder).chatImage.setClickable(true);
 
                     break;
-                case PUBLIC_GROUP:
+                case PRIVATE_GROUP_HIVEMATE:
                     ((ChatViewHolder)holder).chatHiveImage.setVisibility(View.VISIBLE);
                     ((ChatViewHolder)holder).chatTypeImage.setImageResource(R.drawable.pestanha_hives_show_more_users);
                     ((ChatViewHolder)holder).chatImage.setImageResource(R.drawable.chats_users_online);
@@ -452,7 +452,7 @@ public class LeftPanelListAdapter extends BaseAdapter {
                     ((ChatViewHolder)holder).chatImage.setOnClickListener(null);
                     ((ChatViewHolder)holder).chatImage.setClickable(false);
                     break;
-                case HIVE:
+                case PUBLIC:
                     ((ChatViewHolder)holder).chatHiveImage.setVisibility(View.GONE);
                     ((ChatViewHolder)holder).chatTypeImage.setImageResource(R.drawable.pestanha_chats_public_chat);
                     ((ChatViewHolder)holder).chatImage.setImageResource(R.drawable.default_hive_image);
@@ -473,7 +473,7 @@ public class LeftPanelListAdapter extends BaseAdapter {
                     ((ChatViewHolder)holder).chatImage.setOnClickListener(null);
                     ((ChatViewHolder)holder).chatImage.setClickable(false);
                     break;
-                case PRIVATE_SINGLE:
+                case PRIVATE_FRIEND:
                     ((ChatViewHolder)holder).chatHiveImage.setVisibility(View.GONE);
                     ((ChatViewHolder)holder).chatTypeImage.setImageResource(R.drawable.pestanha_chats_user);
                     ((ChatViewHolder)holder).chatImage.setImageResource(R.drawable.default_profile_image_male);
@@ -514,7 +514,7 @@ public class LeftPanelListAdapter extends BaseAdapter {
                     ((ChatViewHolder)holder).chatImage.setOnClickListener(((ChatViewHolder)holder).thumbnailClickListener);
                     ((ChatViewHolder)holder).chatImage.setClickable(true);
                     break;
-                case PRIVATE_GROUP:
+                case PRIVATE_GROUP_FRIEND:
                     ((ChatViewHolder)holder).chatHiveImage.setVisibility(View.GONE);
                     ((ChatViewHolder)holder).chatTypeImage.setImageResource(R.drawable.pestanha_chats_group);
                     ((ChatViewHolder)holder).chatImage.setImageResource(R.drawable.chats_users_online);

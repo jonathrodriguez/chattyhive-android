@@ -2,8 +2,9 @@ package com.chattyhive.Core.BusinessObjects.Home;
 
 import com.chattyhive.Core.BusinessObjects.Hives.Hive;
 import com.chattyhive.Core.BusinessObjects.Chats.Messages.Message;
-import com.chattyhive.Core.BusinessObjects.Hives.HiveList;
 import com.chattyhive.Core.BusinessObjects.Home.Cards.HiveMessageCard;
+import com.chattyhive.Core.BusinessObjects.Subscriptions.SubscribableList;
+import com.chattyhive.Core.BusinessObjects.Subscriptions.Subscription;
 import com.chattyhive.Core.BusinessObjects.Users.User;
 import com.chattyhive.Core.Util.Events.Event;
 import com.chattyhive.Core.Util.Events.EventArgs;
@@ -33,17 +34,17 @@ public class Home implements Collection<HomeCard> {
     /********************/
 
     private List<HomeCard> homeCards = null;
-    private HiveList hiveList = null;
+    private SubscribableList<Hive> hiveSubscriptionsList = null;
     private User owner;
 
     public Event<EventArgs> HomeReceived;
 
     public Home(User owner) {
-        this.hiveList = owner.getHiveList();
+        this.hiveSubscriptionsList = owner.getHiveSubscriptionsList();
         this.owner = owner;
         this.HomeReceived = new Event<EventArgs>();
 
-        this.hiveList.HiveListChanged.add(new EventHandler<EventArgs>(this, "onHiveListChanged", EventArgs.class));
+        this.hiveSubscriptionsList.SubscribableListChanged.add(new EventHandler<EventArgs>(this, "onHiveSubscriptionsListChanged", EventArgs.class));
     }
 
 
@@ -75,15 +76,15 @@ public class Home implements Collection<HomeCard> {
                 joinDate.add(Calendar.DATE,-1*estimatedJoinDays); //HARDCODED: "Estimated" join date to hive.
                 GregorianCalendar lastPriority = new GregorianCalendar();
                 lastPriority.add(Calendar.DATE,-1*lastActivityPriorityDays); // HARDCODED: Days to prioritize last activity.
-                for (Hive hive : hiveList) {
-                    if ((hive != null) && (hive.getPublicChat() != null) && (hive.getPublicChat().getConversation() != null) && (hive.getPublicChat().getConversation().getCount() > 0)) {
-                        message = hive.getPublicChat().getConversation().getLastMessage();
+                for (Subscription<Hive> hiveSubscription : hiveSubscriptionsList) {
+                    if ((hiveSubscription != null) && (hiveSubscription.getSubscribable().getPublicChat() != null) && (hiveSubscription.getSubscribable().getPublicChat().getConversation() != null) && (hiveSubscription.getSubscribable().getPublicChat().getConversation().getCount() > 0)) {
+                        message = hiveSubscription.getSubscribable().getPublicChat().getConversation().getLastMessage();
                         if (message.getUser().getUserID().equals(owner.getUserID()))
                             sentMessage = message;
                         else
-                            sentMessage = hive.getPublicChat().getConversation().getLastSentMessage(owner);
+                            sentMessage = hiveSubscription.getSubscribable().getPublicChat().getConversation().getLastSentMessage(owner);
 
-                        Date lastHiveActivity = ((sentMessage != null)?sentMessage.getOrdinationTimeStamp():joinDate.getTime());
+                        Date lastHiveActivity = ((sentMessage != null)?sentMessage.getOrdinationTimeStamp():((hiveSubscription.getCreationDate() != null)?hiveSubscription.getCreationDate():joinDate.getTime()));
 
                         homeCard = new HiveMessageCard(message);
                         homeCards.add(homeCard);
@@ -106,7 +107,7 @@ public class Home implements Collection<HomeCard> {
         }.start();
     }
 
-    public void onHiveListChanged (Object sender, EventArgs eventArgs) {
+    public void onHiveSubscriptionsListChanged(Object sender, EventArgs eventArgs) {
         if ((sender == null) || ((sender instanceof Hive) && (((Hive) sender).getPublicChat() != null) && (((Hive) sender).getPublicChat().getConversation() != null) && (((Hive) sender).getPublicChat().getConversation().getCount() > 0))) {
             this.RequestHome();
         }

@@ -71,8 +71,8 @@ public class MainChat extends Window {
 
         User otherUser = null;
 
-        switch (channelChat.getChatKind()) {
-            case HIVE:
+        switch (channelChat.getChatType()) {
+            case PUBLIC:
                 ((ImageView)actionBar.findViewById(R.id.main_panel_chat_icon)).setImageResource(R.drawable.default_hive_image);
 
                 if ((this.channelChat.getParentHive() != null) && (this.channelChat.getParentHive().getImageURL() != null) && (!this.channelChat.getParentHive().getImageURL().isEmpty())) {
@@ -85,7 +85,7 @@ public class MainChat extends Window {
                 else if ((this.channelChat.getParentHive() != null) && (this.channelChat.getParentHive().getName() != null))
                     mainName = hiveNameIdentifier.concat(this.channelChat.getParentHive().getName());
                 break;
-            case PUBLIC_SINGLE:
+            case PRIVATE_HIVEMATE:
                 for (User member : this.channelChat.getMembers())
                     if (!member.isMe())
                         otherUser = member;
@@ -107,7 +107,7 @@ public class MainChat extends Window {
 
 
                 break;
-            case PUBLIC_GROUP:
+            case PRIVATE_GROUP_HIVEMATE:
                 if ((this.channelChat.getName() != null) && (!this.channelChat.getName().isEmpty()))
                     mainName = this.channelChat.getName();
                 else
@@ -118,7 +118,7 @@ public class MainChat extends Window {
                 if ((this.channelChat.getParentHive() != null) && (this.channelChat.getParentHive().getName() != null))
                     infoText = hiveNameIdentifier.concat(this.channelChat.getParentHive().getName());
                 break;
-            case PRIVATE_SINGLE:
+            case PRIVATE_FRIEND:
                 for (User member : this.channelChat.getMembers())
                     if (!member.isMe())
                         otherUser = member;
@@ -137,7 +137,7 @@ public class MainChat extends Window {
                 if ((otherUser != null) && (otherUser.getUserPublicProfile() != null) && (otherUser.getUserPublicProfile().getPublicName() != null))
                     infoText = userPublicNameIdentifier.concat(otherUser.getUserPublicProfile().getPublicName());
                 break;
-            case PRIVATE_GROUP:
+            case PRIVATE_GROUP_FRIEND:
                 if ((this.channelChat.getName() != null) && (!this.channelChat.getName().isEmpty()))
                     mainName = this.channelChat.getName();
                 else
