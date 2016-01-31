@@ -82,7 +82,7 @@ public class Home extends Window {
 
         ((ListView) ((Activity) this.context).findViewById(R.id.home_listView)).setAdapter(this.homeListAdapter);
 
-        ((Main) this.context).controller.RequestHome();
+        ((Main) this.context).controller.getUser("").getHome();
         this.setButtons();
     }
 

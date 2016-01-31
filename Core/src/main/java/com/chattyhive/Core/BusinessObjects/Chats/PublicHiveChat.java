@@ -1,9 +1,11 @@
 package com.chattyhive.Core.BusinessObjects.Chats;
 
+import com.chattyhive.Core.BusinessObjects.Chats.Context.ContextElement;
 import com.chattyhive.Core.BusinessObjects.Chats.Messages.Message;
 import com.chattyhive.Core.BusinessObjects.Hives.Hive;
 import com.chattyhive.Core.BusinessObjects.Subscriptions.SubscriberList;
 import com.chattyhive.Core.BusinessObjects.Subscriptions.Subscription;
+import com.chattyhive.Core.BusinessObjects.Users.User;
 import com.chattyhive.Core.ContentProvider.Formats.CHAT;
 import com.chattyhive.Core.ContentProvider.Formats.CHAT_ID;
 import com.chattyhive.Core.ContentProvider.Formats.CHAT_SYNC;
@@ -13,8 +15,11 @@ import com.chattyhive.Core.ContentProvider.Formats.MESSAGE;
 import com.chattyhive.Core.ContentProvider.Formats.PROFILE_ID;
 import com.chattyhive.Core.Controller;
 import com.chattyhive.Core.Util.CallbackDelegate;
+import com.chattyhive.Core.Util.Events.Event;
+import com.chattyhive.Core.Util.Events.EventArgs;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by jonathrodriguez on 01/11/2015.
@@ -66,5 +71,60 @@ public class PublicHiveChat extends Chat {
         }*/
 
         return super.fromFormat(format);
+    }
+
+    @Override
+    public ContextElement getCommunityContext() {
+        return null;
+    }
+
+    @Override
+    public ContextElement getBaseContext() {
+        return null;
+    }
+
+    @Override
+    public ContextElement getParentContext() {
+        return null;
+    }
+
+    @Override
+    public Event<EventArgs> getOnContextLoaded() {
+        return null;
+    }
+
+    @Override
+    public void loadContext(int numberImages, int numberNewUsers, int numberBuzzes) {
+
+    }
+
+    @Override
+    public List<ContextElement> getPublicChats() {
+        return null;
+    }
+
+    @Override
+    public List<Message> getSharedImages() {
+        return null;
+    }
+
+    @Override
+    public List<User> getNewUsers() {
+        return null;
+    }
+
+    @Override
+    public List<User> getUsers() {
+        return null;
+    }
+
+    @Override
+    public List<Message> getTrendingBuzzes() {
+        return null;
+    }
+
+    @Override
+    public List<ContextElement> getOtherChats() {
+        return null;
     }
 }

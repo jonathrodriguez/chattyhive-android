@@ -8,9 +8,9 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 
-import com.chattyhive.backend.businessobjects.Chats.Hive;
-import com.chattyhive.backend.util.events.Event;
-import com.chattyhive.backend.util.events.EventArgs;
+import com.chattyhive.Core.BusinessObjects.Hives.Hive;
+import com.chattyhive.Core.Util.Events.Event;
+import com.chattyhive.Core.Util.Events.EventArgs;
 import com.chattyhive.chattyhive.ViewHolders.LeftPanelHiveViewHolder;
 
 import java.util.ArrayList;

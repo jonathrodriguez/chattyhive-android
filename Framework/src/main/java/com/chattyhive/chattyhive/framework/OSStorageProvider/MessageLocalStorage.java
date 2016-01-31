@@ -3,7 +3,7 @@ package com.chattyhive.chattyhive.framework.OSStorageProvider;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.chattyhive.Core.ContentProvider.OSStorageProvider.OLD.MessageLocalStorageInterface;
+//import com.chattyhive.Core.ContentProvider.OSStorageProvider.OLD.MessageLocalStorageInterface;
 import com.chattyhive.chattyhive.framework.Util.ApplicationContextProvider;
 
 import java.util.ArrayList;
@@ -12,7 +12,7 @@ import java.util.Collection;
 /**
  * Created by Jonathan on 26/05/2014.
  */
-public class MessageLocalStorage implements MessageLocalStorageInterface {
+public class MessageLocalStorage /*implements MessageLocalStorageInterface */{
     private MessageLocalStorage() {}
     static MessageLocalStorage instance = null;
 
@@ -21,7 +21,7 @@ public class MessageLocalStorage implements MessageLocalStorageInterface {
         return instance;
     }
 
-    @Override
+    //@Override
     public void StoreMessage(String PusherChannel,String messageId, String jsonMessage) {
         Context context = ApplicationContextProvider.getContext();
         SharedPreferences sharedPreferences = context.getSharedPreferences(PusherChannel,context.MODE_PRIVATE);
@@ -32,7 +32,7 @@ public class MessageLocalStorage implements MessageLocalStorageInterface {
         sharedPreferencesEditor.apply();
     }
 
-    @Override
+    //@Override
     public String RecoverMessage(String PusherChannel, String messageId) {
         String message = null;
 
@@ -45,7 +45,7 @@ public class MessageLocalStorage implements MessageLocalStorageInterface {
         return message;
     }
 
-    @Override
+    //@Override
     public String[] RecoverMessages(String PusherChannel) {
         String[] messages = null;
 
@@ -58,14 +58,14 @@ public class MessageLocalStorage implements MessageLocalStorageInterface {
         return messages;
     }
 
-    @Override
+    //@Override
     public void ClearMessages(String PusherChannel) {
         Context context = ApplicationContextProvider.getContext();
         SharedPreferences sharedPreferences = context.getSharedPreferences(PusherChannel,context.MODE_PRIVATE);
         sharedPreferences.edit().clear().apply();
     }
 
-    @Override
+    //@Override
     public void RemoveMessage(String PusherChannel, String messageId) {
         Context context = ApplicationContextProvider.getContext();
         SharedPreferences sharedPreferences = context.getSharedPreferences(PusherChannel,context.MODE_PRIVATE);
@@ -88,7 +88,7 @@ public class MessageLocalStorage implements MessageLocalStorageInterface {
         }
     }
 
-    @Override
+    //@Override
     public void TrimStoredMessages(String PusherChannel,int numberOfMessages) {
         Context context = ApplicationContextProvider.getContext();
         SharedPreferences sharedPreferences = context.getSharedPreferences(PusherChannel,context.MODE_PRIVATE);

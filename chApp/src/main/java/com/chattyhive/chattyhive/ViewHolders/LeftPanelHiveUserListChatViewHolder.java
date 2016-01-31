@@ -6,7 +6,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.chattyhive.backend.businessobjects.Chats.Chat;
+import com.chattyhive.Core.BusinessObjects.Chats.Chat;
 import com.chattyhive.chattyhive.Main;
 import com.chattyhive.chattyhive.MainChat;
 import com.chattyhive.chattyhive.R;

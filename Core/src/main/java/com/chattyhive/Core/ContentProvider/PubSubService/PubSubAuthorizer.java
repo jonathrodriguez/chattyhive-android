@@ -1,4 +1,4 @@
-package com.chattyhive.Core.ContentProvider.pubsubservice;
+package com.chattyhive.Core.ContentProvider.PubSubService;
 
 /**
  * Created by Jonathan Rodriguez on 10/06/2014.

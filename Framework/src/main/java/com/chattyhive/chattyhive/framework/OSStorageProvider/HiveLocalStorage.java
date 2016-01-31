@@ -3,13 +3,13 @@ package com.chattyhive.chattyhive.framework.OSStorageProvider;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.chattyhive.Core.ContentProvider.OSStorageProvider.OLD.HiveLocalStorageInterface;
+//import com.chattyhive.Core.ContentProvider.OSStorageProvider.OLD.HiveLocalStorageInterface;
 import com.chattyhive.chattyhive.framework.Util.ApplicationContextProvider;
 
 /**
  * Created by Jonathan on 01/07/2014.
  */
-public class HiveLocalStorage implements HiveLocalStorageInterface {
+public class HiveLocalStorage /*implements HiveLocalStorageInterface*/ {
     private HiveLocalStorage() {}
     static HiveLocalStorage instance;
 
@@ -20,10 +20,10 @@ public class HiveLocalStorage implements HiveLocalStorageInterface {
 
     private static String HIVE_PROFILES = "chHive";
 
-    @Override
+    //@Override
     public void StoreHive(String NAME_URL, String jsonHive) {
         Context context = ApplicationContextProvider.getContext();
-        SharedPreferences sharedPreferences = context.getSharedPreferences(HIVE_PROFILES,context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = context.getSharedPreferences(HIVE_PROFILES, Context.MODE_PRIVATE);
         SharedPreferences.Editor sharedPreferencesEditor = sharedPreferences.edit();
         if (sharedPreferences.contains(NAME_URL)) {
             sharedPreferencesEditor.remove(NAME_URL);
@@ -32,38 +32,38 @@ public class HiveLocalStorage implements HiveLocalStorageInterface {
         sharedPreferencesEditor.apply();
     }
 
-    @Override
+    //@Override
     public String RecoverHive(String NAME_URL) {
         Context context = ApplicationContextProvider.getContext();
-        SharedPreferences sharedPreferences = context.getSharedPreferences(HIVE_PROFILES,context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = context.getSharedPreferences(HIVE_PROFILES, Context.MODE_PRIVATE);
         if (sharedPreferences.contains(NAME_URL)) {
             return sharedPreferences.getString(NAME_URL,null);
         }
         return null;
     }
 
-    @Override
+    //@Override
     public String[] RecoverHives() {
         String[] hives = null;
         Context context = ApplicationContextProvider.getContext();
-        SharedPreferences sharedPreferences = context.getSharedPreferences(HIVE_PROFILES,context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = context.getSharedPreferences(HIVE_PROFILES, Context.MODE_PRIVATE);
         if (sharedPreferences.getAll().size() > 0)
-            hives = sharedPreferences.getAll().values().toArray(new String[0]);
+            hives = sharedPreferences.getAll().values().toArray(new String[sharedPreferences.getAll().size()]);
 
         return hives;
     }
 
-    @Override
+    //@Override
     public void ClearHives() {
         Context context = ApplicationContextProvider.getContext();
-        SharedPreferences sharedPreferences = context.getSharedPreferences(HIVE_PROFILES,context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = context.getSharedPreferences(HIVE_PROFILES, Context.MODE_PRIVATE);
         sharedPreferences.edit().clear().apply();
     }
 
-    @Override
+    //@Override
     public void RemoveHive(String NAME_URL) {
         Context context = ApplicationContextProvider.getContext();
-        SharedPreferences sharedPreferences = context.getSharedPreferences(HIVE_PROFILES,context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = context.getSharedPreferences(HIVE_PROFILES, Context.MODE_PRIVATE);
         if ((sharedPreferences.getAll().size() > 0) && (sharedPreferences.contains(NAME_URL))) {
             SharedPreferences.Editor sharedPreferencesEditor = sharedPreferences.edit();
             sharedPreferencesEditor.remove(NAME_URL);

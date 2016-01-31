@@ -9,12 +9,12 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.chattyhive.backend.businessobjects.Chats.Hive;
-import com.chattyhive.backend.businessobjects.Image;
-import com.chattyhive.backend.businessobjects.Users.PublicProfile;
-import com.chattyhive.backend.businessobjects.Users.User;
-import com.chattyhive.backend.util.events.EventArgs;
-import com.chattyhive.backend.util.events.EventHandler;
+import com.chattyhive.Core.BusinessObjects.Hives.Hive;
+import com.chattyhive.Core.BusinessObjects.Image;
+import com.chattyhive.Core.BusinessObjects.Users.PublicProfile;
+import com.chattyhive.Core.BusinessObjects.Users.User;
+import com.chattyhive.Core.Util.Events.EventArgs;
+import com.chattyhive.Core.Util.Events.EventHandler;
 import com.chattyhive.chattyhive.Main;
 import com.chattyhive.chattyhive.MainChat;
 import com.chattyhive.chattyhive.Profile;

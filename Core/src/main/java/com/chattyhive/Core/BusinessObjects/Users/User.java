@@ -22,6 +22,7 @@ import com.chattyhive.Core.Util.CallbackDelegate;
 import com.chattyhive.Core.Util.Events.Event;
 import com.chattyhive.Core.Util.Events.EventArgs;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -29,9 +30,6 @@ import java.util.List;
  * Represents a user.
  */
 public class User {
-    public Event<EventArgs> UserLoaded;
-    public Event<EventArgs> FriendListChanged;
-
     private Controller controller;
 
     // Members
@@ -52,6 +50,7 @@ public class User {
 
     // Events
     public Event<EventArgs> UserLoaded;
+    public Event<EventArgs> FriendListChanged;
 
     private ArrayList<User> friends;
 
@@ -201,21 +200,6 @@ public class User {
         this.email = value;
     }
 
-    public User(String userID, PROFILE_ID requestProfile, Controller controller) {
-        this.controller = controller;
-        this.userID = userID;
-
-        this.friends = new ArrayList<User>();
-
-        if (this.controller == null) return;
-
-        this.controller.getDataProvider().RunCommand(AvailableCommands.UserProfile, new EventHandler<CommandCallbackEventArgs>(this, "loadCallback", CommandCallbackEventArgs.class), requestProfile);
-        this.loading = true;
-
-        this.UserLoaded = new Event<EventArgs>();
-        this.FriendListChanged = new Event<EventArgs>();
-    }
-    
     // Callbacks
     public void loadCallback (Command command) {
         if (command.getResultFormats().size() == 0) return;

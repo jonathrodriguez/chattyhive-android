@@ -3,13 +3,13 @@ package com.chattyhive.chattyhive.framework.OSStorageProvider;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.chattyhive.Core.ContentProvider.OSStorageProvider.OLD.UserLocalStorageInterface;
+//import com.chattyhive.Core.ContentProvider.OSStorageProvider.OLD.UserLocalStorageInterface;
 import com.chattyhive.chattyhive.framework.Util.ApplicationContextProvider;
 
 /**
  * Created by Jonathan on 23/06/2014.
  */
-public class UserLocalStorage implements UserLocalStorageInterface {
+public class UserLocalStorage /* implements UserLocalStorageInterface */ {
     private UserLocalStorage() {}
     static UserLocalStorage instance = null;
 
@@ -21,7 +21,7 @@ public class UserLocalStorage implements UserLocalStorageInterface {
     private static String OTHER_USER_PROFILES = "chProfiles";
     private static String LOCAL_USER_PROFILE = "chUser";
 
-    @Override
+    //@Override
     public void StoreLocalUserProfile(String jsonUser) {
         Context context = ApplicationContextProvider.getContext();
         SharedPreferences sharedPreferences = context.getSharedPreferences(LOCAL_USER_PROFILE,context.MODE_PRIVATE);
@@ -33,7 +33,7 @@ public class UserLocalStorage implements UserLocalStorageInterface {
         sharedPreferencesEditor.apply();
     }
 
-    @Override
+    //@Override
     public String RecoverLocalUserProfile() {
         Context context = ApplicationContextProvider.getContext();
         SharedPreferences sharedPreferences = context.getSharedPreferences(LOCAL_USER_PROFILE,context.MODE_PRIVATE);
@@ -43,7 +43,7 @@ public class UserLocalStorage implements UserLocalStorageInterface {
         return null;
     }
 
-    @Override
+    //@Override
     public void ClearLocalUserProfile() {
         Context context = ApplicationContextProvider.getContext();
         SharedPreferences sharedPreferences = context.getSharedPreferences(LOCAL_USER_PROFILE,context.MODE_PRIVATE);
@@ -52,7 +52,7 @@ public class UserLocalStorage implements UserLocalStorageInterface {
 
 
 
-    @Override
+    //@Override
     public void StoreCompleteUserProfile(String userID, String jsonCompleteUser) {
         Context context = ApplicationContextProvider.getContext();
         SharedPreferences sharedPreferences = context.getSharedPreferences(OTHER_USER_PROFILES,context.MODE_PRIVATE);
@@ -64,7 +64,7 @@ public class UserLocalStorage implements UserLocalStorageInterface {
         sharedPreferencesEditor.apply();
     }
 
-    @Override
+    //@Override
     public String RecoverCompleteUserProfile(String userID) {
         Context context = ApplicationContextProvider.getContext();
         SharedPreferences sharedPreferences = context.getSharedPreferences(OTHER_USER_PROFILES,context.MODE_PRIVATE);
@@ -74,7 +74,7 @@ public class UserLocalStorage implements UserLocalStorageInterface {
         return null;
     }
 
-    @Override
+    //@Override
     public String[] RecoverAllCompleteUserProfiles() {
         String[] profiles = null;
         Context context = ApplicationContextProvider.getContext();
@@ -85,7 +85,7 @@ public class UserLocalStorage implements UserLocalStorageInterface {
         return profiles;
     }
 
-    @Override
+    //@Override
     public void RemoveCompleteUserProfile(String userID) {
         Context context = ApplicationContextProvider.getContext();
         SharedPreferences sharedPreferences = context.getSharedPreferences(OTHER_USER_PROFILES,context.MODE_PRIVATE);
@@ -96,7 +96,7 @@ public class UserLocalStorage implements UserLocalStorageInterface {
         }
     }
 
-    @Override
+    //@Override
     public void ClearCompleteUserProfiles() {
         Context context = ApplicationContextProvider.getContext();
         SharedPreferences sharedPreferences = context.getSharedPreferences(OTHER_USER_PROFILES,context.MODE_PRIVATE);

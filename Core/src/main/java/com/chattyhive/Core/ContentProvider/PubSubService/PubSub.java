@@ -1,5 +1,6 @@
-package com.chattyhive.Core.ContentProvider.pubsubservice;
+package com.chattyhive.Core.ContentProvider.PubSubService;
 
+import com.chattyhive.Core.Controller;
 import com.chattyhive.Core.StaticParameters;
 import com.chattyhive.Core.ContentProvider.DataProvider;
 import com.chattyhive.Core.Util.Events.Event;
@@ -125,7 +126,6 @@ public class PubSub implements ChannelEventListener, ConnectionEventListener, Pr
             pubSubAuthorizer.setHeaders(headers);
         }
 
-        DataProvider.GetDataProvider().CsrfTokenChanged.add(new EventHandler<EventArgs>(this,"onCSRFTokenChanged",EventArgs.class));
 
         PusherOptions pO = new PusherOptions();
         pO.setEncrypted(false);

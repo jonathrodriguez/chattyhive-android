@@ -13,8 +13,15 @@ import com.chattyhive.Core.BusinessObjects.Chats.Chat;
 import com.chattyhive.Core.BusinessObjects.Chats.Conversation;
 import com.chattyhive.Core.BusinessObjects.Chats.Messages.Message;
 import com.chattyhive.Core.BusinessObjects.Chats.Messages.MessageContent;
+import com.chattyhive.Core.BusinessObjects.Chats.PrivateHivemateChat;
+import com.chattyhive.Core.BusinessObjects.Chats.PublicHiveChat;
+import com.chattyhive.Core.BusinessObjects.Hives.Hive;
 import com.chattyhive.Core.BusinessObjects.Image;
 import com.chattyhive.Core.BusinessObjects.Users.User;
+import com.chattyhive.Core.ContentProvider.Formats.COMMON;
+import com.chattyhive.Core.ContentProvider.Formats.Format;
+import com.chattyhive.Core.ContentProvider.Formats.PROFILE_ID;
+import com.chattyhive.Core.Util.Events.CommandCallbackEventArgs;
 import com.chattyhive.Core.Util.Events.EventArgs;
 import com.chattyhive.Core.Util.Events.EventHandler;
 import com.chattyhive.chattyhive.framework.Util.ViewPair;
@@ -58,7 +65,7 @@ public class MainChat extends Window {
 
         this.newChat = false;
 
-        this.channelChatID = channelChat.getChannelUnicode();
+        this.channelChatID = channelChat.getID();
         this.channelChat = channelChat;
 
         this.hiveID = "";
@@ -82,7 +89,7 @@ public class MainChat extends Window {
         Date now = new Date();
 
         if (hive != null) {
-            this.hiveID = hive.getNameUrl();
+            this.hiveID = hive.getID();
             this.hive = hive;
         } else {
             this.hiveID = "";
@@ -92,7 +99,7 @@ public class MainChat extends Window {
         this.user = user;
 
         this.channelChatID = "";
-        this.channelChat = Chat.CreateChat(this.user,this.hive,new EventHandler<CommandCallbackEventArgs>(this,"onChatCreated",CommandCallbackEventArgs.class));
+        //this.channelChat = new PrivateHivemateChat(this.user,this.hive,new EventHandler<CommandCallbackEventArgs>(this,"onChatCreated",CommandCallbackEventArgs.class));
 
         this.newChat = ((this.channelChat == null) || (this.channelChat.getCreationDate() == null) || (this.channelChat.getCreationDate().after(now)));
 
@@ -118,21 +125,21 @@ public class MainChat extends Window {
 
         switch (channelChat.getChatType()) {
             case PUBLIC:
-                ((ImageView)actionBar.findViewById(R.id.main_panel_chat_icon)).setImageResource(R.drawable.default_hive_image);
+                PublicHiveChat publicHiveChat = (PublicHiveChat)this.channelChat;
+                ((ImageView) actionBar.findViewById(R.id.main_panel_chat_icon)).setImageResource(R.drawable.default_hive_image);
 
-                if ((this.channelChat.getParentHive() != null) && (this.channelChat.getParentHive().getImageURL() != null) && (!this.channelChat.getParentHive().getImageURL().isEmpty())) {
-                    this.channelChat.getParentHive().getHiveImage().OnImageLoaded.add(new EventHandler<EventArgs>(this,"onImageLoaded",EventArgs.class));
-                    this.channelChat.getParentHive().getHiveImage().loadImage(Image.ImageSize.small,0);
+                if ((publicHiveChat.getHive() != null) && (publicHiveChat.getHive().getImageURL() != null) && (!publicHiveChat.getHive().getImageURL().isEmpty())) {
+                    publicHiveChat.getHive().getHiveImage().OnImageLoaded.add(new EventHandler<EventArgs>(this,"onImageLoaded",EventArgs.class));
+                    publicHiveChat.getHive().getHiveImage().loadImage(Image.ImageSize.small,0);
                 }
 
-                if ((this.channelChat.getName() != null) && (!this.channelChat.getName().isEmpty()))
-                    mainName = this.channelChat.getName();
-                else if ((this.channelChat.getParentHive() != null) && (this.channelChat.getParentHive().getName() != null))
-                    mainName = hiveNameIdentifier.concat(this.channelChat.getParentHive().getName());
+                if ((publicHiveChat.getHive() != null) && (publicHiveChat.getHive().getName() != null))
+                    mainName = hiveNameIdentifier.concat(publicHiveChat.getHive().getName());
                 break;
             case PRIVATE_HIVEMATE:
+                PrivateHivemateChat privateHivemateChat = (PrivateHivemateChat)this.channelChat;
                 if (!this.newChat) {
-                for (User member : this.channelChat.getMembers())
+                for (User member : privateHivemateChat.getUsers())
                     if (!member.isMe())
                         otherUser = member;
                 } else
@@ -144,19 +151,16 @@ public class MainChat extends Window {
                     } else if ((otherUser != null) && (otherUser.getUserPublicProfile() != null) && (otherUser.getUserPublicProfile().getSex() != null) && (otherUser.getUserPublicProfile().getSex().equalsIgnoreCase("female")))
                         ((ImageView) actionBar.findViewById(R.id.main_panel_chat_icon)).setImageResource(R.drawable.default_profile_image_female);
 
-
-                    if ((!this.newChat) && (this.channelChat.getName() != null) && (!this.channelChat.getName().isEmpty()))
-                        mainName = this.channelChat.getName();
-                    else if ((otherUser != null) && (otherUser.getUserPublicProfile() != null) && (otherUser.getUserPublicProfile().getPublicName() != null))
+                    if ((otherUser != null) && (otherUser.getUserPublicProfile() != null) && (otherUser.getUserPublicProfile().getPublicName() != null))
                         mainName = userPublicNameIdentifier.concat(otherUser.getUserPublicProfile().getPublicName());
 
-                    if ((!this.newChat) && (this.channelChat.getParentHive() != null) && (this.channelChat.getParentHive().getName() != null))
-                        infoText = hiveNameIdentifier.concat(this.channelChat.getParentHive().getName());
+                    if ((!this.newChat) && (privateHivemateChat.getHive() != null) && (privateHivemateChat.getHive().getName() != null))
+                        infoText = hiveNameIdentifier.concat(privateHivemateChat.getHive().getName());
                     else if ((this.newChat) && (this.hive != null) && (this.hive.getName() != null))
                         infoText = hiveNameIdentifier.concat(this.hive.getName());
 
                 break;
-            case PRIVATE_GROUP_HIVEMATE:
+            /*case PRIVATE_GROUP_HIVEMATE:
                 if ((this.channelChat.getName() != null) && (!this.channelChat.getName().isEmpty()))
                     mainName = this.channelChat.getName();
                 else
@@ -196,7 +200,7 @@ public class MainChat extends Window {
                         if (!member.isMe())
                             if ((member.getUserPrivateProfile() != null) && (member.getUserPrivateProfile().getShowingName() != null))
                                 mainName = ((mainName.isEmpty())?"":", ").concat(member.getUserPrivateProfile().getShowingName());
-                break;
+                break;*/
         }
 
         if ((mainName != null) && (!mainName.isEmpty())) {
@@ -259,8 +263,8 @@ public class MainChat extends Window {
                             createdOK = true;
 
                 if (createdOK) {
-                    thisMainChat.channelChat = Chat.getChat(((Chat)sender).getChannelUnicode());
-                    thisMainChat.channelChatID = thisMainChat.channelChat.getChannelUnicode();
+                    thisMainChat.channelChat = ((Chat)sender);
+                    thisMainChat.channelChatID = thisMainChat.channelChat.getID();
                     thisMainChat.channelConversation = thisMainChat.channelChat.getConversation();
                     thisMainChat.newChat = false;
                     Toast.makeText(thisMainChat.context,"Chat created!",Toast.LENGTH_LONG).show();
@@ -282,7 +286,7 @@ public class MainChat extends Window {
             if ((text_to_send == null) || (text_to_send.isEmpty())) return;
 
             try {
-                new Message(((Main)context).controller.getMe(), channelConversation,new MessageContent("TEXT",text_to_send),new Date()).SendMessage();
+                new Message(((Main)context).controller.getUser(""), channelConversation,new MessageContent("TEXT",text_to_send),new Date()).SendMessage();
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {
@@ -297,7 +301,7 @@ public class MainChat extends Window {
 
         try {
             this.channelConversation.setChatWindowActive(false);
-            ((Main) this.context).controller.Leave(this.channelChat.getChannelUnicode());
+            //((Main) this.context).controller.Leave(this.channelChat.getChannelUnicode());
             this.channelConversation.MessageListModifiedEvent.remove(new EventHandler<EventArgs>(this.chatListAdapter, "OnAddItem", EventArgs.class));
         } catch (Exception e) {
 
@@ -353,7 +357,7 @@ public class MainChat extends Window {
         if (!this.newChat) {
             //Log.w("MainChat", "Set channel chat if needed.");
             if (this.channelChat == null) {
-                this.channelChat = Chat.getChat(this.channelChatID);
+                this.channelChat = ((Main)context).controller.getChat(this.channelChatID);
                 this.channelConversation = this.channelChat.getConversation();
             }
 
@@ -386,13 +390,14 @@ public class MainChat extends Window {
             //TODO: Activate textInput
         } else {
             if ((this.hive == null) && (!this.hiveID.isEmpty()))
-                this.hive = Hive.getHive(this.hiveID);
+                this.hive = ((Main)context).controller.getHive(this.hiveID);
 
             if ((this.user == null) && (!this.userID.isEmpty())) {
                 PROFILE_ID profile_id = new PROFILE_ID();
                 profile_id.USER_ID = this.userID;
                 profile_id.PROFILE_TYPE = "BASIC_".concat((this.hive != null)?"PUBLIC":"PRIVATE");
-                this.user = ((Main) context).controller.getUser(profile_id);
+                this.user = ((Main) context).controller.getUser(this.userID);
+                this.user.loadProfile(profile_id,"");
             }
 
             //TODO: Deactivate textInput
@@ -422,8 +427,8 @@ public class MainChat extends Window {
         if (this.channelConversation != null)
             this.channelConversation.setChatWindowActive(false);
 
-        if (this.channelChat != null)
-            ((Main)this.context).controller.Leave(this.channelChat.getChannelUnicode());
+        //if (this.channelChat != null)
+           // ((Main)this.context).controller.Leave(this.channelChat.getChannelUnicode());
 
         if (this.channelConversation != null)
             this.channelConversation.MessageListModifiedEvent.remove(new EventHandler<EventArgs>(this.chatListAdapter,"OnAddItem",EventArgs.class));

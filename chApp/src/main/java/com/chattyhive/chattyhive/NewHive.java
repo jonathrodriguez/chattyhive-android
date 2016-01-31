@@ -18,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.chattyhive.Core.BusinessObjects.Hives.Hive;
+import com.chattyhive.Core.Util.CallbackDelegate;
 import com.chattyhive.Core.Util.Events.CommandCallbackEventArgs;
 import com.chattyhive.Core.Util.Events.EventHandler;
 import com.chattyhive.chattyhive.util.Category;
@@ -161,7 +162,7 @@ public class NewHive extends Activity{
             if ((selectedLanguages != null) && (selectedLanguages.size() > 0))
                 newHive.setChatLanguages(selectedLanguages.toArray(new String[selectedLanguages.size()]));
 
-            newHive.createHive(new EventHandler<CommandCallbackEventArgs>(thisNewHive,"onHiveCreatedCallback",CommandCallbackEventArgs.class));
+            newHive.createHive(new CallbackDelegate(thisNewHive,"onHiveCreatedCallback",CommandCallbackEventArgs.class),"");
         }
     };
 

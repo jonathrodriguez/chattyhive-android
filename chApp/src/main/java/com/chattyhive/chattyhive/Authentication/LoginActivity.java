@@ -157,7 +157,7 @@ public class LoginActivity extends AccountAuthenticatorActivity {
             login.USER = username;
             login.PASS = password;
 
-            Command command = new Command(null, AvailableCommands.Login,login);
+            Command command = new Command(AvailableCommands.Login,login);
             command.addCallbackDelegate(new CallbackDelegate(this,"onLogin",CommandCallbackEventArgs.class));
             dataProvider.runCommand(command, CommandQueue.Priority.RealTime);
         }

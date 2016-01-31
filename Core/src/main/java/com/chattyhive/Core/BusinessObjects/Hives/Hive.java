@@ -1,7 +1,10 @@
 package com.chattyhive.Core.BusinessObjects.Hives;
 
 import com.chattyhive.Core.BusinessObjects.Chats.Chat;
-import com.chattyhive.Core.BusinessObjects.Chats.IContextualizable;
+import com.chattyhive.Core.BusinessObjects.Chats.Context.ContextElement;
+import com.chattyhive.Core.BusinessObjects.Chats.Context.IContextualizable;
+import com.chattyhive.Core.BusinessObjects.Chats.Messages.Message;
+import com.chattyhive.Core.BusinessObjects.Chats.PublicHiveChat;
 import com.chattyhive.Core.BusinessObjects.Subscriptions.ISubscribable;
 import com.chattyhive.Core.BusinessObjects.Subscriptions.SubscriberList;
 import com.chattyhive.Core.ContentProvider.SynchronousDataPath.Command;
@@ -29,7 +32,9 @@ import com.google.gson.JsonElement;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -99,7 +104,7 @@ public class Hive implements IContextualizable,ISubscribable {
         if (data.PUBLIC_CHAT != null) {
             this.publicChat =this.controller.getChat(data.PUBLIC_CHAT.CHANNEL_UNICODE);
             if (this.publicChat == null) {
-                this.publicChat = new Chat(data.PUBLIC_CHAT,this);
+                this.publicChat = new PublicHiveChat(controller,data.PUBLIC_CHAT);
             }
         }
     }
@@ -227,7 +232,7 @@ public class Hive implements IContextualizable,ISubscribable {
 
         if ((joinOK) && (hive_id != null) && (chat != null)) {
             this.nameUrl = hive_id.NAME_URL;
-            this.publicChat = new Chat(chat, this);
+            this.publicChat = new PublicHiveChat(controller,chat);
             this.subscribedUsersCount = 1;
 
             if (this.createHiveCallback != null)
@@ -250,6 +255,61 @@ public class Hive implements IContextualizable,ISubscribable {
         Command command = new Command(AvailableCommands.HiveInfo,this.toFormat(new HIVE_ID()));
         command.addCallbackDelegate(new CallbackDelegate(this,"onLoadHiveCallback",CommandCallbackEventArgs.class));
         this.controller.getDataProvider().runCommand(accountID,command, CommandQueue.Priority.RealTime);
+    }
+
+    @Override
+    public ContextElement getCommunityContext() {
+        return null;
+    }
+
+    @Override
+    public ContextElement getBaseContext() {
+        return null;
+    }
+
+    @Override
+    public ContextElement getParentContext() {
+        return null;
+    }
+
+    @Override
+    public Event<EventArgs> getOnContextLoaded() {
+        return null;
+    }
+
+    @Override
+    public void loadContext(int numberImages, int numberNewUsers, int numberBuzzes) {
+
+    }
+
+    @Override
+    public List<ContextElement> getPublicChats() {
+        return null;
+    }
+
+    @Override
+    public List<Message> getSharedImages() {
+        return null;
+    }
+
+    @Override
+    public List<User> getNewUsers() {
+        return null;
+    }
+
+    @Override
+    public List<User> getUsers() {
+        return null;
+    }
+
+    @Override
+    public List<Message> getTrendingBuzzes() {
+        return null;
+    }
+
+    @Override
+    public List<ContextElement> getOtherChats() {
+        return null;
     }
     /*************************************/
 
@@ -311,7 +371,7 @@ public class Hive implements IContextualizable,ISubscribable {
             }
         } else {
             if (this.subscribedUsers == null)
-                this.subscribedUsers = new ArrayList<User>();
+                this.subscribedUsers = new SubscriberList<>();
         }
 
         if (OnSubscribedUsersListUpdated != null)
@@ -441,7 +501,7 @@ public class Hive implements IContextualizable,ISubscribable {
             if (((HIVE) format).PUBLIC_CHAT != null) {
                 this.publicChat = this.controller.getChat(((HIVE) format).PUBLIC_CHAT.CHANNEL_UNICODE);
                 if (this.publicChat == null) {
-                    this.publicChat = new Chat(((HIVE) format).PUBLIC_CHAT,this);
+                    this.publicChat = new PublicHiveChat(controller,((HIVE) format).PUBLIC_CHAT);
                 }
             } else {
                 this.publicChat = this.controller.getChat(String.format("presence-%s", this.nameUrl));

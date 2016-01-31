@@ -151,18 +151,18 @@ public class LeftPanel {
 
         ((ListView)this.leftPanelSlidingSteps.getViewByStep(this.activeStep).findViewById(R.id.left_panel_element_list)).setAdapter(this.leftPanelAdapters[this.activeStep]);
 
-        Hive.HiveListChanged.add(new EventHandler<EventArgs>(leftPanelAdapters[1], "OnAddItem", EventArgs.class));
-        Chat.ChatListChanged.add(new EventHandler<EventArgs>(leftPanelAdapters[0], "OnAddItem", EventArgs.class));
-        if (((Main)context).controller.getMe() != null) {
+        //Hive.HiveListChanged.add(new EventHandler<EventArgs>(leftPanelAdapters[1], "OnAddItem", EventArgs.class));
+        //Chat.ChatListChanged.add(new EventHandler<EventArgs>(leftPanelAdapters[0], "OnAddItem", EventArgs.class));
+        /*if (((Main)context).controller.getMe() != null) {
             ((Main)context).controller.getMe().FriendListChanged.add(new EventHandler<EventArgs>(leftPanelAdapters[2],"OnAddItem",EventArgs.class));
         } else {
             ((Main)context).controller.LocalUserReceived.add(new EventHandler<EventArgs>(this,"OnLocalUserReceived",EventArgs.class));
-        }
+        }*/
 
 
-        ((LeftPanelListAdapter)this.leftPanelAdapters[0]).ListSizeChanged.add(new EventHandler<EventArgs>(this, "OnListSizeChanged", EventArgs.class));
-        ((LeftPanelHivesListAdapter)this.leftPanelAdapters[1]).ListSizeChanged.add(new EventHandler<EventArgs>(this, "OnListSizeChanged", EventArgs.class));
-        ((LeftPanelListAdapter)this.leftPanelAdapters[2]).ListSizeChanged.add(new EventHandler<EventArgs>(this, "OnListSizeChanged", EventArgs.class));
+        //((LeftPanelListAdapter)this.leftPanelAdapters[0]).ListSizeChanged.add(new EventHandler<EventArgs>(this, "OnListSizeChanged", EventArgs.class));
+        //((LeftPanelHivesListAdapter)this.leftPanelAdapters[1]).ListSizeChanged.add(new EventHandler<EventArgs>(this, "OnListSizeChanged", EventArgs.class));
+        //((LeftPanelListAdapter)this.leftPanelAdapters[2]).ListSizeChanged.add(new EventHandler<EventArgs>(this, "OnListSizeChanged", EventArgs.class));
 
         ((LeftPanelListAdapter)this.leftPanelAdapters[0]).SetOnClickListener(chatClick);
         //this.leftPanelAdapters[1].SetOnClickListener(hiveClick);
@@ -171,8 +171,8 @@ public class LeftPanel {
   }
 
     public void OnLocalUserReceived(Object sender, EventArgs eventArgs) {
-        ((Main)context).controller.getMe().FriendListChanged.add(new EventHandler<EventArgs>(leftPanelAdapters[2],"OnAddItem",EventArgs.class));
-        ((Main)context).controller.LocalUserReceived.remove(new EventHandler<EventArgs>(this,"OnLocalUserReceived",EventArgs.class));
+        //((Main)context).controller.getMe().FriendListChanged.add(new EventHandler<EventArgs>(leftPanelAdapters[2],"OnAddItem",EventArgs.class));
+        //((Main)context).controller.LocalUserReceived.remove(new EventHandler<EventArgs>(this,"OnLocalUserReceived",EventArgs.class));
     }
 
     protected int getEmptyMessage(int list) {

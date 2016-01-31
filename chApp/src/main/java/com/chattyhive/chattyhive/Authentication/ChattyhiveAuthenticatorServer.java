@@ -10,7 +10,6 @@ import com.chattyhive.Core.ContentProvider.SynchronousDataPath.CommandDefinition
 import com.chattyhive.Core.ContentProvider.SynchronousDataPath.CommandQueue;
 import com.chattyhive.Core.Controller;
 import com.chattyhive.Core.Util.CallbackDelegate;
-import com.chattyhive.backend.contentprovider.server.Server;
 import com.chattyhive.chattyhive.framework.OSStorageProvider.LocalSettings;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -59,7 +58,7 @@ public class ChattyhiveAuthenticatorServer {
             LOGIN loginFormat = new LOGIN();
             loginFormat.USER = user.getLogin();
             loginFormat.PASS = user.getPassword();
-            Command loginCommand = new Command(user, AvailableCommands.Login,loginFormat);
+            Command loginCommand = new Command(AvailableCommands.Login,loginFormat);
             loginCommand.addCallbackDelegate(new CallbackDelegate(this,"WorkCallback",null));
             this.controller.getDataProvider().runCommand(loginCommand, CommandQueue.Priority.RealTime);
         }

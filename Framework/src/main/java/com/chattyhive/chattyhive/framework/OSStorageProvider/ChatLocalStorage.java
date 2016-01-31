@@ -3,13 +3,13 @@ package com.chattyhive.chattyhive.framework.OSStorageProvider;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.chattyhive.Core.ContentProvider.OSStorageProvider.OLD.ChatLocalStorageInterface;
+//import com.chattyhive.Core.ContentProvider.OSStorageProvider.OLD.ChatLocalStorageInterface;
 import com.chattyhive.chattyhive.framework.Util.ApplicationContextProvider;
 
 /**
  * Created by Jonathan on 23/06/2014.
  */
-public class ChatLocalStorage implements ChatLocalStorageInterface {
+public class ChatLocalStorage /*implements ChatLocalStorageInterface*/ {
     private ChatLocalStorage() {}
     static ChatLocalStorage instance;
 
@@ -20,7 +20,7 @@ public class ChatLocalStorage implements ChatLocalStorageInterface {
 
     private static String CHAT_PROFILES = "chChat";
 
-    @Override
+    //@Override
     public void StoreGroup(String CHANNEL_UNICODE, String jsonGroup) {
         Context context = ApplicationContextProvider.getContext();
         SharedPreferences sharedPreferences = context.getSharedPreferences(CHAT_PROFILES,context.MODE_PRIVATE);
@@ -32,7 +32,7 @@ public class ChatLocalStorage implements ChatLocalStorageInterface {
         sharedPreferencesEditor.apply();
     }
 
-    @Override
+    //@Override
     public String RecoverGroup(String CHANNEL_UNICODE) {
         Context context = ApplicationContextProvider.getContext();
         SharedPreferences sharedPreferences = context.getSharedPreferences(CHAT_PROFILES,context.MODE_PRIVATE);
@@ -43,7 +43,7 @@ public class ChatLocalStorage implements ChatLocalStorageInterface {
     }
 
 
-    @Override
+    //@Override
     public String[] RecoverGroups() {
         String[] chats = null;
         Context context = ApplicationContextProvider.getContext();
@@ -54,7 +54,7 @@ public class ChatLocalStorage implements ChatLocalStorageInterface {
         return chats;
     }
 
-    @Override
+    //@Override
     public void RemoveGroup(String CHANNEL_UNICODE) {
         Context context = ApplicationContextProvider.getContext();
         SharedPreferences sharedPreferences = context.getSharedPreferences(CHAT_PROFILES,context.MODE_PRIVATE);
@@ -65,7 +65,7 @@ public class ChatLocalStorage implements ChatLocalStorageInterface {
         }
     }
 
-    @Override
+    //@Override
     public void ClearGroups() {
         Context context = ApplicationContextProvider.getContext();
         SharedPreferences sharedPreferences = context.getSharedPreferences(CHAT_PROFILES,context.MODE_PRIVATE);

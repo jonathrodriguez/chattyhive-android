@@ -173,9 +173,9 @@ public class Main extends Activity {
 
         //Log.w("Main","onCreate..."); //DEBUG
         Object[] LocalStorage = {LoginLocalStorage.getLoginLocalStorage(), ChatLocalStorage.getGroupLocalStorage(), HiveLocalStorage.getHiveLocalStorage(), MessageLocalStorage.getMessageLocalStorage(), UserLocalStorage.getUserLocalStorage()};
-        Controller.Initialize(new CookieStore(),LocalStorage);
+        //Controller.Initialize(new CookieStore(),LocalStorage);
 
-        this.controller = Controller.GetRunningController(com.chattyhive.chattyhive.framework.OSStorageProvider.LocalStorage.getLocalStorage());
+        //this.controller = Controller.GetRunningController(com.chattyhive.chattyhive.framework.OSStorageProvider.LocalStorage.getLocalStorage());
 
         this.viewStack = new HashMap<Integer, Window>();
         this.lastOpenHierarchyLevel = -1;
@@ -187,11 +187,11 @@ public class Main extends Activity {
 
         this.rightPanel = new RightPanel2(this);
 
-        try {
-            Controller.bindApp(this.getClass().getMethod("hasToLogin"),this);
+      /*  try {
+           // Controller.bindApp(this.getClass().getMethod("hasToLogin"),this);
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
-        }
+        }*/
 
         this.ConnectService();
 
@@ -223,7 +223,7 @@ public class Main extends Activity {
                 if (floatingPanel.isOpen())
                     floatingPanel.close(0);
                 if (resultCode != RESULT_OK) {
-                    Controller.DisposeRunningController();
+                   // Controller.DisposeRunningController();
                     this.finish();
                 }
                 break;
@@ -236,7 +236,7 @@ public class Main extends Activity {
                         nameURL = data.getStringExtra("NameURL");
 
                     if ((nameURL != null) && (!nameURL.isEmpty())) {
-                        Hive h = Hive.getHive(nameURL);
+                        Hive h = controller.getHive(nameURL);
                         Chat c = null;
                         if (h != null)
                             c = h.getPublicChat();
@@ -269,7 +269,7 @@ public class Main extends Activity {
 
     @Override
     public void onDestroy() {
-        Controller.unbindApp();
+        //Controller.unbindApp();
         super.onDestroy();
     }
 
@@ -347,25 +347,10 @@ public class Main extends Activity {
     protected View.OnClickListener logout_button_click = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            controller.clearUserData();
-            controller.clearAllChats();
+            //controller.clearUserData();
+            //controller.clearAllChats();
 
             hasToLogin();
-        }
-    };
-
-    protected View.OnClickListener clear_chats_button_click = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            controller.clearAllChats();
-        }
-    };
-
-    protected View.OnClickListener chat_sync_button_click = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            DataProvider dataProvider = DataProvider.GetDataProvider();
-            dataProvider.InvokeServerCommand(AvailableCommands.ChatList, null);
         }
     };
 

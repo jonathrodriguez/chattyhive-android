@@ -8,9 +8,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 
-import com.chattyhive.backend.businessobjects.Chats.Hive;
-import com.chattyhive.backend.util.events.EventArgs;
-import com.chattyhive.backend.util.events.EventHandler;
+import com.chattyhive.Core.BusinessObjects.Hives.Hive;
+import com.chattyhive.Core.Util.Events.EventArgs;
+import com.chattyhive.Core.Util.Events.EventHandler;
 import com.chattyhive.chattyhive.ViewHolders.LeftPanelHiveUserListChatViewHolder;
 import com.chattyhive.chattyhive.ViewHolders.LeftPanelHiveUserListUserViewHolder;
 
@@ -43,7 +43,7 @@ public class LeftPanelHiveUserListAdapter extends PaginationList {
             this.inflater = this.contextActivity.getLayoutInflater();
 
         this.hive.OnSubscribedUsersListUpdated.add(new EventHandler<EventArgs>(this,"onAddItem",EventArgs.class));
-        this.hive.requestUsers(0,11,this.hiveUsersType);
+        this.hive.requestUsers(0,11,this.hiveUsersType,"");
         // TODO: here show the "loading" animation
 
 /*        this.contextActivity.runOnUiThread(new Runnable() { //This is for preloading the chat card
@@ -163,7 +163,7 @@ public class LeftPanelHiveUserListAdapter extends PaginationList {
                     break;
                 case 1:
                     convertView = inflater.inflate(R.layout.left_panel_hive_user_list_user_card,parent,false);
-                    LeftPanelHiveUserListUserViewHolder leftPanelHiveUserListUserViewHolder = new LeftPanelHiveUserListUserViewHolder(this.contextActivity,this,convertView,hive.getSubscribedUsers().get(position-1),hive);
+                    LeftPanelHiveUserListUserViewHolder leftPanelHiveUserListUserViewHolder = new LeftPanelHiveUserListUserViewHolder(this.contextActivity,this,convertView,hive.getSubscribedUsers().get(position-1).getUser(),hive);
                     convertView.setTag(leftPanelHiveUserListUserViewHolder);
                     break;
                 case 2:
@@ -178,7 +178,7 @@ public class LeftPanelHiveUserListAdapter extends PaginationList {
                     break;
                 case 1:
                     LeftPanelHiveUserListUserViewHolder leftPanelHiveUserListUserViewHolder = (LeftPanelHiveUserListUserViewHolder)convertView.getTag();
-                    leftPanelHiveUserListUserViewHolder.setItem(hive.getSubscribedUsers().get(position - 1));
+                    leftPanelHiveUserListUserViewHolder.setItem(hive.getSubscribedUsers().get(position - 1).getUser());
                     break;
             }
         }
@@ -202,7 +202,7 @@ public class LeftPanelHiveUserListAdapter extends PaginationList {
                 }
             });
         } else if ((actualPage>=1) && (actualPage<4)) {
-            this.hive.requestUsers(this.hive.getSubscribedUsers().size(), this.getItemCountPerPage(), this.hiveUsersType);
+            this.hive.requestUsers(this.hive.getSubscribedUsers().size(), this.getItemCountPerPage(), this.hiveUsersType,"");
             this.contextActivity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -210,7 +210,7 @@ public class LeftPanelHiveUserListAdapter extends PaginationList {
                 }
             });
         } else if (actualPage>=5) {
-            this.hive.requestUsers(this.hive.getSubscribedUsers().size(), this.getItemCountPerPage(), this.hiveUsersType);
+            this.hive.requestUsers(this.hive.getSubscribedUsers().size(), this.getItemCountPerPage(), this.hiveUsersType,"");
             // TODO: here show the "loading" animation
         } else {
             this.contextActivity.runOnUiThread(new Runnable() {

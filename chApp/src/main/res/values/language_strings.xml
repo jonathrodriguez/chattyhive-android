@@ -74,5 +74,5 @@
     <string name="language_uk">Ukrainian</string>
     <string name="language_ur">Urdu</string>
     <string name="language_vi">Vietnamese</string>
-    <string name="language_zh-hant">Chinese</string>
+    <!--string name="language_zh-hant">Chinese</string-->
 </resources>

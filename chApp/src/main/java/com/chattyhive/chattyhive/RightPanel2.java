@@ -15,7 +15,7 @@ import android.widget.TextView;
 import com.chattyhive.Core.BusinessObjects.Image;
 import com.chattyhive.Core.Util.Events.EventArgs;
 import com.chattyhive.Core.Util.Events.EventHandler;
-import com.chattyhive.backend.businessobjects.Chats.Context.IContextualizable;
+import com.chattyhive.Core.BusinessObjects.Chats.Context.IContextualizable;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,9 +34,9 @@ public class RightPanel2{
     private View.OnClickListener open_profile = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (((Main)context).controller.getMe() != null) {
+           /* if (((Main)context).controller.getMe() != null) {
                 ((Main)context).OpenWindow(new Profile(context,((Main)context).controller.getMe(), Profile.ProfileType.Private));
-            }
+            }*/
         }
     };
 
@@ -44,9 +44,9 @@ public class RightPanel2{
         this.context = activity ;
         this.InitializeComponent();
         ((Activity)this.context).findViewById(R.id.right_panel_action_bar).setOnClickListener(this.open_profile);
-        ((Main)this.context).controller.LocalUserReceived.add(new EventHandler<EventArgs>(this, "onLocalUserLoaded", EventArgs.class));
-        if (((Main)this.context).controller.getMe() != null)
-            this.onLocalUserLoaded(((Main)this.context).controller.getMe(),EventArgs.Empty());
+        //((Main)this.context).controller.LocalUserReceived.add(new EventHandler<EventArgs>(this, "onLocalUserLoaded", EventArgs.class));
+        /*if (((Main)this.context).controller.getMe() != null)
+            this.onLocalUserLoaded(((Main)this.context).controller.getMe(),EventArgs.Empty());*/
 
         listView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
             @Override
@@ -66,7 +66,7 @@ public class RightPanel2{
         ((Activity)context).runOnUiThread( new Runnable() {
             @Override
             public void run() {
-                String name = ((Main) context).controller.getMe().getUserPrivateProfile().getShowingName().toString();
+                /*String name = ((Main) context).controller.getMe().getUserPrivateProfile().getShowingName().toString();
                 ((TextView)((Activity)context).findViewById(R.id.menu_private_profile_name)).setText(name);
                 name = context.getResources().getString(R.string.public_username_identifier_character).concat(((Main) context).controller.getMe().getUserPublicProfile().getShowingName().toString());
                 ((TextView)((Activity)context).findViewById(R.id.menu_public_profile_name)).setText(name);
@@ -80,7 +80,7 @@ public class RightPanel2{
                 if (((Main) context).controller.getMe().getUserPrivateProfile().getProfileImage() != null) {
                     ((Main) context).controller.getMe().getUserPrivateProfile().getProfileImage().OnImageLoaded.add(new EventHandler<EventArgs>(thisPanel, "loadImage", EventArgs.class));
                     ((Main) context).controller.getMe().getUserPrivateProfile().getProfileImage().loadImage(Image.ImageSize.medium, 0);
-                }
+                }*/
 
                 //((Main)context).controller.LocalUserReceived.remove(new EventHandler<EventArgs>(thisPanel, "onLocalUserLoaded", EventArgs.class));
             }

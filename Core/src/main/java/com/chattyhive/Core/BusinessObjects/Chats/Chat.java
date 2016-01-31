@@ -1,5 +1,6 @@
 package com.chattyhive.Core.BusinessObjects.Chats;
 
+import com.chattyhive.Core.BusinessObjects.Chats.Context.IContextualizable;
 import com.chattyhive.Core.BusinessObjects.Hives.Hive;
 import com.chattyhive.Core.BusinessObjects.Subscriptions.ISubscribable;
 import com.chattyhive.Core.BusinessObjects.Chats.Messages.Message;

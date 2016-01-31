@@ -220,7 +220,7 @@ public class ChatListAdapter extends BaseAdapter {
                     image.OnImageLoaded.add(new EventHandler<EventArgs>(holder, "onMessageImageLoaded", EventArgs.class));
                     image.loadImage(Image.ImageSize.xlarge, 0);
 
-                    if ((chatKind == ChatKind.PRIVATE_SINGLE) || (chatKind == ChatKind.PUBLIC_SINGLE))
+                    if ((chatType == ChatType.PRIVATE_FRIEND) || (chatType == ChatType.PRIVATE_HIVEMATE))
                         ((LinearLayout.LayoutParams) holder.chatItem.getLayoutParams()).weight = 1;
                 }
             } else {

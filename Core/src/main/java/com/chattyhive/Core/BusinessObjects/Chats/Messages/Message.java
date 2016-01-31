@@ -166,7 +166,7 @@ public class Message implements Comparable {
     }
 
     public void FillMessageHole(String nextMessageId) {
-        if ((!isMessageHole) || (filling)) return;
+        /*if ((!isMessageHole) || (filling)) return;
         if (DataProvider.isConnectionAvailable()) {
             DataProvider dataProvider = DataProvider.GetDataProvider();
             if (dataProvider.isServerConnected()) {
@@ -179,14 +179,14 @@ public class Message implements Comparable {
                 dataProvider.InvokeServerCommand(AvailableCommands.GetMessages,new EventHandler<CommandCallbackEventArgs>(this,"onMessageHoleFilledCallback",CommandCallbackEventArgs.class),chat_id,message_interval);
                 filling = true;
             }
-        }
+        }*/
     }
 
     public void onMessageHoleFilledCallback (Object sender, CommandCallbackEventArgs eventArgs) {
-        if ((!isMessageHole) || (!filling)) return;
+       /* if ((!isMessageHole) || (!filling)) return;
         filling = false;
         Conversation.onFormatReceived(this, new FormatReceivedEventArgs(eventArgs.getReceivedFormats()));
-        this.conversation.removeMessage(this.getId());
+        this.conversation.removeMessage(this.getId());*/
     }
 
     /**
@@ -213,9 +213,9 @@ public class Message implements Comparable {
         if ((this.user == null) || (this.conversation == null) || (this.content == null) || (this.timeStamp == null) || (this.content.getContentType().endsWith("_SEPARATOR"))) throw new IOException("Cannot send message");
 
         this.conversation.addMessage(this);
-        DataProvider dataProvider = DataProvider.GetDataProvider();
+       // DataProvider dataProvider = DataProvider.GetDataProvider();
 
-        dataProvider.InvokeServerCommand(AvailableCommands.SendMessage,new EventHandler<CommandCallbackEventArgs>(this,"onMessageSendCallback",CommandCallbackEventArgs.class),this.toFormat(new MESSAGE()));
+       // dataProvider.InvokeServerCommand(AvailableCommands.SendMessage,new EventHandler<CommandCallbackEventArgs>(this,"onMessageSendCallback",CommandCallbackEventArgs.class),this.toFormat(new MESSAGE()));
     }
 
     public void onMessageSendCallback (Object sender, CommandCallbackEventArgs eventArgs) {
@@ -248,7 +248,7 @@ public class Message implements Comparable {
             ((MESSAGE) format).CONFIRMED = this.confirmed;
             ((MESSAGE) format).CONTENT = (MESSAGE_CONTENT)this.content.toFormat(new MESSAGE_CONTENT());
             ((MESSAGE) format).USER_ID = this.user.getUserID();
-            ((MESSAGE) format).CHANNEL_UNICODE = this.conversation.getParent().getChannelUnicode();
+            ((MESSAGE) format).CHANNEL_UNICODE = this.conversation.getParent().getID();
         } else if (format instanceof MESSAGE_ACK) {
             ((MESSAGE_ACK) format).ID = this.id;
             ((MESSAGE_ACK) format).SERVER_TIMESTAMP = this.serverTimeStamp;
@@ -273,12 +273,12 @@ public class Message implements Comparable {
 
             this.confirmed = ((MESSAGE) format).CONFIRMED;
             this.content = new MessageContent(((MESSAGE) format).CONTENT);
-            this.conversation = Chat.getChat(((MESSAGE) format).CHANNEL_UNICODE, true).getConversation();
+            this.conversation = controller.getChat(((MESSAGE) format).CHANNEL_UNICODE).getConversation();
 
             PROFILE_ID profile_id = new PROFILE_ID();
             profile_id.USER_ID = ((MESSAGE) format).USER_ID;
             profile_id.PROFILE_TYPE = ((this.conversation.getParent().getChatType() == ChatType.PRIVATE_GROUP_FRIEND) || (this.conversation.getParent().getChatType() == ChatType.PRIVATE_FRIEND))?"BASIC_PRIVATE":"BASIC_PUBLIC";
-            this.user = controller.getUser(profile_id);
+            this.user = controller.getUser(profile_id.USER_ID);
 
 
             return true;
@@ -323,7 +323,7 @@ public class Message implements Comparable {
             else if ((this.getConversation() != null) && (((Message) o).getConversation() == null))
                 compareRes = -1;
             else if ((this.getConversation() != null) && (((Message) o).getConversation() != null)) {
-                compareRes = (this.getConversation().getParent().getChannelUnicode().compareToIgnoreCase(((Message) o).getConversation().getParent().getChannelUnicode()));
+                compareRes = (this.getConversation().getParent().getID().compareToIgnoreCase(((Message) o).getConversation().getParent().getID()));
             }
         }
 
@@ -341,7 +341,7 @@ public class Message implements Comparable {
 
             Boolean result = true;
 
-            result = result && (this.getConversation().getParent().getChannelUnicode().equalsIgnoreCase(m.getConversation().getParent().getChannelUnicode()));
+            result = result && (this.getConversation().getParent().getID().equalsIgnoreCase(m.getConversation().getParent().getID()));
             result = result && (this.getId() != null) && (m.getId() != null) && (this.getId().equalsIgnoreCase(m.getId()));
             
             return result;

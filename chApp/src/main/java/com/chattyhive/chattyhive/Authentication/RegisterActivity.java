@@ -566,7 +566,8 @@ public class RegisterActivity extends Activity {
                     break;
                 case 1:
                     if ((nextStep == 2) && (!usernameValidated) && (!newUser.getUserPublicProfile().getPublicName().equals(((TextView)findViewById(R.id.register_second_step_username)).getText().toString()))) {
-                        controller.CheckUsername(((TextView)findViewById(R.id.register_second_step_username)).getText().toString(),new EventHandler<CommandCallbackEventArgs>(thisActivity,"onUsernameCheckedCallback",CommandCallbackEventArgs.class));
+                        CallbackDelegate callbackDelegate = new CallbackDelegate(thisActivity,"onUsernameCheckedCallback",CommandCallbackEventArgs.class);
+                        controller.CheckUsername(((TextView)findViewById(R.id.register_second_step_username)).getText().toString(),callbackDelegate);
                     }
                     break;
             }

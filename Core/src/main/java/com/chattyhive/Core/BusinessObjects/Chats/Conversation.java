@@ -2,18 +2,20 @@ package com.chattyhive.Core.BusinessObjects.Chats;
 
 import com.chattyhive.Core.BusinessObjects.Hives.Hive;
 import com.chattyhive.Core.BusinessObjects.Users.User;
+import com.chattyhive.Core.ContentProvider.SynchronousDataPath.Command;
+import com.chattyhive.Core.ContentProvider.SynchronousDataPath.CommandQueue;
 import com.chattyhive.Core.Controller;
 import com.chattyhive.Core.StaticParameters;
 import com.chattyhive.Core.BusinessObjects.Chats.Messages.Message;
 import com.chattyhive.Core.ContentProvider.SynchronousDataPath.AvailableCommands;
 import com.chattyhive.Core.ContentProvider.DataProvider;
-import com.chattyhive.Core.ContentProvider.OSStorageProvider.OLD.MessageLocalStorageInterface;
 import com.chattyhive.Core.ContentProvider.Formats.CHAT_ID;
 import com.chattyhive.Core.ContentProvider.Formats.Format;
 import com.chattyhive.Core.ContentProvider.Formats.MESSAGE;
 import com.chattyhive.Core.ContentProvider.Formats.MESSAGE_INTERVAL;
 import com.chattyhive.Core.ContentProvider.Formats.MESSAGE_LIST;
 import com.chattyhive.Core.Util.Events.ChannelEventArgs;
+import com.chattyhive.Core.Util.Events.CommandCallbackEventArgs;
 import com.chattyhive.Core.Util.Events.Event;
 import com.chattyhive.Core.Util.Events.EventArgs;
 import com.chattyhive.Core.Util.Events.EventHandler;
@@ -21,6 +23,7 @@ import com.chattyhive.Core.Util.Events.FormatReceivedEventArgs;
 import com.chattyhive.Core.Util.Formatters.DateFormatter;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -29,42 +32,6 @@ import java.util.TreeSet;
  * Created by Jonathan on 12/06/2014.
  */
 public class Conversation { //TODO: implements SortedSet<Message>
-    /**************************
-       Static conversation management
-     **************************/
-    private static MessageLocalStorageInterface localStorage;
-    private static Controller controller;
-
-    public static void Initialize(Controller controller, MessageLocalStorageInterface messageLocalStorageInterface) {
-        Conversation.controller = controller;
-        Conversation.localStorage = messageLocalStorageInterface;
-
-        DataProvider.GetDataProvider().onMessageReceived.add(new EventHandler<FormatReceivedEventArgs>(Conversation.class, "onFormatReceived", FormatReceivedEventArgs.class));
-    }
-
-    /***********************************/
-    /*        STATIC CALLBACKS         */
-    /***********************************/
-
-    public static void onFormatReceived(Object sender, FormatReceivedEventArgs args) {
-        if (args.countReceivedFormats() > 0) {
-            ArrayList<Format> formats = args.getReceivedFormats();
-            for (Format format : formats) {
-                if (format instanceof MESSAGE) {
-                    Chat.getChat(((MESSAGE) format).CHANNEL_UNICODE).getConversation().addMessage(new Message(format));
-                } else if (format instanceof MESSAGE_LIST) {
-                    if ((((MESSAGE_LIST) format).MESSAGES != null) && (((MESSAGE_LIST) format).MESSAGES.size() > 0)) {
-                        int lastReceived = ((MESSAGE_LIST) format).MESSAGES.size()-1;
-                        for (int i = 0; i <= lastReceived; i++) {
-                            MESSAGE message = ((MESSAGE_LIST) format).MESSAGES.get(i);
-                            Chat.getChat(message.CHANNEL_UNICODE).getConversation().addMessage(new Message(message),(i == lastReceived));
-                        }
-                    }
-                }
-            }
-        }
-    }
-
     /**************************
        Proper conversation management
      **************************/
@@ -83,11 +50,13 @@ public class Conversation { //TODO: implements SortedSet<Message>
         this.chatWindowActive = value;
         if (value) {
             this.showingIndex = this.messages.size() - 100;
-            controller.Join(this.parent.pusherChannel);
+            // TODO: Join pusher channel
+            //controller.Join(this.parent.pusherChannel);
             this.loadMessages(-1);
         }
         else {
-            controller.Leave(this.parent.pusherChannel);
+            // TODO: Leave pusher channel
+            //controller.Leave(this.parent.pusherChannel);
             this.showingIndex = -1;
         }
     }
@@ -103,14 +72,16 @@ public class Conversation { //TODO: implements SortedSet<Message>
         }
 
         CHAT_ID chat_id = new CHAT_ID();
-        chat_id.CHANNEL_UNICODE = this.getParent().getChannelUnicode();
+        chat_id.CHANNEL_UNICODE = this.getParent().getID();
 
         MESSAGE_INTERVAL message_interval = new MESSAGE_INTERVAL();
         message_interval.LAST_MESSAGE_ID = last;
         message_interval.COUNT = 100;
         message_interval.START_MESSAGE_ID = start;
 
-        controller.getDataProvider().InvokeServerCommand(AvailableCommands.GetMessages,chat_id,message_interval);
+        Command command = new Command(AvailableCommands.GetMessages,chat_id,message_interval);
+
+        this.getParent().controller.getDataProvider().runCommand("", command, CommandQueue.Priority.RealTime);
     }
     public void unloadMessages() {
         Message lastMessage = this.getLastMessage();
@@ -119,6 +90,17 @@ public class Conversation { //TODO: implements SortedSet<Message>
         this.messages.clear();
         this.messagesByID.put(lastMessage.getId(),lastMessage);
         this.messages.addAll(tail);
+    }
+    /*****************************************
+    Call backs
+    *****************************************/
+    public void CommandCallback(CommandCallbackEventArgs eventArgs) {
+        List<Format> receivedFormats = eventArgs.getReceivedFormats();
+        if (receivedFormats != null) {
+            for (Format receivedFormat : receivedFormats) {
+                // TODO: implement this
+            }
+        }
     }
 
     /*****************************************
@@ -140,13 +122,6 @@ public class Conversation { //TODO: implements SortedSet<Message>
     /*****************************************
                   Message lists
      *****************************************/
-    public void loadPendingMessages() {
-        String[] messages = Conversation.localStorage.RecoverMessages(this.parent.pusherChannel);
-
-        //TODO: recover local messages.
-        //TODO: recover send pending messages.
-        //TODO: identify holes.
-    }
 
     private TreeMap<String,Message> messagesByID;
     private TreeSet<Message> messages;
@@ -168,17 +143,6 @@ public class Conversation { //TODO: implements SortedSet<Message>
             if (this.MessageListModifiedEvent != null)
                 this.MessageListModifiedEvent.fire(this, EventArgs.Empty());
 
-            if (idReceived) {
-                Conversation.localStorage.RemoveMessage(String.format("Sending-%s", this.parent.pusherChannel),m.getId());
-                Conversation.localStorage.StoreMessage(this.parent.pusherChannel,m.getId(), m.toJson(new MESSAGE()).toString());
-                if (StaticParameters.MaxLocalMessages > 0)
-                    Conversation.localStorage.TrimStoredMessages(this.parent.pusherChannel, StaticParameters.MaxLocalMessages);
-            }
-
-            if (confirmationReceived) { //TODO: think about update method.
-                Conversation.localStorage.RemoveMessage(this.parent.pusherChannel,m.getId());
-                Conversation.localStorage.StoreMessage(this.parent.pusherChannel, m.getId(),m.toJson(new MESSAGE()).toString());
-            }
         }
     }
 
@@ -262,7 +226,7 @@ public class Conversation { //TODO: implements SortedSet<Message>
 
         if (message.getId() == null)
             message.IdReceived.add(new EventHandler<EventArgs>(this, "onMessageChanged", EventArgs.class));
-        if ((this.parent.chatType == ChatType.PRIVATE_HIVEMATE) || (this.parent.chatType == ChatType.PRIVATE_FRIEND))
+        if ((this.parent.getChatType()== ChatType.PRIVATE_HIVEMATE) || (this.parent.getChatType() == ChatType.PRIVATE_FRIEND))
             message.ConfirmationReceived.add(new EventHandler<EventArgs>(this, "onMessageChanged", EventArgs.class));
 
         Boolean messageListModified = this.messages.add(message);
@@ -279,23 +243,13 @@ public class Conversation { //TODO: implements SortedSet<Message>
             if ((messageListModified) && (this.MessageListModifiedEvent != null))
                 this.MessageListModifiedEvent.fire(this, EventArgs.Empty());
 
-            if ((messageListModified) && (this.getParent().chatKind == ChatKind.HIVE) && (Hive.HiveListChanged != null))
-                Hive.HiveListChanged.fire(null, EventArgs.Empty());
+           // if ((messageListModified) && (this.getParent().getChatType() == ChatType.PUBLIC) && (Controller.GetRunningController(). != null))
+           //     Hive.HiveListChanged.fire(null, EventArgs.Empty());
 
-            if ((messageListModified) && (Chat.ChatListChanged != null))
-                Chat.ChatListChanged.fire(null, EventArgs.Empty());
+           // if ((messageListModified) && (Chat.ChatListChanged != null))
+           //     Chat.ChatListChanged.fire(null, EventArgs.Empty());
         }
 
-
-        if ((message.getId() != null) && (!message.getId().isEmpty())) {
-            if (StaticParameters.MaxLocalMessages != 0) {
-                Conversation.localStorage.StoreMessage(this.parent.pusherChannel,message.getId(), message.toJson(new MESSAGE()).toString());
-                if (StaticParameters.MaxLocalMessages > 0)
-                    Conversation.localStorage.TrimStoredMessages(this.parent.pusherChannel, StaticParameters.MaxLocalMessages);
-            }
-        } else {
-            Conversation.localStorage.StoreMessage(String.format("Sending-%s",this.parent.pusherChannel),message.getId(),message.toJson(new MESSAGE()).toString());
-        }
     }
 
     public void addMessageByID(Message message) {
@@ -315,15 +269,11 @@ public class Conversation { //TODO: implements SortedSet<Message>
         Message toBeRemoved = this.getMessageByID(ID);
         this.messagesByID.remove(ID);
         this.messages.remove(toBeRemoved);
-        if (StaticParameters.MaxLocalMessages != 0)
-            Conversation.localStorage.RemoveMessage(this.parent.pusherChannel,toBeRemoved.getId());
     }
 
     public void clearAllMessages() {
         this.messagesByID.clear();
         this.messages.clear();
-        if (StaticParameters.MaxLocalMessages != 0)
-            Conversation.localStorage.ClearMessages(this.parent.pusherChannel);
     }
 
     public void getMoreMessages() {

@@ -19,7 +19,6 @@ import com.chattyhive.Core.Controller;
 import com.chattyhive.Core.StaticParameters;
 import com.chattyhive.Core.ContentProvider.Formats.Format;
 import com.chattyhive.Core.ContentProvider.Formats.MESSAGE;
-import com.chattyhive.Core.ContentProvider.pubsubservice.ConnectionState;
 import com.chattyhive.Core.Util.Events.EventArgs;
 import com.chattyhive.Core.Util.Events.EventHandler;
 import com.chattyhive.Core.Util.Events.FormatReceivedEventArgs;

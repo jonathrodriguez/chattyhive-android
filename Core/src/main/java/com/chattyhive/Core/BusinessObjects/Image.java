@@ -88,7 +88,7 @@ public class Image {
                 } else {
                     String url = this.fileURL.replace("file_","small_");
                     //String url = this.fileURL;
-                    smallThumbnail = dataProvider.getImage(url);
+                    //smallThumbnail = dataProvider.getImage(url);
                 }
                 break;
             case medium:
@@ -97,7 +97,7 @@ public class Image {
                 } else {
                     String url = this.fileURL.replace("file_","medium_");
                     //String url = this.fileURL;
-                    mediumThumbnail = dataProvider.getImage(url);
+                    //mediumThumbnail = dataProvider.getImage(url);
                 }
                 break;
             case large:
@@ -106,7 +106,7 @@ public class Image {
                 } else {
                     String url = this.fileURL.replace("file_","large_");
                     //String url = this.fileURL;
-                    largeThumbnail = dataProvider.getImage(url);
+                    //largeThumbnail = dataProvider.getImage(url);
                 }
                 break;
             case xlarge:
@@ -115,7 +115,7 @@ public class Image {
                 } else {
                     String url = this.fileURL.replace("file_","xlarge_");
                     //String url = this.fileURL;
-                    xlargeThumbnail = dataProvider.getImage(url);
+                    //xlargeThumbnail = dataProvider.getImage(url);
                 }
                 break;
             case file:
@@ -123,7 +123,7 @@ public class Image {
                     // TODO: think about checking updates
                 } else {
                     String url = this.fileURL;
-                    fileImage = dataProvider.getImage(url);
+                    //fileImage = dataProvider.getImage(url);
                 }
                 break;
         }

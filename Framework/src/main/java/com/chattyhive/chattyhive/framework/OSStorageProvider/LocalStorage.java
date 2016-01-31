@@ -16,7 +16,7 @@ import com.chattyhive.Core.ContentProvider.Formats.PRIVATE_PROFILE;
 import com.chattyhive.Core.ContentProvider.Formats.PROFILE_ID;
 import com.chattyhive.Core.ContentProvider.Formats.PUBLIC_PROFILE;
 import com.chattyhive.Core.ContentProvider.Formats.USER_PROFILE;
-import com.chattyhive.Core.ContentProvider.OSStorageProvider.OLD.LocalStorageInterface;
+//import com.chattyhive.Core.ContentProvider.OSStorageProvider.OLD.LocalStorageInterface;
 import com.chattyhive.Core.Util.Events.CommandCallbackEventArgs;
 import com.chattyhive.Core.Util.Events.EventHandler;
 import com.chattyhive.Core.Util.Formatters.TimestampFormatter;
@@ -30,7 +30,7 @@ import java.util.Collection;
 /**
  * Created by Jonathan on 03/10/2014.
  */
-public class LocalStorage implements LocalStorageInterface {
+public class LocalStorage /* implements LocalStorageInterface*/ {
     private LocalStorage() {}
     static LocalStorage instance;
 
@@ -39,7 +39,7 @@ public class LocalStorage implements LocalStorageInterface {
         return instance;
     }
 
-    @Override
+    //@Override
     public Boolean PreRunCommand(AvailableCommands command, EventHandler<CommandCallbackEventArgs> Callback, Object CallbackAdditionalData, Format... formats) {
         Boolean result = false;
         LOCAL_USER_PROFILE local_user_profile = null;
@@ -121,7 +121,7 @@ public class LocalStorage implements LocalStorageInterface {
         return result;
     }
 
-    @Override
+    //@Override
     public Boolean PostRunCommand(AvailableCommands command, Format... formats) {
         Boolean result = false;
         COMMON common = null;
@@ -390,12 +390,12 @@ public class LocalStorage implements LocalStorageInterface {
         return new_profile;
     }
 
-    @Override
+    //@Override
     public Boolean FormatsReceived(Collection<Format> receivedFormats) {
         return null;
     }
 
-    @Override
+    //@Override
     public InputStream getImage(String url) {
         String name = url.substring(0,url.lastIndexOf("."));
         Resources resources = ApplicationContextProvider.getContext().getResources();

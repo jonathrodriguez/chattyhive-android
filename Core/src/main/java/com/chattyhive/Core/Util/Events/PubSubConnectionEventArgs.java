@@ -1,6 +1,6 @@
 package com.chattyhive.Core.Util.Events;
 
-import com.chattyhive.Core.ContentProvider.pubsubservice.ConnectionStateChange;
+import com.chattyhive.Core.ContentProvider.PubSubService.ConnectionStateChange;
 
 /**
  * Created by Jonathan on 30/12/13.

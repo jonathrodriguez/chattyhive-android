@@ -1,4 +1,4 @@
-package com.chattyhive.Core.ContentProvider.pubsubservice;
+package com.chattyhive.Core.ContentProvider.PubSubService;
 
 
 /**
