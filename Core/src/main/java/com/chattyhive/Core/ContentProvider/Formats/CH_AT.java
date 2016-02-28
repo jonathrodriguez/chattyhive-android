@@ -15,7 +15,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  *
  */
 @Generated("org.jsonschema2pojo")
-public class CHAT {
+public class CH_AT {
 
     /**
      * Chat identifier
@@ -40,7 +40,7 @@ public class CHAT {
      */
     @SerializedName("type")
     @Expose
-    private CHAT.Type type;
+    private CH_AT.Type type;
     /**
      * Last message in chat
      * (Required)
@@ -101,7 +101,7 @@ public class CHAT {
      * @return
      * The type
      */
-    public CHAT.Type getType() {
+    public CH_AT.Type getType() {
         return type;
     }
 
@@ -112,7 +112,7 @@ public class CHAT {
      * @param type
      * The type
      */
-    public void setType(CHAT.Type type) {
+    public void setType(CH_AT.Type type) {
         this.type = type;
     }
 
@@ -153,10 +153,10 @@ public class CHAT {
         if (other == this) {
             return true;
         }
-        if ((other instanceof CHAT) == false) {
+        if ((other instanceof CH_AT) == false) {
             return false;
         }
-        CHAT rhs = ((CHAT) other);
+        CH_AT rhs = ((CH_AT) other);
         return new EqualsBuilder().append(chatId, rhs.chatId).append(slug, rhs.slug).append(type, rhs.type).append(lastMessage, rhs.lastMessage).isEquals();
     }
 
@@ -174,10 +174,10 @@ public class CHAT {
         @SerializedName("friend_group")
         FRIEND_GROUP("friend_group");
         private final String value;
-        private final static Map<String, CHAT.Type> CONSTANTS = new HashMap<String, CHAT.Type>();
+        private final static Map<String, CH_AT.Type> CONSTANTS = new HashMap<String, CH_AT.Type>();
 
         static {
-            for (CHAT.Type c: values()) {
+            for (CH_AT.Type c: values()) {
                 CONSTANTS.put(c.value, c);
             }
         }
@@ -191,8 +191,8 @@ public class CHAT {
             return this.value;
         }
 
-        public static CHAT.Type fromValue(String value) {
-            CHAT.Type constant = CONSTANTS.get(value);
+        public static CH_AT.Type fromValue(String value) {
+            CH_AT.Type constant = CONSTANTS.get(value);
             if (constant == null) {
                 throw new IllegalArgumentException(value);
             } else {
