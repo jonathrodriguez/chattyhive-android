@@ -15,7 +15,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  *
  */
 @Generated("org.jsonschema2pojo")
-public class CH_AT {
+public class CHAT {
 
     /**
      * Chat identifier
@@ -40,7 +40,7 @@ public class CH_AT {
      */
     @SerializedName("type")
     @Expose
-    private CH_AT.Type type;
+    private CHAT.Type type;
     /**
      * Last message in chat
      * (Required)
@@ -101,7 +101,7 @@ public class CH_AT {
      * @return
      * The type
      */
-    public CH_AT.Type getType() {
+    public CHAT.Type getType() {
         return type;
     }
 
@@ -112,7 +112,7 @@ public class CH_AT {
      * @param type
      * The type
      */
-    public void setType(CH_AT.Type type) {
+    public void setType(CHAT.Type type) {
         this.type = type;
     }
 
@@ -153,10 +153,10 @@ public class CH_AT {
         if (other == this) {
             return true;
         }
-        if ((other instanceof CH_AT) == false) {
+        if ((other instanceof CHAT) == false) {
             return false;
         }
-        CH_AT rhs = ((CH_AT) other);
+        CHAT rhs = ((CHAT) other);
         return new EqualsBuilder().append(chatId, rhs.chatId).append(slug, rhs.slug).append(type, rhs.type).append(lastMessage, rhs.lastMessage).isEquals();
     }
 
@@ -174,10 +174,10 @@ public class CH_AT {
         @SerializedName("friend_group")
         FRIEND_GROUP("friend_group");
         private final String value;
-        private final static Map<String, CH_AT.Type> CONSTANTS = new HashMap<String, CH_AT.Type>();
+        private final static Map<String, CHAT.Type> CONSTANTS = new HashMap<String, CHAT.Type>();
 
         static {
-            for (CH_AT.Type c: values()) {
+            for (CHAT.Type c: values()) {
                 CONSTANTS.put(c.value, c);
             }
         }
@@ -191,8 +191,8 @@ public class CH_AT {
             return this.value;
         }
 
-        public static CH_AT.Type fromValue(String value) {
-            CH_AT.Type constant = CONSTANTS.get(value);
+        public static CHAT.Type fromValue(String value) {
+            CHAT.Type constant = CONSTANTS.get(value);
             if (constant == null) {
                 throw new IllegalArgumentException(value);
             } else {
