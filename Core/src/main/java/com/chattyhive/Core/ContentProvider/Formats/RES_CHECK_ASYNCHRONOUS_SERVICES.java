@@ -33,7 +33,7 @@ public class RES_CHECK_ASYNCHRONOUS_SERVICES {
      */
     @SerializedName("services")
     @Expose
-    private Set<SERVICE> services = new LinkedHashSet<SERVICE>();
+    private Set<SERVI_CE> services = new LinkedHashSet<SERVI_CE>();
 
     /**
      * Device identifier for the registered device into chattyhive server.
@@ -62,7 +62,7 @@ public class RES_CHECK_ASYNCHRONOUS_SERVICES {
      * @return
      * The services
      */
-    public Set<SERVICE> getServices() {
+    public Set<SERVI_CE> getServices() {
         return services;
     }
 
@@ -73,7 +73,7 @@ public class RES_CHECK_ASYNCHRONOUS_SERVICES {
      * @param services
      * The services
      */
-    public void setServices(Set<SERVICE> services) {
+    public void setServices(Set<SERVI_CE> services) {
         this.services = services;
     }
 

@@ -18,7 +18,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  *
  */
 @Generated("org.jsonschema2pojo")
-public class SERVICE {
+public class SERVI_CE {
 
     /**
      * Service name/identifier.
@@ -27,7 +27,7 @@ public class SERVICE {
      */
     @SerializedName("name")
     @Expose
-    private SERVICE.Name name;
+    private SERVI_CE.Name name;
     /**
      * APP-Key used by the third party service.
      *
@@ -50,7 +50,7 @@ public class SERVICE {
      * @return
      * The name
      */
-    public SERVICE.Name getName() {
+    public SERVI_CE.Name getName() {
         return name;
     }
 
@@ -61,7 +61,7 @@ public class SERVICE {
      * @param name
      * The name
      */
-    public void setName(SERVICE.Name name) {
+    public void setName(SERVI_CE.Name name) {
         this.name = name;
     }
 
@@ -120,10 +120,10 @@ public class SERVICE {
         if (other == this) {
             return true;
         }
-        if ((other instanceof SERVICE) == false) {
+        if ((other instanceof SERVI_CE) == false) {
             return false;
         }
-        SERVICE rhs = ((SERVICE) other);
+        SERVI_CE rhs = ((SERVI_CE) other);
         return new EqualsBuilder().append(name, rhs.name).append(app, rhs.app).append(regId, rhs.regId).isEquals();
     }
 
@@ -135,10 +135,10 @@ public class SERVICE {
         @SerializedName("gcm")
         GCM("gcm");
         private final String value;
-        private final static Map<String, SERVICE.Name> CONSTANTS = new HashMap<String, SERVICE.Name>();
+        private final static Map<String, SERVI_CE.Name> CONSTANTS = new HashMap<String, SERVI_CE.Name>();
 
         static {
-            for (SERVICE.Name c: values()) {
+            for (SERVI_CE.Name c: values()) {
                 CONSTANTS.put(c.value, c);
             }
         }
@@ -152,8 +152,8 @@ public class SERVICE {
             return this.value;
         }
 
-        public static SERVICE.Name fromValue(String value) {
-            SERVICE.Name constant = CONSTANTS.get(value);
+        public static SERVI_CE.Name fromValue(String value) {
+            SERVI_CE.Name constant = CONSTANTS.get(value);
             if (constant == null) {
                 throw new IllegalArgumentException(value);
             } else {
