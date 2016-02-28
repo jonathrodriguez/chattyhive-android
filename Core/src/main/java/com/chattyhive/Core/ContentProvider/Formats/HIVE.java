@@ -1,189 +1,432 @@
 package com.chattyhive.Core.ContentProvider.Formats;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonNull;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
+import javax.annotation.Generated;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
-    import java.util.Date;
-import com.chattyhive.Core.Util.Formatters.TimestampFormatter;
 
-import java.util.ArrayList;
-    
-
- /*
-  * Automatically generated code by ChattyHive API Manager Code Generator on 28/09/2014.
-  * Be careful to not modify this file since your changes will not be included in future
-  * versions of this file.
-  *
-  * ChattyHive API Manager Code Generator was created by Jonathan on 25/06/2014.
+/**
+ * Hive object
+ *
  */
-public class HIVE extends Format {
-	public String NAME_URL;
-    public String NAME;
-    public String CATEGORY;
-    public String DESCRIPTION;
-    public String IMAGE_URL;
-    public Date CREATION_DATE;
-    public CHAT PUBLIC_CHAT;
-    public ArrayList<String> TAGS;
-    public ArrayList<String> CHAT_LANGUAGES;
-    public Integer SUBSCRIBED_USERS;
-    
+@Generated("org.jsonschema2pojo")
+public class HIVE {
 
-    public HIVE() {
-        super();
+    /**
+     * Hive name
+     *
+     */
+    @SerializedName("name")
+    @Expose
+    private String name;
+    /**
+     * Hive identifier.
+     *
+     */
+    @SerializedName("slug")
+    @Expose
+    private String slug;
+    /**
+     *
+     *
+     */
+    @SerializedName("description")
+    @Expose
+    private String description;
+    /**
+     * Hive creation date. Example: 2015-05-13T15:54:50.315865Z
+     *
+     */
+    @SerializedName("creation_date")
+    @Expose
+    private String creationDate;
+    /**
+     *
+     *
+     */
+    @SerializedName("priority")
+    @Expose
+    private int priority;
+    /**
+     * Hive type. May be Community or Hive.
+     *
+     */
+    @SerializedName("type")
+    @Expose
+    private HIVE.Type type;
+    /**
+     * Category code. Example: 09.01
+     *
+     */
+    @SerializedName("category")
+    @Expose
+    private String category;
+    /**
+     * Public chats language list.
+     *
+     */
+    @SerializedName("languages")
+    @Expose
+    private Set<String> languages = new LinkedHashSet<String>();
+    /**
+     * public_name of the creator user
+     *
+     */
+    @SerializedName("creator")
+    @Expose
+    private String creator;
+    /**
+     * Hive tag list.
+     *
+     */
+    @SerializedName("tags")
+    @Expose
+    private Set<String> tags = new LinkedHashSet<String>();
+    /**
+     * Number of subscribed users
+     *
+     */
+    @SerializedName("subscribed_users_count")
+    @Expose
+    private int subscribedUsersCount;
+    /**
+     * Hive public chat
+     *
+     */
+    @SerializedName("public_chat")
+    @Expose
+    private PUBLIC_CHAT publicChat;
+    /**
+     * Community public chats list.
+     *
+     */
+    @SerializedName("community_public_chats")
+    @Expose
+    private Set<COMMUNITY_PUBLIC_CHAT> communityPublicChats = new LinkedHashSet<COMMUNITY_PUBLIC_CHAT>();
+
+    /**
+     * Hive name
+     *
+     * @return
+     * The name
+     */
+    public String getName() {
+        return name;
     }
 
-    public HIVE(JsonElement data) {
-        this();
-        this.fromJSON(data);
+    /**
+     * Hive name
+     *
+     * @param name
+     * The name
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
+     * Hive identifier.
+     *
+     * @return
+     * The slug
+     */
+    public String getSlug() {
+        return slug;
+    }
+
+    /**
+     * Hive identifier.
+     *
+     * @param slug
+     * The slug
+     */
+    public void setSlug(String slug) {
+        this.slug = slug;
+    }
+
+    /**
+     *
+     *
+     * @return
+     * The description
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     *
+     *
+     * @param description
+     * The description
+     */
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    /**
+     * Hive creation date. Example: 2015-05-13T15:54:50.315865Z
+     *
+     * @return
+     * The creationDate
+     */
+    public String getCreationDate() {
+        return creationDate;
+    }
+
+    /**
+     * Hive creation date. Example: 2015-05-13T15:54:50.315865Z
+     *
+     * @param creationDate
+     * The creation_date
+     */
+    public void setCreationDate(String creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    /**
+     *
+     *
+     * @return
+     * The priority
+     */
+    public int getPriority() {
+        return priority;
+    }
+
+    /**
+     *
+     *
+     * @param priority
+     * The priority
+     */
+    public void setPriority(int priority) {
+        this.priority = priority;
+    }
+
+    /**
+     * Hive type. May be Community or Hive.
+     *
+     * @return
+     * The type
+     */
+    public HIVE.Type getType() {
+        return type;
+    }
+
+    /**
+     * Hive type. May be Community or Hive.
+     *
+     * @param type
+     * The type
+     */
+    public void setType(HIVE.Type type) {
+        this.type = type;
+    }
+
+    /**
+     * Category code. Example: 09.01
+     *
+     * @return
+     * The category
+     */
+    public String getCategory() {
+        return category;
+    }
+
+    /**
+     * Category code. Example: 09.01
+     *
+     * @param category
+     * The category
+     */
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    /**
+     * Public chats language list.
+     *
+     * @return
+     * The languages
+     */
+    public Set<String> getLanguages() {
+        return languages;
+    }
+
+    /**
+     * Public chats language list.
+     *
+     * @param languages
+     * The languages
+     */
+    public void setLanguages(Set<String> languages) {
+        this.languages = languages;
+    }
+
+    /**
+     * public_name of the creator user
+     *
+     * @return
+     * The creator
+     */
+    public String getCreator() {
+        return creator;
+    }
+
+    /**
+     * public_name of the creator user
+     *
+     * @param creator
+     * The creator
+     */
+    public void setCreator(String creator) {
+        this.creator = creator;
+    }
+
+    /**
+     * Hive tag list.
+     *
+     * @return
+     * The tags
+     */
+    public Set<String> getTags() {
+        return tags;
+    }
+
+    /**
+     * Hive tag list.
+     *
+     * @param tags
+     * The tags
+     */
+    public void setTags(Set<String> tags) {
+        this.tags = tags;
+    }
+
+    /**
+     * Number of subscribed users
+     *
+     * @return
+     * The subscribedUsersCount
+     */
+    public int getSubscribedUsersCount() {
+        return subscribedUsersCount;
+    }
+
+    /**
+     * Number of subscribed users
+     *
+     * @param subscribedUsersCount
+     * The subscribed_users_count
+     */
+    public void setSubscribedUsersCount(int subscribedUsersCount) {
+        this.subscribedUsersCount = subscribedUsersCount;
+    }
+
+    /**
+     * Hive public chat
+     *
+     * @return
+     * The publicChat
+     */
+    public PUBLIC_CHAT getPublicChat() {
+        return publicChat;
+    }
+
+    /**
+     * Hive public chat
+     *
+     * @param publicChat
+     * The public_chat
+     */
+    public void setPublicChat(PUBLIC_CHAT publicChat) {
+        this.publicChat = publicChat;
+    }
+
+    /**
+     * Community public chats list.
+     *
+     * @return
+     * The communityPublicChats
+     */
+    public Set<COMMUNITY_PUBLIC_CHAT> getCommunityPublicChats() {
+        return communityPublicChats;
+    }
+
+    /**
+     * Community public chats list.
+     *
+     * @param communityPublicChats
+     * The community_public_chats
+     */
+    public void setCommunityPublicChats(Set<COMMUNITY_PUBLIC_CHAT> communityPublicChats) {
+        this.communityPublicChats = communityPublicChats;
     }
 
     @Override
-    public JsonElement toJSON() {
-        JsonObject jsonObject = new JsonObject();
-
-	    if ((this.NAME_URL != null) && (!this.NAME_URL.isEmpty()))
-            jsonObject.addProperty("NAME_URL",this.NAME_URL);
-      else
-            jsonObject.add("NAME_URL", JsonNull.INSTANCE);            
-        if ((this.NAME != null) && (!this.NAME.isEmpty()))
-            jsonObject.addProperty("NAME",this.NAME);
-      else
-            jsonObject.add("NAME", JsonNull.INSTANCE);            
-        if ((this.CATEGORY != null) && (!this.CATEGORY.isEmpty()))
-            jsonObject.addProperty("CATEGORY",this.CATEGORY);
-      else
-            jsonObject.add("CATEGORY", JsonNull.INSTANCE);            
-        if ((this.DESCRIPTION != null) && (!this.DESCRIPTION.isEmpty()))
-            jsonObject.addProperty("DESCRIPTION",this.DESCRIPTION);
-      else
-            jsonObject.add("DESCRIPTION", JsonNull.INSTANCE);
-        if ((this.IMAGE_URL != null) && (!this.IMAGE_URL.isEmpty()))
-            jsonObject.addProperty("IMAGE_URL",this.IMAGE_URL);
-        else
-            jsonObject.add("IMAGE_URL", JsonNull.INSTANCE);
-        if ((this.CREATION_DATE != null) && (!TimestampFormatter.toString(this.CREATION_DATE).isEmpty()))
-            jsonObject.addProperty("CREATION_DATE", TimestampFormatter.toString(this.CREATION_DATE));
-      else
-            jsonObject.add("CREATION_DATE", JsonNull.INSTANCE);
-            
-        if (this.PUBLIC_CHAT != null) {
-            JsonElement jsonElement = this.PUBLIC_CHAT.toJSON();
-            if (!jsonElement.isJsonNull())
-                jsonObject.add("PUBLIC_CHAT",jsonElement);
-        }
-      else
-            jsonObject.add("PUBLIC_CHAT", JsonNull.INSTANCE);
-
-      if (this.TAGS != null) {
-            JsonArray jsonArray = new JsonArray();
-            for (String element : this.TAGS) {
-                JsonElement jsonElement =   new JsonPrimitive(element);
-                if (!jsonElement.isJsonNull())
-                    jsonArray.add(jsonElement);
-            }
-
-            if (jsonArray.size() > 0)
-                jsonObject.add("TAGS",jsonArray);
-            else
-                jsonObject.add("TAGS", JsonNull.INSTANCE);
-        }
-      else
-            jsonObject.add("TAGS", JsonNull.INSTANCE);
-
-        if (this.CHAT_LANGUAGES != null) {
-            JsonArray jsonArray = new JsonArray();
-            for (String element : this.CHAT_LANGUAGES) {
-                JsonElement jsonElement =   new JsonPrimitive(element);
-                if (!jsonElement.isJsonNull())
-                    jsonArray.add(jsonElement);
-            }
-
-            if (jsonArray.size() > 0)
-                jsonObject.add("CHAT_LANGUAGES",jsonArray);
-            else
-                jsonObject.add("CHAT_LANGUAGES", JsonNull.INSTANCE);
-        }
-        else
-            jsonObject.add("CHAT_LANGUAGES", JsonNull.INSTANCE);
-
-        if (this.SUBSCRIBED_USERS != null)
-            jsonObject.addProperty("SUBSCRIBED_USERS",this.SUBSCRIBED_USERS);
-        else
-            jsonObject.add("SUBSCRIBED_USERS", JsonNull.INSTANCE);
-
-        if (jsonObject.entrySet().isEmpty())
-            return JsonNull.INSTANCE;
-
-        JsonObject result = new JsonObject();
-        result.add("HIVE",jsonObject);
-
-        return result;
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
     }
 
     @Override
-    public void fromJSON(JsonElement data) {
-        JsonObject object = data.getAsJsonObject().getAsJsonObject("HIVE");
-        if ((object == null) || (!object.isJsonObject())) {
-            object = data.getAsJsonObject();
-        }
-        if ((object == null) || (!object.isJsonObject())) {
-            throw new IllegalArgumentException("Data is not an HIVE object.");
-        }
-
-        JsonElement property;
-
-	    property = object.get("NAME_URL");
-        if ((property != null) && (property.isJsonPrimitive()) && (property.getAsString() != null) && (!property.getAsString().isEmpty()))
-            this.NAME_URL = property.getAsString();
-            
-        property = object.get("NAME");
-        if ((property != null) && (property.isJsonPrimitive()) && (property.getAsString() != null) && (!property.getAsString().isEmpty()))
-            this.NAME = property.getAsString();
-            
-        property = object.get("CATEGORY");
-        if ((property != null) && (property.isJsonPrimitive()) && (property.getAsString() != null) && (!property.getAsString().isEmpty()))
-            this.CATEGORY = property.getAsString();
-            
-        property = object.get("DESCRIPTION");
-        if ((property != null) && (property.isJsonPrimitive()) && (property.getAsString() != null) && (!property.getAsString().isEmpty()))
-            this.DESCRIPTION = property.getAsString();
-
-        property = object.get("IMAGE_URL");
-        if ((property != null) && (property.isJsonPrimitive()) && (property.getAsString() != null) && (!property.getAsString().isEmpty()))
-            this.IMAGE_URL = property.getAsString();
-
-        property = object.get("CREATION_DATE");
-        if ((property != null) && (property.isJsonPrimitive()) && (property.getAsString() != null) && (!property.getAsString().isEmpty()))
-            this.CREATION_DATE = TimestampFormatter.toDate(property.getAsString());
-            
-        property = object.get("PUBLIC_CHAT");
-        if ((property != null) && (property.isJsonObject())) {
-            this.PUBLIC_CHAT = new CHAT(property);
-        }
-        
-        property = object.get("TAGS");
-        if ((property != null) && (property.isJsonArray())) {
-            this.TAGS = new ArrayList<String>();
-            JsonArray array = property.getAsJsonArray();
-            for (JsonElement jsonElement : array)
-                this.TAGS.add(  jsonElement.getAsString() );
-        }
-
-        property = object.get("CHAT_LANGUAGES");
-        if ((property != null) && (property.isJsonArray())) {
-            this.CHAT_LANGUAGES = new ArrayList<String>();
-            JsonArray array = property.getAsJsonArray();
-            for (JsonElement jsonElement : array)
-                this.CHAT_LANGUAGES.add(  jsonElement.getAsString() );
-        }
-
-        property = object.get("SUBSCRIBED_USERS");
-        if ((property != null) && (property.isJsonPrimitive()) && (!property.isJsonNull()))
-            this.SUBSCRIBED_USERS = property.getAsInt();
-      
+    public int hashCode() {
+        return new HashCodeBuilder().append(name).append(slug).append(description).append(creationDate).append(priority).append(type).append(category).append(languages).append(creator).append(tags).append(subscribedUsersCount).append(publicChat).append(communityPublicChats).toHashCode();
     }
+
+    @Override
+    public boolean equals(Object other) {
+        if (other == this) {
+            return true;
+        }
+        if ((other instanceof HIVE) == false) {
+            return false;
+        }
+        HIVE rhs = ((HIVE) other);
+        return new EqualsBuilder().append(name, rhs.name).append(slug, rhs.slug).append(description, rhs.description).append(creationDate, rhs.creationDate).append(priority, rhs.priority).append(type, rhs.type).append(category, rhs.category).append(languages, rhs.languages).append(creator, rhs.creator).append(tags, rhs.tags).append(subscribedUsersCount, rhs.subscribedUsersCount).append(publicChat, rhs.publicChat).append(communityPublicChats, rhs.communityPublicChats).isEquals();
+    }
+
+    @Generated("org.jsonschema2pojo")
+    public static enum Type {
+
+        @SerializedName("Hive")
+        HIVE("Hive"),
+        @SerializedName("Community")
+        COMMUNITY("Community");
+        private final String value;
+        private final static Map<String, com.chattyhive.Core.ContentProvider.Formats.HIVE.Type> CONSTANTS = new HashMap<String, com.chattyhive.Core.ContentProvider.Formats.HIVE.Type>();
+
+        static {
+            for (com.chattyhive.Core.ContentProvider.Formats.HIVE.Type c: values()) {
+                CONSTANTS.put(c.value, c);
+            }
+        }
+
+        private Type(String value) {
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return this.value;
+        }
+
+        public static com.chattyhive.Core.ContentProvider.Formats.HIVE.Type fromValue(String value) {
+            com.chattyhive.Core.ContentProvider.Formats.HIVE.Type constant = CONSTANTS.get(value);
+            if (constant == null) {
+                throw new IllegalArgumentException(value);
+            } else {
+                return constant;
+            }
+        }
+
+    }
+
 }

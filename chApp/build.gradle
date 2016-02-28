@@ -44,8 +44,10 @@ dependencies {
     compile project(':Framework')
     compile project(':Core')
     compile 'com.android.support:support-v4:21.0.0'
-    compile 'com.pusher:pusher-java-client:0.2.0'
     compile 'com.android.support:appcompat-v7:21.0.0'
+
+    //Pusher required dependencies
+    compile 'com.pusher:pusher-java-client:0.3.1'
 }
 
 task getPasswords << {
