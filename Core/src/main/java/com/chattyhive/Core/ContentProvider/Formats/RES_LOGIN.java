@@ -56,7 +56,7 @@ public class RES_LOGIN {
      */
     @SerializedName("services")
     @Expose
-    private Set<SERVI_CE> services = new LinkedHashSet<SERVI_CE>();
+    private Set<SERVICE> services = new LinkedHashSet<SERVICE>();
 
     /**
      * User's public name
@@ -145,7 +145,7 @@ public class RES_LOGIN {
      * @return
      * The services
      */
-    public Set<SERVI_CE> getServices() {
+    public Set<SERVICE> getServices() {
         return services;
     }
 
@@ -156,7 +156,7 @@ public class RES_LOGIN {
      * @param services
      * The services
      */
-    public void setServices(Set<SERVI_CE> services) {
+    public void setServices(Set<SERVICE> services) {
         this.services = services;
     }
 

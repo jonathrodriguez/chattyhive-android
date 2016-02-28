@@ -43,7 +43,7 @@ public class REQ_CHECK_ASYNCHRONOUS_SERVICES {
      */
     @SerializedName("services")
     @Expose
-    private Set<SERVI_CE> services = new LinkedHashSet<SERVI_CE>();
+    private Set<SERVICE> services = new LinkedHashSet<SERVICE>();
 
     /**
      * Device's operative system. Note that is the platform where the chattyhive app is running not the current running real operative system.
@@ -94,7 +94,7 @@ public class REQ_CHECK_ASYNCHRONOUS_SERVICES {
      * @return
      * The services
      */
-    public Set<SERVI_CE> getServices() {
+    public Set<SERVICE> getServices() {
         return services;
     }
 
@@ -105,7 +105,7 @@ public class REQ_CHECK_ASYNCHRONOUS_SERVICES {
      * @param services
      * The services
      */
-    public void setServices(Set<SERVI_CE> services) {
+    public void setServices(Set<SERVICE> services) {
         this.services = services;
     }
 
