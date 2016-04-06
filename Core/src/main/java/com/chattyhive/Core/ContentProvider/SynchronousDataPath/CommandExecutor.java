@@ -14,9 +14,9 @@ public class CommandExecutor implements Runnable {
     private enum DataOriginTypes { Cache, Local, RemoteServer, RemoteStorage }
     private HashMap<DataOriginTypes, DataOrigin> dataOrigins;
 
-    private CallbackDelegate cacheCallback;
-    private CallbackDelegate localCallback;
-    private CallbackDelegate remoteCallback;
+    private CallbackDelegate<ProcessorCallbackArgs> cacheCallback;
+    private CallbackDelegate<ProcessorCallbackArgs> localCallback;
+    private CallbackDelegate<ProcessorCallbackArgs> remoteCallback;
 
     public CommandExecutor(CommandQueue commandQueue, IOrigin localCache, IOrigin localData, IOrigin remoteServer, IOrigin remoteStorage) {
         this.commandQueue = commandQueue;
@@ -24,17 +24,17 @@ public class CommandExecutor implements Runnable {
 
         if (localCache != null) {
             this.dataOrigins.put(DataOriginTypes.Cache, new DataOrigin(localCache));
-            this.cacheCallback = new CallbackDelegate(this,"CacheCallback",Command.class, CommandQueue.Priority.class);
+            this.cacheCallback = new CallbackDelegate<>(this::CacheCallback);
         }
 
         if (localData != null) {
             this.dataOrigins.put(DataOriginTypes.Local, new DataOrigin(localData));
-            this.localCallback = new CallbackDelegate(this,"LocalCallback",Command.class, CommandQueue.Priority.class);
+            this.localCallback = new CallbackDelegate<>(this::LocalCallback);
         }
 
         if (remoteServer != null) {
             this.dataOrigins.put(DataOriginTypes.RemoteServer, new DataOrigin(remoteServer));
-            this.remoteCallback = new CallbackDelegate(this,"RemoteCallback",Command.class, CommandQueue.Priority.class);
+            this.remoteCallback = new CallbackDelegate<>(this::RemoteCallback);
         }
 
         if (remoteStorage != null) {
@@ -60,40 +60,40 @@ public class CommandExecutor implements Runnable {
             switch (commandDefinition.getCommandType()) {
                 case Session:
                     if (this.dataOrigins.containsKey(DataOriginTypes.RemoteServer)) // Go to server
-                        this.dataOrigins.get(DataOriginTypes.RemoteServer).ProcessCommand(processingCommand,processingRequest.getKey(),remoteCallback,processingRequest.getKey());
+                        this.dataOrigins.get(DataOriginTypes.RemoteServer).ProcessCommand(processingCommand,processingRequest.getKey(),remoteCallback);
                     break;
                 case Query:
                     if (this.dataOrigins.containsKey(DataOriginTypes.Cache)) //IF CACHE IS DEFINED: Check cache
-                        this.dataOrigins.get(DataOriginTypes.Cache).ProcessCommand(processingCommand,processingRequest.getKey(),cacheCallback,processingRequest.getKey());
+                        this.dataOrigins.get(DataOriginTypes.Cache).ProcessCommand(processingCommand,processingRequest.getKey(),cacheCallback);
                     else if (this.dataOrigins.containsKey(DataOriginTypes.RemoteServer)) //IF CACHE NOT DEFINED: Go to server
-                        this.dataOrigins.get(DataOriginTypes.RemoteServer).ProcessCommand(processingCommand,processingRequest.getKey(),remoteCallback,processingRequest.getKey());
+                        this.dataOrigins.get(DataOriginTypes.RemoteServer).ProcessCommand(processingCommand,processingRequest.getKey(),remoteCallback);
                     break;
                 case Pull:
                     if (this.dataOrigins.containsKey(DataOriginTypes.Local)) //IF LOCAL IS DEFINED: Check local
-                        this.dataOrigins.get(DataOriginTypes.Local).ProcessCommand(processingCommand,processingRequest.getKey(),localCallback,processingRequest.getKey());
+                        this.dataOrigins.get(DataOriginTypes.Local).ProcessCommand(processingCommand,processingRequest.getKey(),localCallback);
                     else if (this.dataOrigins.containsKey(DataOriginTypes.RemoteServer)) //IF LOCAL NOT DEFINED: Go to server
-                        this.dataOrigins.get(DataOriginTypes.RemoteServer).ProcessCommand(processingCommand,processingRequest.getKey(),remoteCallback,processingRequest.getKey());
+                        this.dataOrigins.get(DataOriginTypes.RemoteServer).ProcessCommand(processingCommand,processingRequest.getKey(),remoteCallback);
                     break;
                 case ForcePush:
                     if (this.dataOrigins.containsKey(DataOriginTypes.Local)) // Store pending command
                         this.dataOrigins.get(DataOriginTypes.Local).ProcessCommand(processingCommand,processingRequest.getKey(),null);
 
                     if (this.dataOrigins.containsKey(DataOriginTypes.RemoteServer)) // Go to server
-                        this.dataOrigins.get(DataOriginTypes.RemoteServer).ProcessCommand(processingCommand,processingRequest.getKey(),remoteCallback,processingRequest.getKey());
+                        this.dataOrigins.get(DataOriginTypes.RemoteServer).ProcessCommand(processingCommand,processingRequest.getKey(),remoteCallback);
                     break;
                 case ImmediateResponsePush:
                     if (this.dataOrigins.containsKey(DataOriginTypes.Local)) // Store pending command
                         this.dataOrigins.get(DataOriginTypes.Local).ProcessCommand(processingCommand,processingRequest.getKey(),null);
 
                     if (this.dataOrigins.containsKey(DataOriginTypes.RemoteServer)) // Go to server
-                        this.dataOrigins.get(DataOriginTypes.RemoteServer).ProcessCommand(processingCommand,processingRequest.getKey(),remoteCallback,processingRequest.getKey());
+                        this.dataOrigins.get(DataOriginTypes.RemoteServer).ProcessCommand(processingCommand,processingRequest.getKey(),remoteCallback);
                     break;
                 case DelayedResponsePush:
                     if (this.dataOrigins.containsKey(DataOriginTypes.Local)) // Store pending command
                         this.dataOrigins.get(DataOriginTypes.Local).ProcessCommand(processingCommand,processingRequest.getKey(),null);
 
                     if (this.dataOrigins.containsKey(DataOriginTypes.RemoteServer)) // Go to server
-                        this.dataOrigins.get(DataOriginTypes.RemoteServer).ProcessCommand(processingCommand,processingRequest.getKey(),remoteCallback,processingRequest.getKey());
+                        this.dataOrigins.get(DataOriginTypes.RemoteServer).ProcessCommand(processingCommand,processingRequest.getKey(),remoteCallback);
                     break;
             }
 
@@ -102,45 +102,66 @@ public class CommandExecutor implements Runnable {
         }
     }
 
-    public void CacheCallback(Command command, CommandQueue.Priority priority) {
+    public void CacheCallback(ProcessorCallbackArgs processorCallbackArgs) {
+        Command command = processorCallbackArgs.getCommand();
+        CommandQueue.Priority priority = processorCallbackArgs.getPriority();
+
         CommandDefinition commandDefinition = command.getCommandDefinition();
         switch (commandDefinition.getCommandType()) {
             case Query:
                 //TODO: GO TO SERVER?
                 if (this.dataOrigins.containsKey(DataOriginTypes.RemoteServer)) // Go to server
                     this.dataOrigins.get(DataOriginTypes.RemoteServer).ProcessCommand(command,priority,remoteCallback);
-                //TODO: Process callbacks?
+                //Process callbacks
+                while (command.countCallbackDelegates() > 0) {
+                    CallbackDelegate<Command> callbackDelegate = command.popCallbackDelegate(10000000);
+                    callbackDelegate.Run(command);
+                }
                 break;
         }
     }
 
-    public void LocalCallback(Command command, CommandQueue.Priority priority) {
+    public void LocalCallback(ProcessorCallbackArgs processorCallbackArgs) {
+        Command command = processorCallbackArgs.getCommand();
+        CommandQueue.Priority priority = processorCallbackArgs.getPriority();
+
         CommandDefinition commandDefinition = command.getCommandDefinition();
         switch (commandDefinition.getCommandType()) {
             case Pull:
                 //TODO: GO TO SERVER?
                 if (this.dataOrigins.containsKey(DataOriginTypes.RemoteServer)) // Go to server
                     this.dataOrigins.get(DataOriginTypes.RemoteServer).ProcessCommand(command,priority,remoteCallback);
-                //TODO: Process callbacks?
+                //Process callbacks
+                while (command.countCallbackDelegates() > 0) {
+                    CallbackDelegate<Command> callbackDelegate = command.popCallbackDelegate(10000000);
+                    callbackDelegate.Run(command);
+                }
                 break;
         }
     }
 
-    public void RemoteCallback(Command command, CommandQueue.Priority priority) {
+    public void RemoteCallback(ProcessorCallbackArgs processorCallbackArgs) {
+        Command command = processorCallbackArgs.getCommand();
+        CommandQueue.Priority priority = processorCallbackArgs.getPriority();
+
         CommandDefinition commandDefinition = command.getCommandDefinition();
         switch (commandDefinition.getCommandType()) {
             case Session:
                 //TODO: DO SOMETHING?
-                //TODO: Process callbacks
+                //Process callbacks
                 while (command.countCallbackDelegates() > 0) {
-                    CallbackDelegate callbackDelegate = command.popCallbackDelegate(10000000);
-                    callbackDelegate.Run(command); //TODO: ¿?
+                    CallbackDelegate<Command> callbackDelegate = command.popCallbackDelegate(10000000);
+                    callbackDelegate.Run(command);
                 }
                 break;
             case Query:
                 if (this.dataOrigins.containsKey(DataOriginTypes.Cache)) // Update cache
                     this.dataOrigins.get(DataOriginTypes.Cache).ProcessCommand(command,priority,null);
-                //TODO: Process callbacks?
+                //Process callbacks
+                while (command.countCallbackDelegates() > 0) {
+                    CallbackDelegate<Command> callbackDelegate = command.popCallbackDelegate(10000000);
+                    callbackDelegate.Run(command);
+                }
                 break;
             case Pull:
             case ForcePush:
@@ -148,8 +169,13 @@ public class CommandExecutor implements Runnable {
             case DelayedResponsePush:
                 if (this.dataOrigins.containsKey(DataOriginTypes.Local)) // Update local
                     this.dataOrigins.get(DataOriginTypes.Local).ProcessCommand(command,priority,null);
-                //TODO: Process callbacks?
+                //Process callbacks
+                while (command.countCallbackDelegates() > 0) {
+                    CallbackDelegate<Command> callbackDelegate = command.popCallbackDelegate(10000000);
+                    callbackDelegate.Run(command);
+                }
                 break;
         }
     }
+
 }

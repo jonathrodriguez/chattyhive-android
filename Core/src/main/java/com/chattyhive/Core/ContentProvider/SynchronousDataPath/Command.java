@@ -4,6 +4,7 @@ import com.chattyhive.Core.ContentProvider.Formats.Format;
 import com.chattyhive.Core.ContentProvider.Server.IServerUser;
 import com.chattyhive.Core.ContentProvider.Server.ServerResponse;
 import com.chattyhive.Core.Util.CallbackDelegate;
+import com.google.gson.Gson;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -19,7 +20,7 @@ public class Command {
     /*          COMMAND CLASS            */
     /*************************************/
 
-    private final ArrayList<CallbackDelegate> callbackDelegates;
+    private final ArrayList<CallbackDelegate<Command>> callbackDelegates;
 
     private CommandDefinition commandDefinition;
     private IServerUser serverUser;
@@ -33,7 +34,7 @@ public class Command {
         return this.serverResponse;
     }
 
-    public void addCallbackDelegate(CallbackDelegate callbackDelegate) {
+    public void addCallbackDelegate(CallbackDelegate<Command> callbackDelegate) {
         synchronized (callbackDelegates) {
             this.callbackDelegates.add(callbackDelegate);
             this.callbackDelegates.notify();
@@ -44,14 +45,19 @@ public class Command {
             return this.callbackDelegates.size();
         }
     }
-    public CallbackDelegate popCallbackDelegate(long timeout) {
-        CallbackDelegate callback = null;
+    public CallbackDelegate<Command> popCallbackDelegate(long timeout) {
+        CallbackDelegate<Command> callback = null;
         synchronized (callbackDelegates) {
-            if (this.callbackDelegates.isEmpty())
-                try { this.callbackDelegates.wait(timeout); } catch (InterruptedException e) { }
+            if (this.callbackDelegates.isEmpty()) {
+                try {
+                    this.callbackDelegates.wait(timeout);
+                } catch (InterruptedException ignored) {
+                }
+            }
 
-            if (!this.callbackDelegates.isEmpty())
+            if (!this.callbackDelegates.isEmpty()) {
                 callback = callbackDelegates.remove(0);
+            }
         }
         return callback;
     }
@@ -63,11 +69,14 @@ public class Command {
         this.executionLevel = executionLevel;
     }
 
-    public List<Format> getResultFormats() {
+    public List<Object> getResultFormats() {
         return Collections.unmodifiableList(resultFormats);
     }
-    public void setResultFormats(ArrayList<Format> resultFormats) {
-        this.resultFormats = resultFormats;
+    public void setResultFormats(ArrayList<Object> resultFormats) {
+        this.resultFormats = new ArrayList<>();
+        for(Object format : resultFormats) {
+            this.resultFormats.add(format);
+        }
     }
 
     public int getResultCode() {
@@ -79,20 +88,20 @@ public class Command {
 
     private ExecutionLevel executionLevel;
 
-    private ArrayList<Format> inputFormats;
-    private ArrayList<Format> paramFormats;
+    private ArrayList<Object> inputFormats;
+    private ArrayList<Object> paramFormats;
 
-    private ArrayList<Format> resultFormats;
+    private ArrayList<Object> resultFormats;
     private int resultCode;
 
     public Command(AvailableCommands commandDefinition, Format... formats) {
         this.serverUser = null;
         this.commandDefinition = CommandDefinition.GetCommand(commandDefinition);
 
-        this.callbackDelegates = new ArrayList<CallbackDelegate>();
+        this.callbackDelegates = new ArrayList<>();
 
-        this.inputFormats = new ArrayList<Format>();
-        this.paramFormats = new ArrayList<Format>();
+        this.inputFormats = new ArrayList<>();
+        this.paramFormats = new ArrayList<>();
 
         for (Format format : formats) {
             if (this.commandDefinition.getInputFormats().contains(format.getClass()))
@@ -298,14 +307,14 @@ public class Command {
     }
 
     private String getUrlParameterValue(String parameter) throws NoSuchFieldException, IllegalAccessException {
-        Format parameterFormat = null;
+        Object parameterFormat = null;
 
         int dotIndex = parameter.indexOf('.');
         int preIndex = 0;
 
         String formatName = parameter.substring(preIndex,dotIndex);
 
-        for (Format f : this.paramFormats)
+        for (Object f : this.paramFormats)
             if (this.commandDefinition.getParamFormats().contains(f.getClass()))
                 if (f.getClass().getSimpleName().equalsIgnoreCase(formatName)) {
                     parameterFormat = f;
@@ -322,7 +331,7 @@ public class Command {
             fieldName = parameter.substring(preIndex,dotIndex);
             Field field = parameterFormat.getClass().getField(fieldName);
             if (field.getType().getSuperclass().equals(Format.class)) {
-                parameterFormat = (Format)field.get(parameterFormat);
+                parameterFormat = field.get(parameterFormat);
             } else {
                 throw new ClassCastException("Parametrized URLs can only access sub-fields of Format type fields.");
             }
@@ -340,31 +349,36 @@ public class Command {
 
         String bodyData = "";
 
-        for (Format format : this.inputFormats) {
+        Gson gson = new Gson();
+
+        for (Object format : this.inputFormats) {
             if (this.commandDefinition.getInputFormats().contains(format.getClass())) {
-                String jsonString = format.toJSON().toString();
-                bodyData += ((bodyData.isEmpty())?"{":", ") + jsonString.substring(1,jsonString.length()-1);
+                String jsonString = gson.toJson(format);
+                bodyData += ((bodyData.isEmpty())?((this.inputFormats.size() > 1)?"{":""):", ") + jsonString;
             }
         }
 
-        bodyData += "}";
+        if (this.inputFormats.size() > 1) {
+            bodyData += "}";
+        }
 
         return (!bodyData.equalsIgnoreCase("}"))?bodyData:"";
     }
 
+    //FIXME
     private Boolean checkFormats() {
-        TreeSet<Class<?>> inputFormatClasses = new TreeSet<Class<?>>();
-        for (Format format : this.inputFormats)
+        TreeSet<Class> inputFormatClasses = new TreeSet<>();
+        for (Object format : this.inputFormats)
             inputFormatClasses.add(format.getClass());
 
-        for (Class<?> formatClass : this.commandDefinition.getRequiredInputFormats())
+        for (Class formatClass : this.commandDefinition.getInputFormats())
             if (!inputFormatClasses.contains(formatClass)) return false;
 
-        TreeSet<Class<?>> paramFormatClasses = new TreeSet<Class<?>>();
-        for (Format format : this.paramFormats)
+        TreeSet<Class> paramFormatClasses = new TreeSet<>();
+        for (Object format : this.paramFormats)
             paramFormatClasses.add(format.getClass());
 
-        for (Class<?> formatClass : this.commandDefinition.getRequiredParamFormats())
+        for (Class formatClass : this.commandDefinition.getParamFormats())
             if (!paramFormatClasses.contains(formatClass)) return false;
 
         return true;

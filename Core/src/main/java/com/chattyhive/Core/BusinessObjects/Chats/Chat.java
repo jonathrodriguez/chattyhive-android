@@ -1,23 +1,16 @@
 package com.chattyhive.Core.BusinessObjects.Chats;
 
 import com.chattyhive.Core.BusinessObjects.Chats.Context.IContextualizable;
-import com.chattyhive.Core.BusinessObjects.Hives.Hive;
 import com.chattyhive.Core.BusinessObjects.Subscriptions.ISubscribable;
 import com.chattyhive.Core.BusinessObjects.Chats.Messages.Message;
 import com.chattyhive.Core.BusinessObjects.Subscriptions.SubscriberList;
 import com.chattyhive.Core.BusinessObjects.Subscriptions.Subscription;
-import com.chattyhive.Core.BusinessObjects.Users.ProfileLevel;
-import com.chattyhive.Core.BusinessObjects.Users.ProfileType;
-import com.chattyhive.Core.BusinessObjects.Users.User;
 import com.chattyhive.Core.ContentProvider.Formats.COMMON;
-import com.chattyhive.Core.ContentProvider.Formats.HIVE;
 import com.chattyhive.Core.ContentProvider.SynchronousDataPath.AvailableCommands;
-import com.chattyhive.Core.ContentProvider.DataProvider;
 import com.chattyhive.Core.ContentProvider.Formats.CHAT;
 import com.chattyhive.Core.ContentProvider.Formats.CHAT_ID;
 import com.chattyhive.Core.ContentProvider.Formats.CHAT_SYNC;
 import com.chattyhive.Core.ContentProvider.Formats.Format;
-import com.chattyhive.Core.ContentProvider.Formats.HIVE_ID;
 import com.chattyhive.Core.ContentProvider.Formats.MESSAGE;
 import com.chattyhive.Core.ContentProvider.Formats.PROFILE_ID;
 import com.chattyhive.Core.ContentProvider.SynchronousDataPath.Command;
@@ -25,14 +18,10 @@ import com.chattyhive.Core.ContentProvider.SynchronousDataPath.CommandQueue;
 import com.chattyhive.Core.Controller;
 import com.chattyhive.Core.Util.CallbackDelegate;
 import com.chattyhive.Core.Util.Events.CommandCallbackEventArgs;
-import com.chattyhive.Core.Util.Events.EventArgs;
-import com.chattyhive.Core.Util.Events.EventHandler;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.TreeMap;
 
 /**
  * Created by Jonathan on 16/06/2014.

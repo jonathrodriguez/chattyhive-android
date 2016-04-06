@@ -9,25 +9,26 @@ import java.util.HashMap;
  */
 public class DataOrigin implements Runnable {
     private CommandQueue commandQueue;
-    private final HashMap<Command,CallbackDelegate> commandCallbacks;
-    private final HashMap<Command,Object[]> commandCallbackParameters;
+    private final HashMap<Command,CallbackDelegate<ProcessorCallbackArgs>> commandCallbacks;
+    private final HashMap<Command,ProcessorCallbackArgs> commandCallbackParameters;
 
     private IOrigin origin;
 
     public DataOrigin(IOrigin origin) {
         this.commandQueue = new CommandQueue();
-        this.commandCallbacks = new HashMap<Command, CallbackDelegate>();
-        this.commandCallbackParameters = new HashMap<Command, Object[]>();
+        this.commandCallbacks = new HashMap<>();
+        this.commandCallbackParameters = new HashMap<>();
     }
 
-    public void ProcessCommand(Command command,CommandQueue.Priority priority, CallbackDelegate callback, Object... callbackParameters) {
+    public void ProcessCommand(Command command,CommandQueue.Priority priority, CallbackDelegate<ProcessorCallbackArgs> callback) {
         CommandQueue.Priority finalPriority = (priority != null)?priority: CommandQueue.Priority.Medium;
         try { this.commandQueue.put(command, finalPriority); } catch (InterruptedException e) { e.printStackTrace(); return; }
-        synchronized (this.commandCallbacks) {
-            this.commandCallbacks.put(command, callback);
-            if (callbackParameters != null)
-                this.commandCallbackParameters.put(command,callbackParameters);
-            this.commandCallbacks.notify();
+        if (callback != null) {
+            synchronized (this.commandCallbacks) {
+                this.commandCallbacks.put(command, callback);
+                this.commandCallbackParameters.put(command, new ProcessorCallbackArgs(command,priority));
+                this.commandCallbacks.notify();
+            }
         }
     }
 
@@ -36,8 +37,8 @@ public class DataOrigin implements Runnable {
         Command processingCommand;
         try { processingCommand = commandQueue.poll(); } catch (InterruptedException e) { processingCommand = null; }
         while (processingCommand != null) {
-            CallbackDelegate callback;
-            Object[] callbackParameters = null;
+            CallbackDelegate<ProcessorCallbackArgs> callback;
+            ProcessorCallbackArgs callbackParameters = null;
             synchronized (commandCallbacks) {
                 try { while (!commandCallbacks.containsKey(processingCommand)) commandCallbacks.wait(); } catch (InterruptedException e) { break; }
                 callback = commandCallbacks.get(processingCommand);

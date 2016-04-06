@@ -3,22 +3,13 @@ package com.chattyhive.Core.BusinessObjects.Chats;
 import com.chattyhive.Core.BusinessObjects.Chats.Context.ContextElement;
 import com.chattyhive.Core.BusinessObjects.Chats.Messages.Message;
 import com.chattyhive.Core.BusinessObjects.Hives.Hive;
-import com.chattyhive.Core.BusinessObjects.Subscriptions.SubscriberList;
-import com.chattyhive.Core.BusinessObjects.Subscriptions.Subscription;
 import com.chattyhive.Core.BusinessObjects.Users.User;
-import com.chattyhive.Core.ContentProvider.Formats.CHAT;
-import com.chattyhive.Core.ContentProvider.Formats.CHAT_ID;
-import com.chattyhive.Core.ContentProvider.Formats.CHAT_SYNC;
 import com.chattyhive.Core.ContentProvider.Formats.Format;
-import com.chattyhive.Core.ContentProvider.Formats.HIVE_ID;
-import com.chattyhive.Core.ContentProvider.Formats.MESSAGE;
-import com.chattyhive.Core.ContentProvider.Formats.PROFILE_ID;
 import com.chattyhive.Core.Controller;
 import com.chattyhive.Core.Util.CallbackDelegate;
 import com.chattyhive.Core.Util.Events.Event;
 import com.chattyhive.Core.Util.Events.EventArgs;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**

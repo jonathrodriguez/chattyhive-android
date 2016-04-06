@@ -2,6 +2,7 @@ package com.chattyhive.Core.ContentProvider.Server.StandAlone;
 
 import com.chattyhive.Core.ContentProvider.OSStorageProvider.LocalDataBaseInterface;
 import com.chattyhive.Core.ContentProvider.SynchronousDataPath.IOrigin;
+import com.chattyhive.Core.ContentProvider.SynchronousDataPath.ProcessorCallbackArgs;
 import com.chattyhive.Core.StaticParameters;
 import com.chattyhive.Core.ContentProvider.SynchronousDataPath.Command;
 import com.chattyhive.Core.ContentProvider.Formats.CHAT_ID;
@@ -276,7 +277,7 @@ public class StandAloneServer implements IOrigin {
     }
 
     @Override
-    public void ProcessCommand(Command command, CallbackDelegate Callback, Object... callbackParameters) {
+    public void ProcessCommand(Command command, CallbackDelegate<ProcessorCallbackArgs> Callback, ProcessorCallbackArgs callbackParameters) {
 
     }
 

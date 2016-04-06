@@ -1,18 +1,23 @@
 package com.chattyhive.Core.ContentProvider.Server;
 
+import com.chattyhive.Core.ContentProvider.Formats.RES_EMAIL_GET;
+import com.chattyhive.Core.ContentProvider.Formats.RES_LOGIN;
 import com.chattyhive.Core.ContentProvider.OSStorageProvider.LocalStorageInterface;
 import com.chattyhive.Core.ContentProvider.SynchronousDataPath.AvailableCommands;
 import com.chattyhive.Core.ContentProvider.SynchronousDataPath.Command;
 import com.chattyhive.Core.ContentProvider.SynchronousDataPath.CommandDefinition;
 import com.chattyhive.Core.ContentProvider.SynchronousDataPath.IOrigin;
 import com.chattyhive.Core.ContentProvider.Formats.Format;
+import com.chattyhive.Core.ContentProvider.SynchronousDataPath.ProcessorCallbackArgs;
 import com.chattyhive.Core.StaticParameters;
 import com.chattyhive.Core.Util.CallbackDelegate;
 import com.chattyhive.Core.Util.Events.Event;
 import com.chattyhive.Core.Util.Events.EventArgs;
 import com.chattyhive.Core.ContentProvider.Server.IServerUser;
+import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -47,7 +52,9 @@ public class RemoteServer implements IOrigin {
     }
 
     @Override
-    public void ProcessCommand(Command command, CallbackDelegate Callback, Object... callbackParameters) {
+    public void ProcessCommand(Command command,
+                               CallbackDelegate<ProcessorCallbackArgs> callback,
+                               ProcessorCallbackArgs callbackParameters) {
         ServerResponse response = new ServerResponse();
         try {
             URL url = new URL(String.format("%s://%s/%s", this.serverProtocol, this.serverLocation, command.getUrl()));
@@ -106,18 +113,15 @@ public class RemoteServer implements IOrigin {
             if (command.getResultCode() == 200) {
                 String preparedResponseBody = response.getResultBody();//.replace("\\\"","\"").replace("\"{","{").replace("}\"","}").replaceAll("\"PROFILE\": \"(.*?)\"","\"PROFILE\": {\"PUBLIC_NAME\": \"$1\"}");
                 JsonElement data = (new JsonParser()).parse(preparedResponseBody);
-                ArrayList<Format> resultFormats = new ArrayList<Format>();
-                for (Class<? extends Format> returnFormatClass : command.getCommandDefinition().getReturningFormats()) {
+                ArrayList<Object> resultFormats = new ArrayList<>();
+
+                Gson gson = new Gson();
+
+                for (Class returnFormatClass : command.getCommandDefinition().getReturningFormats()) {
                     try {
-                        Format returnFormat = returnFormatClass.newInstance();
-                        returnFormat.fromJSON(data);
-                        resultFormats.add(returnFormat);
-                    } catch (InstantiationException e) {
+                        resultFormats.add(gson.fromJson(data, returnFormatClass));
+                    } catch (JsonSyntaxException e) {
                         e.printStackTrace();
-                        continue;
-                    } catch (IllegalAccessException e) {
-                        e.printStackTrace();
-                        continue;
                     }
                 }
                 if (!resultFormats.isEmpty())
@@ -125,9 +129,7 @@ public class RemoteServer implements IOrigin {
 
                 //Special case. Login. Recover the public_name if unknown
                 if (command.getCommandDefinition().getCommand() == AvailableCommands.Login) {
-                    String public_name = null;
-
-                    //TODO: read the public_name
+                    String public_name = ((RES_LOGIN)command.getResultFormats().get(0)).getPublicName();
 
                     if (public_name != null) {
                         command.getServerUser().setUserData(IServerUser.userIDKey,public_name);
@@ -135,7 +137,7 @@ public class RemoteServer implements IOrigin {
                 }
             }
 
-            Callback.Run(command,callbackParameters);
+            callback.Run(callbackParameters);
 
             if (response.getResultHeaders().containsKey("Set-Cookie")) //Update Cookies //TODO: This mays change when using token based authentication.
                 for (String setCookieHeader : response.getResultHeaders().get("Set-Cookie"))

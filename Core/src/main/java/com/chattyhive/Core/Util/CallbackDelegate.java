@@ -6,37 +6,30 @@ import java.lang.reflect.Method;
 /**
  * Created by Jonathan on 09/03/2015.
  */
-public class CallbackDelegate {
-    private Object subscriber;
-    private Method method;
+public class CallbackDelegate<T> {
 
+    Callback<T> callback;
     /**
      * Public constructor.
-     * @param Subscriber The object on which the method is to be invoked.
-     * @param methodName The name of the method to invoke. It HAS TO have the correct parameters and be public.
-     * @param argsClasses The classes of the method arguments.
-     * @throws NoSuchMethodException If the method is not found in the subscriber.
+     * @param callback Callback interface to run.
      */
-    public CallbackDelegate (Object Subscriber,String methodName, Class<?>... argsClasses) {
-        this.subscriber = Subscriber;
-        try {
-            this.method = Subscriber.getClass().getMethod(methodName,argsClasses);
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
+    public CallbackDelegate (Callback<T> callback) {
+        this.callback = callback;
     }
-    public void Run(final Object... args) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    method.invoke(subscriber, args);
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                } catch (InvocationTargetException e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
+
+    /**
+     * Callback invocation
+     * @param arg Argument to the callback function
+     */
+    public void Run(final T arg) {
+        new Thread(() -> { callback.run(arg); }).start();
+    }
+
+    /**
+     * Callback interface.
+     * @param <T> Type of callback argument.
+     */
+    public interface Callback<T> {
+        void run(T arg);
     }
 }
