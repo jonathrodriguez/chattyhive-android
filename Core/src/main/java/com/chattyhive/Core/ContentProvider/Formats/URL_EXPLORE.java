@@ -5,6 +5,8 @@ import javax.annotation.Generated;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.List;
+
 
 /**
  * ParamsExplore
@@ -91,7 +93,7 @@ public class URL_EXPLORE {
      */
     @SerializedName("tags")
     @Expose
-    private String tags;
+    private List<String> tags;
 
     /**
      * PATH 1. Can be recommended, near, recent, communities, top, a category code or empty.
@@ -299,7 +301,7 @@ public class URL_EXPLORE {
      * @return
      * The tags
      */
-    public String getTags() {
+    public List<String> getTags() {
         return tags;
     }
 
@@ -309,7 +311,7 @@ public class URL_EXPLORE {
      * @param tags
      * The tags
      */
-    public void setTags(String tags) {
+    public void setTags(List<String> tags) {
         this.tags = tags;
     }
 

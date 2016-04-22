@@ -119,7 +119,13 @@ public class RemoteServer implements IOrigin {
 
                 for (Class returnFormatClass : command.getCommandDefinition().getReturningFormats()) {
                     try {
-                        resultFormats.add(gson.fromJson(data, returnFormatClass));
+                        if (data.isJsonArray()) {
+                            for (JsonElement element : data.getAsJsonArray()) {
+                                resultFormats.add(gson.fromJson(data, returnFormatClass));
+                            }
+                        } else {
+                            resultFormats.add(gson.fromJson(data, returnFormatClass));
+                        }
                     } catch (JsonSyntaxException e) {
                         e.printStackTrace();
                     }

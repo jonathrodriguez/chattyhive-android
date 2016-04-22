@@ -17,6 +17,35 @@ import com.chattyhive.Core.ContentProvider.Formats.MESSAGE_ACK;
 import com.chattyhive.Core.ContentProvider.Formats.MESSAGE_INTERVAL;
 import com.chattyhive.Core.ContentProvider.Formats.MESSAGE_LIST;
 import com.chattyhive.Core.ContentProvider.Formats.PROFILE_ID;
+import com.chattyhive.Core.ContentProvider.Formats.REQ_EMAIL_CHECK;
+import com.chattyhive.Core.ContentProvider.Formats.REQ_JOIN;
+import com.chattyhive.Core.ContentProvider.Formats.REQ_LOGIN;
+import com.chattyhive.Core.ContentProvider.Formats.REQ_PUBLIC_NAME_CHECK;
+import com.chattyhive.Core.ContentProvider.Formats.REQ_REGISTER_USER;
+import com.chattyhive.Core.ContentProvider.Formats.REQ_SEND_MESSAGE;
+import com.chattyhive.Core.ContentProvider.Formats.REQ_UPDATE_USER_PROFILE;
+import com.chattyhive.Core.ContentProvider.Formats.RES_CHAT_INFO;
+import com.chattyhive.Core.ContentProvider.Formats.RES_CHAT_MESSAGE;
+import com.chattyhive.Core.ContentProvider.Formats.RES_EXPLORE;
+import com.chattyhive.Core.ContentProvider.Formats.RES_GET_USER_PROFILE;
+import com.chattyhive.Core.ContentProvider.Formats.RES_HIVE_INFO;
+import com.chattyhive.Core.ContentProvider.Formats.RES_HIVE_USERS_LIST;
+import com.chattyhive.Core.ContentProvider.Formats.RES_JOIN;
+import com.chattyhive.Core.ContentProvider.Formats.RES_LOGIN;
+import com.chattyhive.Core.ContentProvider.Formats.RES_PROFILE_CHAT_LIST;
+import com.chattyhive.Core.ContentProvider.Formats.RES_PUBLIC_NAME_CHECK;
+import com.chattyhive.Core.ContentProvider.Formats.RES_SEND_MESSAGE;
+import com.chattyhive.Core.ContentProvider.Formats.RES_START_SESSION;
+import com.chattyhive.Core.ContentProvider.Formats.URL_CHAT_INFO;
+import com.chattyhive.Core.ContentProvider.Formats.URL_CHAT_MESSAGES;
+import com.chattyhive.Core.ContentProvider.Formats.URL_EXPLORE;
+import com.chattyhive.Core.ContentProvider.Formats.URL_GET_USER_PROFILE;
+import com.chattyhive.Core.ContentProvider.Formats.URL_HIVE_INFO;
+import com.chattyhive.Core.ContentProvider.Formats.URL_HIVE_USERS_LIST;
+import com.chattyhive.Core.ContentProvider.Formats.URL_JOIN;
+import com.chattyhive.Core.ContentProvider.Formats.URL_PROFILE_CHAT_LIST;
+import com.chattyhive.Core.ContentProvider.Formats.URL_SEND_MESSAGE;
+import com.chattyhive.Core.ContentProvider.Formats.URL_UPDATE_USER_PROFILE;
 import com.chattyhive.Core.ContentProvider.Formats.USERNAME;
 import com.chattyhive.Core.ContentProvider.Formats.USER_EMAIL;
 import com.chattyhive.Core.ContentProvider.Formats.USER_PROFILE;
@@ -35,7 +64,7 @@ public class CommandDefinition {
     public static final String CSRFTokenCookie = "csrftoken";
     public static final String SessionCookie = "sessionid";
 
-    public enum Method { GET, POST } //Http protocol method.
+    public enum Method { GET, POST, PATCH, DELETE } //Http protocol method.
     public enum CommandType {
         /**
          * Commands used to set up a server session. (In this category there are only a few
@@ -83,7 +112,7 @@ public class CommandDefinition {
         AvailableCommands command;
         Method method;
         CommandType commandType;
-        String url;
+        URLGenerator url;
         List<Class<?>> inputFormats;
         List<Class<?>> paramFormats;
         List<Class<?>> returningFormats;
@@ -94,10 +123,10 @@ public class CommandDefinition {
         command = AvailableCommands.StartSession;
         method = Method.GET;
         commandType = CommandType.Session;
-        url = "android.start_session";
+        url = params -> "sessions/start/";
         paramFormats = null;
         inputFormats = null;
-        returningFormats = new ArrayList<Class<?>>() {{add(CSRF_TOKEN.class);}};
+        returningFormats = new ArrayList<Class<?>>() {{add(RES_START_SESSION.class);}};
         requiredCookies = null;
         returningCookies = new ArrayList<String>() {{add(CSRFTokenCookie);}};
         CommandDefinition.AddCommandDefinition(command, method, commandType, url, paramFormats, inputFormats, returningFormats, requiredCookies, returningCookies);
@@ -107,10 +136,10 @@ public class CommandDefinition {
         command = AvailableCommands.Login;
         method = Method.POST;
         commandType = CommandType.Session;
-        url = "android.login/";
+        url = params -> "sessions/login/";
         paramFormats = null;
-        inputFormats = new ArrayList<Class<?>>() {{add(LOGIN.class);}};
-        returningFormats = null;
+        inputFormats = new ArrayList<Class<?>>() {{add(REQ_LOGIN.class);}};
+        returningFormats = new ArrayList<Class<?>>() {{add(RES_LOGIN.class);}};
         requiredCookies = new ArrayList<String>() {{add(CSRFTokenCookie);}};
         returningCookies = new ArrayList<String>() {{add(SessionCookie);}};
         CommandDefinition.AddCommandDefinition(command, method, commandType, url, paramFormats, inputFormats, returningFormats, requiredCookies, returningCookies);
@@ -120,9 +149,9 @@ public class CommandDefinition {
         command = AvailableCommands.Register;
         method = Method.POST;
         commandType = CommandType.ImmediateResponsePush;
-        url = "android.register/";
+        url = params -> "users/";
         paramFormats = null;
-        inputFormats = new ArrayList<Class<?>>() {{add(LOCAL_USER_PROFILE.class);}};
+        inputFormats = new ArrayList<Class<?>>() {{add(REQ_REGISTER_USER.class);}};
         returningFormats = null;
         requiredCookies = new ArrayList<String>() {{add(CSRFTokenCookie);}};
         returningCookies = new ArrayList<String>() {{add(SessionCookie);}};
@@ -131,11 +160,11 @@ public class CommandDefinition {
 
         // EmailCheck
         command = AvailableCommands.EmailCheck;
-        method = Method.GET;
+        method = Method.POST;
         commandType = CommandType.Query;
-        url = "android.email_check/[USER_EMAIL.EMAIL_USER_PART]/[USER_EMAIL.EMAIL_SERVER_PART]";
-        paramFormats = new ArrayList<Class<?>>() {{add(USER_EMAIL.class);}};
-        inputFormats = null;
+        url = params -> "users/email/";
+        paramFormats = null;
+        inputFormats = new ArrayList<Class<?>>() {{add(REQ_EMAIL_CHECK.class);}};
         returningFormats = null;
         requiredCookies = new ArrayList<String>() {{add(CSRFTokenCookie);}};
         returningCookies = null;
@@ -143,24 +172,181 @@ public class CommandDefinition {
 
         // UsernameCheck
         command = AvailableCommands.UsernameCheck;
-        method = Method.GET;
+        method = Method.POST;
         commandType = CommandType.Query;
-        url = "android.username_check/[USERNAME.PUBLIC_NAME]";
-        paramFormats = new ArrayList<Class<?>>() {{add(USERNAME.class);}};
-        inputFormats = null;
-        returningFormats = null;
+        url = params -> "users/public_name/";
+        paramFormats = null;
+        inputFormats = new ArrayList<Class<?>>() {{add(REQ_PUBLIC_NAME_CHECK.class);}};
+        returningFormats = new ArrayList<Class<?>>() {{add(RES_PUBLIC_NAME_CHECK.class);}};
         requiredCookies = new ArrayList<String>() {{add(CSRFTokenCookie);}};
         returningCookies = null;
         CommandDefinition.AddCommandDefinition(command, method, commandType, url, paramFormats, inputFormats, returningFormats, requiredCookies, returningCookies);
 
-        // Explore //TODO: Add optional parameters
+
+        // UserProfile
+        command = AvailableCommands.UserProfile;
+        method = Method.GET;
+        commandType = CommandType.Pull;
+        url = params -> {
+            String resultURL = "profiles/";
+            URL_GET_USER_PROFILE urlData = null;
+            for (Object p : params) {
+                if (p instanceof URL_GET_USER_PROFILE) {
+                    urlData = (URL_GET_USER_PROFILE) p;
+                    break;
+                }
+            }
+            if (urlData == null) {
+                throw new IllegalArgumentException("URL_GET_USER_PROFILE expected.");
+            }
+
+            if ((urlData.getPublicName() == null) || (urlData.getPublicName().isEmpty())) {
+                throw new IllegalArgumentException("Must specify public_name.");
+            }
+
+            if (urlData.getType() == null) {
+                throw new IllegalArgumentException("Must specify search type.");
+            }
+
+            resultURL += urlData.getPublicName() + "/" + urlData.getType().toString() + "/";
+
+            String queryURL = "";
+
+            // Query parameters
+            if (urlData.getPackage() != null) {
+                queryURL += ((queryURL.isEmpty())?"?":"&") + "package=" + urlData.getPackage().toString();
+            }
+
+            // End query parameters
+
+            if (!queryURL.isEmpty()) {
+                resultURL += queryURL;
+            }
+
+            return resultURL;
+        };
+        paramFormats = new ArrayList<Class<?>>() {{add(URL_GET_USER_PROFILE.class);}};
+        inputFormats = null;
+        returningFormats = new ArrayList<Class<?>>() {{add(RES_GET_USER_PROFILE.class);}};
+        requiredCookies = new ArrayList<String>() {{add(CSRFTokenCookie); add(SessionCookie);}};
+        returningCookies = null;
+        CommandDefinition.AddCommandDefinition(command, method, commandType, url, paramFormats, inputFormats, returningFormats, requiredCookies, returningCookies);
+
+
+        // UpdateProfile
+        command = AvailableCommands.UpdateProfile;
+        method = Method.PATCH;
+        commandType = CommandType.ImmediateResponsePush;
+        url =params -> {
+            String resultURL = "profiles/";
+            URL_UPDATE_USER_PROFILE urlData = null;
+            for (Object p : params) {
+                if (p instanceof URL_UPDATE_USER_PROFILE) {
+                    urlData = (URL_UPDATE_USER_PROFILE) p;
+                    break;
+                }
+            }
+            if (urlData == null) {
+                throw new IllegalArgumentException("URL_UPDATE_USER_PROFILE expected.");
+            }
+
+            if ((urlData.getPublicName() == null) || (urlData.getPublicName().isEmpty())) {
+                throw new IllegalArgumentException("Must specify public_name.");
+            }
+
+            resultURL += urlData.getPublicName() + "/";
+
+            return resultURL;
+        };;
+        paramFormats = new ArrayList<Class<?>>() {{add(URL_UPDATE_USER_PROFILE.class);}};
+        inputFormats = new ArrayList<Class<?>>() {{add(REQ_UPDATE_USER_PROFILE.class);}};
+        returningFormats = null;
+        requiredCookies = new ArrayList<String>() {{add(CSRFTokenCookie); add(SessionCookie);}};
+        returningCookies = null;
+        CommandDefinition.AddCommandDefinition(command, method, commandType, url, paramFormats, inputFormats, returningFormats, requiredCookies, returningCookies);
+
+
+        // Explore
         command = AvailableCommands.Explore;
         method = Method.GET;
         commandType = CommandType.Query;
-        url = "android.explore/[EXPLORE_FILTER.TYPE]";
-        paramFormats = new ArrayList<Class<?>>() {{add(EXPLORE_FILTER.class);}};
+        url = params -> {
+            String resultURL = "hives/";
+            URL_EXPLORE urlData = null;
+            for (Object p : params) {
+                if (p instanceof URL_EXPLORE) {
+                    urlData = (URL_EXPLORE) p;
+                    break;
+                }
+            }
+            if (urlData == null) {
+                throw new IllegalArgumentException("URL_EXPLORE expected.");
+            }
+
+            if ((urlData.getSort() == null) || (urlData.getSort().isEmpty())) {
+                throw new IllegalArgumentException("Must specify sort type.");
+            }
+
+            resultURL += urlData.getSort() + "/";
+
+            String queryURL = "";
+
+            // Pagination
+            if ((urlData.getStart() != null) && (!urlData.getStart().isEmpty())) {
+                queryURL += ((queryURL.isEmpty())?"?":"&") + "start=" + urlData.getStart();
+            }
+
+            if ((urlData.getEnd() != null) && (!urlData.getEnd().isEmpty())) {
+                queryURL += ((queryURL.isEmpty())?"?":"&") + "end=" + urlData.getEnd();
+            }
+
+            if ((urlData.getElements() != null) && (urlData.getElements() > 0)) {
+                queryURL += ((queryURL.isEmpty())?"?":"&") + "elements=" + urlData.getElements().toString();
+            }
+            // End pagination
+
+            if ((urlData.getCountry() != null) && (!urlData.getCountry().isEmpty())) {
+                queryURL += ((queryURL.isEmpty())?"?":"&") + "country=" + urlData.getCountry();
+            }
+
+            if ((urlData.getRegion() != null) && (!urlData.getRegion().isEmpty())) {
+                queryURL += ((queryURL.isEmpty())?"?":"&") + "region=" + urlData.getRegion();
+            }
+
+            if ((urlData.getCity() != null) && (!urlData.getCity().isEmpty())) {
+                queryURL += ((queryURL.isEmpty())?"?":"&") + "city=" + urlData.getCity();
+            }
+
+            if ((urlData.getCoordinates() != null) && (!urlData.getCoordinates().isEmpty())) {
+                queryURL += ((queryURL.isEmpty())?"?":"&") + "coordinates=" + urlData.getCoordinates();
+            }
+
+            if ((urlData.getSearch_string() != null) && (!urlData.getSearch_string().isEmpty())) {
+                queryURL += ((queryURL.isEmpty())?"?":"&") + "search_string=" + urlData.getSearch_string();
+            }
+
+            if (urlData.getInclude_subscribed() != null) {
+                queryURL += ((queryURL.isEmpty())?"?":"&") + "include_subscribed=" + urlData.getInclude_subscribed().toString();
+            }
+
+            if ((urlData.getTags() != null) && (!urlData.getTags().isEmpty())) {
+                for (String tag : urlData.getTags()) {
+                    if ((tag != null) && (!tag.isEmpty())) {
+                        queryURL += ((queryURL.isEmpty())?"?":"&") + "tags=" + tag;
+                    }
+                }
+            }
+
+            if (!queryURL.isEmpty()) {
+                resultURL += queryURL;
+            }
+
+
+            return resultURL;
+        };
+        paramFormats = new ArrayList<Class<?>>() {{add(URL_EXPLORE.class);}};
         inputFormats = null;
-        returningFormats = new ArrayList<Class<?>>() {{add(HIVE_LIST.class);}};
+        returningFormats = new ArrayList<Class<?>>() {{add(RES_EXPLORE.class);}};
         requiredCookies = new ArrayList<String>() {{add(CSRFTokenCookie); add(SessionCookie);}};
         returningCookies = null;
         CommandDefinition.AddCommandDefinition(command, method, commandType, url, paramFormats, inputFormats, returningFormats, requiredCookies, returningCookies);
@@ -170,10 +356,30 @@ public class CommandDefinition {
         command = AvailableCommands.Join;
         method = Method.POST;
         commandType = CommandType.ImmediateResponsePush;
-        url = "android.join/";
-        paramFormats = null;
-        inputFormats = new ArrayList<Class<?>>() {{add(HIVE_ID.class);}};
-        returningFormats = new ArrayList<Class<?>>() {{add(CHAT.class);}};
+        url = params -> {
+            String resultURL = "profiles/";
+            URL_JOIN urlData = null;
+            for (Object p : params) {
+                if (p instanceof URL_JOIN) {
+                    urlData = (URL_JOIN) p;
+                    break;
+                }
+            }
+            if (urlData == null) {
+                throw new IllegalArgumentException("URL_JOIN expected.");
+            }
+
+            if ((urlData.getPublic_name() == null) || (urlData.getPublic_name().isEmpty())) {
+                throw new IllegalArgumentException("Must specify public_name.");
+            }
+
+            resultURL += urlData.getPublic_name() + "/hives/";
+
+            return resultURL;
+        };
+        paramFormats = new ArrayList<Class<?>>() {{add(URL_JOIN.class);}};
+        inputFormats = new ArrayList<Class<?>>() {{add(REQ_JOIN.class);}};
+        returningFormats = new ArrayList<Class<?>>() {{add(RES_JOIN.class);}};
         requiredCookies = new ArrayList<String>() {{add(CSRFTokenCookie); add(SessionCookie);}};
         returningCookies = null;
         CommandDefinition.AddCommandDefinition(command, method, commandType, url, paramFormats, inputFormats, returningFormats, requiredCookies, returningCookies);
@@ -183,10 +389,30 @@ public class CommandDefinition {
         command = AvailableCommands.SendMessage;
         method = Method.POST;
         commandType = CommandType.ForcePush;
-        url = "android.chat/";
-        paramFormats = null;
-        inputFormats = new ArrayList<Class<?>>() {{add(MESSAGE.class);}};
-        returningFormats = new ArrayList<Class<?>>() {{add(MESSAGE_ACK.class);}};
+        url = params -> {
+            String resultURL = "chats/";
+            URL_SEND_MESSAGE urlData = null;
+            for (Object p : params) {
+                if (p instanceof URL_SEND_MESSAGE) {
+                    urlData = (URL_SEND_MESSAGE) p;
+                    break;
+                }
+            }
+            if (urlData == null) {
+                throw new IllegalArgumentException("URL_SEND_MESSAGE expected.");
+            }
+
+            if ((urlData.getChat_id() == null) || (urlData.getChat_id().isEmpty())) {
+                throw new IllegalArgumentException("Must specify chat_id.");
+            }
+
+            resultURL += urlData.getChat_id() + "/messages/";
+
+            return resultURL;
+        };
+        paramFormats = new ArrayList<Class<?>>() {{add(URL_SEND_MESSAGE.class);}};
+        inputFormats = new ArrayList<Class<?>>() {{add(REQ_SEND_MESSAGE.class);}};
+        returningFormats = new ArrayList<Class<?>>() {{add(RES_SEND_MESSAGE.class);}};
         requiredCookies = new ArrayList<String>() {{add(CSRFTokenCookie); add(SessionCookie);}};
         returningCookies = null;
         CommandDefinition.AddCommandDefinition(command, method, commandType, url, paramFormats, inputFormats, returningFormats, requiredCookies, returningCookies);
@@ -196,35 +422,50 @@ public class CommandDefinition {
         command = AvailableCommands.GetMessages;
         method = Method.GET;
         commandType = CommandType.Pull;
-        url = "android.messages/[CHAT_ID.CHANNEL_UNICODE]/[MESSAGE_INTERVAL.LAST_MESSAGE_ID]/[MESSAGE_INTERVAL.COUNT]";
-        paramFormats = new ArrayList<Class<?>>() {{add(CHAT_ID.class); add(MESSAGE_INTERVAL.class); }};
+        url = params -> {
+            String resultURL = "chats/";
+            URL_CHAT_MESSAGES urlData = null;
+            for (Object p : params) {
+                if (p instanceof URL_CHAT_MESSAGES) {
+                    urlData = (URL_CHAT_MESSAGES) p;
+                    break;
+                }
+            }
+            if (urlData == null) {
+                throw new IllegalArgumentException("URL_CHAT_MESSAGES expected.");
+            }
+
+            if ((urlData.getChat_id() == null) || (urlData.getChat_id().isEmpty())) {
+                throw new IllegalArgumentException("Must specify chat_id.");
+            }
+
+            resultURL += urlData.getChat_id() + "/messages/";
+
+            String queryURL = "";
+
+            // Pagination
+            if ((urlData.getStart() != null) && (!urlData.getStart().isEmpty())) {
+                queryURL += ((queryURL.isEmpty())?"?":"&") + "start=" + urlData.getStart();
+            }
+
+            if ((urlData.getEnd() != null) && (!urlData.getEnd().isEmpty())) {
+                queryURL += ((queryURL.isEmpty())?"?":"&") + "end=" + urlData.getEnd();
+            }
+
+            if ((urlData.getElements() != null) && (urlData.getElements() > 0)) {
+                queryURL += ((queryURL.isEmpty())?"?":"&") + "elements=" + urlData.getElements().toString();
+            }
+            // End pagination
+
+            if (!queryURL.isEmpty()) {
+                resultURL += queryURL;
+            }
+
+            return resultURL;
+        };
+        paramFormats = new ArrayList<Class<?>>() {{add(URL_CHAT_MESSAGES.class); }};
         inputFormats = null;
-        returningFormats = new ArrayList<Class<?>>() {{add(MESSAGE_LIST.class);}};
-        requiredCookies = new ArrayList<String>() {{add(CSRFTokenCookie); add(SessionCookie);}};
-        returningCookies = null;
-        CommandDefinition.AddCommandDefinition(command, method, commandType, url, paramFormats, inputFormats, returningFormats, requiredCookies, returningCookies);
-
-
-        // LocalProfile
-        command = AvailableCommands.LocalProfile;
-        method = Method.GET;
-        commandType = CommandType.Pull;
-        url = "android.recover_local_user_profile";
-        paramFormats = null;
-        inputFormats = null;
-        returningFormats = new ArrayList<Class<?>>() {{add(LOCAL_USER_PROFILE.class);}};
-        requiredCookies = new ArrayList<String>() {{add(CSRFTokenCookie); add(SessionCookie);}};
-        returningCookies = null;
-        CommandDefinition.AddCommandDefinition(command, method, commandType, url, paramFormats, inputFormats, returningFormats, requiredCookies, returningCookies);
-
-        // UpdateProfile
-        command = AvailableCommands.UpdateProfile;
-        method = Method.POST;
-        commandType = CommandType.ImmediateResponsePush;
-        url = "android.update_local_user_profile/";
-        paramFormats = null;
-        inputFormats = new ArrayList<Class<?>>() {{add(LOCAL_USER_PROFILE.class);}};
-        returningFormats = null;
+        returningFormats = new ArrayList<Class<?>>() {{add(RES_CHAT_MESSAGE.class);}};
         requiredCookies = new ArrayList<String>() {{add(CSRFTokenCookie); add(SessionCookie);}};
         returningCookies = null;
         CommandDefinition.AddCommandDefinition(command, method, commandType, url, paramFormats, inputFormats, returningFormats, requiredCookies, returningCookies);
@@ -233,36 +474,82 @@ public class CommandDefinition {
         command = AvailableCommands.ChatInfo;
         method = Method.GET;
         commandType = CommandType.Pull;
-        url = "android.get_chat_context/[CHAT_ID.CHANNEL_UNICODE]";
-        paramFormats = new ArrayList<Class<?>>() {{add(CHAT_ID.class);}};
+        url = params -> {
+            String resultURL = "chats/";
+            URL_CHAT_INFO urlData = null;
+            for (Object p : params) {
+                if (p instanceof URL_CHAT_INFO) {
+                    urlData = (URL_CHAT_INFO) p;
+                    break;
+                }
+            }
+            if (urlData == null) {
+                throw new IllegalArgumentException("URL_CHAT_INFO expected.");
+            }
+
+            if ((urlData.getChat_id() == null) || (urlData.getChat_id().isEmpty())) {
+                throw new IllegalArgumentException("Must specify chat_id.");
+            }
+
+            resultURL += urlData.getChat_id() + "/";
+
+            return resultURL;
+        };
+        paramFormats = new ArrayList<Class<?>>() {{add(URL_CHAT_INFO.class);}};
         inputFormats = null;
-        returningFormats = new ArrayList<Class<?>>() {{add(CHAT.class);}};
+        returningFormats = new ArrayList<Class<?>>() {{add(RES_CHAT_INFO.class);}};
         requiredCookies = new ArrayList<String>() {{add(CSRFTokenCookie); add(SessionCookie);}};
         returningCookies = null;
         CommandDefinition.AddCommandDefinition(command, method, commandType, url, paramFormats, inputFormats, returningFormats, requiredCookies, returningCookies);
-
 
         // ChatList
         command = AvailableCommands.ChatList;
         method = Method.GET;
         commandType = CommandType.Pull;
-        url = "android.get_chat_list";
-        paramFormats = null;
+        url = params -> {
+            String resultURL = "profiles/";
+            URL_PROFILE_CHAT_LIST urlData = null;
+            for (Object p : params) {
+                if (p instanceof URL_PROFILE_CHAT_LIST) {
+                    urlData = (URL_PROFILE_CHAT_LIST) p;
+                    break;
+                }
+            }
+            if (urlData == null) {
+                throw new IllegalArgumentException("URL_PROFILE_CHAT_LIST expected.");
+            }
+
+            if ((urlData.getProfileID() == null) || (urlData.getProfileID().isEmpty())) {
+                throw new IllegalArgumentException("Must specify profile_id.");
+            }
+
+            resultURL += urlData.getProfileID() + "/chats/";
+
+            String queryURL = "";
+
+            // Pagination
+            if ((urlData.getStart() != null) && (!urlData.getStart().isEmpty())) {
+                queryURL += ((queryURL.isEmpty())?"?":"&") + "start=" + urlData.getStart();
+            }
+
+            if ((urlData.getEnd() != null) && (!urlData.getEnd().isEmpty())) {
+                queryURL += ((queryURL.isEmpty())?"?":"&") + "end=" + urlData.getEnd();
+            }
+
+            if ((urlData.getElements() != null) && (urlData.getElements() > 0)) {
+                queryURL += ((queryURL.isEmpty())?"?":"&") + "elements=" + urlData.getElements().toString();
+            }
+            // End pagination
+
+            if (!queryURL.isEmpty()) {
+                resultURL += queryURL;
+            }
+
+            return resultURL;
+        };
+        paramFormats = new ArrayList<Class<?>>() {{add(URL_PROFILE_CHAT_LIST.class);}};
         inputFormats = null;
-        returningFormats = new ArrayList<Class<?>>() {{add(CHAT_LIST.class);}};
-        requiredCookies = new ArrayList<String>() {{add(CSRFTokenCookie); add(SessionCookie);}};
-        returningCookies = null;
-        CommandDefinition.AddCommandDefinition(command, method, commandType, url, paramFormats, inputFormats, returningFormats, requiredCookies, returningCookies);
-
-
-        // UserProfile
-        command = AvailableCommands.UserProfile;
-        method = Method.POST;
-        commandType = CommandType.Pull;
-        url = "android.???/";
-        paramFormats = null;
-        inputFormats = new ArrayList<Class<?>>() {{add(PROFILE_ID.class);}};
-        returningFormats = new ArrayList<Class<?>>() {{add(USER_PROFILE.class);}};
+        returningFormats = new ArrayList<Class<?>>() {{add(RES_PROFILE_CHAT_LIST.class);}};
         requiredCookies = new ArrayList<String>() {{add(CSRFTokenCookie); add(SessionCookie);}};
         returningCookies = null;
         CommandDefinition.AddCommandDefinition(command, method, commandType, url, paramFormats, inputFormats, returningFormats, requiredCookies, returningCookies);
@@ -272,10 +559,30 @@ public class CommandDefinition {
         command = AvailableCommands.HiveInfo;
         method = Method.GET;
         commandType = CommandType.Pull;
-        url = "android.get_hive_info/[HIVE_ID.NAME_URL]";
-        paramFormats = new ArrayList<Class<?>>() {{add(HIVE_ID.class);}};
+        url = params -> {
+            String resultURL = "hives/";
+            URL_HIVE_INFO urlData = null;
+            for (Object p : params) {
+                if (p instanceof URL_HIVE_INFO) {
+                    urlData = (URL_HIVE_INFO) p;
+                    break;
+                }
+            }
+            if (urlData == null) {
+                throw new IllegalArgumentException("URL_HIVE_INFO expected.");
+            }
+
+            if ((urlData.getSlug() == null) || (urlData.getSlug().isEmpty())) {
+                throw new IllegalArgumentException("Must specify slug.");
+            }
+
+            resultURL += urlData.getSlug() + "/";
+
+            return resultURL;
+        };;
+        paramFormats = new ArrayList<Class<?>>() {{add(URL_HIVE_INFO.class);}};
         inputFormats = null;
-        returningFormats = new ArrayList<Class<?>>() {{add(HIVE.class);}};
+        returningFormats = new ArrayList<Class<?>>() {{add(RES_HIVE_INFO.class);}};
         requiredCookies = new ArrayList<String>() {{add(CSRFTokenCookie); add(SessionCookie);}};
         returningCookies = null;
         CommandDefinition.AddCommandDefinition(command, method, commandType, url, paramFormats, inputFormats, returningFormats, requiredCookies, returningCookies);
@@ -284,10 +591,54 @@ public class CommandDefinition {
         command = AvailableCommands.HiveUsers;
         method = Method.GET;
         commandType = CommandType.Query;
-        url = "android.get_hive_users/[HIVE_ID.NAME_URL]";
-        paramFormats = new ArrayList<Class<?>>() {{add(HIVE_ID.class); add(HIVE_USERS_FILTER.class);}};
+        url = params -> {
+            String resultURL = "hives/";
+            URL_HIVE_USERS_LIST urlData = null;
+            for (Object p : params) {
+                if (p instanceof URL_HIVE_USERS_LIST) {
+                    urlData = (URL_HIVE_USERS_LIST) p;
+                    break;
+                }
+            }
+            if (urlData == null) {
+                throw new IllegalArgumentException("URL_HIVE_USERS_LIST expected.");
+            }
+
+            if ((urlData.getHive_slug() == null) || (urlData.getHive_slug().isEmpty())) {
+                throw new IllegalArgumentException("Must specify slug.");
+            }
+
+            if (urlData.getSort() == null) {
+                throw new IllegalArgumentException("Must specify search type.");
+            }
+
+            resultURL += urlData.getHive_slug() + "/users/" + urlData.getSort().toString() + "/";
+
+            String queryURL = "";
+
+            // Pagination
+            if ((urlData.getStart() != null) && (!urlData.getStart().isEmpty())) {
+                queryURL += ((queryURL.isEmpty())?"?":"&") + "start=" + urlData.getStart();
+            }
+
+            if ((urlData.getEnd() != null) && (!urlData.getEnd().isEmpty())) {
+                queryURL += ((queryURL.isEmpty())?"?":"&") + "end=" + urlData.getEnd();
+            }
+
+            if ((urlData.getElements() != null) && (urlData.getElements() > 0)) {
+                queryURL += ((queryURL.isEmpty())?"?":"&") + "elements=" + urlData.getElements().toString();
+            }
+            // End pagination
+
+            if (!queryURL.isEmpty()) {
+                resultURL += queryURL;
+            }
+
+            return resultURL;
+        };
+        paramFormats = new ArrayList<Class<?>>() {{add(URL_HIVE_USERS_LIST.class);}};
         inputFormats = null;
-        returningFormats = new ArrayList<Class<?>>() {{add(USER_PROFILE_LIST.class);}};
+        returningFormats = new ArrayList<Class<?>>() {{add(RES_HIVE_USERS_LIST.class);}};
         requiredCookies = new ArrayList<String>() {{add(CSRFTokenCookie); add(SessionCookie);}};
         returningCookies = null;
         CommandDefinition.AddCommandDefinition(command, method, commandType, url, paramFormats, inputFormats, returningFormats, requiredCookies, returningCookies);
@@ -296,18 +647,21 @@ public class CommandDefinition {
         command = AvailableCommands.CreateHive;
         method = Method.POST;
         commandType = CommandType.ImmediateResponsePush;
-        url = "android.hives";
+        url = params -> "hives/";
         paramFormats = null;
-        inputFormats = new ArrayList<Class<?>>() {{add(HIVE.class);}};
-        returningFormats = new ArrayList<Class<?>>() {{add(HIVE_ID.class); add(CHAT.class);}};
+        inputFormats = new ArrayList<Class<?>>() {{add(RES_HIVE_INFO.class);}};
+        returningFormats = new ArrayList<Class<?>>() {{add(RES_HIVE_INFO.class);}};
         requiredCookies = new ArrayList<String>() {{add(CSRFTokenCookie); add(SessionCookie);}};
         returningCookies = null;
         CommandDefinition.AddCommandDefinition(command, method, commandType, url, paramFormats, inputFormats, returningFormats, requiredCookies, returningCookies);
     }
+
+    /**********************************************************************************/
+
     private static void AddCommandDefinition(AvailableCommands command,
                                              Method method,
                                              CommandType commandType,
-                                             String url,
+                                             URLGenerator url,
                                              List<Class<?>> paramFormats,
                                              List<Class<?>> inputFormats,
                                              List<Class<?>> returningFormats,
@@ -334,7 +688,7 @@ public class CommandDefinition {
     private final AvailableCommands command;
     private final Method method;
     private final CommandType commandType;
-    private final String url;
+    private final URLGenerator url;
 
     private List<Class<?>> inputFormats;
     private List<Class<?>> paramFormats;
@@ -346,7 +700,7 @@ public class CommandDefinition {
     private CommandDefinition(AvailableCommands command,
                               Method method,
                               CommandType commandType,
-                              String url) {
+                              URLGenerator url) {
         this.command = command;
         this.method = method;
         this.commandType = commandType;
@@ -403,8 +757,8 @@ public class CommandDefinition {
     public CommandType getCommandType() {
         return this.commandType;
     }
-    public String getUrl() {
-        return this.url;
+    public String getUrl(List<Object> paramFormats) {
+        return this.url.generateURL(paramFormats);
     }
     public List<Class<?>> getInputFormats() {
         return this.inputFormats;
@@ -420,5 +774,9 @@ public class CommandDefinition {
     }
     public List<String> getReturningCookies() {
         return this.returningCookies;
+    }
+
+    interface URLGenerator {
+        public String generateURL(List<Object> paramFormats);
     }
 }

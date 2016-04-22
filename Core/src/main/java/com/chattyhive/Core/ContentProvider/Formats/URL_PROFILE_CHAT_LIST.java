@@ -45,7 +45,7 @@ public class URL_PROFILE_CHAT_LIST {
      */
     @SerializedName("elements")
     @Expose
-    private int elements;
+    private Integer elements;
 
     /**
      * PATH 1. public_name of the user.
@@ -115,7 +115,7 @@ public class URL_PROFILE_CHAT_LIST {
      * @return
      * The elements
      */
-    public int getElements() {
+    public Integer getElements() {
         return elements;
     }
 
@@ -125,7 +125,7 @@ public class URL_PROFILE_CHAT_LIST {
      * @param elements
      * The elements
      */
-    public void setElements(int elements) {
+    public void setElements(Integer elements) {
         this.elements = elements;
     }
 

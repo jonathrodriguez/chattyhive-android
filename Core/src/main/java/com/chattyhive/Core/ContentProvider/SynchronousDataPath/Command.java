@@ -94,7 +94,9 @@ public class Command {
     private ArrayList<Object> resultFormats;
     private int resultCode;
 
-    public Command(AvailableCommands commandDefinition, Format... formats) {
+    private String url;
+
+    public Command(AvailableCommands commandDefinition, Object... formats) {
         this.serverUser = null;
         this.commandDefinition = CommandDefinition.GetCommand(commandDefinition);
 
@@ -103,7 +105,7 @@ public class Command {
         this.inputFormats = new ArrayList<>();
         this.paramFormats = new ArrayList<>();
 
-        for (Format format : formats) {
+        for (Object format : formats) {
             if (this.commandDefinition.getInputFormats().contains(format.getClass()))
                this.inputFormats.add(format);
 
@@ -125,12 +127,10 @@ public class Command {
         this.serverUser = serverUser;
     }
     public String getUrl() {
-        String url = this.commandDefinition.getUrl();
+        if ((this.url == null) || (this.url.isEmpty()))
+            this.url = this.commandDefinition.getUrl(this.paramFormats);
 
-        if (url.contains("(?P<") || url.contains("(?O<"))
-            url = (new ParseURL(url)).getParsedURL();
-
-        return url;
+        return this.url;
     }
 
     @Override
@@ -365,7 +365,8 @@ public class Command {
         return (!bodyData.equalsIgnoreCase("}"))?bodyData:"";
     }
 
-    //FIXME
+
+    //FIXME: Add check of required data (not business logic validation)
     private Boolean checkFormats() {
         TreeSet<Class> inputFormatClasses = new TreeSet<>();
         for (Object format : this.inputFormats)
